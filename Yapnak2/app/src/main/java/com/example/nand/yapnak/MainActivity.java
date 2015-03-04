@@ -16,6 +16,7 @@ public class MainActivity extends FragmentActivity {
     boolean expanded=false;
     TextView title;
     TextView txtLineOne;
+    TextView txtLineTwo;
     LinearLayout expandArea;
     CardView card;
 
@@ -37,6 +38,7 @@ public class MainActivity extends FragmentActivity {
                     
                 } else {
                     expandArea.setVisibility(View.VISIBLE);
+                    txtLineTwo = (TextView)findViewById(R.id.text2);
                     expanded = true;
 
                 }
