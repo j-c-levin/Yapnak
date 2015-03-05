@@ -1,4 +1,4 @@
-package com.example.nand.yapnak;
+package com.example.nand.abc;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
