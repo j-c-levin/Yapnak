@@ -75,7 +75,7 @@
             android:visibility="gone">
 
             <Button
-                android:id="@+id/hello"
+                android:id="@+id/recommendMeal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -84,7 +84,7 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/bello"
+                android:id="@+id/takeMeThere"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
