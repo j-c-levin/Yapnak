@@ -27,6 +27,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private Button recommendButton;
         private Button mapButton;
         private TextView loyalityPoints;
+        private LinearLayout extendedLayout;
 
 
         public ViewHolder(final View itemView) {
@@ -38,7 +39,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             extendArea = (LinearLayout) itemView.findViewById(R.id.extendLayout);
             card = (android.support.v7.widget.CardView) itemView.findViewById(R.id.card);
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
-
+//            recommendButton = (Button) itemView.findViewById(R.id.hello);
+//            mapButton = (Button) itemView.findViewById(R.id.takeMeThere);
 
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
