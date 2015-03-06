@@ -40,7 +40,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
 
 
-            logo.setOnClickListener(new View.OnClickListener() {
+            card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (extendArea.getVisibility() == View.GONE) {
