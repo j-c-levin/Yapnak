@@ -28,6 +28,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private Button mapButton;
         private TextView loyalityPoints;
         private LinearLayout extendedLayout;
+        private TextView distance;
 
 
         public ViewHolder(final View itemView) {
@@ -39,6 +40,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             extendArea = (LinearLayout) itemView.findViewById(R.id.extendLayout);
             card = (android.support.v7.widget.CardView) itemView.findViewById(R.id.card);
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
+            distance = (TextView) itemView.findViewById(R.id.distance);
 //            recommendButton = (Button) itemView.findViewById(R.id.hello);
 //            mapButton = (Button) itemView.findViewById(R.id.takeMeThere);
 
@@ -67,17 +69,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         // Create some items
         items = new ArrayList<>();
 
-        items.add(new Item("Gourmet Burger Kitchen ", "Portion of fat chips", "10,000", R.drawable.gbklogo));
-        items.add(new Item("McDonalds", "Free Mcflurry with every meal", "500", R.drawable.mcdonalds));
-        items.add(new Item("Wrap It Up", "70p off any drink when you buy a medium burrito", "1", R.drawable.wrapitup));
-        items.add(new Item("Pizza Express", "15% NUS Discounts", "5", R.drawable.pizzaexpresslogo));
-        items.add(new Item("Tesco", "Any sandwich or past + crisps + drink - JUST £3!", "37", R.drawable.tescologo));
-        items.add(new Item("Gourmet Burger Kitchen ", "Portion of fat chips", "10,000", R.drawable.gbklogo));
-        items.add(new Item("McDonalds", "Free Mcflurry with every meal", "500", R.drawable.mcdonalds));
-        items.add(new Item("Wrap It Up", "70p off any drink when you buy a medium burrito", "1", R.drawable.wrapitup));
-        items.add(new Item("Pizza Express", "15% NUS Discounts", "5", R.drawable.pizzaexpresslogo));
-        items.add(new Item("Tesco", "Any sandwich or past + crisps + drink - JUST £3!", "37", R.drawable.tescologo));
-
+        items.add(new Item("Gourmet Burger Kitchen ", "Portion of fat chips", "10,000", R.drawable.gbklogo, "10 Minutes"));
+        items.add(new Item("McDonalds", "Free Mcflurry with every meal", "500", R.drawable.mcdonalds, "3 Minutes"));
+        items.add(new Item("Wrap It Up", "70p off any drink when you buy a medium burrito", "1", R.drawable.wrapitup, "1 Minute"));
+        items.add(new Item("Pizza Express", "15% NUS Discounts", "5", R.drawable.pizzaexpresslogo, "20 Minutes"));
+        items.add(new Item("Tesco", "Any sandwich or past + crisps + drink - JUST £3!", "37", R.drawable.tescologo, "5 Minutes"));
+        items.add(new Item("Gourmet Burger Kitchen ", "Portion of fat chips", "10,000", R.drawable.gbklogo, "10 Minutes"));
+        items.add(new Item("McDonalds", "Free Mcflurry with every meal", "500", R.drawable.mcdonalds, "3 Minutes"));
+        items.add(new Item("Wrap It Up", "70p off any drink when you buy a medium burrito", "1", R.drawable.wrapitup, "1 Minute"));
+        items.add(new Item("Pizza Express", "15% NUS Discounts", "5", R.drawable.pizzaexpresslogo, "20 Minutes"));
+        items.add(new Item("Tesco", "Any sandwich or past + crisps + drink - JUST £3!", "37", R.drawable.tescologo, "5 Minutes"));
 
     }
 
@@ -95,12 +96,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.subtitle.setText(item.getSubtle());
         holder.loyalityPoints.setText(item.getLoyaltyPoints());
         holder.logo.setImageResource(item.getLogo());
+        holder.distance.setText(item.getDistance());
     }
 
     @Override
     public int getItemCount() {
         return items.size();
     }
-
-
 }

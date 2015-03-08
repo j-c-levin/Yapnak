@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,7 +20,11 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import java.util.HashMap;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
+    private static String TAG_ABOUT = "About";
+    private static String TAG_SHARE = "Share";
+    private static String TAG_MANUAL = "Manual";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,13 @@ public class MainActivity extends Activity {
         SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
         SubActionButton buttonManual = itemBuilder.setContentView(iconManual).build();
 
+        buttonAbout.setTag(TAG_ABOUT);
+        buttonShare.setTag(TAG_SHARE);
+        buttonManual.setTag(TAG_MANUAL);
+
+        buttonAbout.setOnClickListener(this);
+        buttonShare.setOnClickListener(this);
+        buttonManual.setOnClickListener(this);
 
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(buttonAbout)
@@ -87,5 +99,16 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getTag().equals(TAG_ABOUT)) {
+            Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
+        } else if (v.getTag().equals(TAG_SHARE)) {
+            Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+        } else if (v.getTag().equals(TAG_MANUAL)) {
+            Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
+        }
     }
 }
