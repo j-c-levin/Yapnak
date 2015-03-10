@@ -1,10 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <color name="primaryColour">#00B78B</color>
-    <color name="primaryColourDark">#00796B</color>
-    <color name="accentColour">#F44336</color>
+
+    <!--<Original preference-->
+
+    <!--<color name="primaryColour">#4CAF50</color>-->
+    <!--<color name="primaryColourDark">#388E3C</color>-->
+    <!--<color name="accentColour">#4CAF50</color>-->
+
+
+    <!--<Uche's Preference-->
+
+    <!--<color name="primaryColour">#F44336</color>-->
+    <!--<color name="primaryColourDark">#D32F2F</color>-->
+    <!--<color name="accentColour">#00897B</color>-->
+
+
+    <!--<James preference-->
+
+
+    <!--<color name="primaryColour">#424242</color>-->
+    <!--<color name="primaryColourDark">#F44336</color>-->
+    <!--<color name="accentColour">#00897B</color>-->
+
+    <!--<James preference 2-->
+
+    <!--<color name="primaryColour">#302C32</color>-->
+    <!--<color name="primaryColourDark">#302C32</color>-->
+    <!--<color name="greyCard">#ffeaeaea</color>-->
+    <!--<color name="accentColour">#00897B</color>-->
+
+    <!--Indigo Preference -->
+    <!--<color name="primaryColour">#3F51B5</color>-->
+    <!--<color name="primaryColourDark">#303F9F</color>-->
+    <!--<color name="accentColour">#2196F3</color>-->
+
+    <!--Orange Preference -->
+
+    <!--<color name="primaryColour">#FFC107</color>-->
+    <!--<color name="primaryColourDark">#FFA000</color>-->
+    <!--<color name="accentColour">#2196F3</color>-->
+
+
+    <!--Green Preference -->
+
+    <!--<color name="primaryColour">#424242</color>-->
+    <!--<color name="primaryColourDark">#424242</color>-->
+    <!--<color name="accentColour">#2196F3</color>-->
+
+    <!--Purple Preference -->
+
+    <!--<color name="primaryColour">#673AB7</color>-->
+    <!--<color name="primaryColourDark">#512DA8</color>-->
+    <!--<color name="accentColour">#2196F3</color>-->
+
+
+    <!--Blue Preference -->
+
+    <!--<color name="primaryColour">#2196F3</color>-->
+    <!--<color name="primaryColourDark">#1565C0</color>-->
+    <!--<color name="accentColour">#0D47A1</color>-->
+
+    <!--Charcoal Preference -->
+
+    <color name="primaryColour">#ff3a3a3c</color>
+    <color name="primaryColourDark">#ff272729</color>
+    <color name="accentColour">#0D47A1</color>
+
+
+    <!--Dark theme with a hint of another colour -->
+    <!--<color name="primaryColour">#EF5350</color>-->
+    <!--<color name="primaryColourDark">#263238</color>-->
+    <!--<color name="accentColour">#0D47A1</color>-->
+
 
     <color name="floatColour">#F44336</color>
-    
+    <color name="cardGrey">#F5F5F5</color>
 </resources>

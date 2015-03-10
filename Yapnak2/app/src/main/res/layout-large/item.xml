@@ -13,31 +13,25 @@
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:layout_margin="2dp"
         android:animateLayoutChanges="true"
-        app:cardCornerRadius="3dp"
+        app:cardCornerRadius="4dp"
         app:cardUseCompatPadding="true"
         app:contentPadding="8dp">
-
-        <TextView
-            android:id="@+id/highlighterTop"
-            android:layout_width="7dp"
-            android:layout_height="match_parent"
-            android:background="#F44336" />
 
         <TextView
             android:id="@+id/title"
             style="@style/Base.TextAppearance.AppCompat.Headline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="80dp"
             android:layout_marginTop="10dp"
             android:singleLine="true"
             android:text="sample1"
-            android:textColor="#ff707070"
+            android:textColor="#000"
             android:textSize="20sp"
             android:textStyle="bold" />
-        <!--//BDBDBD-->
+
         <!--<ImageView-->
         <!--android:id="@+id/logo"-->
         <!--android:layout_width="70dp"-->
@@ -49,7 +43,6 @@
             android:id="@+id/logo"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginLeft="15dp"
             android:src="@drawable/mcdonalds"
             app:border="true"
             app:border_color="#EEEEEE"
@@ -61,18 +54,17 @@
             style="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="80dp"
             android:layout_marginTop="40dp"
             android:layout_weight="1"
             android:text="sample text here"
-            android:textColor="#ff707070" />
+            android:textColor="#000" />
 
         <TextView
             android:id="@+id/loyalty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="93dp"
-            android:layout_marginLeft="15dp"
             android:text="Loyalty Points:"
             android:textColor="#9E9E9E"
             android:textStyle="bold" />
@@ -82,7 +74,7 @@
             android:id="@+id/loyaltyPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="115dp"
+            android:layout_marginLeft="100dp"
             android:layout_marginTop="93dp"
             android:text="10"
             android:textColor="#9E9E9E"
@@ -92,7 +84,7 @@
             android:id="@+id/locationIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="230dp"
+            android:layout_marginLeft="450dp"
             android:layout_marginTop="93dp"
             android:background="@drawable/locationicon" />
 
@@ -100,7 +92,7 @@
             android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="250dp"
+            android:layout_marginLeft="470dp"
             android:layout_marginTop="96dp"
             android:text="hello"
             android:textColor="#9E9E9E"
@@ -119,7 +111,7 @@
                 android:id="@+id/recommendMeal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="150dp"
                 android:layout_marginTop="120dp"
                 android:text="Recommend Deal"
                 android:textStyle="bold" />

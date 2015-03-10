@@ -1,8 +1,10 @@
 package com.example.nand.abc;
 
 import android.animation.LayoutTransition;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,7 +31,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private TextView loyalityPoints;
         private LinearLayout extendedLayout;
         private TextView distance;
-
+        private TextView topRestaurant;
 
         public ViewHolder(final View itemView) {
             super(itemView);
@@ -41,14 +43,14 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             card = (android.support.v7.widget.CardView) itemView.findViewById(R.id.card);
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
             distance = (TextView) itemView.findViewById(R.id.distance);
-//            recommendButton = (Button) itemView.findViewById(R.id.hello);
-//            mapButton = (Button) itemView.findViewById(R.id.takeMeThere);
+            topRestaurant = (TextView) itemView.findViewById(R.id.highlighterTop);
 
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (extendArea.getVisibility() == View.GONE) {
                         extendArea.setVisibility(View.VISIBLE);
+
                     } else {
                         extendArea.setVisibility(View.GONE);
 
@@ -60,7 +62,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         }
     }
 
-    private static final int ITEM_COUNT = 50;
     private ArrayList<Item> items;
 
     public Adapter() {
@@ -79,7 +80,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         items.add(new Item("Wrap It Up", "70p off any drink when you buy a medium burrito", "1", R.drawable.wrapitup, "1 Minute"));
         items.add(new Item("Pizza Express", "15% NUS Discounts", "5", R.drawable.pizzaexpresslogo, "20 Minutes"));
         items.add(new Item("Tesco", "Any sandwich or past + crisps + drink - JUST £3!", "37", R.drawable.tescologo, "5 Minutes"));
-
     }
 
     @Override
