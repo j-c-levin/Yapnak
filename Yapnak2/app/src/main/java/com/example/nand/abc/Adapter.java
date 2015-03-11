@@ -1,8 +1,11 @@
 package com.example.nand.abc;
 
 import android.animation.LayoutTransition;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +35,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private LinearLayout extendedLayout;
         private TextView distance;
         private TextView topRestaurant;
+        private TextView forgotPassword;
 
         public ViewHolder(final View itemView) {
             super(itemView);
@@ -44,6 +48,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
             distance = (TextView) itemView.findViewById(R.id.distance);
             topRestaurant = (TextView) itemView.findViewById(R.id.highlighterTop);
+
 
             card.setOnClickListener(new View.OnClickListener() {
                 @Override

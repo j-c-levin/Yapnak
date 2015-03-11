@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff3a3a3c"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:background="@drawable/gbklogo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+        <EditText
+            android:id="@+id/userEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:alpha="0.4"
+            android:hint="Username"
+            android:inputType="text"
+            android:textColor="#FFF"
+            android:textColorHint="#FFF" />
+
+        <EditText
+            android:id="@+id/passwordEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userEdit"
+            android:layout_marginTop="20dp"
+            android:alpha="0.4"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textColor="#FFF"
+            android:textColorHint="#FFF" />
+
+        <TextView
+            android:id="@+id/loginText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/passwordEdit"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="Login"
+            android:textColor="#FFF"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/passwordEdit"
+            android:layout_marginTop="15dp"
+            android:alpha="0.4" />
+
+
+        <TextView
+            android:id="@+id/signUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/passwordEdit"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="160dp"
+            android:text="Sign Up for Yapnak"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
