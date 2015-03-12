@@ -34,16 +34,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.activity_main);
 
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setAdapter(new Adapter());
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//
-//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-//        recyclerView.setAdapter(new Adapter());
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//
-//        floatButton();
+        floatButton();
     }
 
 

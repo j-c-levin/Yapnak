@@ -47,8 +47,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             card = (android.support.v7.widget.CardView) itemView.findViewById(R.id.card);
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
             distance = (TextView) itemView.findViewById(R.id.distance);
-            topRestaurant = (TextView) itemView.findViewById(R.id.highlighterTop);
-
 
             card.setOnClickListener(new View.OnClickListener() {
                 @Override

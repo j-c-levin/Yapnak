@@ -6,50 +6,49 @@
     android:paddingLeft="1dp"
     android:paddingRight="1dp"
     android:paddingTop="1dp"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="4dp"
         android:animateLayoutChanges="true"
         app:cardCornerRadius="3dp"
         app:cardUseCompatPadding="true"
-        app:contentPadding="8dp">
+        app:contentPaddingBottom="8dp"
+        app:contentPaddingRight="8dp"
+        app:contentPaddingTop="8dp"
+        app:contentPaddingLeft="4dp"
+      >
 
-        <TextView
-            android:id="@+id/highlighterTop"
-            android:layout_width="7dp"
-            android:layout_height="match_parent"
-            android:background="#F44336" />
+        <ImageView
+            android:id="@+id/heatLogo"
+            android:background="@drawable/ic_heat"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="300dp"/>
+
 
         <TextView
             android:id="@+id/title"
             style="@style/Base.TextAppearance.AppCompat.Headline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="80dp"
             android:singleLine="true"
             android:text="sample1"
             android:textColor="#ff707070"
             android:textSize="20sp"
             android:textStyle="bold" />
-        <!--//BDBDBD-->
-        <!--<ImageView-->
-        <!--android:id="@+id/logo"-->
-        <!--android:layout_width="70dp"-->
-        <!--android:layout_height="70dp"-->
-        <!--android:background="@drawable/mcdonalds"-->
-        <!--/>-->
 
         <com.pkmmte.view.CircularImageView
             android:id="@+id/logo"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginLeft="15dp"
             android:src="@drawable/mcdonalds"
             app:border="true"
             app:border_color="#EEEEEE"
@@ -61,8 +60,8 @@
             style="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="35dp"
             android:layout_weight="1"
             android:text="sample text here"
             android:textColor="#ff707070" />
@@ -72,7 +71,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="93dp"
-            android:layout_marginLeft="15dp"
             android:text="Loyalty Points:"
             android:textColor="#9E9E9E"
             android:textStyle="bold" />
@@ -82,7 +80,7 @@
             android:id="@+id/loyaltyPoints"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="115dp"
+            android:layout_marginLeft="100dp"
             android:layout_marginTop="93dp"
             android:text="10"
             android:textColor="#9E9E9E"
@@ -134,7 +132,6 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
-
 
     </android.support.v7.widget.CardView>
 
