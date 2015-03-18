@@ -2,18 +2,30 @@ package com.example.nand.abc;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +35,9 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 
@@ -30,18 +45,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static String TAG_ABOUT = "About";
     private static String TAG_SHARE = "Share";
     private static String TAG_MANUAL = "Manual";
+    private Button cancelButton;
+    private Button submitButton;
+    private Button rateButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setAdapter(new Adapter());
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        floatButton();
+        load();
     }
 
 
@@ -61,7 +72,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_feedback) {
-            Toast.makeText(this, "Thank you for your feedback!", Toast.LENGTH_SHORT).show();
+
+            setContentView(R.layout.feedback_activity);
+
+            submitButton = (Button) findViewById(R.id.submitButton);
+            cancelButton = (Button) findViewById(R.id.cancelButton);
+
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    load();
+                }
+            });
+
+            submitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
+                    load();
+
+                }
+            });
+
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -70,12 +103,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getTag().equals(TAG_ABOUT)) {
+
+            aboutYapnak();
             Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
+
         } else if (v.getTag().equals(TAG_SHARE)) {
+
             Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+
         } else if (v.getTag().equals(TAG_MANUAL)) {
+            howToUseYapnak();
             Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
         }
+
     }
 
     public void floatButton() {
@@ -117,5 +157,33 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 .addSubActionView(buttonManual)
                 .attachTo(actionButton)
                 .build();
+    }
+
+    public void load() {
+        setContentView(R.layout.activity_main);
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView.setAdapter(new Adapter());
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        floatButton();
+
+    }
+
+    public void aboutYapnak() {
+        AlertDialog.Builder aboutYapnak = new AlertDialog.Builder(this);
+        aboutYapnak.setTitle("About Yapnak");
+        aboutYapnak.setMessage("Yapnak is made for hungry people");
+        aboutYapnak.setPositiveButton("OK", null);
+        aboutYapnak.show();
+    }
+
+    public void howToUseYapnak(){
+        AlertDialog.Builder howToUse = new AlertDialog.Builder(this);
+        howToUse.setTitle("How To Use Yapnak");
+        howToUse.setMessage("Yapnak is the coolest lunch time app in the world! \nFrom Unche & James");
+        howToUse.setPositiveButton("OK", null);
+        howToUse.show();
     }
 }

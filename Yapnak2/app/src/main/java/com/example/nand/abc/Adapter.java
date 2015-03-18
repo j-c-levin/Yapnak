@@ -1,8 +1,12 @@
 package com.example.nand.abc;
 
 import android.animation.LayoutTransition;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -11,9 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +44,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private TextView distance;
         private TextView topRestaurant;
         private TextView forgotPassword;
+        private LinearLayout customExtentionLayout;
+        private Button ratingButton;
+        private Button takeMeThere;
+        private Button recommendRestaurant;
 
         public ViewHolder(final View itemView) {
             super(itemView);
@@ -44,25 +56,36 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             subtitle = (TextView) itemView.findViewById(R.id.subtitle);
             logo = (ImageView) itemView.findViewById(R.id.logo);
             extendArea = (LinearLayout) itemView.findViewById(R.id.extendLayout);
+            customExtentionLayout = (LinearLayout) itemView.findViewById(R.id.customIconLayout);
             card = (android.support.v7.widget.CardView) itemView.findViewById(R.id.card);
             loyalityPoints = (TextView) itemView.findViewById(R.id.loyaltyPoints);
             distance = (TextView) itemView.findViewById(R.id.distance);
+            ratingButton = (Button) itemView.findViewById(R.id.feedbackButton);
+            takeMeThere = (Button) itemView.findViewById(R.id.takeMeThere);
+            recommendRestaurant = (Button) itemView.findViewById(R.id.recommendMeal);
+
+
+
 
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (extendArea.getVisibility() == View.GONE) {
+                    if (extendArea.getVisibility() == View.GONE && customExtentionLayout.getVisibility() == View.GONE) {
                         extendArea.setVisibility(View.VISIBLE);
+                        customExtentionLayout.setVisibility(View.VISIBLE);
 
                     } else {
                         extendArea.setVisibility(View.GONE);
+                        customExtentionLayout.setVisibility(View.GONE);
 
                     }
 
                 }
             });
 
-        }
+
+       }
+
     }
 
     private ArrayList<Item> items;
@@ -100,6 +123,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.loyalityPoints.setText(item.getLoyaltyPoints());
         holder.logo.setImageResource(item.getLogo());
         holder.distance.setText(item.getDistance());
+
     }
 
     @Override

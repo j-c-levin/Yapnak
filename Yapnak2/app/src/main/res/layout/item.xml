@@ -17,26 +17,26 @@
         android:layout_gravity="center"
         android:layout_margin="4dp"
         android:animateLayoutChanges="true"
+
         app:cardCornerRadius="3dp"
         app:cardUseCompatPadding="true"
         app:contentPaddingBottom="8dp"
         app:contentPaddingRight="8dp"
         app:contentPaddingTop="8dp"
-        app:contentPaddingLeft="4dp"
-      >
+        app:contentPaddingLeft="4dp">
+
 
         <ImageView
-            android:id="@+id/heatLogo"
+            android:id="@+id/heatIcon"
             android:background="@drawable/ic_heat"
+            android:layout_marginLeft="300dp"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="300dp"/>
-
+            android:layout_height="30dp" />
 
         <TextView
             android:id="@+id/title"
             style="@style/Base.TextAppearance.AppCompat.Headline"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="80dp"
             android:singleLine="true"
@@ -90,7 +90,7 @@
             android:id="@+id/locationIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_marginLeft="230dp"
+            android:layout_marginLeft="240dp"
             android:layout_marginTop="93dp"
             android:background="@drawable/locationicon" />
 
@@ -98,7 +98,7 @@
             android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="250dp"
+            android:layout_marginLeft="260dp"
             android:layout_marginTop="96dp"
             android:text="hello"
             android:textColor="#9E9E9E"
@@ -109,29 +109,75 @@
         <LinearLayout
             android:id="@+id/extendLayout"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="200dp"
             android:background="@android:color/transparent"
             android:visibility="gone">
 
             <Button
                 android:id="@+id/recommendMeal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="120dp"
-                android:text="Recommend Deal"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="130dp"
+                android:textSize="12sp"
+                android:background="@drawable/custom_recommend"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/takeMeThere"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="120dp"
-                android:text="Take Me There"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="130dp"
+                android:background="@drawable/custom_takemethere"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/feedbackButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="130dp"
+                android:background="@drawable/custom_rate"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/customIconLayout"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:text="Recommend"
+                android:layout_marginTop="185dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Take Me There"
+                android:layout_marginTop="185dp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Rate"
+                android:layout_marginTop="185dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+
 
     </android.support.v7.widget.CardView>
 

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <TextView
+        android:id="@+id/nameLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="30dp"
+        android:text="Please choose an option.."
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="normal" />
+
+
+    <LinearLayout
+        android:id="@+id/radioLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/feedbackRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radioFoodGood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Food is fantabulous!"
+                android:textColor="#000" />
+
+            <RadioButton
+                android:id="@+id/radioUnhappy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unhappy"
+                android:textColor="#000" />
+
+            <RadioButton
+                android:id="@+id/radioBadRestaurants"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bad restaurant"
+                android:textColor="#000" />
+
+            <RadioButton
+                android:id="@+id/radioWasteOfMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Too expensive"
+                android:textColor="#000" />
+
+            <RadioButton
+                android:id="@+id/radioOther"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Other (if other please leave a comment)"
+                android:textColor="#000" />
+
+
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/commentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="30dp"
+        android:text="Additional Comments"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/commentField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:alpha="0.8"
+        android:background="#FFF"
+        android:gravity="top"
+        android:hint="Your Feedback"
+        android:lines="5"
+        android:padding="10dp"
+        android:singleLine="false"
+        android:textColor="#000000"
+        android:textSize="13dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Cancel"
+            android:layout_marginRight="20dp"
+            android:textColor="#ff535357" />
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Submit"
+            android:textColor="#ff535357" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

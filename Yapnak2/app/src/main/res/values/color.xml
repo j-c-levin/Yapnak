@@ -63,8 +63,8 @@
     <!--Charcoal Preference -->
 
     <color name="primaryColour">#ff3a3a3c</color>
-    <color name="primaryColourDark">#ff272729</color>
-    <color name="accentColour">#0D47A1</color>
+    <color name="primaryColourDark">#ff343436</color>
+    <color name="accentColour">#009688</color>
 
 
     <!--Dark theme with a hint of another colour -->
