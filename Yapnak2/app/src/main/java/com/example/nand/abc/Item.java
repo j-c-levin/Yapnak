@@ -22,7 +22,7 @@ public class Item {
         return title;
     }
 
-    public String getSubtle() {
+    public String getSubtitle() {
         return subtle;
     }
 

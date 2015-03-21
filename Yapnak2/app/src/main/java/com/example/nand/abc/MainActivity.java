@@ -1,44 +1,21 @@
 package com.example.nand.abc;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.FragmentManager;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ShareActionProvider;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
-
-import org.w3c.dom.Text;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
 
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -137,7 +114,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         iconManual.setImageResource(R.drawable.manualicon);
 
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_green));
+        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
 
         SubActionButton buttonAbout = itemBuilder.setContentView(iconAbout).build();
         SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
@@ -174,7 +151,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void aboutYapnak() {
         AlertDialog.Builder aboutYapnak = new AlertDialog.Builder(this);
         aboutYapnak.setTitle("About Yapnak");
-        aboutYapnak.setMessage("Yapnak is made for hungry people");
+        aboutYapnak.setMessage("Yapnak finds you lunch for a £5er! 💰💰💰");
         aboutYapnak.setPositiveButton("OK", null);
         aboutYapnak.show();
     }
@@ -182,8 +159,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void howToUseYapnak(){
         AlertDialog.Builder howToUse = new AlertDialog.Builder(this);
         howToUse.setTitle("How To Use Yapnak");
-        howToUse.setMessage("Yapnak is the coolest lunch time app in the world! \nFrom Unche & James");
+        howToUse.setMessage("Free lunch?\n\n" +
+                "   Use loyalty points for free meals!\n\n" +
+                "🍴 Make sure the restaurant takes your code!\n\n" +
+                "🍴 Recommend your friends to a restaurant for extra loyalty!\n\n" +
+                "🍴 10 points = free lunch!");
+
         howToUse.setPositiveButton("OK", null);
-        howToUse.show();
+        AlertDialog dialog = howToUse.create();
+        dialog.getWindow().setLayout(400, 400);
+        dialog.show();
     }
 }

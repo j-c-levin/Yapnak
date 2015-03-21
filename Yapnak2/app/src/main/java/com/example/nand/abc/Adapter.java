@@ -119,7 +119,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         final Item item = items.get(position);
 
         holder.title.setText(item.getTitle());
-        holder.subtitle.setText(item.getSubtle());
+        holder.subtitle.setText(item.getSubtitle());
         holder.loyalityPoints.setText(item.getLoyaltyPoints());
         holder.logo.setImageResource(item.getLogo());
         holder.distance.setText(item.getDistance());

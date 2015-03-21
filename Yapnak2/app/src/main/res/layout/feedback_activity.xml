@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/primaryColourDark"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -15,7 +16,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="30dp"
         android:text="Please choose an option.."
-        android:textColor="#000"
+        android:textColor="#FFF"
         android:textSize="15sp"
         android:textStyle="normal" />
 
@@ -36,39 +37,26 @@
             android:orientation="vertical">
 
             <RadioButton
-                android:id="@+id/radioFoodGood"
+                android:id="@+id/radioHappy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Food is fantabulous!"
-                android:textColor="#000" />
-
+                android:text="Happy"
+                android:textColor="#FFF" />
             <RadioButton
                 android:id="@+id/radioUnhappy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Unhappy"
-                android:textColor="#000" />
+                android:textColor="#FFF" />
 
             <RadioButton
-                android:id="@+id/radioBadRestaurants"
+                android:id="@+id/radioStoreCode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bad restaurant"
-                android:textColor="#000" />
+                android:text="Store did not accept my code"
+                android:textColor="#FFF" />
 
-            <RadioButton
-                android:id="@+id/radioWasteOfMoney"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Too expensive"
-                android:textColor="#000" />
 
-            <RadioButton
-                android:id="@+id/radioOther"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Other (if other please leave a comment)"
-                android:textColor="#000" />
 
 
 
@@ -84,7 +72,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="30dp"
         android:text="Additional Comments"
-        android:textColor="#000"
+        android:textColor="#FFF"
         android:textSize="15sp"
         android:textStyle="bold" />
 
