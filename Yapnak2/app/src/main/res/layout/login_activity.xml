@@ -9,6 +9,7 @@
     android:paddingTop="10dp">
 
     <RelativeLayout
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -20,25 +21,25 @@
             android:layout_height="100dp" />
 
         <EditText
-            android:id="@+id/userEdit"
+            android:id="@+id/initialsEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="170dp"
             android:alpha="0.4"
-            android:hint="Username"
+            android:hint="Initials"
             android:inputType="text"
             android:textColor="#FFF"
             android:textColorHint="#FFF" />
 
         <EditText
-            android:id="@+id/passwordEdit"
+            android:id="@+id/phoneNumberEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/userEdit"
+            android:layout_below="@id/initialsEdit"
             android:layout_marginTop="20dp"
             android:alpha="0.4"
-            android:hint="Password"
-            android:inputType="textPassword"
+            android:hint="Phone Number"
+            android:inputType="phone"
             android:textColor="#FFF"
             android:textColorHint="#FFF" />
 
@@ -46,7 +47,7 @@
             android:id="@+id/loginText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/passwordEdit"
+            android:layout_below="@id/phoneNumberEdit"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
             android:text="Login"
@@ -57,21 +58,9 @@
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/passwordEdit"
+            android:layout_below="@id/phoneNumberEdit"
             android:layout_marginTop="15dp"
             android:alpha="0.4" />
-
-
-        <TextView
-            android:id="@+id/signUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/passwordEdit"
-            android:layout_marginLeft="100dp"
-            android:layout_marginTop="160dp"
-            android:text="Sign Up for Yapnak"
-            android:textColor="#FFF"
-            android:textSize="15sp" />
 
     </RelativeLayout>
 

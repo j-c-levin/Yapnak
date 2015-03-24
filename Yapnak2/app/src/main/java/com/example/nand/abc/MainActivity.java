@@ -2,7 +2,9 @@ package com.example.nand.abc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,6 +28,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button cancelButton;
     private Button submitButton;
     private Button rateButton;
+    private EditText initials;
+    private Button loginB;
+    MenuItem itemMen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+//
+//        itemMen = menu.findItem(R.id.userName);
+//        itemMen.setTitle("");
+
         return true;
     }
 
@@ -145,7 +155,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         floatButton();
-
     }
 
     public void aboutYapnak() {
@@ -156,7 +165,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         aboutYapnak.show();
     }
 
-    public void howToUseYapnak(){
+    public void howToUseYapnak() {
         AlertDialog.Builder howToUse = new AlertDialog.Builder(this);
         howToUse.setTitle("How To Use Yapnak");
         howToUse.setMessage("Free lunch?\n\n" +
@@ -170,4 +179,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         dialog.getWindow().setLayout(400, 400);
         dialog.show();
     }
+
 }
