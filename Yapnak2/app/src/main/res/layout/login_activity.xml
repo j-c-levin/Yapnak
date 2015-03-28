@@ -40,6 +40,18 @@
             android:alpha="0.4"
             android:hint="Phone Number"
             android:inputType="phone"
+            android:digits="+0123456789"
+            android:textColor="#FFF"
+            android:textColorHint="#FFF" />
+
+        <EditText
+            android:id="@+id/promoBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/phoneNumberEdit"
+            android:layout_marginTop="20dp"
+            android:alpha="0.4"
+            android:hint="Promo Code"
             android:textColor="#FFF"
             android:textColorHint="#FFF" />
 
@@ -49,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/phoneNumberEdit"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="100dp"
             android:text="Login"
             android:textColor="#FFF"
             android:textStyle="bold" />
@@ -59,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/phoneNumberEdit"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="85dp"
             android:alpha="0.4" />
 
     </RelativeLayout>

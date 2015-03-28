@@ -2,11 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="1dp"
     android:paddingLeft="1dp"
     android:paddingRight="1dp"
     android:paddingTop="1dp"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,21 +17,20 @@
         android:layout_gravity="center"
         android:layout_margin="4dp"
         android:animateLayoutChanges="true"
-
         app:cardCornerRadius="3dp"
         app:cardUseCompatPadding="true"
         app:contentPaddingBottom="8dp"
+        app:contentPaddingLeft="4dp"
         app:contentPaddingRight="8dp"
-        app:contentPaddingTop="8dp"
-        app:contentPaddingLeft="4dp">
+        app:contentPaddingTop="8dp">
 
 
         <ImageView
             android:id="@+id/heatIcon"
-            android:background="@drawable/ic_heat"
-            android:layout_marginLeft="300dp"
             android:layout_width="30dp"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:layout_marginLeft="300dp"
+            android:background="@drawable/ic_heat" />
 
         <TextView
             android:id="@+id/title"
@@ -119,8 +118,8 @@
                 android:layout_height="50dp"
                 android:layout_marginLeft="30dp"
                 android:layout_marginTop="130dp"
-                android:textSize="12sp"
                 android:background="@drawable/custom_recommend"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <Button
@@ -154,29 +153,28 @@
             android:visibility="gone">
 
             <TextView
-                android:text="Recommend"
-                android:layout_marginTop="185dp"
-                android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="185dp"
+                android:text="Recommend" />
 
             <TextView
-                android:text="Take Me There"
-                android:layout_marginTop="185dp"
-                android:layout_marginLeft="20dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="185dp"
+                android:text="Take Me There" />
 
             <TextView
-                android:text="Rate"
-                android:layout_marginTop="185dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="40dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_marginTop="185dp"
+                android:text="Rate" />
 
 
-            </LinearLayout>
-
+        </LinearLayout>
 
 
     </android.support.v7.widget.CardView>

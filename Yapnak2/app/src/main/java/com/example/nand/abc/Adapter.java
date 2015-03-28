@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
@@ -63,9 +64,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             ratingButton = (Button) itemView.findViewById(R.id.feedbackButton);
             takeMeThere = (Button) itemView.findViewById(R.id.takeMeThere);
             recommendRestaurant = (Button) itemView.findViewById(R.id.recommendMeal);
-
-
-
 
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
