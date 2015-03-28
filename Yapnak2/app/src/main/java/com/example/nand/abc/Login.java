@@ -44,7 +44,7 @@ public class Login extends Activity {
                     Toast.makeText(getApplicationContext(), "Welcome: " + initials.getText().toString() + "-" + phone.getText().toString(), Toast.LENGTH_SHORT).show();
                     Intent i = new Intent(Login.this, MainActivity.class);
                     v.getContext().startActivity(i);
-                    userItems();
+//                    userItems();
                     finish();
 
                 } else {
@@ -54,14 +54,14 @@ public class Login extends Activity {
         });
     }
 
-    public void userItems() {
-        AlertDialog.Builder userItems = new AlertDialog.Builder(this);
-        userItems.setTitle("Free Items");
-        userItems.setMessage("🍪You currently have no free items available");
-        userItems.setPositiveButton("OK", null);
-        AlertDialog dialog = userItems.create();
-        dialog.getWindow().setLayout(400, 400);
-        dialog.show();
-
-    }
+//    private void userItems() {
+//        AlertDialog.Builder userItems = new AlertDialog.Builder(this);
+//        userItems.setTitle("Free Items");
+//        userItems.setMessage("🍪You currently have no free items available");
+//        userItems.setPositiveButton("OK", null);
+//        AlertDialog dialog = userItems.create();
+//        dialog.getWindow().setLayout(400, 400);
+//        dialog.show();
+//
+//    }
 }

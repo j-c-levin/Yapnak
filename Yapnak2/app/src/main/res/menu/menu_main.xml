@@ -5,7 +5,7 @@
     <item
         android:id="@+id/userName"
         android:title="N-6438"
-        android:showAsAction="ifRoom|collapseActionView"/>
+        android:showAsAction="ifRoom|collapseActionView|always"/>
 
     <item
         android:id="@+id/action_feedback"
