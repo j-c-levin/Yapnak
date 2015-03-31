@@ -2,6 +2,7 @@ package com.example.nand.abc;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -81,8 +82,37 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 }
             });
 
+            recommendRestaurant.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder userItems = new AlertDialog.Builder(v.getContext());
+                    LinearLayout linearLayout = new LinearLayout(v.getContext());
 
-       }
+                    userItems.setTitle("👥 Recommend");
+                    userItems.setMessage("Enter your friends Yapnak iD");
+                    userItems.setPositiveButton("OK", null);
+                    userItems.setNegativeButton("CANCEL", null);
+
+                    linearLayout.setOrientation(LinearLayout.VERTICAL);
+                    linearLayout.setPadding(40, 0, 40, 0);
+
+                    TextView message = new TextView(v.getContext());
+                    final EditText input = new EditText(v.getContext());
+
+                    input.setHint("EG: NS-6438");
+                    input.setSingleLine(false);
+                    input.setMaxLines(1);
+                    input.setTextColor(Color.BLACK);
+                    linearLayout.addView(message);
+                    linearLayout.addView(input);
+                    userItems.setView(linearLayout);
+
+
+                    AlertDialog dialog = userItems.create();
+                    dialog.show();
+                }
+            });
+        }
 
     }
 
@@ -133,4 +163,5 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     public int getItemCount() {
         return items.size();
     }
+
 }

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/userName"
-        android:title="N-6438"
+        android:title="NS-6438"
         android:showAsAction="ifRoom|collapseActionView|always"/>
 
     <item
