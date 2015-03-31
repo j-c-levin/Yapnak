@@ -1,6 +1,9 @@
 package com.example.nand.abc;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +13,7 @@ import android.view.Window;
  * Created by Nand on 23/03/15.
  */
 public class Splash extends Activity {
+    private static final int NOTIFICATION_ID = 0 ;
     private long timer = 2000;
 
     @Override
@@ -27,4 +31,5 @@ public class Splash extends Activity {
             }
         }, timer);
     }
+
 }

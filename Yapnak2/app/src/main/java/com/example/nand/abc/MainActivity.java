@@ -1,11 +1,15 @@
 package com.example.nand.abc;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,8 +25,10 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
+import java.io.InputStream;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+    private static final int NOTIFICATION_ID = 0;
     private static String TAG_ABOUT = "About";
     private static String TAG_SHARE = "Share";
     private static String TAG_MANUAL = "Manual";
@@ -31,17 +36,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private Button cancelButton;
     private Button submitButton;
-    private Button rateButton;
-    private EditText initials;
-    private Button loginB;
     private MenuItem itemMen;
-    private EditText promo;
+
+    private NotificationManager notif;
+    private Notification note;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         load();
+        showNotification();
+
     }
 
 
@@ -163,7 +170,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addSubActionView(buttonShare)
                 .addSubActionView(buttonGift)
                 .addSubActionView(buttonManual)
-                 .attachTo(actionButton)
+                .attachTo(actionButton)
                 .build();
     }
 
@@ -209,6 +216,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         AlertDialog dialog = userItems.create();
         dialog.getWindow().setLayout(400, 400);
         dialog.show();
+
+    }
+
+    public void showNotification() {
+        notif = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                this);
+        note = builder.setContentIntent(contentIntent)
+                .setSmallIcon(R.drawable.notifications)
+                .setTicker("Message From Yapnak")
+                .setWhen(System.currentTimeMillis())
+                .setAutoCancel(true)
+                .setContentTitle("Yapnak")
+                .setContentText("🍪 No Free Items Currently Available")
+                .build();
+
+        notif.notify(NOTIFICATION_ID, note);
 
     }
 }
