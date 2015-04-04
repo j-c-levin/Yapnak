@@ -64,7 +64,7 @@
 
     <color name="primaryColour">#ff3a3a3c</color>
     <color name="primaryColourDark">#ff343436</color>
-    <color name="accentColour">#009688</color>
+    <color name="accentColour">#2196F3</color>
 
 
     <!--Dark theme with a hint of another colour -->
