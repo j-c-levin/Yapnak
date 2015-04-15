@@ -5,9 +5,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -24,8 +21,6 @@ import android.widget.Toast;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
-
-import java.io.InputStream;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
     private static final int NOTIFICATION_ID = 0;
@@ -45,10 +40,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         load();
         showNotification();
-
+        new EndpointsAsyncTask(getApplicationContext()).execute();
     }
 
 
