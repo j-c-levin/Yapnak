@@ -42,7 +42,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         load();
         showNotification();
-        new EndpointsAsyncTask(getApplicationContext()).execute();
     }
 
 

@@ -34,6 +34,8 @@ public class Login extends Activity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] details = {initials.getText().toString(), phone.getText().toString(), promo.getText().toString()};
+                new UserRegistrationAsyncTask(getApplicationContext(), details).execute();
                 /*if (initials.getText().toString().equals("ns") && phone.getText().toString().equals("123") || promo.getText().toString().equals("cookies")) {
                     Toast.makeText(getApplicationContext(), "Welcome: " + initials.getText().toString() + "-" + phone.getText().toString(), Toast.LENGTH_SHORT).show();*/
                 Intent i = new Intent(Login.this, MainActivity.class);
@@ -42,6 +44,7 @@ public class Login extends Activity {
                 finish();
             }
         });
+        new GcmRegistrationAsyncTask(this).execute();
     }
 }
 
