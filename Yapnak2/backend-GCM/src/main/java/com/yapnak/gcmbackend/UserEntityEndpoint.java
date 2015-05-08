@@ -156,4 +156,5 @@ public class UserEntityEndpoint {
             throw new NotFoundException("Could not find UserEntity with ID: " + id);
         }
     }
+
 }

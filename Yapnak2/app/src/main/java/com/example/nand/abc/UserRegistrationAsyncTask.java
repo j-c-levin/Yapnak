@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.userEntityApi.UserEntityApi;
+import com.yapnak.gcmbackend.userEntityApi.model.UserEntity;
 
 import java.io.IOException;
 
@@ -31,21 +32,9 @@ class UserRegistrationAsyncTask extends AsyncTask<Void, Void, Integer> {
                 .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
         myApiService = builder.build();
         try {
-            String p = details[0] + details[1].substring(details[1].length() - 3);
-            UserEntityApi.Get y = myApiService.get(p);
-            Log.d("Debug", "received entity " + y.toString());
-            /*if(!it.get("id").equals("")) {
-                x.setId((String) it.get("id"));
-                x.setPhoneNumber((String) it.get("phoneNumber"));
-                return 1;
-            }
-            else {
-                UserEntity newUser = new UserEntity();
-                newUser.setId(details[0] + details[1].substring(details[1].length()-3));
-                myApiService.insert(newUser).execute();
-                Log.d("Debug", "sent");
-                return 1;
-            }*/
+            String p = details[0];
+            UserEntity x = myApiService.get(p).execute();
+            Log.d("Debug", "received entity " + x.getEmail());
         }catch (IOException e) {
 
         }
