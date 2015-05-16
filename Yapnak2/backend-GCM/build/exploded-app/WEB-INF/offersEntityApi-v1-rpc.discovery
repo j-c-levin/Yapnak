@@ -1,0 +1,242 @@
+{
+ "kind": "discovery#rpcDescription",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/bx7NXL5TtaS7_0sFV0n2lmer5U0\"",
+ "discoveryVersion": "v1",
+ "id": "offersEntityApi:v1",
+ "name": "offersEntityApi",
+ "version": "v1",
+ "description": "This is an API",
+ "ownerDomain": "gcmbackend.yapnak.com",
+ "ownerName": "gcmbackend.yapnak.com",
+ "icons": {
+  "x16": "http://www.google.com/images/icons/product/search-16.gif",
+  "x32": "http://www.google.com/images/icons/product/search-32.gif"
+ },
+ "protocol": "rpc",
+ "rootUrl": "https://yapnak-app.appspot.com/_ah/api/",
+ "rpcUrl": "https://yapnak-app.appspot.com/_ah/api/rpc",
+ "rpcPath": "/_ah/api/rpc",
+ "parameters": {
+  "alt": {
+   "type": "string",
+   "description": "Data format for the response.",
+   "default": "json",
+   "enum": [
+    "json"
+   ],
+   "enumDescriptions": [
+    "Responses with Content-Type of application/json"
+   ],
+   "location": "query"
+  },
+  "fields": {
+   "type": "string",
+   "description": "Selector specifying which fields to include in a partial response.",
+   "location": "query"
+  },
+  "key": {
+   "type": "string",
+   "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+   "location": "query"
+  },
+  "oauth_token": {
+   "type": "string",
+   "description": "OAuth 2.0 token for the current user.",
+   "location": "query"
+  },
+  "prettyPrint": {
+   "type": "boolean",
+   "description": "Returns response with indentations and line breaks.",
+   "default": "true",
+   "location": "query"
+  },
+  "quotaUser": {
+   "type": "string",
+   "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters. Overrides userIp if both are provided.",
+   "location": "query"
+  },
+  "userIp": {
+   "type": "string",
+   "description": "IP address of the site where the request originates. Use this if you want to enforce per-user limits.",
+   "location": "query"
+  }
+ },
+ "auth": {
+  "oauth2": {
+   "scopes": {
+    "https://www.googleapis.com/auth/userinfo.email": {
+     "description": "View your email address"
+    }
+   }
+  }
+ },
+ "schemas": {
+  "CollectionResponse_OffersEntity": {
+   "id": "CollectionResponse_OffersEntity",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "OffersEntity"
+     }
+    },
+    "nextPageToken": {
+     "type": "string"
+    }
+   }
+  },
+  "OffersEntity": {
+   "id": "OffersEntity",
+   "type": "object",
+   "properties": {
+    "clientID": {
+     "type": "string"
+    },
+    "offerEnd": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "offerID": {
+     "type": "string"
+    },
+    "offerStart": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "offerText": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "methods": {
+  "offersEntityApi.get": {
+   "id": "offersEntityApi.get",
+   "allowGet": true,
+   "parameters": {
+    "offerID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    }
+   },
+   "parameterOrder": [
+    "offerID"
+   ],
+   "returns": {
+    "$ref": "OffersEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "offersEntityApi.insert": {
+   "id": "offersEntityApi.insert",
+   "parameters": {
+    "resource": {
+     "$ref": "OffersEntity"
+    }
+   },
+   "parameterOrder": [
+    "resource"
+   ],
+   "returns": {
+    "$ref": "OffersEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "offersEntityApi.list": {
+   "id": "offersEntityApi.list",
+   "allowGet": true,
+   "parameters": {
+    "cursor": {
+     "type": "string"
+    },
+    "limit": {
+     "type": "integer",
+     "format": "int32"
+    }
+   },
+   "returns": {
+    "$ref": "CollectionResponse_OffersEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "offersEntityApi.patch": {
+   "id": "offersEntityApi.patch",
+   "supportsPatch": true,
+   "parameters": {
+    "clientID": {
+     "type": "string"
+    },
+    "offerEnd": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "offerID": {
+     "type": "any"
+    },
+    "offerStart": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "offerText": {
+     "type": "string"
+    }
+   },
+   "parameterOrder": [
+    "offerID"
+   ],
+   "returns": {
+    "$ref": "OffersEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "offersEntityApi.remove": {
+   "id": "offersEntityApi.remove",
+   "parameters": {
+    "offerID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    }
+   },
+   "parameterOrder": [
+    "offerID"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "offersEntityApi.update": {
+   "id": "offersEntityApi.update",
+   "parameters": {
+    "offerID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "resource": {
+     "$ref": "OffersEntity"
+    }
+   },
+   "parameterOrder": [
+    "resource",
+    "offerID"
+   ],
+   "returns": {
+    "$ref": "OffersEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  }
+ }
+}

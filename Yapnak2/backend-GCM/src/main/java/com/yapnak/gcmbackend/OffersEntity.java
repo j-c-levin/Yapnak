@@ -11,17 +11,33 @@ import java.util.Date;
 @Entity
 public class OffersEntity {
     @Id
-    int offerID;
+    String offerID;
     String clientID;
     String offerText;
     Date offerStart;
     Date offerEnd;
 
-    public int getOfferID() {
+    public Date getOfferStart() {
+        return offerStart;
+    }
+
+    public void setOfferStart(Date offerStart) {
+        this.offerStart = offerStart;
+    }
+
+    public Date getOfferEnd() {
+        return offerEnd;
+    }
+
+    public void setOfferEnd(Date offerEnd) {
+        this.offerEnd = offerEnd;
+    }
+
+    public String getOfferID() {
         return offerID;
     }
 
-    public void setOfferID(int offerID) {
+    public void setOfferID(String offerID) {
         this.offerID = offerID;
     }
 
@@ -41,19 +57,5 @@ public class OffersEntity {
         this.offerText = offerText;
     }
 
-    public Date getOfferStart() {
-        return offerStart;
-    }
 
-    public void setOfferStart(Date offerStart) {
-        this.offerStart = offerStart;
-    }
-
-    public Date getOfferEnd() {
-        return offerEnd;
-    }
-
-    public void setOfferEnd(Date offerEnd) {
-        this.offerEnd = offerEnd;
-    }
 }

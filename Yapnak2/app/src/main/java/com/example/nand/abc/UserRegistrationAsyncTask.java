@@ -12,17 +12,21 @@ import com.yapnak.gcmbackend.userEntityApi.model.UserEntity;
 import java.io.IOException;
 
 /**
- * Created by Joshua on 15/04/2015.
+ * Created by Joshua on 16/05/2015.
  */
-class UserRegistrationAsyncTask extends AsyncTask<Void, Void, Integer> {
+public class UserRegistrationAsyncTask extends AsyncTask<Void, Void, Integer> {
 
-    private static UserEntityApi myApiService = null;
+    private static UserEntityApi userEntity = null;
     private Context context;
     private String[] details = null;
 
     UserRegistrationAsyncTask(Context context, String[] details) {
         this.context = context;
         this.details = details;
+/*      details[0] = id,
+        details[1] = phone number,
+        details[2] = promo code*/
+
     }
 
     @Override
@@ -30,22 +34,37 @@ class UserRegistrationAsyncTask extends AsyncTask<Void, Void, Integer> {
         //check if user exists
         UserEntityApi.Builder builder = new UserEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                 .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-        myApiService = builder.build();
+        userEntity = builder.build();
         try {
-            String p = details[0];
-            UserEntity x = myApiService.get(p).execute();
-            Log.d("Debug", "received entity " + x.getEmail());
-        }catch (IOException e) {
-
+            Log.d("Debug", "User does not exist, creating");
+            //Create a new user with basic details
+            UserEntity x = new UserEntity();
+            x.setId(details[0]);
+            x.setPhoneNumber(details[1]);
+            userEntity.insert(x).execute();
+            Log.d("Debug", "successfully inserted user");
+            //Add referer ID to points
+            if (!details[2].equals(""))
+            {
+                Log.d("Debug", "here it is:"+details[2].toString()+":here");
+                    /*TODO: create a datastore search where it finds a pointsEntity where...hmm...
+                    TODO: Where there referrerID is a match...and needs something else to distinguish this referral from any other referrals the user has made.*/
+            }
+            return 1;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return 1;
+        return 0;
     }
 
 
     protected void onPostExecute(Integer result) {
         if (result == 1) {
-            //Toast.makeText(context, "done", Toast.LENGTH_LONG).show();
-            Log.d("Debug", "successfully logged in");
+            Log.d("Debug", "successfully registered");
+            //Toast.makeText(context, "successfully registered", Toast.LENGTH_LONG).show();
+        }
+        else {
+            Log.d("Debug", "failed logged in");
         }
     }
 }

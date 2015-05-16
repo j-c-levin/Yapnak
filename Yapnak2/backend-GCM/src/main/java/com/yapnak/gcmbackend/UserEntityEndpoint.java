@@ -62,7 +62,8 @@ public class UserEntityEndpoint {
         logger.info("Getting UserEntity with ID: " + id);
         UserEntity userEntity = ofy().load().type(UserEntity.class).id(id).now();
         if (userEntity == null) {
-            throw new NotFoundException("Could not find UserEntity with ID: " + id);
+            //throw new NotFoundException("Could not find UserEntity with ID: " + id);
+            userEntity.setId("");
         }
         return userEntity;
     }

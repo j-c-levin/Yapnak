@@ -8,6 +8,7 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class UserEntity {
+
     @Id
     String id;
     String firstName;

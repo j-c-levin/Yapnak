@@ -14,7 +14,12 @@
         <init-param>
             <param-name>services</param-name>
             <param-value>com.yapnak.gcmbackend.RegistrationEndpoint,
-                com.yapnak.gcmbackend.MessagingEndpoint, com.yapnak.gcmbackend.UserEntityEndpoint</param-value>
+                com.yapnak.gcmbackend.MessagingEndpoint, com.yapnak.gcmbackend.UserEntityEndpoint,
+                com.yapnak.gcmbackend.ClientEntityEndpoint,
+                com.yapnak.gcmbackend.PointsEntityEndpoint,
+                com.yapnak.gcmbackend.FeedbackEntityEndpoint,
+                com.yapnak.gcmbackend.OffersEntityEndpoint,
+                com.yapnak.gcmbackend.ClaimsEntityEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

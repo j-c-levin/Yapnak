@@ -1,0 +1,245 @@
+{
+ "kind": "discovery#restDescription",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/IM5HApvCm8-ZyIsBbi5ETBh1RrA\"",
+ "discoveryVersion": "v1",
+ "id": "feedbackEntityApi:v1",
+ "name": "feedbackEntityApi",
+ "version": "v1",
+ "description": "This is an API",
+ "ownerDomain": "gcmbackend.yapnak.com",
+ "ownerName": "gcmbackend.yapnak.com",
+ "icons": {
+  "x16": "http://www.google.com/images/icons/product/search-16.gif",
+  "x32": "http://www.google.com/images/icons/product/search-32.gif"
+ },
+ "protocol": "rest",
+ "baseUrl": "https://yapnak-app.appspot.com/_ah/api/feedbackEntityApi/v1/",
+ "basePath": "/_ah/api/feedbackEntityApi/v1/",
+ "rootUrl": "https://yapnak-app.appspot.com/_ah/api/",
+ "servicePath": "feedbackEntityApi/v1/",
+ "batchPath": "batch",
+ "parameters": {
+  "alt": {
+   "type": "string",
+   "description": "Data format for the response.",
+   "default": "json",
+   "enum": [
+    "json"
+   ],
+   "enumDescriptions": [
+    "Responses with Content-Type of application/json"
+   ],
+   "location": "query"
+  },
+  "fields": {
+   "type": "string",
+   "description": "Selector specifying which fields to include in a partial response.",
+   "location": "query"
+  },
+  "key": {
+   "type": "string",
+   "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+   "location": "query"
+  },
+  "oauth_token": {
+   "type": "string",
+   "description": "OAuth 2.0 token for the current user.",
+   "location": "query"
+  },
+  "prettyPrint": {
+   "type": "boolean",
+   "description": "Returns response with indentations and line breaks.",
+   "default": "true",
+   "location": "query"
+  },
+  "quotaUser": {
+   "type": "string",
+   "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters. Overrides userIp if both are provided.",
+   "location": "query"
+  },
+  "userIp": {
+   "type": "string",
+   "description": "IP address of the site where the request originates. Use this if you want to enforce per-user limits.",
+   "location": "query"
+  }
+ },
+ "auth": {
+  "oauth2": {
+   "scopes": {
+    "https://www.googleapis.com/auth/userinfo.email": {
+     "description": "View your email address"
+    }
+   }
+  }
+ },
+ "schemas": {
+  "CollectionResponse_FeedbackEntity": {
+   "id": "CollectionResponse_FeedbackEntity",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "FeedbackEntity"
+     }
+    },
+    "nextPageToken": {
+     "type": "string"
+    }
+   }
+  },
+  "FeedbackEntity": {
+   "id": "FeedbackEntity",
+   "type": "object",
+   "properties": {
+    "clientID": {
+     "type": "string"
+    },
+    "feedbackText": {
+     "type": "string"
+    },
+    "offerID": {
+     "type": "string"
+    },
+    "posOrNeg": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "timestamp": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "userID": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "methods": {
+  "get": {
+   "id": "feedbackEntityApi.get",
+   "path": "feedbackEntity/{userID}",
+   "httpMethod": "GET",
+   "parameters": {
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "userID"
+   ],
+   "response": {
+    "$ref": "FeedbackEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "insert": {
+   "id": "feedbackEntityApi.insert",
+   "path": "feedbackEntity",
+   "httpMethod": "POST",
+   "request": {
+    "$ref": "FeedbackEntity",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "FeedbackEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "list": {
+   "id": "feedbackEntityApi.list",
+   "path": "feedbackEntity",
+   "httpMethod": "GET",
+   "parameters": {
+    "cursor": {
+     "type": "string",
+     "location": "query"
+    },
+    "limit": {
+     "type": "integer",
+     "format": "int32",
+     "location": "query"
+    }
+   },
+   "response": {
+    "$ref": "CollectionResponse_FeedbackEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "patch": {
+   "id": "feedbackEntityApi.patch",
+   "path": "feedbackEntity/{userID}",
+   "httpMethod": "PATCH",
+   "parameters": {
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "userID"
+   ],
+   "request": {
+    "$ref": "FeedbackEntity"
+   },
+   "response": {
+    "$ref": "FeedbackEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "remove": {
+   "id": "feedbackEntityApi.remove",
+   "path": "feedbackEntity/{userID}",
+   "httpMethod": "DELETE",
+   "parameters": {
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "userID"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "update": {
+   "id": "feedbackEntityApi.update",
+   "path": "feedbackEntity/{userID}",
+   "httpMethod": "PUT",
+   "parameters": {
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "userID"
+   ],
+   "request": {
+    "$ref": "FeedbackEntity",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "FeedbackEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  }
+ }
+}
