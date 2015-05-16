@@ -53,10 +53,11 @@ class UserLoginAsyncTask extends AsyncTask<Void, Void, Integer> {
         if (result == 1) {
             //Toast.makeText(context, "done", Toast.LENGTH_LONG).show();
             Log.d("Debug", "successfully logged in");
-        }
-        else {
+        } else {
             Log.d("Debug", "failed logged in");
             new UserRegistrationAsyncTask(context, details).execute();
         }
     }
 }
+
+
