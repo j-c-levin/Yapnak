@@ -35,7 +35,8 @@ public class Login extends Activity {
             @Override
             public void onClick(View v) {
                 String[] details = {initials.getText().toString() + phone.getText().toString().substring(7), phone.getText().toString(), promo.getText().toString()};
-                new UserLoginAsyncTask(getApplicationContext(), details).execute();
+                //new UserLoginAsyncTask(getApplicationContext(), details).execute();
+                new SQLConnectAsyncTask(getApplicationContext(), details).execute();
                 /*if (initials.getText().toString().equals("ns") && phone.getText().toString().equals("123") || promo.getText().toString().equals("cookies")) {
                     Toast.makeText(getApplicationContext(), "Welcome: " + initials.getText().toString() + "-" + phone.getText().toString(), Toast.LENGTH_SHORT).show();*/
                 Intent i = new Intent(Login.this, MainActivity.class);

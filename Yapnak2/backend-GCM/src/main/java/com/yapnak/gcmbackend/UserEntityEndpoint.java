@@ -83,7 +83,6 @@ public class UserEntityEndpoint {
         // If your client provides the ID then you should probably use PUT instead.
         ofy().save().entity(userEntity).now();
         logger.info("Created UserEntity with ID: " + userEntity.getId());
-
         return ofy().load().entity(userEntity).now();
     }
 

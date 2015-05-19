@@ -19,7 +19,8 @@
                 com.yapnak.gcmbackend.PointsEntityEndpoint,
                 com.yapnak.gcmbackend.FeedbackEntityEndpoint,
                 com.yapnak.gcmbackend.OffersEntityEndpoint,
-                com.yapnak.gcmbackend.ClaimsEntityEndpoint</param-value>
+                com.yapnak.gcmbackend.ClaimsEntityEndpoint,
+                com.yapnak.gcmbackend.SQLEntityEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
