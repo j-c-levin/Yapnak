@@ -4,17 +4,18 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+
+import java.io.IOException;
 
 /**
  * Created by Joshua on 17/05/2015.
  */
 public class SQLConnectAsyncTask extends AsyncTask<Void, Void, Integer> {
 
+    private static SQLEntityApi sqlEntity;
     private Context context;
     private String[] details = null;
 
@@ -29,22 +30,16 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Void, Integer> {
 
     @Override
     protected Integer doInBackground(Void... params) {
-        Connection connection;
-        String query = "Select * from user";
+        SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+        sqlEntity = builder.build();
         try {
-            Log.d("Debug", "Starting.");
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            sqlEntity.insert("testing").execute();
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            Log.d("Debug", resultSet.toString());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return 1;
+        return 0;
     }
 
     protected void onPostExecute(Integer result) {

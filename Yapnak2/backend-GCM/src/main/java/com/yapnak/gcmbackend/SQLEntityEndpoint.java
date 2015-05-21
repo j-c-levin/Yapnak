@@ -140,8 +140,9 @@ public class SQLEntityEndpoint {
             }
 
             try {
-                String statement = "INSERT INTO user (userID) VALUES(\"d0n3\")";
+                String statement = "INSERT INTO user (userID) VALUES(?)";
                 PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, name);
                 int success = stmt.executeUpdate();
                 connection.close();
             } catch (SQLException e) {
