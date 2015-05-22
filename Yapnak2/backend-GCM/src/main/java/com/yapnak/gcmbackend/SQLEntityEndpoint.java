@@ -16,7 +16,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -54,63 +53,124 @@ public class SQLEntityEndpoint {
         ObjectifyService.register(SQLEntity.class);
     }
 
+
     /**
      * Returns the {@link SQLEntity} with the corresponding ID.
      *
-     * @param name the ID of the entity to be retrieved
+     * @param x is the x coordinate of the user
+     * @param y is the y coordinate of the user
      * @return the entity with the corresponding ID
      * @throws NotFoundException if there is no {@code SQLEntity} with the provided ID.
      */
     @ApiMethod(
-            name = "get",
-            path = "sQLEntity/{name}",
+            name = "getClients",
+            path = "sQLEntity_clients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLEntity get(@Named("name") String name) throws NotFoundException {
-//        logger.info("Getting SQLEntity with ID: " + name);
-//        SQLEntity sQLEntity = ofy().load().type(SQLEntity.class).id(name).now();
+    public SQLEntity get(@Named("x") double x, @Named("y") double y) throws NotFoundException {
         Connection connection;
-        SQLEntity x = new SQLEntity();
+        SQLEntity sql = new SQLEntity();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
                 // Load the class that provides the new "jdbc:google:mysql://" prefix.
                 Class.forName("com.mysql.jdbc.GoogleDriver");
-                connection = DriverManager.getConnection("jdbc:mysql://yapnak-app:yapnak-main/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
             } else {
                 // Local MySQL instance to use during development.
                 Class.forName("com.mysql.jdbc.Driver");
-                String url = "jdbc:mysql://127.0.0.1:3306/yapnak_main?user=client";
-                connection = DriverManager.getConnection(url);
+//                String url = "jdbc:mysql://localhost:3306/yapnak_main?user=client&password=g7lFVLRzYdJoWXc3";
+//                connection = DriverManager.getConnection(url);
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
                 // Alternatively, connect to a Google Cloud SQL instance using:
                 // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
             }
-            String query = "Select * from user";
             try {
-                Class.forName("com.mysql.jdbc.Driver");
-
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query);
-                x.setName(resultSet.toString());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                String statement = "SELECT * FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                double t = x - 0.003;
+                stmt.setDouble(1, t);
+                t = x + 0.003;
+                stmt.setDouble(2, t);
+                t = y - 0.003;
+                stmt.setDouble(3, t);
+                t = y + 0.003;
+                stmt.setDouble(4, t);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    logger.info("received client: " + rs.getInt("clientID") + " " + rs.getString("clientName") + " " + rs.getString("clientOffer") + " " + rs.getString("clientLocation").toString());
+                }
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return x;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return x;
+        return sql;
+    }
+
+    /**
+     * Inserts a new client {@code SQLEntity}.
+     */
+    @ApiMethod(
+            name = "insertClient",
+            path = "sQLEntity_client",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SQLEntity insertClient(@Named("name") String name, @Named("x") double x, @Named("y") double y, @Named("offer") String offer) {
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+//                String url = "jdbc:mysql://localhost:3306/yapnak_main?user=client&password=g7lFVLRzYdJoWXc3";
+//                connection = DriverManager.getConnection(url);
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+                // Alternatively, connect to a Google Cloud SQL instance using:
+
+                // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
+            }
+
+            try {
+                String statement = "INSERT INTO client (clientName,clientLocation, clientX, clientY, clientOffer) VALUES(?,Point(?,?),?,?,?)";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, name);
+                stmt.setDouble(2, x);
+                stmt.setDouble(3, y);
+                stmt.setDouble(4, x);
+                stmt.setDouble(5, y);
+                stmt.setString(6, offer);
+                int success = stmt.executeUpdate();
+                logger.info("returned: " + success);
+                connection.close();
+                SQLEntity t = new SQLEntity();
+                t.setValue(success);
+                return t;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        SQLEntity t = new SQLEntity();
+        t.setValue(-1);
+        return t;
     }
 
     /**
      * Inserts a new {@code SQLEntity}.
      */
     @ApiMethod(
-            name = "insert",
-            path = "sQLEntity",
+            name = "insertUser",
+            path = "sQLEntity_user",
             httpMethod = ApiMethod.HttpMethod.POST)
     public void insert(@Named("name") String name) {
         // Typically in a RESTful API a POST does not have a known ID (assuming the ID is used in the resource path).
@@ -122,7 +182,6 @@ public class SQLEntityEndpoint {
 //        logger.info("Created SQLEntity with ID: " + sQLEntity.getName());
 
         Connection connection;
-        SQLEntity x = new SQLEntity();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -153,44 +212,6 @@ public class SQLEntityEndpoint {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Updates an existing {@code SQLEntity}.
-     *
-     * @param name      the ID of the entity to be updated
-     * @param sQLEntity the desired state of the entity
-     * @return the updated version of the entity
-     * @throws NotFoundException if the {@code name} does not correspond to an existing
-     *                           {@code SQLEntity}
-     */
-    @ApiMethod(
-            name = "update",
-            path = "sQLEntity/{name}",
-            httpMethod = ApiMethod.HttpMethod.PUT)
-    public SQLEntity update(@Named("name") String name, SQLEntity sQLEntity) throws NotFoundException {
-        // TODO: You should validate your ID parameter against your resource's ID here.
-        checkExists(name);
-        ofy().save().entity(sQLEntity).now();
-        logger.info("Updated SQLEntity: " + sQLEntity);
-        return ofy().load().entity(sQLEntity).now();
-    }
-
-    /**
-     * Deletes the specified {@code SQLEntity}.
-     *
-     * @param name the ID of the entity to delete
-     * @throws NotFoundException if the {@code name} does not correspond to an existing
-     *                           {@code SQLEntity}
-     */
-    @ApiMethod(
-            name = "remove",
-            path = "sQLEntity/{name}",
-            httpMethod = ApiMethod.HttpMethod.DELETE)
-    public void remove(@Named("name") String name) throws NotFoundException {
-        checkExists(name);
-        ofy().delete().type(SQLEntity.class).id(name).now();
-        logger.info("Deleted SQLEntity with ID: " + name);
     }
 
     /**

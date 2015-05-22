@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/6I1_29jah7pVrwQnUL3eSWAq3Ec\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/yNjWuAFmRcSPmDP4hqIL8yJcyG0\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -94,24 +94,36 @@
    "properties": {
     "name": {
      "type": "string"
+    },
+    "value": {
+     "type": "integer",
+     "format": "int32"
     }
    }
   }
  },
  "methods": {
-  "get": {
-   "id": "sQLEntityApi.get",
-   "path": "sQLEntity/{name}",
+  "getClients": {
+   "id": "sQLEntityApi.getClients",
+   "path": "sQLEntity_clients",
    "httpMethod": "GET",
    "parameters": {
-    "name": {
-     "type": "string",
+    "x": {
+     "type": "number",
      "required": true,
-     "location": "path"
+     "format": "double",
+     "location": "query"
+    },
+    "y": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
     }
    },
    "parameterOrder": [
-    "name"
+    "x",
+    "y"
    ],
    "response": {
     "$ref": "SQLEntity"
@@ -120,9 +132,50 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "insert": {
-   "id": "sQLEntityApi.insert",
-   "path": "sQLEntity",
+  "insertClient": {
+   "id": "sQLEntityApi.insertClient",
+   "path": "sQLEntity_client",
+   "httpMethod": "POST",
+   "parameters": {
+    "name": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "offer": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "x": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    },
+    "y": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "name",
+    "offer",
+    "x",
+    "y"
+   ],
+   "response": {
+    "$ref": "SQLEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "insertUser": {
+   "id": "sQLEntityApi.insertUser",
+   "path": "sQLEntity_user",
    "httpMethod": "POST",
    "parameters": {
     "name": {
@@ -155,73 +208,6 @@
    },
    "response": {
     "$ref": "CollectionResponse_SQLEntity"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
-  "patch": {
-   "id": "sQLEntityApi.patch",
-   "path": "sQLEntity/{name}",
-   "httpMethod": "PATCH",
-   "parameters": {
-    "name": {
-     "type": "string",
-     "required": true,
-     "location": "path"
-    }
-   },
-   "parameterOrder": [
-    "name"
-   ],
-   "request": {
-    "$ref": "SQLEntity"
-   },
-   "response": {
-    "$ref": "SQLEntity"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
-  "remove": {
-   "id": "sQLEntityApi.remove",
-   "path": "sQLEntity/{name}",
-   "httpMethod": "DELETE",
-   "parameters": {
-    "name": {
-     "type": "string",
-     "required": true,
-     "location": "path"
-    }
-   },
-   "parameterOrder": [
-    "name"
-   ],
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
-  "update": {
-   "id": "sQLEntityApi.update",
-   "path": "sQLEntity/{name}",
-   "httpMethod": "PUT",
-   "parameters": {
-    "name": {
-     "type": "string",
-     "required": true,
-     "location": "path"
-    }
-   },
-   "parameterOrder": [
-    "name"
-   ],
-   "request": {
-    "$ref": "SQLEntity",
-    "parameterName": "resource"
-   },
-   "response": {
-    "$ref": "SQLEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
