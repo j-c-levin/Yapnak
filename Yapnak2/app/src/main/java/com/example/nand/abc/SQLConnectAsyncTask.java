@@ -7,8 +7,10 @@ import android.util.Log;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Joshua on 17/05/2015.
@@ -35,7 +37,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Void, Integer> {
         sqlEntity = builder.build();
         try {
             //????here
-            com.yapnak.gcmbackend.sQLEntityApi.model.ArrayList x = sqlEntity.getClients(51.685239, -0.308691, 0.02).execute();
+            SQLEntity x = sqlEntity.getClients(51.685239, -0.308691).execute();
+            List t = x.getList();
+            Log.d("debug", "size is: " + t.size());
         } catch (IOException e) {
             e.printStackTrace();
         }

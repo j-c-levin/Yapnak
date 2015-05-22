@@ -66,10 +66,11 @@ public class SQLEntityEndpoint {
             name = "getClients",
             path = "sQLEntity_clients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public ArrayList get(@Named("x") double x, @Named("y") double y) throws NotFoundException {
+public SQLEntity get(@Named("x") double x, @Named("y") double y) throws NotFoundException {
         Connection connection;
         double distance = 0.02;
         ArrayList<SQLEntity> list2 = new ArrayList();
+        SQLEntity s = new SQLEntity();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -113,11 +114,12 @@ public class SQLEntityEndpoint {
                     list2.add(sql);
                     logger.info("found client: " + rs.getString("clientName"));
                 }
+                s.setList(list2);
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
                 connection.close();
-                return list2;
+                return s;
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

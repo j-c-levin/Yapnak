@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/hmghlRVpS1fdAt3jDlbKoDQW5NM\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/D7qo-ONy6MZx2i4jtYfY2JDeiME\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -71,15 +71,6 @@
   }
  },
  "schemas": {
-  "ArrayList": {
-   "id": "ArrayList",
-   "type": "object",
-   "properties": {
-    "empty": {
-     "type": "boolean"
-    }
-   }
-  },
   "CollectionResponse_SQLEntity": {
    "id": "CollectionResponse_SQLEntity",
    "type": "object",
@@ -106,6 +97,12 @@
      "type": "string",
      "format": "int64"
     },
+    "list": {
+     "type": "array",
+     "items": {
+      "$ref": "SQLEntity"
+     }
+    },
     "name": {
      "type": "string"
     },
@@ -131,11 +128,6 @@
    "id": "sQLEntityApi.getClients",
    "allowGet": true,
    "parameters": {
-    "distance": {
-     "type": "number",
-     "required": true,
-     "format": "double"
-    },
     "x": {
      "type": "number",
      "required": true,
@@ -148,12 +140,11 @@
     }
    },
    "parameterOrder": [
-    "distance",
     "x",
     "y"
    ],
    "returns": {
-    "$ref": "ArrayList"
+    "$ref": "SQLEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
