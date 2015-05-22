@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/yNjWuAFmRcSPmDP4hqIL8yJcyG0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/hmghlRVpS1fdAt3jDlbKoDQW5NM\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -71,6 +71,15 @@
   }
  },
  "schemas": {
+  "ArrayList": {
+   "id": "ArrayList",
+   "type": "object",
+   "properties": {
+    "empty": {
+     "type": "boolean"
+    }
+   }
+  },
   "CollectionResponse_SQLEntity": {
    "id": "CollectionResponse_SQLEntity",
    "type": "object",
@@ -90,12 +99,29 @@
    "id": "SQLEntity",
    "type": "object",
    "properties": {
+    "foodStyle": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
     "name": {
      "type": "string"
     },
-    "value": {
-     "type": "integer",
-     "format": "int32"
+    "offer": {
+     "type": "string"
+    },
+    "photo": {
+     "type": "string"
+    },
+    "x": {
+     "type": "number",
+     "format": "double"
+    },
+    "y": {
+     "type": "number",
+     "format": "double"
     }
    }
   }
@@ -105,6 +131,11 @@
    "id": "sQLEntityApi.getClients",
    "allowGet": true,
    "parameters": {
+    "distance": {
+     "type": "number",
+     "required": true,
+     "format": "double"
+    },
     "x": {
      "type": "number",
      "required": true,
@@ -117,11 +148,12 @@
     }
    },
    "parameterOrder": [
+    "distance",
     "x",
     "y"
    ],
    "returns": {
-    "$ref": "SQLEntity"
+    "$ref": "ArrayList"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -155,9 +187,6 @@
     "x",
     "y"
    ],
-   "returns": {
-    "$ref": "SQLEntity"
-   },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

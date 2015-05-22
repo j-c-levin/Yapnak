@@ -10,16 +10,46 @@ import com.googlecode.objectify.annotation.Id;
 public class SQLEntity {
 
     @Id
+    long id;
+    double x;
+    double y;
+    String foodStyle;
     String name;
-    int value;
+    String offer;
+    String photo;
 
-    public int getValue() {
-        return value;
+    public long getId() {
+        return id;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setId(long id) {
+        this.id = id;
     }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public String getFoodStyle() {
+        return foodStyle;
+    }
+
+    public void setFoodStyle(String foodStyle) {
+        this.foodStyle = foodStyle;
+    }
+
     public String getName() {
         return name;
     }
@@ -28,5 +58,19 @@ public class SQLEntity {
         this.name = name;
     }
 
+    public String getOffer() {
+        return offer;
+    }
 
+    public void setOffer(String offer) {
+        this.offer = offer;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 }

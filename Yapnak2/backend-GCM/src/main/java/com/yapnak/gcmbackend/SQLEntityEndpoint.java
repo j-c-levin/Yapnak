@@ -66,9 +66,10 @@ public class SQLEntityEndpoint {
             name = "getClients",
             path = "sQLEntity_clients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLEntity get(@Named("x") double x, @Named("y") double y) throws NotFoundException {
+    public ArrayList get(@Named("x") double x, @Named("y") double y) throws NotFoundException {
         Connection connection;
-        SQLEntity sql = new SQLEntity();
+        double distance = 0.02;
+        ArrayList<SQLEntity> list2 = new ArrayList();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -85,30 +86,45 @@ public class SQLEntityEndpoint {
                 // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
             }
             try {
-                String statement = "SELECT * FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+                String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
-                double t = x - 0.003;
+                double t = x - distance;
                 stmt.setDouble(1, t);
-                t = x + 0.003;
+                t = x + distance;
                 stmt.setDouble(2, t);
-                t = y - 0.003;
+                t = y - distance;
                 stmt.setDouble(3, t);
-                t = y + 0.003;
+                t = y + distance;
                 stmt.setDouble(4, t);
                 ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    logger.info("received client: " + rs.getInt("clientID") + " " + rs.getString("clientName") + " " + rs.getString("clientOffer") + " " + rs.getString("clientLocation").toString());
+                rs.last();
+                logger.info("number of results: " + rs.getRow());
+                int p = rs.getRow();
+                rs.beforeFirst();
+                for (int i = 0; i < p; i++) {
+                    rs.next();
+                    SQLEntity sql = new SQLEntity();
+                    sql.setName(rs.getString("clientName"));
+                    sql.setOffer(rs.getString("clientOffer"));
+                    sql.setX(rs.getDouble("clientX"));
+                    sql.setY(rs.getDouble("clientY"));
+                    sql.setFoodStyle(rs.getString("clientFoodStyle"));
+                    sql.setPhoto(rs.getString("clientPhoto"));
+                    list2.add(sql);
+                    logger.info("found client: " + rs.getString("clientName"));
                 }
-                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                connection.close();
+                return list2;
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return sql;
+        return null;
     }
 
     /**
@@ -118,7 +134,7 @@ public class SQLEntityEndpoint {
             name = "insertClient",
             path = "sQLEntity_client",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SQLEntity insertClient(@Named("name") String name, @Named("x") double x, @Named("y") double y, @Named("offer") String offer) {
+    public void insertClient(@Named("name") String name, @Named("x") double x, @Named("y") double y, @Named("offer") String offer) {
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -136,7 +152,7 @@ public class SQLEntityEndpoint {
 
                 // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
             }
-
+            int success = 0;
             try {
                 String statement = "INSERT INTO client (clientName,clientLocation, clientX, clientY, clientOffer) VALUES(?,Point(?,?),?,?,?)";
                 PreparedStatement stmt = connection.prepareStatement(statement);
@@ -146,23 +162,18 @@ public class SQLEntityEndpoint {
                 stmt.setDouble(4, x);
                 stmt.setDouble(5, y);
                 stmt.setString(6, offer);
-                int success = stmt.executeUpdate();
+                success = stmt.executeUpdate();
                 logger.info("returned: " + success);
-                connection.close();
-                SQLEntity t = new SQLEntity();
-                t.setValue(success);
-                return t;
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                connection.close();
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        SQLEntity t = new SQLEntity();
-        t.setValue(-1);
-        return t;
     }
 
     /**

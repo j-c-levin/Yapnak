@@ -7,7 +7,6 @@ import android.util.Log;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
-import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
 import java.io.IOException;
 
@@ -35,8 +34,8 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Void, Integer> {
                 .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
         sqlEntity = builder.build();
         try {
-            SQLEntity x = sqlEntity.getClients(51.685239, -0.308691).execute();
-            Log.d("Debug", x.toString());
+            //????here
+            com.yapnak.gcmbackend.sQLEntityApi.model.ArrayList x = sqlEntity.getClients(51.685239, -0.308691, 0.02).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
