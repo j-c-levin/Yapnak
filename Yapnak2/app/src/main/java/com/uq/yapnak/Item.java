@@ -9,10 +9,31 @@ public class Item {
     private int logo;
     private String loyaltyPoints;
     private String distance;
-//TODO add loyalty points,distance and logo back in
-    Item(String title, String foodStyle) {
+    private double x;
+    private double y;
+
+    //TODO add loyalty points,distance and logo back in
+    Item(String title, String foodStyle, double x, double y) {
         this.title = title;
         this.foodStyle = foodStyle;
+        this.x = x;
+        this.y = y;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
     }
 
     public String getTitle() {

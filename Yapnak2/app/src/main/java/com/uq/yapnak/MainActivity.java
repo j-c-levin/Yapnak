@@ -22,7 +22,10 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.plus.Plus;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
@@ -55,6 +58,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
+                .addApi(Plus.API)
                 .build();
         //showNotification();
         setContentView(R.layout.activity_main);
@@ -145,14 +149,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             return true;
         }
 
-        if(id == R.id.menu_sign_out) {
+        if (id == R.id.menu_sign_out) {
             if (mGoogleApiClient.isConnected()) {
-                mGoogleApiClient.clearDefaultAccountAndReconnect();
+// Prior to disconnecting, run clearDefaultAccount().
+                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
+                        .setResultCallback(new ResultCallback<Status>() {
+
+                            @Override
+                            public void onResult(Status status) {
+                                signedOut();
+                            }
+                        });
+
             }
-            Intent i = new Intent(this, Login.class);
-            startActivity(i);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void signedOut() {
+        Intent i = new Intent(this, Login.class);
+        startActivity(i);
     }
 
     @Override

@@ -89,6 +89,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
         Intent i = new Intent(this, MainActivity.class);
+//        Intent i = new Intent(this, MapPane.class);
         startActivity(i);
     }
 

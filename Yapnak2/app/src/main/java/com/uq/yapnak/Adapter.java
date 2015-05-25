@@ -1,7 +1,9 @@
 package com.uq.yapnak;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,6 +56,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             takeMeThere = (Button) itemView.findViewById(R.id.takeMeThere);
             recommendRestaurant = (Button) itemView.findViewById(R.id.recommendMeal);
 
+
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -67,6 +70,18 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
                     }
 
+                }
+            });
+
+
+            takeMeThere.setOnClickListener(new View.OnClickListener() {
+                //this code should work but I don't know how to join it up properly.
+                @Override
+                public void onClick(View v) {
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + x + "," + y +"&mode=w");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
                 }
             });
 
@@ -101,7 +116,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 }
             });
         }
-
     }
 
     private ArrayList<Item> items;
@@ -112,11 +126,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         // Create some items
         items = new ArrayList<>();
         for (int i = 0; i < sql.getList().size(); i++) {
-            items.add(new Item(sql.getList().get(i).getName(),sql.getList().get(i).getOffer()));
+            items.add(new Item(sql.getList().get(i).getName(), sql.getList().get(i).getOffer(), sql.getX(), sql.getY()));
         }
     }
-
-
 
     @Override
     public int getItemViewType(int position) {
