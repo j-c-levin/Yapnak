@@ -113,8 +113,6 @@
             android:layout_marginTop="10dp"
             android:text="Submit"
             android:textColor="#ff535357" />
-
-
     </LinearLayout>
 
 </LinearLayout>

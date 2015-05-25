@@ -6,19 +6,22 @@
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:paddingTop="10dp">
+    android:paddingTop="10dp"
+    android:weightSum="1">
 
     <RelativeLayout
         android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="496dp"
+        android:layout_weight="5.30">
 
         <ImageButton
             android:background="@drawable/yapnakmonster"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:id="@+id/imageButton" />
 
         <EditText
             android:id="@+id/initialsEdit"
@@ -73,6 +76,15 @@
             android:layout_below="@id/phoneNumberEdit"
             android:layout_marginTop="85dp"
             android:alpha="0.4" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/loginButton"
+            android:layout_centerHorizontal="true" />
+
 
     </RelativeLayout>
 

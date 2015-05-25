@@ -3,5 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_feedback">Feedback</string>
+    <string name="sign_out">Sign out</string>
 
 </resources>
