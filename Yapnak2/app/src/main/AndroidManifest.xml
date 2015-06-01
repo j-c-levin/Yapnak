@@ -25,7 +25,9 @@
         android:theme="@style/AppTheme.Base">
         <activity
             android:name="com.uq.yapnak.MainActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name">
+
+         </activity>
         <activity
             android:name="com.uq.yapnak.Splash"
             android:label="@string/app_name">
@@ -37,10 +39,24 @@
         </activity>
         <activity
             android:name="com.uq.yapnak.Login"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name">
+
+        </activity>
+
         <activity
             android:name="com.uq.yapnak.MapPane"
-            android:label="Yapnak"></activity>
+            android:label="Yapnak">
+
+         </activity>
+
+        <activity
+            android:name="com.frontend.yapnak.maps.features.MapActivity"
+            android:label="@string/map_activity" >
+        </activity>
+
+        <activity
+            android:name="com.frontend.yapnak.rate.RateActivity">
+        </activity>
 
         <receiver
             android:name="com.uq.yapnak.GcmBroadcastReceiver"

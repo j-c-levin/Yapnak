@@ -1,25 +1,45 @@
 package com.uq.yapnak;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.frontend.yapnak.AdapterPrev;
+import com.frontend.yapnak.ItemPrev;
+import com.frontend.yapnak.maps.features.MapActivity;
+import com.frontend.yapnak.navigationdrawer.NavBarItem;
+import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
+import com.frontend.yapnak.rate.RateActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -33,23 +53,46 @@ import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final int NOTIFICATION_ID = 0;
-    private static String TAG_ABOUT = "About";
-    private static String TAG_SHARE = "Share";
-    private static String TAG_MANUAL = "Manual";
-    private static String TAG_GIFT = "Gifts";
 
-    private Button cancelButton;
-    private Button submitButton;
-    private MenuItem itemMen;
-
-    private NotificationManager notif;
-    private Notification note;
 
     private GoogleApiClient mGoogleApiClient;
 
     private SQLEntity sql;
 
     RecyclerView recyclerView;
+
+    private static String TAG_ABOUT = "About";
+    private static String TAG_SHARE = "Share";
+    private static String TAG_MANUAL = "Manual";
+    private static String TAG_GIFT = "Gifts";
+    private android.widget.RelativeLayout.LayoutParams layoutParams;
+    private static final String ACTION_BUTTON_TAG = "ActionButton";
+    private Button cancelButton;
+    private Button submitButton;
+    private MenuItem itemMen;
+    private String msg;
+    private Thread t;
+    private NotificationManager notif;
+    private Notification note;
+    private boolean click = true;
+    private FragmentManager fragmentManager;
+    //private GestureDetectorCompat gestureDetect;
+    private  ItemPrev[] ip;
+
+    private boolean longPress;
+    private float x;
+    private float y;
+    private String location;
+    private String restaurant;
+    private String item = "YapNak";
+    private String mainItem;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private NavBarItem[] naviBarItems= new NavBarItem[3];
+
+    private FloatingActionButton actionButton;
+    private ListView deals;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +104,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addApi(Plus.API)
                 .build();
         //showNotification();
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        load();
+        navBarToggle();
+        navigationBarContent();
+        /*recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         floatButton();
+        */
     }
 
     @Override
@@ -192,7 +239,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    public void floatButton() {
+    /*public void floatButton() {
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.ic_new_float);
 
@@ -238,10 +285,446 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addSubActionView(buttonManual)
                 .attachTo(actionButton)
                 .build();
+    }*/
+
+
+
+
+    public void extendInfo(View v) {
+        //Extend info: Rate,like and Take Me There
+        LinearLayout layout = (LinearLayout) v.findViewById(R.id.extendHeight);
+
+        if(layout.getHeight()!=500) {
+            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 500));
+        }else {
+
+            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
+        }
+
+        TextView view = (TextView) v.findViewById(R.id.distance);
+
+
+        this.location= (String) view.getText();
+
+
+
+          /*
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(R.anim.abc_slide_out_bottom, R.anim.abc_slide_in_bottom);
+            ExtensionFragment frag = new ExtensionFragment();
+
+            /*if (frag==null) {
+                fragmentTransaction.attach(frag);
+                fragmentTransaction.show(frag);
+
+
+            } else {
+                fragmentTransaction.detach(frag);
+                fragmentTransaction.hide(frag);
+
+            }
+
+            fragmentTransaction.add(R.id.item2,frag);
+
+            fragmentTransaction.commit();
+
+            */
     }
+
+    public void recommendMealButton(View v){
+        Button recommendMeal = (Button) v.findViewById(R.id.recommendMeal);
+
+
+        AlertDialog.Builder userItems = new AlertDialog.Builder(v.getContext());
+        LinearLayout linearLayout = new LinearLayout(v.getContext());
+
+        userItems.setTitle("👥 Recommend");
+        userItems.setMessage("Enter your friends Yapnak iD");
+        userItems.setPositiveButton("OK", null);
+        userItems.setNegativeButton("CANCEL", null);
+
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(40, 0, 40, 0);
+
+        TextView message = new TextView(v.getContext());
+        final EditText input = new EditText(v.getContext());
+
+        input.setHint("EG: NS-6438");
+        input.setSingleLine(false);
+        input.setMaxLines(1);
+        input.setTextColor(Color.BLACK);
+        linearLayout.addView(message);
+        linearLayout.addView(input);
+        userItems.setView(linearLayout);
+
+
+        AlertDialog dialog = userItems.create();
+        dialog.show();
+
+
+    }
+
+    public void takeMeThereButton(View v){
+        Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
+
+        Intent maps = new Intent(this, MapActivity.class);
+        final int result = 1;
+        this.restaurant= "McDonalds";
+        maps.putExtra("LocationIntent",location);
+        maps.putExtra("RestaurantNameIntent", restaurant);
+        startActivity(maps);
+
+
+
+
+    }
+
+
+    public void feedbackButton(View v) {
+        Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
+
+        Intent rate = new Intent(this, RateActivity.class);
+        final int result = 1;
+
+
+        startActivity(rate);
+
+
+
+    }
+
+    public void setLongPress(boolean lp){
+        longPress = lp;
+    }
+    public boolean getLongPress(){
+        return this.longPress;
+    }
+
+    /*public void floatButton() {
+        final ImageView image = new ImageView(this);
+        image.setImageResource(R.drawable.ic_new_float);
+
+        actionButton = new FloatingActionButton.Builder(this)
+                .setContentView(image)
+                .setBackgroundDrawable(R.drawable.selector_file_red)
+                .build();
+
+        actionButton.setTag(ACTION_BUTTON_TAG);
+
+        actionButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(getClick()==true) {
+                    setLongPress(true);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        //After long press, allow the button to move.
+
+        actionButton.setOnTouchListener(new View.OnTouchListener() {
+            private float x,y;
+            private RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relLayout);
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    setClick(true);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    setLongPress(false);
+
+
+                }if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    x = event.getRawX() - (v.getHeight() / 2);
+                    y = event.getRawY() - (v.getWidth() / 2);
+
+                    if(getLongPress()==true && x<relativeLayout.getWidth() && y<relativeLayout.getHeight()) {
+
+
+                        actionButton.setX(x);
+                        actionButton.setY(y);
+                        setClick(false);
+                        return true;
+
+                    }
+
+                }
+
+                return false;
+
+            }
+
+            public void setX(float x) {
+                this.x = x;
+
+            }
+
+            public void setY(float y) {
+                this.y = y;
+            }
+
+            public float getX() {
+                return x;
+            }
+
+            public float getY() {
+                return y;
+            }
+        });
+
+
+
+
+
+
+
+
+        ImageView iconAbout = new ImageView(this);
+        iconAbout.setImageResource(R.drawable.abouticon);
+
+        ImageView iconShare = new ImageView(this);
+        iconShare.setImageResource(R.drawable.shareicon);
+
+        ImageView iconManual = new ImageView(this);
+        iconManual.setImageResource(R.drawable.manualicon);
+
+        ImageView iconGift = new ImageView(this);
+        iconGift.setImageResource(R.drawable.gift);
+
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
+        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
+
+        SubActionButton buttonAbout = itemBuilder.setContentView(iconAbout).build();
+        SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
+        SubActionButton buttonManual = itemBuilder.setContentView(iconManual).build();
+        SubActionButton buttonGift = itemBuilder.setContentView(iconGift).build();
+
+        buttonAbout.setTag(TAG_ABOUT);
+        buttonShare.setTag(TAG_SHARE);
+        buttonManual.setTag(TAG_MANUAL);
+        buttonGift.setTag(TAG_GIFT);
+
+        buttonAbout.setOnClickListener(this);
+        buttonShare.setOnClickListener(this);
+        buttonManual.setOnClickListener(this);
+        buttonGift.setOnClickListener(this);
+
+        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
+                .addSubActionView(buttonAbout)
+                .addSubActionView(buttonShare)
+                .addSubActionView(buttonGift)
+                .addSubActionView(buttonManual)
+                .attachTo(actionButton)
+                .build();
+
+
+
+    }*/
+
+    public ItemPrev[] dealList(){
+        ip = new ItemPrev[10];
+
+
+        for(int i=0;i<ip.length;i++) {
+
+            ItemPrev temp = new ItemPrev();
+            temp.setLocation("London");
+            temp.setLogo(R.drawable.mcdonalds);
+            temp.setMainText(" 2 For Tuesdays");
+            temp.setSubText("Buy one pizza, get another free");
+            temp.setPoints("20");
+            ip[i] = temp;
+
+        }
+
+
+
+
+        return ip;
+    }
+
+    public void load() {
+
+        setContentView(R.layout.activity_main1);
+        ListAdapter dealList = new AdapterPrev(this,R.id.item2,dealList());
+        deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setAdapter(dealList);
+
+        deals.setBackgroundResource(R.drawable.customshape);
+
+
+    }
+
+
+
+    /*
+
+
+    NAVIGATION DRAWER IMPLEMENTATION BELOW
+
+
+     */
+
+
+
+    //Listener
+
+
+    private class DrawerItemListener implements ListView.OnItemClickListener {
+
+        FragmentManager fragmentManager;
+
+
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mainItem=item;
+            NavBarItem navItem = (NavBarItem)parent.getItemAtPosition(position);
+
+            selectedItem(navItem.getNavBarItem());
+
+        }
+
+
+    }
+
+
+    private void selectedItem(String item) {
+
+
+
+        fragmentManager = getFragmentManager();
+
+
+        if (item.equalsIgnoreCase("About YapNak")) {
+
+            /*Fragment fragment = new AboutYapNak();
+
+
+                    fragmentManager.beginTransaction().replace(R.id.relLayout, fragment)
+                    .commit();
+
+            */
+
+            aboutYapnak();
+
+
+
+        } else if (item.contains("How To Use")) {
+
+            /*Fragment fragment = new HowToUse();
+
+                     fragmentManager.beginTransaction()
+                    .replace(R.id.relLayout,fragment)
+                    .commit();
+            */
+
+            howToUseYapnak();
+
+        }else if(item.equalsIgnoreCase("Misc")){
+
+            Toast.makeText(this,"MISCELLANEOUS",Toast.LENGTH_LONG).show();
+            userItems();
+        }
+
+    }
+
+
+    @Override
+    public void setTitle(CharSequence title) {
+
+        this.item = (String)title;
+        getSupportActionBar().setTitle(title);
+
+
+
+
+    }
+
+    public void navBarToggle(){
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
+        actionBarDrawerToggle=new ActionBarDrawerToggle(this,drawerLayout,R.string.drawer_open,R.string.drawer_close){
+
+
+            public void onDrawerClosed(View view){
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(mainItem);
+            }
+
+            public void onDrawerOpened(View view){
+
+                super.onDrawerOpened(view);
+
+                getSupportActionBar().setTitle(item);
+
+            }
+
+
+        };
+
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    public void navigationBarContent(){
+
+        //String [] tempList= {"About YapNak","How To Use YapNak","Misc"};
+
+        NavBarItem about = new NavBarItem();
+        about.setNavBarItem("About YapNak");
+        NavBarItem howTo = new NavBarItem();
+        howTo.setNavBarItem("How To Use YapNak");
+        NavBarItem misc = new NavBarItem();
+        misc.setNavBarItem("Misc");
+
+        naviBarItems[0] = about;
+        naviBarItems[1] = howTo;
+        naviBarItems[2] = misc;
+
+
+        ListAdapter adapter = new NavigationBarAdapter(this,R.layout.navigation_bar_layout, naviBarItems);
+
+        ListView navBarItems = (ListView) findViewById(R.id.left_drawer);
+
+
+        navBarItems.setAdapter(adapter);
+        navBarItems.setOnItemClickListener(new DrawerItemListener());
+    }
+
+
+
+
+
+
+
+
 
     public void load(SQLEntity sql) {
         recyclerView.setAdapter(new Adapter(sql));
+
     }
 
     public void aboutYapnak() {

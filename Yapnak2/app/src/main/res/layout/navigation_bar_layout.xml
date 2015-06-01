@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+   >
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:background="@color/lightBrown"
+        android:fadingEdge="vertical"
+
+        >
+
+
+        <TextView
+            android:id="@+id/NavBarItemName"
+            android:layout_width="200dp"
+            android:layout_height="100dp"
+            android:text="Sample Text"
+            android:fontFamily="Calibri"
+            android:textSize="20sp"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="45dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/border"
+        />
+
+
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+
+</LinearLayout>

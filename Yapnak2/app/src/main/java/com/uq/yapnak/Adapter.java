@@ -78,10 +78,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 //this code should work but I don't know how to join it up properly.
                 @Override
                 public void onClick(View v) {
-                    Uri gmmIntentUri = Uri.parse("google.navigation:q=" + x + "," + y +"&mode=w");
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
+                    //Uri gmmIntentUri = Uri.parse("google.navigation:q=" + x + "," + y +"&mode=w");
+                   // Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    //mapIntent.setPackage("com.google.android.apps.maps");
+                   // startActivity(mapIntent);
                 }
             });
 
