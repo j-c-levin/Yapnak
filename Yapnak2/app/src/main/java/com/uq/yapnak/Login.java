@@ -72,8 +72,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                 //new UserLoginAsyncTask(getApplicationContext(), details).execute();
                 //note: the details argument has been removed and probably won't be re-added.
                 //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
-                /*if (initials.getText().toString().equals("ns") && phone.getText().toString().equals("123") || promo.getText().toString().equals("cookies")) {
-                    Toast.makeText(getApplicationContext(), "Welcome: " + initials.getText().toString() + "-" + phone.getText().toString(), Toast.LENGTH_SHORT).show();*/
                 Intent i = new Intent(Login.this, MainActivity.class);
                 v.getContext().startActivity(i);
 //                  userItems();
@@ -151,15 +149,3 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         }
     }
 }
-
-// I think this is all old code that can be removed
-//    private void userItems() {
-//        AlertDialog.Builder userItems = new AlertDialog.Builder(this);
-//        userItems.setTitle("Free Items");
-//        userItems.setMessage("🍪You currently have no free items available");
-//        userItems.setPositiveButton("OK", null);
-//        AlertDialog dialog = userItems.create();
-//        dialog.getWindow().setLayout(400, 400);
-//        dialog.show();
-//
-//    }

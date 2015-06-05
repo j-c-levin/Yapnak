@@ -14,23 +14,18 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,8 +42,6 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.plus.Plus;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
-import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -77,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private boolean click = true;
     private FragmentManager fragmentManager;
     //private GestureDetectorCompat gestureDetect;
-    private  ItemPrev[] ip;
+    private ItemPrev[] ip;
 
     private boolean longPress;
     private float x;
@@ -88,7 +81,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private String mainItem;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private NavBarItem[] naviBarItems= new NavBarItem[3];
+    private NavBarItem[] naviBarItems = new NavBarItem[3];
 
     private FloatingActionButton actionButton;
     private ListView deals;
@@ -106,7 +99,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //showNotification();
         //setContentView(R.layout.activity_main);
 
-        load();
+        //load(); commented out because the code is being called from SQLConnectAsyncTask
+        setContentView(R.layout.activity_main1);
         navBarToggle();
         navigationBarContent();
         /*recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -288,23 +282,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }*/
 
 
-
-
     public void extendInfo(View v) {
         //Extend info: Rate,like and Take Me There
         LinearLayout layout = (LinearLayout) v.findViewById(R.id.extendHeight);
 
-        if(layout.getHeight()!=500) {
+        if (layout.getHeight() != 500) {
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 500));
-        }else {
+        } else {
 
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
         }
 
         TextView view = (TextView) v.findViewById(R.id.distance);
 
-
-        this.location= (String) view.getText();
+        this.location = (String) view.getText().toString();
 
 
 
@@ -332,7 +323,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             */
     }
 
-    public void recommendMealButton(View v){
+    public void recommendMealButton(View v) {
         Button recommendMeal = (Button) v.findViewById(R.id.recommendMeal);
 
 
@@ -365,18 +356,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    public void takeMeThereButton(View v){
+    public void takeMeThereButton(View v) {
         Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
-
         Intent maps = new Intent(this, MapActivity.class);
         final int result = 1;
-        this.restaurant= "McDonalds";
-        maps.putExtra("LocationIntent",location);
+        this.restaurant = "McDonalds";
+        maps.putExtra("LocationIntent", location);
         maps.putExtra("RestaurantNameIntent", restaurant);
         startActivity(maps);
-
-
-
 
     }
 
@@ -391,13 +378,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         startActivity(rate);
 
 
-
     }
 
-    public void setLongPress(boolean lp){
+    public void setLongPress(boolean lp) {
         longPress = lp;
     }
-    public boolean getLongPress(){
+
+    public boolean getLongPress() {
         return this.longPress;
     }
 
@@ -524,38 +511,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }*/
 
-    public ItemPrev[] dealList(){
-        ip = new ItemPrev[10];
-
-
-        for(int i=0;i<ip.length;i++) {
-
-            ItemPrev temp = new ItemPrev();
-            temp.setLocation("London");
-            temp.setLogo(R.drawable.mcdonalds);
-            temp.setMainText(" 2 For Tuesdays");
-            temp.setSubText("Buy one pizza, get another free");
-            temp.setPoints("20");
-            ip[i] = temp;
-
-        }
-
-
-
-
-        return ip;
-    }
-
+    //commented out because we have code to actually grab information from the database.
     public void load() {
-
+/*
         setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this,R.id.item2,dealList());
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setAdapter(dealList);
 
         deals.setBackgroundResource(R.drawable.customshape);
 
-
+*/
     }
 
 
@@ -569,7 +535,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
      */
 
 
-
     //Listener
 
 
@@ -578,11 +543,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         FragmentManager fragmentManager;
 
 
-
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mainItem=item;
-            NavBarItem navItem = (NavBarItem)parent.getItemAtPosition(position);
+            mainItem = item;
+            NavBarItem navItem = (NavBarItem) parent.getItemAtPosition(position);
 
             selectedItem(navItem.getNavBarItem());
 
@@ -593,7 +557,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private void selectedItem(String item) {
-
 
 
         fragmentManager = getFragmentManager();
@@ -612,7 +575,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             aboutYapnak();
 
 
-
         } else if (item.contains("How To Use")) {
 
             /*Fragment fragment = new HowToUse();
@@ -624,9 +586,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             howToUseYapnak();
 
-        }else if(item.equalsIgnoreCase("Misc")){
+        } else if (item.equalsIgnoreCase("Misc")) {
 
-            Toast.makeText(this,"MISCELLANEOUS",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "MISCELLANEOUS", Toast.LENGTH_LONG).show();
             userItems();
         }
 
@@ -636,28 +598,26 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void setTitle(CharSequence title) {
 
-        this.item = (String)title;
+        this.item = (String) title;
         getSupportActionBar().setTitle(title);
-
-
 
 
     }
 
-    public void navBarToggle(){
+    public void navBarToggle() {
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
 
-        actionBarDrawerToggle=new ActionBarDrawerToggle(this,drawerLayout,R.string.drawer_open,R.string.drawer_close){
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
 
-            public void onDrawerClosed(View view){
+            public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 getSupportActionBar().setTitle(mainItem);
             }
 
-            public void onDrawerOpened(View view){
+            public void onDrawerOpened(View view) {
 
                 super.onDrawerOpened(view);
 
@@ -671,7 +631,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
 
 
     }
@@ -689,7 +648,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-    public void navigationBarContent(){
+    public void navigationBarContent() {
 
         //String [] tempList= {"About YapNak","How To Use YapNak","Misc"};
 
@@ -705,7 +664,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         naviBarItems[2] = misc;
 
 
-        ListAdapter adapter = new NavigationBarAdapter(this,R.layout.navigation_bar_layout, naviBarItems);
+        ListAdapter adapter = new NavigationBarAdapter(this, R.layout.navigation_bar_layout, naviBarItems);
 
         ListView navBarItems = (ListView) findViewById(R.id.left_drawer);
 
@@ -715,16 +674,35 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-
-
-
-
-
-
-
     public void load(SQLEntity sql) {
-        recyclerView.setAdapter(new Adapter(sql));
+        //recyclerView.setAdapter(new Adapter(sql));
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+        deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setAdapter(dealList);
+        deals.setBackgroundResource(R.drawable.customshape);
+    }
 
+    public ItemPrev[] dealList(SQLEntity sql) {
+        ip = new ItemPrev[sql.getList().size()];
+
+
+        for (int i = 0; i < ip.length; i++) {
+            ItemPrev temp = new ItemPrev();
+            //TODO:add generic location to database
+            temp.setLocation("to be added");
+            //TODO: add photo download from google storage
+            temp.setLogo(R.drawable.mcdonalds);
+            temp.setMainText(sql.getList().get(i).getFoodStyle());
+            temp.setRestaurantName(sql.getList().get(i).getName());
+            temp.setSubText(sql.getList().get(i).getOffer());
+            //TODO: points
+            temp.setPoints("to be added");
+            ip[i] = temp;
+
+        }
+
+
+        return ip;
     }
 
     public void aboutYapnak() {
