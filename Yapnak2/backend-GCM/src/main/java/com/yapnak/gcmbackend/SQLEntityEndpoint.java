@@ -88,11 +88,7 @@ public class SQLEntityEndpoint {
             } else {
                 // Local MySQL instance to use during development.
                 Class.forName("com.mysql.jdbc.Driver");
-//                String url = "jdbc:mysql://localhost:3306/yapnak_main?user=client&password=g7lFVLRzYdJoWXc3";
-//                connection = DriverManager.getConnection(url);
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
-                // Alternatively, connect to a Google Cloud SQL instance using:
-                // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
             }
             try {
                 String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
