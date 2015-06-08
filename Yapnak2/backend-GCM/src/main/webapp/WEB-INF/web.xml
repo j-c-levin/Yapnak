@@ -5,6 +5,14 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet>
+        <servlet-name>signup</servlet-name>
+        <servlet-class>com.yapnak.website.signup</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>signup</servlet-name>
+        <url-pattern>/signup</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>login</servlet-name>
         <servlet-class>com.yapnak.website.login</servlet-class>
     </servlet>

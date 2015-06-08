@@ -71,7 +71,7 @@ body {
       <form class="form-signin" action="/login" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+        <input type="email" id="clientID" name="username" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <div class="checkbox">
@@ -81,7 +81,19 @@ body {
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
-
     </div> <!-- /container -->
+
+    <div class="container">
+
+      <form class="form-signin" action="/signup" method="post">
+        <h2 class="form-signin-heading">Sign up here</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="clientID" name="email" class="form-control" placeholder="Email" required>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Your desired password" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+      </form>
+    </div> <!-- /container -->
+
   </body>
 </html>
