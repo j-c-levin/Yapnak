@@ -68,7 +68,7 @@ body {
 
     <div class="container">
 
-      <form class="form-signin" action="/login" method="post">
+      <form class="form-signin" id = "login" action="/login" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="email" id="clientID" name="username" class="form-control" placeholder="Email" required autofocus>
@@ -76,7 +76,7 @@ body {
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="remember-me"> Remember me
+            <input type="checkbox" name = "save" value="remember-me"> Remember me for a week
           </label>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

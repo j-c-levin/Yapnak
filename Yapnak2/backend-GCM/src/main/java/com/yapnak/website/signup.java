@@ -4,6 +4,7 @@ import com.google.appengine.api.utils.SystemProperty;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -63,7 +64,6 @@ public class signup extends HttpServlet {
         }
         return "";
     }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //Finish signup
@@ -87,7 +87,7 @@ public class signup extends HttpServlet {
                 ResultSet rs = stmt.executeQuery();
                 //check if user has signed up
                 if (rs.next()) {
-                    sql = "INSERT INTO client (clientUsername, password) VALUES (?,?)";
+                    sql = "INSERT INTO client (email, password) VALUES (?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, rs.getString("email"));
                     stmt.setString(2, rs.getString("password"));
@@ -119,6 +119,31 @@ public class signup extends HttpServlet {
         }
     }
 
+    public void sendEmail(String email) {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        String link = "https://yapnak-app.appspot.com/signup?user=" + hashPassword(email);
+        //TODO:what happens if they didn't request the email?
+        String msgBody = "Hey there!\n\nYou've asked to signup to Yapnak, a startup connecting hungry people with quality lunchtime deals." +
+                "\n\nTo activate your account, please click the link: \n\n" + link + "\n\n\n***Don't reply to this e-mail***";
+        //TODO:integrate help support?  set it so that e-mails are forwarded to the yapnak account?
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+            msg.addRecipient(Message.RecipientType.TO,
+                    new InternetAddress(email));
+            msg.setSubject("Activate your Yapnak account");
+            msg.setText(msgBody);
+            Transport.send(msg);
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         //Sign up user
         PrintWriter out = resp.getWriter();
@@ -145,30 +170,15 @@ public class signup extends HttpServlet {
                 PreparedStatement stmt = connection.prepareStatement(sql);
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
+
+                //Resend email
                 if (rs.next()) {
                     out.println("It looks like you've already signed up, we'll go ahead and resend confirmation");
-                    Properties props = new Properties();
-                    Session session = Session.getDefaultInstance(props, null);
-                    String link = "https://yapnak-app.appspot.com/signup?user=" + hashPassword(email);
-                    //TODO:what happens if they didn't request the email?
-                    String msgBody = "Hey there!\n\nYou've asked to signup to Yapnak, a startup connecting hungry people with quality lunchtime deals." +
-                            "\n\nTo activate your account, please click the link: \n\n" + link + "\n\n\n***Don't reply to this e-mail***";
-                    //TODO:integrate help support?  set it so that e-mails are forwarded to the yapnak account?
-                    try {
-                        Message msg = new MimeMessage(session);
-                        msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
-                        msg.addRecipient(Message.RecipientType.TO,
-                                new InternetAddress(email));
-                        msg.setSubject("Activate your Yapnak account");
-                        msg.setText(msgBody);
-                        Transport.send(msg);
-                        resp.setHeader("Refresh", "3; url=/index.jsp");
-                    } catch (AddressException e) {
-                        e.printStackTrace();
-                    } catch (MessagingException e) {
-                        e.printStackTrace();
-                    }
-                }else {
+                    resp.setHeader("Refresh", "3; url=/index.jsp");
+                    sendEmail(email);
+                }
+                //Send e-mail confirmation
+                else {
                     sql = "INSERT INTO signup (email, hash, password) VALUES (?,?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, email);
@@ -177,24 +187,7 @@ public class signup extends HttpServlet {
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {
-                        Properties props = new Properties();
-                        Session session = Session.getDefaultInstance(props, null);
-                        String link = "https://yapnak-app.appspot.com/signup?user=" + hashPassword(email);
-                        //TODO:what happens if they didn't request the email?
-                        String msgBody = "Hey there!\n\nYou've asked to signup to Yapnak, a startup connecting hungry people with quality lunchtime deals." +
-                                "\n\nTo activate your account, please click the link: \n\n" + link + "\n\n\n***Don't reply to this e-mail***";
-                        //TODO:integrate help support?  set it so that e-mails are forwarded to the yapnak account?
-                        try {
-                            Message msg = new MimeMessage(session);
-                            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
-                            msg.addRecipient(Message.RecipientType.TO,
-                                    new InternetAddress(email));
-                            msg.setSubject("Activate your Yapnak account");
-                            msg.setText(msgBody);
-                            Transport.send(msg);
-                        } catch (MessagingException e) {
-                            e.printStackTrace();
-                        }
+                        sendEmail(email);
                         out.println("Check your e-mail for confirmation");
                         resp.setHeader("Refresh", "3; url=/index.jsp");
                     } else {
