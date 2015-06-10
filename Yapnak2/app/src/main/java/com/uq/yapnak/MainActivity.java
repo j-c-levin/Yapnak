@@ -44,6 +44,7 @@ import com.google.android.gms.plus.Plus;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
+
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final int NOTIFICATION_ID = 0;
 
@@ -96,10 +97,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addApi(LocationServices.API)
                 .addApi(Plus.API)
                 .build();
-        //showNotification();
-        //setContentView(R.layout.activity_main);
 
         //load(); commented out because the code is being called from SQLConnectAsyncTask
+        Intent temp = getIntent();
+        String intials = temp.getStringExtra("initials");
+
+        getSupportActionBar().setSubtitle(intials);
         setContentView(R.layout.activity_main1);
         navBarToggle();
         navigationBarContent();
@@ -188,6 +191,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
             return true;
+        }else if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+
         }
 
         if (id == R.id.menu_sign_out) {
