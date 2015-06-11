@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +10,18 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+
 
     <TextView
         android:id="@+id/nameLabel"
@@ -21,11 +35,15 @@
         android:textStyle="normal" />
 
 
+
+
     <LinearLayout
         android:id="@+id/radioLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+
 
         <RadioGroup
             android:id="@+id/feedbackRadioGroup"
@@ -55,11 +73,6 @@
                 android:layout_height="wrap_content"
                 android:text="Store did not accept my code"
                 android:textColor="#FFF" />
-
-
-
-
-
         </RadioGroup>
 
     </LinearLayout>
@@ -114,5 +127,12 @@
             android:text="Submit"
             android:textColor="#ff535357" />
     </LinearLayout>
+
+
+    </LinearLayout>
+
+    </ScrollView>
+
+
 
 </LinearLayout>

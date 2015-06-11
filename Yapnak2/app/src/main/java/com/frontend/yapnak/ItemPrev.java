@@ -5,6 +5,7 @@ import com.uq.yapnak.R;
 /**
  * Created by vahizan on 17/04/2015.
  */
+
 public class ItemPrev {
 
     private int logo;
@@ -15,7 +16,6 @@ public class ItemPrev {
     private final String loyaltyPointsTitle= "Loyalty Points";
     private int locationIcon;
     private String restaurantName;
-
 
 
     public ItemPrev(){
@@ -40,11 +40,11 @@ public class ItemPrev {
         this.points = points;
     }
 
-    public String getLocation() {
+    public String getDistance() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setDistance(String location) {
         this.location = location;
     }
 

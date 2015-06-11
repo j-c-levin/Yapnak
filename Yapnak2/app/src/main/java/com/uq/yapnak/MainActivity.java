@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.frontend.yapnak.maps.features.MapActivity;
 import com.frontend.yapnak.navigationdrawer.NavBarItem;
 import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
 import com.frontend.yapnak.rate.RateActivity;
+import com.frontend.yapnak.rate.RatingDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -46,7 +48,9 @@ import com.google.android.gms.plus.model.people.Person;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<People.LoadPeopleResult> {
+
+public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        ResultCallback<People.LoadPeopleResult> {
     private static final int NOTIFICATION_ID = 0;
 
 
@@ -87,6 +91,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private FloatingActionButton actionButton;
     private ListView deals;
+    private Intent temp;
 
     private String firstName;
     private String lastName;
@@ -103,6 +108,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
+
+        temp = getIntent();
+        String intials = temp.getStringExtra("initials");
+
+        getSupportActionBar().setSubtitle(intials);
         setContentView(R.layout.activity_main1);
         navBarToggle();
         navigationBarContent();
@@ -172,6 +182,50 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return true;
     }
 
+
+    public class Feedback extends ActionBarActivity {
+
+        //@Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            final View view = inflater.inflate(R.layout.feedback_activity, null);
+
+            cancelButton = (Button) view.findViewById(R.id.cancelButton);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    load(sql);
+
+                }
+            });
+
+
+            submitButton = (Button) view.findViewById(R.id.submitButton);
+            submitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+
+                    EditText feedback = (EditText) v.findViewById(R.id.commentField);
+
+                    String text = feedback.getText().toString();
+                    //TODO:text must be stored in feedback table in the database
+
+                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
+                    load(sql);
+                }
+            });
+
+
+            return view;
+        }
+
+    }
+
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -182,29 +236,37 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_feedback) {
 
-            setContentView(R.layout.feedback_activity);
+          try {
+              setContentView(R.layout.feedback_activity);
+              submitButton = (Button) findViewById(R.id.submitButton);
+              cancelButton = (Button) findViewById(R.id.cancelButton);
 
-            submitButton = (Button) findViewById(R.id.submitButton);
-            cancelButton = (Button) findViewById(R.id.cancelButton);
 
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    load(sql);
-                }
-            });
+              cancelButton.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                       showMain();
+                  }
+              });
 
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-                    load(sql);
 
-                }
-            });
+              submitButton.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
+                      showMain();
+                  }
+              });
+
+          }catch(Exception e){
+              Toast.makeText(getApplicationContext(), "You are currently in feedback window", Toast.LENGTH_SHORT).show();
+          }
 
 
             return true;
+        }else if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+            return true;
+
         }
 
         if (id == R.id.menu_sign_out) {
@@ -228,6 +290,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void signedOut() {
         Intent i = new Intent(this, Login.class);
         startActivity(i);
+    }
+
+    //view the main activitiy - clean up code and make it simpler
+
+    private void showMain(){
+
+        load(sql);
+        navBarToggle();
+        navigationBarContent();
+        getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
+
     }
 
     @Override
@@ -303,8 +376,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //Extend info: Rate,like and Take Me There
         LinearLayout layout = (LinearLayout) v.findViewById(R.id.extendHeight);
 
-        if (layout.getHeight() != 500) {
-            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 500));
+        if (layout.getHeight() != 600) {
+            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 600));
         } else {
 
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
@@ -388,11 +461,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void feedbackButton(View v) {
         Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
 
-        Intent rate = new Intent(this, RateActivity.class);
-        final int result = 1;
+        //Intent rate = new Intent(this, RateActivity.class);
+        RatingDialog rate = new RatingDialog();
+        rate.show(getFragmentManager(),"rating");
 
-
-        startActivity(rate);
+        //startActivity(rate);
 
 
     }
@@ -546,11 +619,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     /*
-
-
+     *
+     *
     NAVIGATION DRAWER IMPLEMENTATION BELOW
-
-
+     *
+     *
      */
 
 
@@ -695,6 +768,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void load(SQLEntity sql) {
         //recyclerView.setAdapter(new Adapter(sql));
+        setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setAdapter(dealList);
@@ -702,26 +776,55 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public ItemPrev[] dealList(SQLEntity sql) {
-        ip = new ItemPrev[sql.getList().size()];
 
 
-        for (int i = 0; i < ip.length; i++) {
+
+        try{
+
+
+            ip = new ItemPrev[sql.getList().size()];
+
+            for (int i = 0; i < ip.length; i++) {
+                ItemPrev temp = new ItemPrev();
+                //TODO:add generic location to database
+                temp.setDistance("to be added");
+                //TODO: add photo download from google storage
+                temp.setLogo(R.drawable.mcdonalds);
+                temp.setMainText(sql.getList().get(i).getFoodStyle());
+                temp.setRestaurantName(sql.getList().get(i).getName());
+                temp.setSubText(sql.getList().get(i).getOffer());
+                //TODO: points
+                temp.setPoints("to be added");
+                ip[i] = temp;
+
+            }
+
+            return ip;
+
+        }catch(Exception e){
+
+            ip = new ItemPrev[1];
+
+
             ItemPrev temp = new ItemPrev();
             //TODO:add generic location to database
-            temp.setLocation("to be added");
+            temp.setDistance("to be added");
             //TODO: add photo download from google storage
             temp.setLogo(R.drawable.mcdonalds);
-            temp.setMainText(sql.getList().get(i).getFoodStyle());
-            temp.setRestaurantName(sql.getList().get(i).getName());
-            temp.setSubText(sql.getList().get(i).getOffer());
+            temp.setMainText("Cannot Retrieve Information");
+            temp.setRestaurantName("N/A");
+            temp.setSubText("N/A ");
             //TODO: points
             temp.setPoints("to be added");
-            ip[i] = temp;
+            ip[0] = temp;
+
+            return ip;
+
 
         }
 
 
-        return ip;
+
     }
 
     public void aboutYapnak() {

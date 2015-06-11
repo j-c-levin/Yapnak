@@ -45,17 +45,55 @@
 
         <activity
             android:name="com.uq.yapnak.MapPane"
-            android:label="Yapnak">
+            android:label="Yapnak"
+            android:parentActivityName="com.uq.yapnak.MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainActivity" />
 
          </activity>
 
         <activity
             android:name="com.frontend.yapnak.maps.features.MapActivity"
-            android:label="@string/map_activity" >
+            android:label="@string/map_activity"
+            android:parentActivityName="com.uq.yapnak.MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainActivity" />
+
         </activity>
 
         <activity
-            android:name="com.frontend.yapnak.rate.RateActivity">
+            android:name="com.uq.yapnak.MoreInfo"
+            android:label="Additional Info"
+            android:parentActivityName="com.uq.yapnak.MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainActivity" />
+
+        </activity>
+
+        <activity android:name=".MainActivity$Feedback"
+            android:label="Feedback"
+            android:parentActivityName="com.uq.yapnak.MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainActivity" />
+
+        </activity>
+
+        <activity
+            android:name="com.frontend.yapnak.rate.RateActivity"
+            android:parentActivityName="com.uq.yapnak.MainActivity">
+
+
+           <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.uq.yapnak.MainActivity" />
         </activity>
 
         <receiver
