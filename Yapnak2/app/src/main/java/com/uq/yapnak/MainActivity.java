@@ -40,11 +40,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ResultCallback<People.LoadPeopleResult> {
     private static final int NOTIFICATION_ID = 0;
 
 
@@ -86,6 +88,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private FloatingActionButton actionButton;
     private ListView deals;
 
+    private String firstName;
+    private String lastName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,28 +100,40 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
-        //showNotification();
-        //setContentView(R.layout.activity_main);
-
-        //load(); commented out because the code is being called from SQLConnectAsyncTask
         setContentView(R.layout.activity_main1);
         navBarToggle();
         navigationBarContent();
-        /*recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        floatButton();
-        */
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.d("Location", "onConnected");
+        Log.d("debug", "onConnected");
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
-            Log.d("Location", "Location Found: " + mLastLocation.toString());
+            Log.d("debug", "Location Found: " + mLastLocation.toString());
             new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
+        }
+        Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
+    }
+
+    @Override
+    public void onResult(People.LoadPeopleResult loadPeopleResult) {
+        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+            Person user = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            if (user.getName().hasGivenName()) {
+                firstName = user.getName().getGivenName();
+                Log.d("debug", firstName);
+            }
+            if (user.getName().hasFamilyName()) {
+                lastName = user.getName().getFamilyName();
+                Log.d("debug", lastName);
+            }
+        }
+        else {
+            Log.d("debug", "failed");
         }
     }
 
@@ -523,6 +540,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 */
     }
+
+
 
 
 

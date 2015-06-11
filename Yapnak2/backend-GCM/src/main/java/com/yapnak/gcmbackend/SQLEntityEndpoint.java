@@ -8,7 +8,6 @@ import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.oauth.OAuthRequestException;
-import com.google.appengine.api.users.User;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.cmd.Query;
@@ -44,9 +43,7 @@ import static com.googlecode.objectify.ObjectifyService.ofy;
                 packagePath = ""
         ),
         scopes = {Constants.EMAIL_SCOPE},
-        clientIds = {Constants.WEB_CLIENT_ID,
-                Constants.ANDROID_CLIENT_ID,
-                com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID},
+        clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID},
         audiences = {Constants.ANDROID_AUDIENCE})
 
 public class SQLEntityEndpoint {
@@ -73,8 +70,10 @@ public class SQLEntityEndpoint {
             name = "getClients",
             path = "sQLEntity_clients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLEntity get(User user, @Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
-        if (user == null) { throw new OAuthRequestException("User is not valid");}
+    public SQLEntity get(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
+/*        if (user == null) {
+            throw new OAuthRequestException("User is not valid " + user);
+        }*/
         Connection connection;
         double distance = 0.02;
         ArrayList<SQLEntity> list2 = new ArrayList();

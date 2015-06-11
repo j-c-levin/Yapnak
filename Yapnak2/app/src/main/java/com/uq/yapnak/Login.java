@@ -54,6 +54,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
                 .addScope(new Scope("profile"))
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
         SignInButton gSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
         gSignInButton.setSize(SignInButton.SIZE_WIDE);
@@ -74,7 +76,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                 //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
                 Intent i = new Intent(Login.this, MainActivity.class);
                 v.getContext().startActivity(i);
-//                  userItems();
                 finish();
             }
         });
@@ -87,7 +88,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
         Intent i = new Intent(this, MainActivity.class);
-//        Intent i = new Intent(this, MapPane.class);
         startActivity(i);
     }
 

@@ -18,6 +18,9 @@ android {
     }
     productFlavors {
     }
+    defaultConfig {
+        multiDexEnabled true
+    }
 }
 
 dependencies {
@@ -27,6 +30,5 @@ dependencies {
     compile 'com.oguzdev:CircularFloatingActionMenu:1.0.2'
     compile 'com.pkmmte.view:circularimageview:1.1'
     compile project(path: ':backend-GCM', configuration: 'android-endpoints')
-    compile files('libs/mysql-connector-java-5.1.35-bin.jar')
-    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'com.google.android.gms:play-services:7.5.0'
 }
