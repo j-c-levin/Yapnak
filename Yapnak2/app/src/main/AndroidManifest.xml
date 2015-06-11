@@ -67,7 +67,7 @@
 
         <activity
             android:name="com.uq.yapnak.MoreInfo"
-            android:label="AdditionalInfo"
+            android:label="Additional Info"
             android:parentActivityName="com.uq.yapnak.MainActivity">
 
             <meta-data

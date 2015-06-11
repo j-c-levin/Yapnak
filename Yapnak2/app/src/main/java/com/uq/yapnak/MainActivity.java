@@ -216,40 +216,31 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_feedback) {
 
-            setContentView(R.layout.feedback_activity);
+          try {
+              setContentView(R.layout.feedback_activity);
+              submitButton = (Button) findViewById(R.id.submitButton);
+              cancelButton = (Button) findViewById(R.id.cancelButton);
 
 
+              cancelButton.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                       showMain();
+                  }
+              });
 
 
-            submitButton = (Button) findViewById(R.id.submitButton);
-            cancelButton = (Button) findViewById(R.id.cancelButton);
+              submitButton.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
+                      showMain();
+                  }
+              });
 
-
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    showMain();
-
-
-                }
-            });
-
-
-
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                        Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-                        showMain();
-
-
-
-
-                }
-            });
-
+          }catch(Exception e){
+              Toast.makeText(getApplicationContext(), "You are currently in feedback window", Toast.LENGTH_SHORT).show();
+          }
 
 
             return true;
@@ -284,6 +275,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //view the main activitiy - clean up code and make it simpler
 
     private void showMain(){
+
         load(sql);
         navBarToggle();
         navigationBarContent();
@@ -364,8 +356,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //Extend info: Rate,like and Take Me There
         LinearLayout layout = (LinearLayout) v.findViewById(R.id.extendHeight);
 
-        if (layout.getHeight() != 500) {
-            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 500));
+        if (layout.getHeight() != 600) {
+            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 600));
         } else {
 
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
