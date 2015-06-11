@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="false"
+    android:id="@+id/mainContainer">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:id="@+id/subContainer"
+    android:background="@color/lightBrown">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/linearLayout">
+
+        <RatingBar
+            android:layout_width="52dp"
+            android:layout_height="50dp"
+            android:id="@+id/avgRating"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:numStars="1" />
+
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="20dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/avgRatingText"
+            android:layout_gravity="right"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/logo"
+        android:src="@drawable/ic_heat"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="20dp" />
+
+    <TextView
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Deal Info"
+        android:id="@+id/info"
+        android:layout_alignTop="@+id/logo"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
+
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/commentsSection"
+        android:layout_below="@+id/furtherInfo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="27dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Comments"
+                android:textSize="15sp"
+
+            />
+
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="170dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:background="@color/ripple_material_light"
+        android:id="@+id/furtherInfo"
+        android:layout_marginTop="41dp"
+        android:layout_below="@+id/subContainer"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

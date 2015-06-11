@@ -43,6 +43,22 @@ public class Feedback extends DialogFragment implements View.OnClickListener {
         }
     }
 
+    public void setCancel(Button cancel){
+        this.cancel=cancel;
+    }
+
+    private Button getCancel(){
+
+        return this.cancel;
+    }
+
+    public void setSubmit(Button submit){
+        this.submit=submit;
+    }
+    private Button getSubmit(){
+        return this.submit;
+    }
+
 
 
 }

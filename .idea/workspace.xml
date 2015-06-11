@@ -2,12 +2,54 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="714a2527-e07d-4d7e-b736-750361c234d4" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/res/drawable/mcdonalds.png" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/app.iml" afterPath="$PROJECT_DIR$/Yapnak2/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/build.gradle" afterPath="$PROJECT_DIR$/Yapnak2/app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/res/values/color.xml" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/res/values/color.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/res/layout/item.xml" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/res/layout/item.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/res/menu/menu_main.xml" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/res/menu/menu_main.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Yapnak2/Yapnak2.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Yapnak2/app/app.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/backend-GCM.iml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/libs/backend-GCM-android-endpoints.jar" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/libs/backend-GCM-android-endpoints.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/client-libs/messaging-v1-java.zip" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/client-libs/messaging-v1-java.zip" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/client-libs/registration-v1-java.zip" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/client-libs/registration-v1-java.zip" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/client-libs/sQLEntityApi-v1-java.zip" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/client-libs/sQLEntityApi-v1-java.zip" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/model/CollectionResponseRegistrationRecord.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/model/CollectionResponseRegistrationRecord.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/model/CollectionResponseRegistrationRecord.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/model/CollectionResponseRegistrationRecord.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/model/CollectionResponseSQLEntity.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/model/CollectionResponseSQLEntity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/model/CollectionResponseSQLEntity.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/model/CollectionResponseSQLEntity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/java/com/uq/yapnak/Feedback.java" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/java/com/uq/yapnak/Feedback.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/java/com/frontend/yapnak/ItemPrev.java" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/java/com/frontend/yapnak/ItemPrev.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/_appengineEndpointsAndroidArtifact/MANIFEST.MF" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/_appengineEndpointsAndroidArtifact/MANIFEST.MF" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/java/com/uq/yapnak/MainActivity.java" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/java/com/uq/yapnak/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/Messaging.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/Messaging.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/Messaging.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/Messaging.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/MessagingRequest.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/MessagingRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/MessagingRequest.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/MessagingRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/MessagingRequestInitializer.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/MessagingRequestInitializer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/MessagingRequestInitializer.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/MessagingRequestInitializer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/MessagingScopes.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/messaging/MessagingScopes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/MessagingScopes.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/messaging-v1-java.zip-unzipped/messaging/src/main/java/com/yapnak/gcmbackend/messaging/MessagingScopes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/Registration.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/Registration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/Registration.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/Registration.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/model/RegistrationRecord.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/model/RegistrationRecord.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/model/RegistrationRecord.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/model/RegistrationRecord.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/RegistrationRequest.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/RegistrationRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/RegistrationRequest.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/RegistrationRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/RegistrationRequestInitializer.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/RegistrationRequestInitializer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/RegistrationRequestInitializer.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/RegistrationRequestInitializer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/RegistrationScopes.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/registration/RegistrationScopes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/RegistrationScopes.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/registration-v1-java.zip-unzipped/registration/src/main/java/com/yapnak/gcmbackend/registration/RegistrationScopes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/model/SQLEntity.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/model/SQLEntity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/model/SQLEntity.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/model/SQLEntity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApi.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApi.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApi.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApi.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequest.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequest.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequestInitializer.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequestInitializer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequestInitializer.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiRequestInitializer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiScopes.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/generated-source/endpoints/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiScopes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiScopes.java" afterPath="$PROJECT_DIR$/Yapnak2/backend-GCM/build/tmp/appengineEndpointsExpandClientLibs/sQLEntityApi-v1-java.zip-unzipped/sQLEntityApi/src/main/java/com/yapnak/gcmbackend/sQLEntityApi/SQLEntityApiScopes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/.idea/gradle.xml" afterPath="$PROJECT_DIR$/Yapnak2/.idea/gradle.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/res/layout/login_activity.xml" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/res/layout/login_activity.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/.idea/misc.xml" afterPath="$PROJECT_DIR$/Yapnak2/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Yapnak2/app/src/main/res/layout/navigationbar_main.xml" afterPath="$PROJECT_DIR$/Yapnak2/app/src/main/res/layout/navigationbar_main.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Yapnak.iws" />
@@ -63,6 +105,9 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -77,9 +122,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -195,7 +237,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="819" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="819" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -203,7 +245,7 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32716927" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
