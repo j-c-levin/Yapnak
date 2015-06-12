@@ -71,8 +71,8 @@ body {
 
   Connection connection = null;
 
-                Class.forName("com.mysql.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
             String sql = "SELECT clientName,clientFoodStyle,clientOffer,clientPhoto FROM client WHERE email = ?";
                             PreparedStatement stmt = connection.prepareStatement(sql);
                             stmt.setString(1, (String)request.getSession().getAttribute("email"));
