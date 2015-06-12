@@ -20,6 +20,16 @@ public class SQLEntity {
     String name;
     String offer;
     String photo;
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    double rating;
     List list;
 
     public List<SQLEntity> getList() {

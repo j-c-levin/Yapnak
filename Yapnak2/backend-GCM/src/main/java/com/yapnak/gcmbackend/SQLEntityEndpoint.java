@@ -90,7 +90,7 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+                String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = x - distance;
                 stmt.setDouble(1, t);
@@ -114,6 +114,7 @@ public class SQLEntityEndpoint {
                     sql.setY(rs.getDouble("clientY"));
                     sql.setFoodStyle(rs.getString("clientFoodStyle"));
                     sql.setPhoto(rs.getString("clientPhoto"));
+                    sql.setRating((rs.getDouble("rating")));
                     list2.add(sql);
                     logger.info("found client: " + rs.getString("clientName"));
                 }
