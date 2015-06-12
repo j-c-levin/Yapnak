@@ -31,9 +31,9 @@ public class autologin implements Filter {
         //TODO: Check cookies and put this into index
         Cookie[] cookies = req.getCookies();
         if (cookies == null) {
-            resp.sendRedirect(contextPath + "/index.jsp"); //or page where you want to redirect
+            resp.sendRedirect(contextPath + "/login.jsp"); //or page where you want to redirect
         }
-        fc.doFilter(request, response);
+        resp.sendRedirect(contextPath + "/login"); //or page where you want to redirect
     }
 
     public void destroy() {

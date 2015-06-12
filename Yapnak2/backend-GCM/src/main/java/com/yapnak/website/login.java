@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by Joshua on 08/06/2015.
@@ -80,7 +81,7 @@ public class login extends HttpServlet {
             e.printStackTrace();
             return;
         }
-        //TODO: Check cookies and put this into index
+
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
             out.println("cookies found");
@@ -108,23 +109,16 @@ public class login extends HttpServlet {
                     if (hash.equals(hashPassword(x))) {
                         //login
                         out.println("Login with cookies successful!");
+                        HttpSession session = req.getSession();
+                        session.setAttribute("email", email);
                         resp.setHeader("Refresh", "3; url=/client.jsp");
                     } else {
-                        //delete cookie and go through normal authentication
-                        out.println("Cookies failed, deleting");
-                        cookies[0].setMaxAge(0);
-                        cookies[1].setMaxAge(0);
-                        resp.addCookie(cookies[0]);
-                        resp.addCookie(cookies[1]);
+                        //go through normal authentication
                     }
                 }
-                //delete cookie and go through normal authentication
+
                 else {
-                    out.println("Salt not found");
-                    cookies[0].setMaxAge(0);
-                    cookies[1].setMaxAge(0);
-                    resp.addCookie(cookies[0]);
-                    resp.addCookie(cookies[1]);
+                    //go through normal authentication
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -189,6 +183,8 @@ public class login extends HttpServlet {
                                     out.println("cookies added");
                                 }
                                 //TODO: Add the client page
+                                HttpSession session = req.getSession();
+                                session.setAttribute("email", email);
                                 resp.setHeader("Refresh", "3; url=/client.jsp");
                             } else {
                                 out.println("Incorrect login.");

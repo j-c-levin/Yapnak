@@ -11,4 +11,5 @@
         <property name="gcm.api.key" value="AIzaSyC07-8rHsVyVzCqGU-yac4cKpqdeEBZHhA" />
     </system-properties>
     <use-google-connector-j>true</use-google-connector-j>
+    <sessions-enabled>true</sessions-enabled>
 </appengine-web-app>
