@@ -30,10 +30,21 @@ public class autologin implements Filter {
 
         //TODO: Check cookies and put this into index
         Cookie[] cookies = req.getCookies();
-        if (cookies == null) {
-            resp.sendRedirect(contextPath + "/login.jsp"); //or page where you want to redirect
+        boolean l = false;
+        boolean j = false;
+        for (int i = 0; i < cookies.length; i++) {
+            if (cookies[i].getName().equals("com.yapnak.email")) {
+                l = true;
+            } else if (cookies[i].getName().equals("com.yapnak.hash")) {
+                j = true;
+            }
         }
-        resp.sendRedirect(contextPath + "/login"); //or page where you want to redirect
+        if (l || j) {
+            resp.sendRedirect(contextPath + "/login"); //or page where you want to redirect
+        }
+        else {
+            fc.doFilter(request, response);
+        }
     }
 
     public void destroy() {

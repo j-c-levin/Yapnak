@@ -4,6 +4,14 @@
     xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+    <filter>
+        <filter-name>autologin</filter-name>
+        <filter-class>com.yapnak.website.autologin</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>autologin</filter-name>
+        <url-pattern>/login.jsp</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>update</servlet-name>
         <servlet-class>com.yapnak.website.update</servlet-class>
