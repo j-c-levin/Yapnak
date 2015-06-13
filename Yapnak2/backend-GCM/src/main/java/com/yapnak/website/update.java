@@ -38,31 +38,39 @@ public class update extends HttpServlet {
         }
 
         try {
-            Connection conn = DriverManager.getConnection(url);
             try {
                 String name = req.getParameter("name");
+                if (name.equals("")) {
+                    name = (String) session.getAttribute("name");
+                }
                 String type = req.getParameter("type");
+                if (type.equals("")) {
+                    type = (String) session.getAttribute("type");
+                }
 //                String address = req.getParameter("address");
                 String deal = req.getParameter("deal");
-                String sql = "UPDATE client SET clientName = ?, clientFoodStyle = ?, clientOffer = ? WHERE email = ?";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setString(1, name);
-                stmt.setString(2, type);
-                stmt.setString(3, deal);
-                stmt.setString(4, (String)session.getAttribute("email"));
-                int success = 2;
-                success = stmt.executeUpdate();
-                if (success == 1) {
-                    //success
-                    out.print("successfully updated");
-                    resp.setHeader("Refresh", "3; url=/client.jsp");
+                if (deal.equals("")) {
+                    deal = (String) session.getAttribute("deal");
                 }
-                else {
-                    out.print("failed to update");
-                    resp.setHeader("Refresh", "3; url=/client.jsp");
-                }
+                out.print(name + " " + type + " " + deal + " ");
+                    String sql = "UPDATE client SET clientName = ?, clientFoodStyle = ?, clientOffer = ? WHERE email = ?";
+                    PreparedStatement stmt = connection.prepareStatement(sql);
+                    stmt.setString(1, name);
+                    stmt.setString(2, type);
+                    stmt.setString(3, deal);
+                    stmt.setString(4, (String) session.getAttribute("email"));
+                    int success = 2;
+                    success = stmt.executeUpdate();
+                    if (success == 1) {
+                        //success
+                        out.print("successfully updated");
+                        resp.setHeader("Refresh", "3; url=/client.jsp");
+                    } else {
+                        out.print("failed to update");
+                        resp.setHeader("Refresh", "3; url=/client.jsp");
+                    }
             } finally {
-                conn.close();
+                connection.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -70,43 +70,49 @@ body {
   String email = null;
 
   Connection connection = null;
-
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
                 Class.forName("com.mysql.jdbc.GoogleDriver");
                 connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+
             String sql = "SELECT clientName,clientFoodStyle,clientOffer,clientPhoto FROM client WHERE email = ?";
                             PreparedStatement stmt = connection.prepareStatement(sql);
                             stmt.setString(1, (String)request.getSession().getAttribute("email"));
                             ResultSet rs = null;
                             rs = stmt.executeQuery();
             rs.next();
+            request.getSession().setAttribute("name", rs.getString("clientName"));
+            request.getSession().setAttribute("type", rs.getString("clientFoodStyle"));
+            request.getSession().setAttribute("deal", rs.getString("clientOffer"));
   %>
 
     <form action="/update" method="post">
   <div class="form-signin">
     <label for="exampleInputEmail1">Restaurant Name</label>
-    <input type="text" class="form-control" id="name" placeholder="<%= rs.getString("clientName") %>">
+    <input type="text" class="form-control" name="name" id="name" placeholder="<%= rs.getString("clientName") %>">
   </div>
   <div class="form-signin">
     <label for="exampleInputPassword1">Restaurant Type</label>
-    <input type="text" class="form-control" id="type" placeholder="<%= rs.getString("clientFoodStyle") %>">
+    <input type="text" class="form-control" name="type" id="type" placeholder="<%= rs.getString("clientFoodStyle") %>">
   </div>
     <div class="form-signin">
     <label for="exampleInputPassword1">Address</label>
-    <input type="text" class="form-control" id="address" placeholder="their address here">
+    <input type="text" class="form-control" name="address" id="address" placeholder="their address here">
   </div>
     <div class="form-signin">
     <label for="exampleInputPassword1">Deal text</label><p>
-	<textarea class="form-control" id = "deal" rows="3" placeholder="<%= rs.getString("clientOffer") %>"></textarea>
+	<textarea maxlength="250" class="form-control" name="deal" id = "deal" rows="3" placeholder="<%= rs.getString("clientOffer") %>"></textarea>
   </div>
   <div class="form-signin">
     <label for="exampleInputFile">Logo</label>
-    <input type="file" id="exampleInputFile">
+    <input type="file" name="image" id="image">
     <p class="help-block">Example block-level help text here.</p>
-  </div>
-  <div class="form-signin">
-    <label>
-      <input type="checkbox"> Update
-    </label>
   </div>
   <div class ="form-signin">
   <button type="submit" class="btn btn-default">Submit</button>

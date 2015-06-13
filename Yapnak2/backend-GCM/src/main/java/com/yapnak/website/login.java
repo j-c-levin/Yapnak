@@ -83,19 +83,18 @@ public class login extends HttpServlet {
         }
 
         Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            out.println("cookies found");
-            //work out which cookie holds what
-            String email = null;
-            String hash = null;
-            for (int i = 0; i < cookies.length; i++) {
-                if (cookies[i].getName().equals("email")) {
-                    email = cookies[i].getValue();
-                }
-                else if (cookies[i].getName().equals("hash")) {
-                    hash = cookies[i].getValue();
-                }
+        //work out which cookie holds what
+        String email = null;
+        String hash = null;
+        for (int i = 0; i < cookies.length; i++) {
+            if (cookies[i].getName().equals("com.yapnak.email")) {
+                out.println("cookies found");
+                email = cookies[i].getValue();
+            } else if (cookies[i].getName().equals("com.yapnak.hash")) {
+                hash = cookies[i].getValue();
             }
+        }
+        if (email != null || hash != null) {
             out.println("email: " + email + " hash: " + hash);
             try {
                 String sql = "SELECT salt,password FROM client WHERE email = ?";
@@ -115,9 +114,7 @@ public class login extends HttpServlet {
                     } else {
                         //go through normal authentication
                     }
-                }
-
-                else {
+                } else {
                     //go through normal authentication
                 }
             } catch (SQLException e) {
@@ -126,7 +123,7 @@ public class login extends HttpServlet {
         } else {
             try {
                 try {
-                    String email = req.getParameter("username");
+                    email = req.getParameter("username");
                     String password = req.getParameter("password");
                     if (email == "" || password == "") {
                         out.println(
@@ -172,9 +169,9 @@ public class login extends HttpServlet {
                                         }
                                     }
                                     //Use created salt
-                                    Cookie part1 = new Cookie("email", email);
+                                    Cookie part1 = new Cookie("com.yapnak.email", email);
                                     String x = email + hashPassword(password) + rs.getString("salt");
-                                    Cookie part2 = new Cookie("hash", hashPassword(x));
+                                    Cookie part2 = new Cookie("com.yapnak.hash", hashPassword(x));
                                     int time = 60 * 60 * 24 * 7;
                                     part1.setMaxAge(time);
                                     part2.setMaxAge(time);
