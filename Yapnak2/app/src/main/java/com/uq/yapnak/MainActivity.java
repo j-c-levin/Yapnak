@@ -35,7 +35,6 @@ import com.frontend.yapnak.ItemPrev;
 import com.frontend.yapnak.maps.features.MapActivity;
 import com.frontend.yapnak.navigationdrawer.NavBarItem;
 import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
-import com.frontend.yapnak.rate.RateActivity;
 import com.frontend.yapnak.rate.RatingDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -777,10 +776,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(SQLEntity sql) {
 
-
-
         try{
-
 
             ip = new ItemPrev[sql.getList().size()];
 

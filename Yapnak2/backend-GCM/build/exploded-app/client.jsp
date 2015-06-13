@@ -2,6 +2,13 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="com.google.appengine.api.utils.SystemProperty" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobKey" %>
+<%@ page import="com.google.appengine.api.images.ServingUrlOptions" %>
+<%@ page import="com.google.appengine.api.images.ImagesService" %>
+<%@ page import="com.google.appengine.api.images.ImagesServiceFactory" %>
+<%@ page import="com.google.appengine.api.images.Image" %>
 
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -67,6 +74,9 @@ body {
   <body>
 
   <%
+
+  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+
   String email = null;
 
   Connection connection = null;
@@ -90,9 +100,10 @@ body {
             request.getSession().setAttribute("name", rs.getString("clientName"));
             request.getSession().setAttribute("type", rs.getString("clientFoodStyle"));
             request.getSession().setAttribute("deal", rs.getString("clientOffer"));
+            request.getSession().setAttribute("image", rs.getString("clientPhoto"));
   %>
 
-    <form action="/update" method="post">
+    <form action="<%= blobstoreService.createUploadUrl("/update") %>" method="post" enctype="multipart/form-data">
   <div class="form-signin">
     <label for="exampleInputEmail1">Restaurant Name</label>
     <input type="text" class="form-control" name="name" id="name" placeholder="<%= rs.getString("clientName") %>">
@@ -109,10 +120,24 @@ body {
     <label for="exampleInputPassword1">Deal text</label><p>
 	<textarea maxlength="250" class="form-control" name="deal" id = "deal" rows="3" placeholder="<%= rs.getString("clientOffer") %>"></textarea>
   </div>
+  <%
+  String url = null;
+  if (!rs.getString("clientPhoto").equals("")) {
+  ImagesService services = ImagesServiceFactory.getImagesService();
+  ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
+  url = services.getServingUrl(serve);
+  }
+  else {
+  url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+  }
+  %>
+  <div class="form-signin">
+  <img src=<%=url%>>
+  </div>
   <div class="form-signin">
     <label for="exampleInputFile">Logo</label>
     <input type="file" name="image" id="image">
-    <p class="help-block">Example block-level help text here.</p>
+    <p class="help-block">Please keep your image size small and wait a few seconds for it to upload before submitting.</p>
   </div>
   <div class ="form-signin">
   <button type="submit" class="btn btn-default">Submit</button>
