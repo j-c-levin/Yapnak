@@ -103,23 +103,29 @@ body {
             request.getSession().setAttribute("image", rs.getString("clientPhoto"));
   %>
 
-    <form action="<%= blobstoreService.createUploadUrl("/update") %>" method="post" enctype="multipart/form-data">
+<form action="/update" method="post">
   <div class="form-signin">
     <label for="exampleInputEmail1">Restaurant Name</label>
     <input type="text" class="form-control" name="name" id="name" placeholder="<%= rs.getString("clientName") %>">
   </div>
   <div class="form-signin">
-    <label for="exampleInputPassword1">Restaurant Type</label>
+  <label for="exampleInputPassword1">Restaurant Type</label>
     <input type="text" class="form-control" name="type" id="type" placeholder="<%= rs.getString("clientFoodStyle") %>">
   </div>
-    <div class="form-signin">
+  <div class="form-signin">
     <label for="exampleInputPassword1">Address</label>
     <input type="text" class="form-control" name="address" id="address" placeholder="their address here">
   </div>
-    <div class="form-signin">
+  <div class="form-signin">
     <label for="exampleInputPassword1">Deal text</label><p>
 	<textarea maxlength="250" class="form-control" name="deal" id = "deal" rows="3" placeholder="<%= rs.getString("clientOffer") %>"></textarea>
   </div>
+  <div class ="form-signin">
+      <button type="submit" class="btn btn-default">Update information</button>
+  </div>
+  </form>
+
+
   <%
   String url = null;
   if (!rs.getString("clientPhoto").equals("")) {
@@ -131,6 +137,8 @@ body {
   url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
   }
   %>
+
+  <form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
   <div class="form-signin">
   <img src=<%=url%>>
   </div>
@@ -140,7 +148,7 @@ body {
     <p class="help-block">Please keep your image size small and wait a few seconds for it to upload before submitting.</p>
   </div>
   <div class ="form-signin">
-  <button type="submit" class="btn btn-default">Submit</button>
+  <button type="submit" class="btn btn-default">Update image</button>
   </div>
 </form>
 

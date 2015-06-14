@@ -12,6 +12,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <filter-name>autologin</filter-name>
         <url-pattern>/login.jsp</url-pattern>
     </filter-mapping>
+
+    <servlet>
+        <servlet-name>photoUpload</servlet-name>
+        <servlet-class>com.yapnak.website.uploadPhoto</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>photoUpload</servlet-name>
+        <url-pattern>/upload</url-pattern>
+    </servlet-mapping>
     <servlet>
         <servlet-name>update</servlet-name>
         <servlet-class>com.yapnak.website.update</servlet-class>
@@ -36,6 +45,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>login</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+
     <filter>
         <filter-name>ObjectifyFilter</filter-name>
         <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>
