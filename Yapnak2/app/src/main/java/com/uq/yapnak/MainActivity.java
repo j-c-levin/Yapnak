@@ -269,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         }
 
-        if (id == R.id.menu_sign_out) {
+        else if (id == R.id.menu_sign_out) {
             if (mGoogleApiClient.isConnected()) {
 // Prior to disconnecting, run clearDefaultAccount().
                 Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);

@@ -1,5 +1,6 @@
 package com.frontend.yapnak;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.uq.yapnak.R;
 
 /**
@@ -16,6 +17,7 @@ public class ItemPrev {
     private final String loyaltyPointsTitle= "Loyalty Points";
     private int locationIcon;
     private String restaurantName;
+    
 
 
     public ItemPrev(){
