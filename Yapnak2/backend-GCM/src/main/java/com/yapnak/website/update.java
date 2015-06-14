@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class update extends HttpServlet {
+
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String url = null;
@@ -64,10 +65,10 @@ public class update extends HttpServlet {
                     if (success == 1) {
                         //success
                         out.print("successfully updated");
-                        resp.setHeader("Refresh", "3; url=/client.jsp");
+                        resp.setHeader("Refresh", "0; url=/client.jsp");
                     } else {
                         out.print("failed to update");
-                        resp.setHeader("Refresh", "3; url=/client.jsp");
+                        resp.setHeader("Refresh", "0; url=/client.jsp");
                     }
             } finally {
                 connection.close();

@@ -181,7 +181,7 @@ public class login extends HttpServlet {
                                 //TODO: Add the client page
                                 HttpSession session = req.getSession();
                                 session.setAttribute("email", email);
-                                resp.setHeader("Refresh", "3; url=/client.jsp");
+                                resp.setHeader("Refresh", "0; url=/client.jsp");
                             } else {
                                 out.println("Incorrect login.");
                                 resp.setHeader("Refresh", "3; url=/index.jsp");
@@ -249,7 +249,7 @@ public class login extends HttpServlet {
                         out.println("Login with cookies successful!");
                         HttpSession session = req.getSession();
                         session.setAttribute("email", email);
-                        resp.setHeader("Refresh", "3; url=/client.jsp");
+                        resp.setHeader("Refresh", "0; url=/client.jsp");
                     } else {
                         //go through normal authentication
                     }
@@ -321,14 +321,14 @@ public class login extends HttpServlet {
                                 //TODO: Add the client page
                                 HttpSession session = req.getSession();
                                 session.setAttribute("email", email);
-                                resp.setHeader("Refresh", "3; url=/client.jsp");
+                                resp.setHeader("Refresh", "0; url=/client.jsp");
                             } else {
                                 out.println("Incorrect login.");
-                                resp.setHeader("Refresh", "3; url=/index.jsp");
+                                resp.setHeader("Refresh", "0; url=/index.jsp");
                             }
                         } else {
                             out.println("LOGIN FAILED!!!");
-                            resp.setHeader("Refresh", "3; url=/index.jsp");
+                            resp.setHeader("Refresh", "0; url=/index.jsp");
                         }
                     }
                 } finally {
