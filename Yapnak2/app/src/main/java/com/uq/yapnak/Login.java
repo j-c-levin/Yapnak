@@ -1,6 +1,8 @@
 package com.uq.yapnak;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
@@ -26,6 +29,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
     private Button loginButton;
     private EditText promo;
     private MenuItem itemMen;
+    private FragmentManager fragmentManager;
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
@@ -66,18 +70,38 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         promo = (EditText) findViewById(R.id.promoBox);
 
         loginButton = (Button) findViewById(R.id.loginButton);
+        fragmentManager = getFragmentManager();
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] details = {initials.getText().toString() + phone.getText().toString().substring(7), phone.getText().toString(), promo.getText().toString()};
-                //new UserLoginAsyncTask(getApplicationContext(), details).execute();
-                //note: the details argument has been removed and probably won't be re-added.
-                //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
-                Intent i = new Intent(Login.this, MainActivity.class);
-                i.putExtra("initials",initials.getText().toString());
-                v.getContext().startActivity(i);
-                finish();
+
+             try {
+                 String[] details = {initials.getText().toString() + phone.getText().toString().substring(7), phone.getText().toString(), promo.getText().toString()};
+                 //new UserLoginAsyncTask(getApplicationContext(), details).execute();
+                 //note: the details argument has been removed and probably won't be re-added.
+                 //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
+
+
+                 Intent i = new Intent(Login.this, MainActivity.class);
+                 i.putExtra("initials", initials.getText().toString());
+                 v.getContext().startActivity(i);
+                 finish();
+
+             }catch(StringIndexOutOfBoundsException e){
+
+                 ErrorDialog error = new ErrorDialog();
+
+                 error.show(fragmentManager,"error");
+
+
+             }
+
+
+
+
+
             }
         });
         new GcmRegistrationAsyncTask(this).execute();

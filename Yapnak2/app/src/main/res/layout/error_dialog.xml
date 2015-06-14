@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Please Enter The Correct Login Information"
+        android:layout_margin="10dp"
+        android:id="@+id/infoAboutLogin"
+        android:layout_gravity="center"
+        android:layout_weight="0.02" />
+
+    <TextView
+        android:layout_width="296dp"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="If you haven't registered,
+please select the red button below to register."
+        android:id="@+id/additionalErrorInfo" />
+
+
+</LinearLayout>
