@@ -17,7 +17,8 @@ public class ItemPrev {
     private final String loyaltyPointsTitle= "Loyalty Points";
     private int locationIcon;
     private String restaurantName;
-    
+
+
 
 
     public ItemPrev(){

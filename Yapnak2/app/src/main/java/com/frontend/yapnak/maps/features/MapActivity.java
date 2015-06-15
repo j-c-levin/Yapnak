@@ -2,6 +2,7 @@ package com.frontend.yapnak.maps.features;
 
 
 import android.content.Intent;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.uq.yapnak.GPSTrack;
 import com.uq.yapnak.R;
 
 import org.apache.http.HttpEntity;
@@ -36,11 +38,15 @@ import java.io.InputStream;
  * Created by vahizan on 26/05/2015.
  */
 public class MapActivity extends ActionBarActivity implements View.OnClickListener{
-    private String location;
+    private double latitude;
+    private double longitude;
     private GoogleMap googleMap;
     private String restaurant;
     private LatLng startPosition,destPosition;
     private EditText startAddressText,endAddressText;
+
+
+
 
 
 
@@ -51,12 +57,16 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
         setContentView(R.layout.map_activity);
 
-       /* Intent mapIntent = getIntent();
 
-        location= mapIntent.getExtras().getString("LocationIntent");
 
-        restaurant= mapIntent.getExtras().getString("RestaurantNameIntent");
-        */
+        Intent mapIntent = getIntent();
+
+        latitude= mapIntent.getExtras().getDouble("latitude");
+
+        longitude= mapIntent.getExtras().getDouble("longitude");
+
+
+
 
 
         startAddressText = (EditText)findViewById(R.id.directionsFrom);
@@ -118,16 +128,21 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            String uriString = "http://maps.google.com/maps?addr=" + startPosition.latitude +
-                    ","+ startPosition.longitude
-                    + "&daddr="
-                    + destPosition.latitude
-                    + ","
-                    + destPosition.longitude;
 
-            Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
 
-            startActivity(mapIntent);
+
+                String uriString = "http://maps.google.com/maps?addr=" + startPosition.latitude +
+                        "," + startPosition.longitude
+                        + "&daddr="
+                        + destPosition.latitude
+                        + ","
+                        + destPosition.longitude;
+
+                Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
+
+                startActivity(mapIntent);
+
+
 
         }
     }
@@ -200,23 +215,13 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
 
 
-    public void tempMethod(String loc,String res){
 
-        TextView location = (TextView) findViewById(R.id.location);
-        location.setText(loc);
-
-        TextView restName = (TextView) findViewById(R.id.restaurantName);
-        restName.setText(res);
-
-
-
-    }
 
     @Override
     public void onClick(View v) {
 
 
-        tempMethod(location,restaurant);
+        //tempMethod(location,restaurant);
 
     }
 

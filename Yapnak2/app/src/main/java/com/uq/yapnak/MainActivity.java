@@ -95,6 +95,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private String firstName;
     private String lastName;
 
+    private GPSTrack tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -450,8 +451,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Intent maps = new Intent(this, MapActivity.class);
         final int result = 1;
         this.restaurant = "McDonalds";
-        maps.putExtra("LocationIntent", location);
-        maps.putExtra("RestaurantNameIntent", restaurant);
+
+        tracker = new GPSTrack(MainActivity.this);
+
+        double longitude=0;
+        double latitude=0;
+        if(tracker.canGetLoc()){
+
+            longitude = tracker.getLongitude();
+            latitude = tracker.getLatitude();
+        }
+
+        maps.putExtra("longitude",longitude);
+        maps.putExtra("latitude",latitude);
+        //maps.putExtra("LocationIntent", location);
+        //maps.putExtra("RestaurantNameIntent", restaurant);
         startActivity(maps);
 
     }
