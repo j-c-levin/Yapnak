@@ -1,5 +1,7 @@
 package com.uq.yapnak;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.Notification;
@@ -96,10 +98,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private String lastName;
 
     private GPSTrack tracker;
+    private  LinearLayout extendIcon;
+    private  LinearLayout extendText;
+    private  LinearLayout extendHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -372,12 +380,101 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }*/
 
 
+    private ValueAnimator slideAnimator(int start,int end){
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //Update The Height of the card
+
+                int value= (Integer) animation.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
+                layoutParams.height = value;
+                extendHeight.setLayoutParams(layoutParams);
+            }
+        });
+
+        return animator;
+    }
+
+    public void extend(){
+
+        extendIcon.setVisibility(View.VISIBLE);
+        extendText.setVisibility(View.VISIBLE);
+
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+
+        extendHeight.measure(widthSpec,heightSpec);
+
+        ValueAnimator valueAnimator = slideAnimator(0,extendHeight.getMeasuredHeight());
+        valueAnimator.start();
+
+
+    }
+
+    public void collapse(){
+        int finalHeight = extendHeight.getHeight();
+
+        ValueAnimator animator = slideAnimator(finalHeight,(extendHeight.getHeight()/2));
+
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+                extendIcon.setVisibility(View.GONE);
+                extendText.setVisibility(View.GONE);
+                /*
+                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
+                extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
+                */
+
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        animator.start();
+
+    }
+
     public void extendInfo(View v) {
         //Extend info: Rate,like and Take Me There
-        LinearLayout layout = (LinearLayout) v.findViewById(R.id.extendHeight);
+         extendHeight= (LinearLayout) v.findViewById(R.id.extendHeight);
+         extendIcon =(LinearLayout)v.findViewById(R.id.extendIconLayout);
+         extendText =(LinearLayout)v.findViewById(R.id.extendTextLayout);
 
-        if (layout.getHeight() != 600) {
-            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 600));
+
+
+        if(extendText.getVisibility()==View.GONE && extendIcon.getVisibility() == View.GONE ){
+
+            extend();
+
+
+        }else{
+
+            collapse();
+        }
+
+
+
+    /*    if (layout.getHeight() != 500) {
+            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT*3));
         } else {
 
             layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
@@ -387,6 +484,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         this.location = (String) view.getText().toString();
 
+        */
 
 
           /*

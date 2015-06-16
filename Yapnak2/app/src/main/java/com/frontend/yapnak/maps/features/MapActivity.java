@@ -45,6 +45,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     private LatLng startPosition,destPosition;
     private EditText startAddressText,endAddressText;
     private GPSTrack tracker;
+    private Toast errorToast;
 
 
 
@@ -74,8 +75,13 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
 
 
+        startAddressText = (EditText) findViewById(R.id.directionsFrom);
 
-        startAddressText = (EditText)findViewById(R.id.directionsFrom);
+        if(tracker.canGetLoc()) {
+            String location = tracker.getLatitude()+","+tracker.getLongitude();
+            startAddressText.setText(location);
+        }
+
         endAddressText = (EditText)findViewById(R.id.directionsTo);
 
 
@@ -91,6 +97,9 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         }catch(Exception e){
 
         }
+
+
+        errorToast = Toast.makeText(this,"Please Try Again In Few Seconds",Toast.LENGTH_LONG);
    }
 
     public void getDirections(View view) {
@@ -124,13 +133,19 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         @Override
         protected String doInBackground(String... params) {
 
-            String startAddr = params[0];
-            startAddr = startAddr.replaceAll(" ","%20");
-            getLatLong(startAddr,false);
+            try {
+                String startAddr = params[0];
+                startAddr = startAddr.replaceAll(" ", "%20");
+                getLatLong(startAddr, false);
 
-            String endAddr =params[1];
-            endAddr = endAddr.replaceAll(" ","%20");
-            getLatLong(endAddr,true);
+                String endAddr = params[1];
+                endAddr = endAddr.replaceAll(" ", "%20");
+                getLatLong(endAddr, true);
+
+            }catch(NullPointerException e){
+                errorToast.show();
+
+            }
 
             return null;
         }
