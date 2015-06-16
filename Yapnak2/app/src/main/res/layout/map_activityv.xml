@@ -35,6 +35,14 @@
                     android:hint="To:"
                     android:layout_height="wrap_content"
                     android:id="@+id/directionsTo" />
+
+                <EditText
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:hint="From:"
+                    android:id="@+id/directionsFrom" />
+
             </LinearLayout>
 
 

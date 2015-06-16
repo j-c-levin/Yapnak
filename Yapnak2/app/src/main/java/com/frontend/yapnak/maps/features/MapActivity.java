@@ -44,6 +44,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     private String restaurant;
     private LatLng startPosition,destPosition;
     private EditText startAddressText,endAddressText;
+    private GPSTrack tracker;
 
 
 
@@ -55,8 +56,13 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.map_activity);
+        tracker = new GPSTrack(MapActivity.this);
 
+        if(tracker.canGetLoc()){
+            setContentView(R.layout.map_activityv);
+        }else {
+            setContentView(R.layout.map_activity);
+        }
 
 
         Intent mapIntent = getIntent();
@@ -87,8 +93,14 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         }
    }
 
-    public void getDirections(View view){
-       String startAddr =  startAddressText.getText().toString();
+    public void getDirections(View view) {
+        String  startAddr = startAddressText.getText().toString();
+
+        if(tracker.canGetLoc()) {
+            String loc =tracker.getLatitude()+","+tracker.getLongitude();
+            startAddressText.setText(loc);
+        }
+
        String endAddr = endAddressText.getText().toString() ;
 
         if(startAddr.equalsIgnoreCase("")||endAddr.equalsIgnoreCase("")){
