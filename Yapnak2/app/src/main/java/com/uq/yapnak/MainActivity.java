@@ -122,6 +122,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         getSupportActionBar().setSubtitle(intials);
         setContentView(R.layout.activity_main1);
+
         navBarToggle();
         navigationBarContent();
     }
@@ -202,7 +203,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
 
+
                     load(sql);
+
 
                 }
             });
@@ -222,6 +225,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                     Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
                     load(sql);
+                    //load();
                 }
             });
 
@@ -303,6 +307,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //view the main activitiy - clean up code and make it simpler
 
     private void showMain(){
+
 
         load(sql);
         navBarToggle();
@@ -408,7 +413,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         extendHeight.measure(widthSpec,heightSpec);
 
-        ValueAnimator valueAnimator = slideAnimator(0,extendHeight.getMeasuredHeight());
+        ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(),extendHeight.getMeasuredHeight());
         valueAnimator.start();
 
 
@@ -430,6 +435,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 extendIcon.setVisibility(View.GONE);
                 extendText.setVisibility(View.GONE);
+
                 /*
                 ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
                 extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
@@ -712,18 +718,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }*/
 
-    //commented out because we have code to actually grab information from the database.
-    public void load() {
-/*
-        setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
-        deals = (ListView) findViewById(R.id.listviewMain);
-        deals.setAdapter(dealList);
-
-        deals.setBackgroundResource(R.drawable.customshape);
-
-*/
-    }
 
 
 
@@ -877,6 +871,30 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    //commented out because we have code to actually grab information from the database.
+    public void load() {
+/*
+        setContentView(R.layout.activity_main1);
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setAdapter(dealList);
+
+        deals.setBackgroundResource(R.drawable.customshape);
+
+
+*/
+        setContentView(R.layout.activity_main1);
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setAdapter(dealList);
+        deals.setBackgroundResource(R.drawable.customshape);
+
+
+
+
+    }
+
+
     public void load(SQLEntity sql) {
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
@@ -884,6 +902,83 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setAdapter(dealList);
         deals.setBackgroundResource(R.drawable.customshape);
+    }
+
+    public ItemPrev[] dealList(){
+
+        ip = new ItemPrev[5];
+
+
+
+            ItemPrev temp = new ItemPrev();
+            //TODO:add generic location to database
+            temp.setDistance("100 Metres");
+            //TODO: add photo download from google storage
+            temp.setLogo(R.drawable.mcdonalds);
+            temp.setMainText("Happy Meal");
+            temp.setRestaurantName("Mc Donalds");
+            temp.setSubText("Happy Meal £2");
+            //TODO: points
+            temp.setPoints("to be added");
+            ip[0] = temp;
+
+            ItemPrev temp2 = new ItemPrev();
+            //TODO:add generic location to database
+            temp2.setDistance("1 km");
+            //TODO: add photo download from google storage
+            temp2.setLogo(R.drawable.wrapitup);
+            temp2.setMainText("Burrito Deal");
+            temp2.setRestaurantName("Wrap It Up");
+            temp2.setSubText("Buy 1 Get 1 Free = £4");
+            //TODO: points
+            temp2.setPoints("to be added");
+            ip[1] = temp2;
+
+
+            ItemPrev temp3 = new ItemPrev();
+            //TODO:add generic location to database
+            temp3.setDistance("80 Metres");
+            //TODO: add photo download from google storage
+            temp3.setLogo(R.drawable.pizzaexpresslogo);
+            temp3.setMainText("Any Size Pizza");
+            temp3.setRestaurantName("Pizza Express");
+            temp3.setSubText("Half Price = £4");
+            //TODO: points
+            temp3.setPoints("to be added");
+            ip[2] = temp3;
+
+
+            ItemPrev temp4 = new ItemPrev();
+            //TODO:add generic location to database
+            temp4.setDistance("80 Metres");
+            //TODO: add photo download from google storage
+            temp4.setLogo(R.drawable.gbklogo);
+            temp4.setMainText("Main Meal Deal");
+            temp4.setRestaurantName("Gourmet Burger Kitchen");
+            temp4.setSubText("£10 off Meal - £5");
+            //TODO: points
+            temp4.setPoints("to be added");
+            ip[3] = temp4;
+
+
+            ItemPrev temp5 = new ItemPrev();
+            //TODO:add generic location to database
+            temp5.setDistance("2 km");
+            //TODO: add photo download from google storage
+            temp5.setLogo(R.drawable.tescologo);
+            temp5.setMainText("Meal Deal");
+            temp5.setRestaurantName("Tesco");
+            temp5.setSubText("Sandwich,Drink,Snack = £3 ");
+            //TODO: points
+            temp5.setPoints("to be added");
+            ip[4] = temp5;
+
+
+
+
+
+        return ip;
+
     }
 
     public ItemPrev[] dealList(SQLEntity sql) {
