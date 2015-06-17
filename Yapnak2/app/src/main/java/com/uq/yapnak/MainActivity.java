@@ -120,9 +120,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp = getIntent();
         String intials = temp.getStringExtra("initials");
 
+
         getSupportActionBar().setSubtitle(intials);
         setContentView(R.layout.activity_main1);
-
+       
         navBarToggle();
         navigationBarContent();
     }
@@ -202,10 +203,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
                     load(sql);
-
 
                 }
             });
@@ -225,7 +223,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                     Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
                     load(sql);
-                    //load();
+
+
                 }
             });
 
@@ -886,8 +885,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
         deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
-        deals.setBackgroundResource(R.drawable.customshape);
+        //deals.setBackgroundResource(R.drawable.customshape);
 
 
 
@@ -901,6 +901,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setAdapter(dealList);
+        deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
     }
 

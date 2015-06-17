@@ -5,9 +5,8 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:id="@+id/item2"
-    android:onClick="extendInfo"
-
-    >
+    android:background="#EEEEEE"
+    android:onClick="extendInfo">
 
 
         <LinearLayout
@@ -17,14 +16,15 @@
         android:layout_width="match_parent"
         android:layout_marginBottom="5dp"
         android:padding="5dp"
-        android:background="@color/bright_foreground_inverse_material_light"
+        android:background="@drawable/curved_card"
         android:weightSum="1">
 
-
+            <!--android:background="@color/bright_foreground_inverse_material_light"-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/tempId"
+
             >
 
 

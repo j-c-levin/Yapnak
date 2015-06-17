@@ -84,6 +84,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             restaurantLogo.setImageResource(deal.getLogo());
 
 
+
             //Show Ratings and Comments page with long click;
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
