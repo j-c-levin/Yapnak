@@ -9,6 +9,12 @@
 <%@ page import="com.google.appengine.api.images.ImagesService" %>
 <%@ page import="com.google.appengine.api.images.ImagesServiceFactory" %>
 <%@ page import="com.google.appengine.api.images.Image" %>
+<%@ page import="org.json.simple.JSONObject" %>
+<%@ page import="org.json.simple.parser.JSONParser" %>
+<%@ page import="org.json.simple.JSONArray" %>
+<%@ page import="org.json.simple.parser.ParseException" %>
+<%@page import="java.io.*" %>
+<%@page import="java.net.*" %>
 
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -101,6 +107,26 @@ body {
             request.getSession().setAttribute("type", rs.getString("clientFoodStyle"));
             request.getSession().setAttribute("deal", rs.getString("clientOffer"));
             request.getSession().setAttribute("image", rs.getString("clientPhoto"));
+
+        String recv = "";
+        String recvbuff = "";
+        URL jsonpage = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyDBM6kltuQ1mF_X9XYCseXR9x95uc9fyv4");
+        URLConnection urlcon = jsonpage.openConnection();
+        BufferedReader buffread = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+
+        while ((recv = buffread.readLine()) != null)
+            recvbuff += recv;
+        buffread.close();
+        JSONParser x = new JSONParser();
+        JSONObject j = null;
+        try {
+            j = (JSONObject) x.parse(recvbuff);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        JSONArray array = (JSONArray) j.get("results");
+        JSONObject details = (JSONObject) array.get(0);
+        String t = (String) details.get("formatted_address");
   %>
 
 <form action="/update" method="post">
@@ -114,7 +140,7 @@ body {
   </div>
   <div class="form-signin">
     <label for="exampleInputPassword1">Address</label>
-    <input type="text" class="form-control" name="address" id="address" placeholder="their address here">
+    <input type="text" class="form-control" name="address" id="address" placeholder="<%= t %>">
   </div>
   <div class="form-signin">
     <label for="exampleInputPassword1">Deal text</label><p>
@@ -130,12 +156,13 @@ body {
   String url = null;
   if (!rs.getString("clientPhoto").equals("")) {
   ImagesService services = ImagesServiceFactory.getImagesService();
-  ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-  url = services.getServingUrl(serve);
+ // ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
+  //url = services.getServingUrl(serve);
   }
   else {
   url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
   }
+    url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
   %>
 
   <form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
