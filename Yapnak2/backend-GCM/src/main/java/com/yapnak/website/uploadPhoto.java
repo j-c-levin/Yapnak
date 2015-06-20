@@ -84,5 +84,6 @@ public class uploadPhoto extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 }
