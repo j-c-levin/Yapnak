@@ -9,6 +9,8 @@
 <%@ page import="com.google.appengine.api.images.ImagesService" %>
 <%@ page import="com.google.appengine.api.images.ImagesServiceFactory" %>
 <%@ page import="com.google.appengine.api.images.Image" %>
+<%@page import="java.io.*" %>
+<%@page import="java.net.*" %>
 
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -91,7 +93,7 @@ body {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
 
-            String sql = "SELECT clientName,clientFoodStyle,clientOffer,clientPhoto FROM client WHERE email = ?";
+            String sql = "SELECT clientName,clientFoodStyle,clientOffer,clientPhoto, clientX, clientY FROM client WHERE email = ?";
                             PreparedStatement stmt = connection.prepareStatement(sql);
                             stmt.setString(1, (String)request.getSession().getAttribute("email"));
                             ResultSet rs = null;
@@ -101,6 +103,15 @@ body {
             request.getSession().setAttribute("type", rs.getString("clientFoodStyle"));
             request.getSession().setAttribute("deal", rs.getString("clientOffer"));
             request.getSession().setAttribute("image", rs.getString("clientPhoto"));
+            request.getSession().setAttribute("x", rs.getDouble("clientX"));
+            request.getSession().setAttribute("y", rs.getDouble("clientY"));
+            String geo = "";
+            if(rs.getDouble("clientX") == 0.0 || rs.getDouble("clientY") == 0.0) {
+                geo = "Your address here";
+            }
+            else {
+                geo = rs.getDouble("clientX") + " " + rs.getDouble("clientY");
+            }
   %>
 
 <form action="/update" method="post">
@@ -108,13 +119,12 @@ body {
     <label for="exampleInputEmail1">Restaurant Name</label>
     <input type="text" class="form-control" name="name" id="name" placeholder="<%= rs.getString("clientName") %>">
   </div>
-  <div class="form-signin">
-  <label for="exampleInputPassword1">Restaurant Type</label>
+  <div class="form-signin">  <label for="exampleInputPassword1">Restaurant Type</label>
     <input type="text" class="form-control" name="type" id="type" placeholder="<%= rs.getString("clientFoodStyle") %>">
   </div>
   <div class="form-signin">
     <label for="exampleInputPassword1">Address</label>
-    <input type="text" class="form-control" name="address" id="address" placeholder="their address here">
+    <input type="text" class="form-control" name="address" id="address" placeholder="<%= geo %>">
   </div>
   <div class="form-signin">
     <label for="exampleInputPassword1">Deal text</label><p>

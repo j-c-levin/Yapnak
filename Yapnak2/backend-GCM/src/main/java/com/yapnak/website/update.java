@@ -2,8 +2,17 @@ package com.yapnak.website;
 
 import com.google.appengine.api.utils.SystemProperty;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -48,18 +57,52 @@ public class update extends HttpServlet {
                 if (type.equals("")) {
                     type = (String) session.getAttribute("type");
                 }
-//                String address = req.getParameter("address");
                 String deal = req.getParameter("deal");
                 if (deal.equals("")) {
                     deal = (String) session.getAttribute("deal");
                 }
-                out.print(name + " " + type + " " + deal + " ");
-                    String sql = "UPDATE client SET clientName = ?, clientFoodStyle = ?, clientOffer = ? WHERE email = ?";
+                String address = req.getParameter("address");
+                double X;
+                double Y;
+                if (address.equals("")) {
+                    X = (double) session.getAttribute("x");
+                    Y = (double) session.getAttribute("y");
+                }
+                else {
+                    String recv = "";
+                    String recvbuff = "";
+                    address = address.replaceAll(" ", "+");
+                    //need to check first char is valid and not a space
+                    URL jsonpage = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyDBM6kltuQ1mF_X9XYCseXR9x95uc9fyv4");
+                    URLConnection urlcon = jsonpage.openConnection();
+                    BufferedReader buffread = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+
+                    while ((recv = buffread.readLine()) != null)
+                        recvbuff += recv;
+                    buffread.close();
+                    JSONParser x = new JSONParser();
+                    JSONObject j = null;
+                    try {
+                        j = (JSONObject) x.parse(recvbuff);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    JSONArray array = (JSONArray) j.get("results");
+                    JSONObject details = (JSONObject) array.get(0);
+                    details = (JSONObject) details.get("geometry");
+                    details = (JSONObject) details.get("location");
+                    Y = (double) details.get("lat");
+                    X = (double) details.get("lng");
+                }
+                out.print(name + " " + type + " " + deal + " " + X + " " + Y + " ");
+                    String sql = "UPDATE client SET clientName = ?, clientFoodStyle = ?, clientOffer = ?, clientX = ?, clientY = ? WHERE email = ?";
                     PreparedStatement stmt = connection.prepareStatement(sql);
                     stmt.setString(1, name);
                     stmt.setString(2, type);
                     stmt.setString(3, deal);
-                    stmt.setString(4, (String) session.getAttribute("email"));
+                    stmt.setDouble(4, X);
+                    stmt.setDouble(5, Y);
+                    stmt.setString(6, (String) session.getAttribute("email"));
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {
