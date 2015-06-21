@@ -18,13 +18,14 @@ import android.provider.Settings;
 public class GPSTrack extends Service implements LocationListener {
 
     private final Context context;
+    private Location userLocation;
 
     boolean isGPSEnabled = false;
     boolean canGetLoc = false;
     boolean isNetworkEnabled = false;
 
-    double longitude;
-    double latitude;
+    private double longitude;
+    private double latitude;
     private Location location;
 
     private static final long MIN_UPDATE_DISTANCE =10;
@@ -149,6 +150,14 @@ public class GPSTrack extends Service implements LocationListener {
            locationManager.removeUpdates(GPSTrack.this);
         }
     }
+
+    public Location getUserLocation(){
+        userLocation.setLongitude(getLongitude());
+        userLocation.setLatitude(getLatitude());
+
+        return userLocation;
+    }
+
 
     @Override
     public void onLocationChanged(Location location) {

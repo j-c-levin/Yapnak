@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -43,6 +45,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
@@ -89,7 +92,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavBarItem[] naviBarItems = new NavBarItem[3];
-
+    private ItemPrev itemInfo;
     private FloatingActionButton actionButton;
     private ListView deals;
     private Intent temp;
@@ -184,6 +187,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -233,6 +238,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
     }
+
+
 
 
 
@@ -549,11 +556,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    public void takeMeThereButton(View v) {
-        Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
-        Intent maps = new Intent(this, MapActivity.class);
-        final int result = 1;
-        this.restaurant = "McDonalds";
+    public void setDirections(View v){
+
 
         tracker = new GPSTrack(MainActivity.this);
 
@@ -565,12 +569,92 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             latitude = tracker.getLatitude();
         }
 
-        maps.putExtra("longitude",longitude);
-        maps.putExtra("latitude",latitude);
-        //maps.putExtra("LocationIntent", location);
-        //maps.putExtra("RestaurantNameIntent", restaurant);
+
+        Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
+        Intent maps = new Intent(this, MapActivity.class);
+        final int result = 1;
+
+        ItemPrev itemAtSelectedPosition = getItemPrev();
+
+        maps.putExtra("userLongitude",longitude);
+        maps.putExtra("userLatitude",latitude);
+
+        if(itemAtSelectedPosition!=null) {
+            maps.putExtra("resLongitude", itemAtSelectedPosition.getLongitude());
+            maps.putExtra("resLatitude", itemAtSelectedPosition.getLatitude());
+        }
+
         startActivity(maps);
 
+    }
+
+    public void takeMeThereButton(View v) {
+
+        if(getItemPrev()!=null ){
+
+
+            GetDirections directions = new GetDirections();
+            directions.execute();
+
+        }else{
+            setDirections(v);
+        }
+
+
+
+    }
+
+    private class GetDirections extends AsyncTask<GPSTrack,LatLng,String>{
+
+        private LatLng resPosition;
+        private LatLng userPosition;
+
+        @Override
+        protected String doInBackground(GPSTrack... params) {
+
+
+            try{
+
+
+                GPSTrack tracker = new GPSTrack(MainActivity.this);
+
+                if(tracker.canGetLoc()){
+                    userPosition = new LatLng(tracker.getLatitude(),tracker.getLongitude());
+
+                }else{
+
+                }
+
+                if(getItemPrev()!=null){
+
+                    ItemPrev temp = getItemPrev();
+                    resPosition = new LatLng(temp.getLatitude(),temp.getLongitude());
+
+                }
+
+
+
+            }catch(NullPointerException e){
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            String uriString = "http://maps.google.com/maps?addr=" + userPosition.latitude +
+                    "," + userPosition.longitude
+                    + "&daddr="
+                    + resPosition.latitude
+                    + ","
+                    + resPosition.longitude;
+
+            Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
+
+            startActivity(mapIntent);
+        }
     }
 
 
@@ -900,10 +984,33 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
         deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setOnItemClickListener(new ItemInfoListener());
         deals.setAdapter(dealList);
         deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
+
     }
+
+    private class ItemInfoListener implements ListView.OnItemClickListener{
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            ItemPrev temp = (ItemPrev)parent.getItemAtPosition(position);
+            setItemPrev(temp);
+            Toast.makeText(getApplicationContext(),"Inside ItemInfoListener",Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    private void setItemPrev(ItemPrev itemPrev){
+        this.itemInfo = itemPrev;
+    }
+
+    private ItemPrev getItemPrev(){
+        return this.itemInfo;
+    }
+
 
     public ItemPrev[] dealList(){
 
@@ -997,6 +1104,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setMainText(sql.getList().get(i).getFoodStyle());
                 temp.setRestaurantName(sql.getList().get(i).getName());
                 temp.setSubText(sql.getList().get(i).getOffer());
+                temp.setLatitude(sql.getList().get(i).getY());
+                temp.setLongitude(sql.getList().get(i).getX());
                 //TODO: points
                 temp.setPoints("to be added");
                 ip[i] = temp;

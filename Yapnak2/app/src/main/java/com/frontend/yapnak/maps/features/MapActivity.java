@@ -40,6 +40,8 @@ import java.io.InputStream;
 public class MapActivity extends ActionBarActivity implements View.OnClickListener{
     private double latitude;
     private double longitude;
+    private double resLongitude;
+    private double resLatitude;
     private GoogleMap googleMap;
     private String restaurant;
     private LatLng startPosition,destPosition;
@@ -134,13 +136,28 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         protected String doInBackground(String... params) {
 
             try {
-                String startAddr = params[0];
-                startAddr = startAddr.replaceAll(" ", "%20");
-                getLatLong(startAddr, false);
 
-                String endAddr = params[1];
-                endAddr = endAddr.replaceAll(" ", "%20");
-                getLatLong(endAddr, true);
+                if(!tracker.canGetLoc()) {
+                    String startAddr = params[0];
+                    startAddr = startAddr.replaceAll(" ", "%20");
+                    getLatLong(startAddr, false);
+
+
+                    String endAddr = params[1];
+                    endAddr = endAddr.replaceAll(" ", "%20");
+                    getLatLong(endAddr, true);
+
+
+                }else{
+
+                    startPosition = new LatLng(tracker.getLatitude(),tracker.getLongitude());
+
+
+                    String endAddr = params[1];
+                    endAddr = endAddr.replaceAll(" ", "%20");
+                    getLatLong(endAddr, true);
+
+                }
 
             }catch(NullPointerException e){
                 errorToast.show();
