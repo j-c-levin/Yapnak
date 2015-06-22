@@ -125,8 +125,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
         getSupportActionBar().setSubtitle(intials);
-        setContentView(R.layout.activity_main1);
-       
+        //setContentView(R.layout.activity_main1);
+        load();
         navBarToggle();
         navigationBarContent();
     }
@@ -208,7 +208,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    load(sql);
+                    load();
+                    //load(sql);
 
                 }
             });
@@ -227,7 +228,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     //TODO:text must be stored in feedback table in the database
 
                     Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-                    load(sql);
+
+                    load();
+                    //load(sql);
 
 
                 }
@@ -315,7 +318,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void showMain(){
 
 
-        load(sql);
+        //load(sql);
+        load();
         navBarToggle();
         navigationBarContent();
         getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
@@ -559,7 +563,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void setDirections(View v){
 
 
-        tracker = new GPSTrack(MainActivity.this);
+
 
         double longitude=0;
         double latitude=0;
@@ -590,11 +594,22 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void takeMeThereButton(View v) {
 
-        if(getItemPrev()!=null ){
+        tracker = new GPSTrack(MainActivity.this);
 
 
-            GetDirections directions = new GetDirections();
-            directions.execute();
+
+        if((getItemPrev()!=null)){
+
+            try {
+                setTakeMeThereView(v);
+                GetDirections directions = new GetDirections();
+                directions.doInBackground(tracker);
+                directions.execute();
+
+            }catch(Exception e){
+                Toast.makeText(this,"There was an error in retrieving the selected restaurant/deal's location - Please enter location manually",Toast.LENGTH_LONG).show();
+                setDirections(v);
+            }
 
         }else{
             setDirections(v);
@@ -604,7 +619,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private class GetDirections extends AsyncTask<GPSTrack,LatLng,String>{
+    private View takeMeThere;
+
+    private void setTakeMeThereView(View v){
+        takeMeThere= v;
+
+    }
+    private View getTakeMeThereView(){
+        return takeMeThere;
+
+    }
+    private class GetDirections extends AsyncTask<GPSTrack,String,String>{
 
         private LatLng resPosition;
         private LatLng userPosition;
@@ -616,7 +641,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             try{
 
 
-                GPSTrack tracker = new GPSTrack(MainActivity.this);
+                GPSTrack tracker = params[0];
 
                 if(tracker.canGetLoc()){
                     userPosition = new LatLng(tracker.getLatitude(),tracker.getLongitude());
@@ -625,16 +650,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 }
 
-                if(getItemPrev()!=null){
+                if(getItemPrev()!=null ){
 
-                    ItemPrev temp = getItemPrev();
-                    resPosition = new LatLng(temp.getLatitude(),temp.getLongitude());
+
+                    try {
+                        ItemPrev temp = getItemPrev();
+                        resPosition = new LatLng(temp.getLatitude(), temp.getLongitude());
+
+                    }catch(NullPointerException e){
+
+                        Toast.makeText(getApplicationContext(),"There was an error in retrieving the selected restaurant/deal's location - Please enter location manually",Toast.LENGTH_LONG).show();
+                        setDirections(getTakeMeThereView());
+
+                    }
 
                 }
 
 
 
             }catch(NullPointerException e){
+
+            }catch(ArrayIndexOutOfBoundsException ex){
 
             }
             return null;
@@ -644,16 +680,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            String uriString = "http://maps.google.com/maps?addr=" + userPosition.latitude +
-                    "," + userPosition.longitude
-                    + "&daddr="
-                    + resPosition.latitude
-                    + ","
-                    + resPosition.longitude;
+            try {
 
-            Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
+                String uriString = "http://maps.google.com/maps?addr=" + userPosition.latitude +
+                        "," + userPosition.longitude
+                        + "&daddr="
+                        + resPosition.latitude
+                        + ","
+                        + resPosition.longitude;
 
-            startActivity(mapIntent);
+                Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
+
+                startActivity(mapIntent);
+
+            }catch(NullPointerException e){
+
+                Toast.makeText(getApplicationContext(),"There was an error in retrieving the selected restaurant/deal's location - Please enter location manually",Toast.LENGTH_LONG).show();
+                setDirections(getTakeMeThereView());
+
+            }
         }
     }
 
@@ -954,6 +999,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+
     //commented out because we have code to actually grab information from the database.
     public void load() {
 /*
@@ -971,6 +1017,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
+        deals.setOnItemLongClickListener(new OnLongTouchListener());
+        deals.setOnItemClickListener(new ItemInfoListener());
         //deals.setBackgroundResource(R.drawable.customshape);
 
 
@@ -982,24 +1030,121 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void load(SQLEntity sql) {
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+        //ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
         deals = (ListView) findViewById(R.id.listviewMain);
-        deals.setOnItemClickListener(new ItemInfoListener());
         deals.setAdapter(dealList);
+        deals.setOnItemClickListener(new ItemInfoListener());
+        deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
 
     }
 
-    private class ItemInfoListener implements ListView.OnItemClickListener{
+    private  ItemPrev itemTemp;
+
+    private class OnLongTouchListener implements AdapterView.OnItemLongClickListener{
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+            //LongClickInfo longClickCheck = new LongClickInfo();
+            //longClickCheck.onPostExecute(view);
+
+            ItemPrev item = (ItemPrev)parent.getItemAtPosition(position);
+            Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
+            intent.putExtra("logo", item.getLogo());
+            intent.putExtra("location", item.getDistance());
+            intent.putExtra("rating",2.1);
+            startActivity(intent);
+            return true;
+
+        }
+    }
+
+    private class ItemInfoListener implements AdapterView.OnItemClickListener{
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            ItemPrev temp = (ItemPrev)parent.getItemAtPosition(position);
-            setItemPrev(temp);
-            Toast.makeText(getApplicationContext(),"Inside ItemInfoListener",Toast.LENGTH_SHORT).show();
 
+            itemTemp = (ItemPrev)parent.getItemAtPosition(position);
+            //setItemPrev(itemTemp);
+            GetItemPrev threadGetItem =  new GetItemPrev();
+            threadGetItem.doInBackground(itemTemp);
+
+            ExtendInfoInBackGround extend = new ExtendInfoInBackGround();
+            extend.doInBackground(view);
+
+
+
+         }
+    }
+
+
+
+    private class GetItemPrev extends AsyncTask<ItemPrev,String,ItemPrev>{
+
+        @Override
+        protected ItemPrev doInBackground(ItemPrev... params) {
+
+            ItemPrev temp = params[0];
+            setItemPrev(temp);
+
+            return null;
+        }
+
+
+    }
+
+    private View longClickView;
+    private class LongClickInfo extends AsyncTask<View,String,View>{
+
+        @Override
+        protected View doInBackground(View... params) {
+
+            longClickView = params[0];
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(View view) {
+            super.onPostExecute(view);
+
+
+
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
+                    intent.putExtra("logo", itemTemp.getLogo());
+                    intent.putExtra("location", itemTemp.getDistance());
+                    intent.putExtra("rating",2.1);
+                    startActivity(intent);
+                    return true;
+
+
+
+                }
+            });
+
+
+
+        }
+    }
+
+    private class ExtendInfoInBackGround extends  AsyncTask<View,String,View>{
+
+        @Override
+        protected View doInBackground(View... params) {
+
+            View v = params[0];
+
+            extendInfo(v);
+
+            return null;
         }
     }
 
@@ -1019,6 +1164,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
             ItemPrev temp = new ItemPrev();
+            temp.setLatitude(51.523992);
+            temp.setLongitude(-0.03798);
             //TODO:add generic location to database
             temp.setDistance("100 Metres");
             //TODO: add photo download from google storage
@@ -1031,6 +1178,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             ip[0] = temp;
 
             ItemPrev temp2 = new ItemPrev();
+            temp2.setLatitude(51.523992);
+            temp2.setLongitude(-0.03798);
             //TODO:add generic location to database
             temp2.setDistance("1 km");
             //TODO: add photo download from google storage
@@ -1045,6 +1194,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             ItemPrev temp3 = new ItemPrev();
             //TODO:add generic location to database
+            temp3.setLatitude(51.523992);
+            temp3.setLongitude(-0.03798);
             temp3.setDistance("80 Metres");
             //TODO: add photo download from google storage
             temp3.setLogo(R.drawable.pizzaexpresslogo);
@@ -1058,6 +1209,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             ItemPrev temp4 = new ItemPrev();
             //TODO:add generic location to database
+            temp4.setLatitude(51.523992);
+            temp4.setLongitude(-0.03798);
             temp4.setDistance("80 Metres");
             //TODO: add photo download from google storage
             temp4.setLogo(R.drawable.gbklogo);
@@ -1071,6 +1224,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             ItemPrev temp5 = new ItemPrev();
             //TODO:add generic location to database
+            temp5.setLatitude(51.523992);
+            temp5.setLongitude(-0.03798);
             temp5.setDistance("2 km");
             //TODO: add photo download from google storage
             temp5.setLogo(R.drawable.tescologo);

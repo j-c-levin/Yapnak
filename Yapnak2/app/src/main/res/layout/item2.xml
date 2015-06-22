@@ -6,7 +6,9 @@
     android:padding="5dp"
     android:id="@+id/item2"
     android:background="#EEEEEE"
-    android:onClick="extendInfo">
+    android:descendantFocusability="blocksDescendants">
+
+    <!--android:onClick="extendInfo"-->
 
 
         <LinearLayout
@@ -17,7 +19,8 @@
         android:layout_marginBottom="5dp"
         android:padding="5dp"
         android:background="@drawable/curved_card"
-        android:weightSum="1">
+        android:weightSum="1"
+        >
 
             <!--android:background="@color/bright_foreground_inverse_material_light"-->
         <RelativeLayout
@@ -111,7 +114,6 @@
 
 
           <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginTop="140dp"

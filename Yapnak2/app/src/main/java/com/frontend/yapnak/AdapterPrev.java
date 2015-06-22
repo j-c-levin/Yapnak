@@ -24,13 +24,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
 
 
-
-    /*private LinearLayout locationLayout;
-    private LinearLayout buttonsLayout;
-    private LinearLayout textForButtonLayout;
-    private GestureDetectorCompat gestureDetect;
-    */
-
     public AdapterPrev(Context context, int resourse, ItemPrev[] values) {
 
         super(context, R.layout.item2,values);
@@ -85,7 +78,9 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
 
 
+
             //Show Ratings and Comments page with long click;
+            /*
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -102,6 +97,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
                     return true;
                 }
             });
+            */
 
 
 
@@ -132,9 +128,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
     public View getActualView(){
         return this.view;
     }
-
-
-
 
 
 
