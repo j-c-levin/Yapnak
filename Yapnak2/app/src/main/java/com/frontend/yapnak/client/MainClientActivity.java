@@ -2,6 +2,7 @@ package com.frontend.yapnak.client;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,19 @@ import com.uq.yapnak.R;
 public class MainClientActivity extends Activity{
 
     private EditText userCode;
+    private boolean exit = false;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if(exit){
+            finish();
+        }
+
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

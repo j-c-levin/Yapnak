@@ -101,6 +101,8 @@
             android:label="@string/app_name"
             android:parentActivityName="com.frontend.yapnak.client.MainClientActivity">
 
+
+
             <meta-data
                 android:name = "android.support.PARENT_ACTIVITY"
                 android:value="com.frontend.yapnak.client.MainClientActivity"

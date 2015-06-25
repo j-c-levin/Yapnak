@@ -86,6 +86,9 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
                  Intent i = new Intent(Login.this, MainActivity.class);
                  i.putExtra("initials", initials.getText().toString());
+                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                  v.getContext().startActivity(i);
                  finish();
 

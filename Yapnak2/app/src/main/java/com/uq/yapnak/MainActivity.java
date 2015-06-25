@@ -132,7 +132,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //navigationBarContent();
     }
 
+
+    private boolean exit = false;
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (exit) {
+            finish();
+        }
+    }
+
+
+        @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("debug", "onConnected");
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);

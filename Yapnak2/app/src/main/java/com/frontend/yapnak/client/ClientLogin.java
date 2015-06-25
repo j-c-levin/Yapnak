@@ -43,6 +43,10 @@ public class ClientLogin extends Activity {
         if(clientEmail.getText().toString().equalsIgnoreCase("") && clientPass.getText().toString().equalsIgnoreCase("")) {
             //Start Main Client Activity
            Intent mainClientPage = new Intent(this,MainClientActivity.class);
+
+            mainClientPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            mainClientPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            mainClientPage.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mainClientPage);
 
         }else{
