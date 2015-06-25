@@ -26,8 +26,7 @@ public class MainLoginActivity extends Activity implements View.OnClickListener{
             int userLoginID = R.id.mainLoginUserButton;
             int clientLoginID = R.id.mainLoginClientButton;
 
-           // userLogin = (Button)findViewById(R.id.loginUserButton);
-            //clientLogin = (Button)findViewById(R.id.loginClientButton);
+
 
             if(v.getId()==userLoginID){
 

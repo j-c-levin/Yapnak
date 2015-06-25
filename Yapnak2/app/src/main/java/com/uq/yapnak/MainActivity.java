@@ -125,10 +125,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
         getSupportActionBar().setSubtitle(intials);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         //setContentView(R.layout.activity_main1);
         load();
-        navBarToggle();
-        navigationBarContent();
+        //navBarToggle();
+        //navigationBarContent();
     }
 
     @Override
@@ -285,8 +286,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
             return true;
-        }else if(actionBarDrawerToggle.onOptionsItemSelected(item)){
-            return true;
+       // }else if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+         //   return true;
 
         }
 
@@ -320,8 +321,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         //load(sql);
         load();
-        navBarToggle();
-        navigationBarContent();
+       // navBarToggle();
+        //navigationBarContent();
         getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
 
     }
@@ -963,13 +964,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
+        //actionBarDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        actionBarDrawerToggle.onConfigurationChanged(newConfig);
+        //actionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
 
@@ -991,11 +992,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ListAdapter adapter = new NavigationBarAdapter(this, R.layout.navigation_bar_layout, naviBarItems);
 
-        ListView navBarItems = (ListView) findViewById(R.id.left_drawer);
+        /*ListView navBarItems = (ListView) findViewById(R.id.left_drawer);
 
 
         navBarItems.setAdapter(adapter);
         navBarItems.setOnItemClickListener(new DrawerItemListener());
+        */
     }
 
 

@@ -13,6 +13,7 @@ public class MoreInfo extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.more_info);
     }
 
