@@ -22,7 +22,7 @@ public class Splash extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(Splash.this, Login.class);
+                Intent i = new Intent(Splash.this, MainLoginActivity.class);
                 startActivity(i);
                 finish();
             }

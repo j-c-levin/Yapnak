@@ -24,5 +24,8 @@
     <string name="title_activity_navigation">navigationAct</string>
     <string name="Cancel">Cancel</string>
     <string name="OK">OK</string>
+    <string name="client_login_splash">Login As Client</string>
+    <string name="user_login_splash">Login As User</string>
+
 
 </resources>
