@@ -14,6 +14,22 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/about"
+        android:title = "@string/about_action_item"
+        app:showAsAction ="ifRoom"
+
+    />
+
+    <item
+      android:id = "@+id/howToUse"
+      android:title= "HOWTO"
+      app:showAsAction = "ifRoom"
+        
+     />
+
+
+
+    <item
         android:id="@+id/menu_sign_out"
         android:title="@string/sign_out"
         android:orderInCategory="100" />

@@ -258,40 +258,49 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_feedback) {
 
-          try {
-              setContentView(R.layout.feedback_activity);
-              submitButton = (Button) findViewById(R.id.submitButton);
-              cancelButton = (Button) findViewById(R.id.cancelButton);
+            try {
+                setContentView(R.layout.feedback_activity);
+                submitButton = (Button) findViewById(R.id.submitButton);
+                cancelButton = (Button) findViewById(R.id.cancelButton);
 
 
-              cancelButton.setOnClickListener(new View.OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                       showMain();
-                  }
-              });
+                cancelButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showMain();
+                    }
+                });
 
 
-              submitButton.setOnClickListener(new View.OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                      Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-                      showMain();
-                  }
-              });
+                submitButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
+                        showMain();
+                    }
+                });
 
-          }catch(Exception e){
-              Toast.makeText(getApplicationContext(), "You are currently in feedback window", Toast.LENGTH_SHORT).show();
-          }
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "You are currently in feedback window", Toast.LENGTH_SHORT).show();
+            }
 
 
             return true;
-       // }else if(actionBarDrawerToggle.onOptionsItemSelected(item)){
-         //   return true;
+            // }else if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+            //   return true;
 
-        }
+        }else if(id== R.id.about) {
 
-        else if (id == R.id.menu_sign_out) {
+            aboutYapnak();
+
+        }else if(id == R.id.howToUse) {
+            howToUseYapnak();
+
+        }else if(id == -1){
+            userItems();
+
+
+        }else if (id == R.id.menu_sign_out) {
             if (mGoogleApiClient.isConnected()) {
 // Prior to disconnecting, run clearDefaultAccount().
                 Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
