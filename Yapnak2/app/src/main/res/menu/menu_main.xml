@@ -22,9 +22,9 @@
 
     <item
       android:id = "@+id/howToUse"
-      android:title= "HOWTO"
+      android:title= "HowTo"
       app:showAsAction = "ifRoom"
-        
+
      />
 
 

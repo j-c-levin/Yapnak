@@ -245,9 +245,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -572,9 +569,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void setDirections(View v){
 
-
-
-
         double longitude=0;
         double latitude=0;
         if(tracker.canGetLoc()){
@@ -719,9 +713,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //Intent rate = new Intent(this, RateActivity.class);
         RatingDialog rate = new RatingDialog();
         rate.show(getFragmentManager(),"rating");
-
-        //startActivity(rate);
-
 
     }
 

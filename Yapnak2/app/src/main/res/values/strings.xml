@@ -27,6 +27,9 @@
     <string name="client_login_splash">Login As Client</string>
     <string name="user_login_splash">Login As User</string>
     <string name="about_action_item">About</string>
+    <string name="submit_client_button">Submit Code</string>
+    <string name="enter_user_code">Enter User Code</string>
+
 
 
 </resources>
