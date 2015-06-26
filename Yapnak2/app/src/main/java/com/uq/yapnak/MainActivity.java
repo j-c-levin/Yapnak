@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -51,6 +52,9 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
+import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -108,6 +112,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
 
 
@@ -1015,12 +1021,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 */
         setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        /*ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
         deals.setOnItemLongClickListener(new OnLongTouchListener());
-        deals.setOnItemClickListener(new ItemInfoListener());
+        deals.setOnItemClickListener(new ItemInfoListener());*/
         //deals.setBackgroundResource(R.drawable.customshape);
 
 
@@ -1029,11 +1035,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-    public void load(SQLEntity sql) {
+    public void load(SQLList sql) {
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
-        //ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+        //ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setAdapter(dealList);
         deals.setOnItemClickListener(new ItemInfoListener());
@@ -1246,27 +1252,36 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    public ItemPrev[] dealList(SQLEntity sql) {
+    public ItemPrev[] dealList(SQLList sql) {
 
         try{
-
-            ip = new ItemPrev[sql.getList().size()];
-
+            ArrayList<SQLEntity> list = new ArrayList<SQLEntity>(sql.getList());
+            ip = new ItemPrev[list.size()];
             for (int i = 0; i < ip.length; i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
                 temp.setDistance("to be added");
-                //TODO: add photo download from google storage
-                temp.setLogo(R.drawable.mcdonalds);
-                temp.setMainText(sql.getList().get(i).getFoodStyle());
-                temp.setRestaurantName(sql.getList().get(i).getName());
-                temp.setSubText(sql.getList().get(i).getOffer());
-                temp.setLatitude(sql.getList().get(i).getY());
-                temp.setLongitude(sql.getList().get(i).getX());
+
+
+                //download and display image from url
+                String url = list.get(i).getPhoto();
+
+                ImageView imageView = (ImageView) findViewById(R.id.logo);
+
+/*                Ion.with(imageView)
+                        .placeholder(R.drawable.yapnakmonster)
+                        .error(R.drawable.yapnakmonster)
+                        .load(url);*/
+
+                temp.setLogo(R.drawable.yapnakmonster);
+                temp.setMainText(list.get(i).getFoodStyle());
+                temp.setRestaurantName(list.get(i).getName());
+                temp.setSubText(list.get(i).getOffer());
+                temp.setLatitude(list.get(i).getY());
+                temp.setLongitude(list.get(i).getX());
                 //TODO: points
                 temp.setPoints("to be added");
                 ip[i] = temp;
-
             }
 
             return ip;

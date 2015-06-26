@@ -5,8 +5,12 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.api.server.spi.response.NotFoundException;
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterator;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
@@ -68,16 +72,17 @@ public class SQLEntityEndpoint {
      */
     @ApiMethod(
             name = "getClients",
-            path = "sQLEntity_clients",
+            path = "sQLEntity_client",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLEntity get(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
+public SQLList getClients(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
 /*        if (user == null) {
             throw new OAuthRequestException("User is not valid " + user);
         }*/
         Connection connection;
         double distance = 0.02;
-        ArrayList<SQLEntity> list2 = new ArrayList();
-        SQLEntity s = new SQLEntity();
+        ArrayList<SQLEntity> list = new ArrayList<SQLEntity>();
+        SQLEntity entity = new SQLEntity();
+        SQLList sqlList = new SQLList();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -113,17 +118,27 @@ public class SQLEntityEndpoint {
                     sql.setX(rs.getDouble("clientX"));
                     sql.setY(rs.getDouble("clientY"));
                     sql.setFoodStyle(rs.getString("clientFoodStyle"));
-                    sql.setPhoto(rs.getString("clientPhoto"));
+                    //get photo from blobstore
+                    String url = null;
+                    if (!rs.getString("clientPhoto").equals("")) {
+                        ImagesService services = ImagesServiceFactory.getImagesService();
+                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "s=50"));    // Blobkey of the image uploaded to BlobStore.
+                        url = services.getServingUrl(serve);
+                    }
+                    else {
+                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                    }
+                    sql.setPhoto(url);
                     sql.setRating((rs.getDouble("rating")));
-                    list2.add(sql);
+                    list.add(sql);
                     logger.info("found client: " + rs.getString("clientName"));
                 }
-                s.setList(list2);
+                sqlList.setList(list);
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
                 connection.close();
-                return s;
+                return sqlList;
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

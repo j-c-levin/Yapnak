@@ -110,7 +110,7 @@ body {
                 geo = "Your address here";
             }
             else {
-                geo = rs.getDouble("clientX") + " " + rs.getDouble("clientY");
+                geo = rs.getDouble("clientY") + " " + rs.getDouble("clientX");
             }
   %>
 

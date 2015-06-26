@@ -1,9 +1,7 @@
 package com.uq.yapnak;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -126,7 +124,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         // Create some items
         items = new ArrayList<>();
         for (int i = 0; i < sql.getList().size(); i++) {
-            items.add(new Item(sql.getList().get(i).getName(), sql.getList().get(i).getOffer(), sql.getX(), sql.getY()));
+            //items.add(new Item(sql.getList().get(i).getName(), sql.getList().get(i).getOffer(), sql.getX(), sql.getY()));
         }
     }
 

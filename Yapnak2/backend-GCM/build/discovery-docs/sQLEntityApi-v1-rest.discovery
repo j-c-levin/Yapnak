@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ze5saN2qKtNX0PfP-J8tIWL0j4Y\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/HTmKMdZ1vNH7EgXxgUqCo7sfTX4\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -88,6 +88,15 @@
     }
    }
   },
+  "List": {
+   "id": "List",
+   "type": "object",
+   "properties": {
+    "empty": {
+     "type": "boolean"
+    }
+   }
+  },
   "SQLEntity": {
    "id": "SQLEntity",
    "type": "object",
@@ -100,10 +109,7 @@
      "format": "int64"
     },
     "list": {
-     "type": "array",
-     "items": {
-      "$ref": "SQLEntity"
-     }
+     "$ref": "List"
     },
     "name": {
      "type": "string"
@@ -127,12 +133,24 @@
      "format": "double"
     }
    }
+  },
+  "SQLList": {
+   "id": "SQLList",
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": {
+      "$ref": "SQLEntity"
+     }
+    }
+   }
   }
  },
  "methods": {
   "getClients": {
    "id": "sQLEntityApi.getClients",
-   "path": "sQLEntity_clients",
+   "path": "sQLEntity_client",
    "httpMethod": "GET",
    "parameters": {
     "x": {
@@ -153,7 +171,7 @@
     "y"
    ],
    "response": {
-    "$ref": "SQLEntity"
+    "$ref": "SQLList"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

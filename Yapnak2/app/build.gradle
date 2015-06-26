@@ -31,4 +31,5 @@ dependencies {
     compile 'com.pkmmte.view:circularimageview:1.1'
     compile project(path: ':backend-GCM', configuration: 'android-endpoints')
     compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.koushikdutta.ion:ion:2.1.6'
 }
