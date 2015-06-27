@@ -36,6 +36,16 @@
 
        -->
 
+    <ListView
+            android:id="@+id/listViewPromotions"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="#EEEEEE"
+            android:divider="#00000000"
+
+    />
 
 
 
@@ -43,6 +53,7 @@
         android:id="@+id/listviewMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/listViewPromotions"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="#EEEEEE"

@@ -1,6 +1,10 @@
 package com.uq.yapnak;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
@@ -25,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +44,8 @@ import com.frontend.yapnak.ItemPrev;
 import com.frontend.yapnak.maps.features.MapActivity;
 import com.frontend.yapnak.navigationdrawer.NavBarItem;
 import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
+import com.frontend.yapnak.promotion.PromoItem;
+import com.frontend.yapnak.promotion.PromotionAdapter;
 import com.frontend.yapnak.rate.RatingDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -93,8 +100,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavBarItem[] naviBarItems = new NavBarItem[3];
     private ItemPrev itemInfo;
+    private PromoItem promoItem;
     private FloatingActionButton actionButton;
-    private ListView deals;
+    private ListView deals,promoList;
     private Intent temp;
 
     private String firstName;
@@ -1016,26 +1024,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     //commented out because we have code to actually grab information from the database.
     public void load() {
-/*
+
         setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
-        deals = (ListView) findViewById(R.id.listviewMain);
-        deals.setAdapter(dealList);
-
-        deals.setBackgroundResource(R.drawable.customshape);
 
 
-*/
-        setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
+        promoList = (ListView) findViewById(R.id.listViewPromotions);
+        promoList.setAdapter(promo);
+
+        scaleListY = promoList.getY();
+
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
         deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setOnItemClickListener(new ItemInfoListener());
-        //deals.setBackgroundResource(R.drawable.customshape);
-
-
+        deals.setOnScrollListener(new ScrollListener());
 
 
     }
@@ -1044,18 +1049,182 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void load(SQLEntity sql) {
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
-        //ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+
+        ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
+        promoList = (ListView) findViewById(R.id.listViewPromotions);
+        promoList.setAdapter(promo);
+
+        scaleListY = promoList.getY();
+
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setAdapter(dealList);
         deals.setOnItemClickListener(new ItemInfoListener());
         deals.setOnItemLongClickListener(new OnLongTouchListener());
+        deals.setOnScrollListener(new ScrollListener());
         deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
 
     }
 
     private  ItemPrev itemTemp;
+    private int currentPosition;
+    private  float scaleListY;
+
+
+    private class ScrollBackgroundTask extends AsyncTask<ListView,String,ListView>{
+
+
+        @Override
+        protected ListView doInBackground(ListView... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ListView listView) {
+            super.onPostExecute(listView);
+        }
+    }
+
+
+    private class ScrollListener implements ListView.OnScrollListener{
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+
+
+            if(view.getId()==deals.getId()){
+
+                final int firstItemPosition = deals.getFirstVisiblePosition();
+
+                View v = view.getChildAt(0);
+                float topValue = v==null ? 0 : v.getTop()-deals.getPaddingTop();
+
+
+                if(firstItemPosition>currentPosition){
+                     //scrolling down
+                    //Toast.makeText(getApplicationContext(),"Scroll Down",Toast.LENGTH_SHORT).show();
+                    //hidePromoItems();
+                    collapseList();
+
+                }else if(currentPosition>firstItemPosition ){
+                    //scrolling up
+                    //Toast.makeText(getApplicationContext(),"Scroll Up",Toast.LENGTH_SHORT).show();
+
+                }else if((scrollState == SCROLL_STATE_IDLE)&&(topValue==0)&& (promoList.getVisibility()!=View.VISIBLE)){
+                    //reveal redeemable gifts
+
+                   // Toast.makeText(getApplicationContext(),"At top SHOW GIFTS",Toast.LENGTH_SHORT).show();
+                    //showPromoItems();
+
+                    extendList();
+                }
+
+                currentPosition = firstItemPosition;
+
+            }
+
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        }
+    }
+
+
+    private ValueAnimator slideView(int start,int end){
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //Update The Height of the card
+
+                int value= (Integer) animation.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = promoList.getLayoutParams();
+                layoutParams.height = value;
+                promoList.setLayoutParams(layoutParams);
+            }
+        });
+
+        return animator;
+    }
+
+    public void extendList(){
+
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+
+        promoList.measure(widthSpec,heightSpec);
+
+        ValueAnimator valueAnimator = slideView(0,promoList.getMeasuredHeight());
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                promoList.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+                promoList.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        valueAnimator.start();
+
+
+    }
+
+    public void collapseList(){
+        int finalHeight = promoList.getHeight();
+
+        ValueAnimator animator = slideView(promoList.getHeight(),0);
+
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+               promoList.setVisibility(View.GONE);
+
+                /*
+                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
+                extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
+                */
+
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        animator.start();
+
+    }
 
     private class OnLongTouchListener implements AdapterView.OnItemLongClickListener{
 
@@ -1170,6 +1339,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return this.itemInfo;
     }
 
+
+    public PromoItem[] gift(){
+        PromoItem [] list = new PromoItem[4];
+
+        for(int i=0;i<list.length;i++){
+
+            PromoItem temp = new PromoItem();
+            temp.setImage(R.drawable.gift);
+            temp.setPromoSubTitle("Free Cookie!");
+            temp.setPromoTitle("Free Item Alert!");
+            list[i]= temp;
+        }
+
+        return list;
+    }
 
     public ItemPrev[] dealList(){
 

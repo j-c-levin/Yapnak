@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:id="@+id/promo_item"
+    android:descendantFocusability="blocksDescendants">
+
+    <!--android:onClick="extendInfo"-->
+
+
+    <LinearLayout
+
+        android:id = "@+id/extendPromoHeight"
+        android:orientation="vertical"
+        android:layout_height="94dp"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="5dp"
+        android:padding="5dp"
+        android:background="@drawable/curved_card"
+        android:weightSum="1"
+
+        >
+
+        <!--android:background="@color/bright_foreground_inverse_material_light"-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/someId"
+            android:background="#FFECB3"
+
+            >
+
+
+          <TextView
+                android:id="@+id/promotionTitle"
+                style="@style/Base.TextAppearance.AppCompat.Headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:singleLine="true"
+                android:text="Current Promotion Items"
+                android:textColor="#ff707070"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold" />
+
+            <com.pkmmte.view.CircularImageView
+                android:id="@+id/promoImage"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/gift"
+
+                />
+
+            <TextView
+                android:id="@+id/promotionSubtitle"
+                style="@style/Base.TextAppearance.AppCompat.Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="45dp"
+
+                android:text="10"
+                android:textColor="#ff707070" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
+
+
+
