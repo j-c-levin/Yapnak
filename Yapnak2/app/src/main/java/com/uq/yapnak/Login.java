@@ -62,6 +62,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
         SignInButton gSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        //Button gSignInButton = (Button) findViewById(R.id.sign_in_button);
         gSignInButton.setSize(SignInButton.SIZE_WIDE);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 

@@ -59,6 +59,8 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Intent i = getIntent();
+        getSupportActionBar().setSubtitle(i.getStringExtra("init"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tracker = new GPSTrack(MapActivity.this);
 

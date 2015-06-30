@@ -124,7 +124,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         super();
 
         // Create some items
-        items = new ArrayList<>();
+        items = new ArrayList<Item>();
         for (int i = 0; i < sql.getList().size(); i++) {
             items.add(new Item(sql.getList().get(i).getName(), sql.getList().get(i).getOffer(), sql.getX(), sql.getY()));
         }

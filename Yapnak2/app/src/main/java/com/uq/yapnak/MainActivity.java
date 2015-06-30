@@ -59,6 +59,8 @@ import com.google.android.gms.plus.model.people.Person;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
+import java.io.FileOutputStream;
+
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
@@ -70,6 +72,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private SQLEntity sql;
 
     RecyclerView recyclerView;
+    private static String USER_NAME;
+    private static String PASS;
 
     private static String TAG_ABOUT = "About";
     private static String TAG_SHARE = "Share";
@@ -86,7 +90,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Notification note;
     private boolean click = true;
     private FragmentManager fragmentManager;
-    //private GestureDetectorCompat gestureDetect;
     private ItemPrev[] ip;
 
     private boolean longPress;
@@ -112,6 +115,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private  LinearLayout extendIcon;
     private  LinearLayout extendText;
     private  LinearLayout extendHeight;
+    private  String initials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,15 +133,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .build();
 
         temp = getIntent();
-        String intials = temp.getStringExtra("initials");
+        initials = temp.getStringExtra("initials");
 
 
-        getSupportActionBar().setSubtitle(intials);
+        getSupportActionBar().setSubtitle(initials);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        //setContentView(R.layout.activity_main1);
+        setContentView(R.layout.activity_main1);
         load();
         //navBarToggle();
         //navigationBarContent();
+
     }
 
 
@@ -600,6 +605,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
         Intent maps = new Intent(this, MapActivity.class);
+        maps.putExtra("init",initials);
         final int result = 1;
 
         ItemPrev itemAtSelectedPosition = getItemPrev();
