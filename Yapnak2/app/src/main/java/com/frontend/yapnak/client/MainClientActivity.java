@@ -2,13 +2,14 @@ package com.frontend.yapnak.client;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
 import com.uq.yapnak.R;
+import com.uq.yapnak.clientSearchUserAsyncTask;
+import com.yapnak.gcmbackend.sQLEntityApi.model.PointsEntity;
 
 /**
  * Created by vahizan on 25/06/2015.
@@ -43,6 +44,8 @@ public class MainClientActivity extends Activity{
     public void submitUserCode(View v){
 
         userCode = (EditText) findViewById(R.id.userCodeText);
+        //change this so that it puts the client's email into it
+        new clientSearchUserAsyncTask(this, userCode.toString(), "joshua.c.levin@gmail.com").execute();
 
         //TODO:Compare user code against Database and return boolean
 
@@ -55,6 +58,10 @@ public class MainClientActivity extends Activity{
 
         }
 
+    }
+
+    public void load(PointsEntity result) {
+        //make a notification of some kind in here
     }
 
     @Override

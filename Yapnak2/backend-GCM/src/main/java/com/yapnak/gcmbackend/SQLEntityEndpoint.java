@@ -57,6 +57,67 @@ public class SQLEntityEndpoint {
         ObjectifyService.register(SQLEntity.class);
     }
 
+    @ApiMethod(
+            name = "getUser",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public PointsEntity getUser(@Named("userID") String userID, @Named("clientEmail") String clientEmail) {
+        Connection connection;
+        PointsEntity points = new PointsEntity();
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT userID FROM user where userID = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, userID);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    statement= "SELECT clientID from client where email = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setString(1, clientEmail);
+                    rs = stmt.executeQuery();
+                    rs.next();
+                    points.setClientID(rs.getInt("clientID"));
+                    statement = "SELECT points FROM points where userID = ? AND clientID = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setString(1, userID);
+                    stmt.setInt(2, rs.getInt("clientID"));
+                    rs = stmt.executeQuery();
+                    rs.next();
+                    points.setPoints(rs.getInt("points"));
+                    //change the number here to adjust points given)
+                    points.setPoints(points.getPoints() + 5);
+                    points.setUserID(userID);
+                    statement = "UPDATE points SET points = ? where userID = ? AND clientID = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setInt(1, points.getPoints());
+                    stmt.setString(2, points.getUserID());
+                    stmt.setInt(3, points.getClientID());
+                    stmt.executeUpdate();
+                } else {
+                    points = null;
+                }
+            } finally {
+                connection.close();
+                return points;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            return points;
+        }
+    }
+
 
     /**
      * Returns the {@link SQLEntity} with the corresponding ID.
