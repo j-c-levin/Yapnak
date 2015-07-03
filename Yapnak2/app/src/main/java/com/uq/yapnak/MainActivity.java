@@ -18,10 +18,12 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -57,12 +60,14 @@ import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
+import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
+import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
 import java.io.FileOutputStream;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
     private static final int NOTIFICATION_ID = 0;
 
@@ -140,6 +145,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
         load();
+        floatButton();
         //navBarToggle();
         //navigationBarContent();
 
@@ -224,7 +230,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-    public class Feedback extends ActionBarActivity {
+    public class Feedback extends AppCompatActivity {
 
         //@Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -278,6 +284,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_sign_out) {
+            if (mGoogleApiClient.isConnected()) {
+           // Prior to disconnecting, run clearDefaultAccount().
+                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
+                        .setResultCallback(new ResultCallback<Status>() {
+
+                            @Override
+                            public void onResult(Status status) {
+                                signedOut();
+                            }
+                        });
+
+            }
+        }
+        return super.onOptionsItemSelected(item);
+
+
+
+        /*
+
         if (id == R.id.action_feedback) {
 
             try {
@@ -322,22 +349,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             userItems();
 
 
-        }else if (id == R.id.menu_sign_out) {
-            if (mGoogleApiClient.isConnected()) {
-// Prior to disconnecting, run clearDefaultAccount().
-                Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
-                        .setResultCallback(new ResultCallback<Status>() {
-
-                            @Override
-                            public void onResult(Status status) {
-                                signedOut();
-                            }
-                        });
-
-            }
         }
-        return super.onOptionsItemSelected(item);
+         */
+
+
+
     }
 
     public void signedOut() {
@@ -377,55 +393,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
     }
-
-    /*public void floatButton() {
-        ImageView image = new ImageView(this);
-        image.setImageResource(R.drawable.ic_new_float);
-
-        FloatingActionButton actionButton = new FloatingActionButton.Builder(this)
-                .setContentView(image)
-                .setBackgroundDrawable(R.drawable.selector_file_red)
-                .build();
-
-        ImageView iconAbout = new ImageView(this);
-        iconAbout.setImageResource(R.drawable.abouticon);
-
-        ImageView iconShare = new ImageView(this);
-        iconShare.setImageResource(R.drawable.shareicon);
-
-        ImageView iconManual = new ImageView(this);
-        iconManual.setImageResource(R.drawable.manualicon);
-
-        ImageView iconGift = new ImageView(this);
-        iconGift.setImageResource(R.drawable.gift);
-
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
-
-        SubActionButton buttonAbout = itemBuilder.setContentView(iconAbout).build();
-        SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
-        SubActionButton buttonManual = itemBuilder.setContentView(iconManual).build();
-        SubActionButton buttonGift = itemBuilder.setContentView(iconGift).build();
-
-        buttonAbout.setTag(TAG_ABOUT);
-        buttonShare.setTag(TAG_SHARE);
-        buttonManual.setTag(TAG_MANUAL);
-        buttonGift.setTag(TAG_GIFT);
-
-        buttonAbout.setOnClickListener(this);
-        buttonShare.setOnClickListener(this);
-        buttonManual.setOnClickListener(this);
-        buttonGift.setOnClickListener(this);
-
-        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
-                .addSubActionView(buttonAbout)
-                .addSubActionView(buttonShare)
-                .addSubActionView(buttonGift)
-                .addSubActionView(buttonManual)
-                .attachTo(actionButton)
-                .build();
-    }*/
-
 
     private ValueAnimator slideAnimator(int start,int end){
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
@@ -520,43 +487,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
 
-
-    /*    if (layout.getHeight() != 500) {
-            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT*3));
-        } else {
-
-            layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 250));
-        }
-
-        TextView view = (TextView) v.findViewById(R.id.distance);
-
-        this.location = (String) view.getText().toString();
-
-        */
-
-
-          /*
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.setCustomAnimations(R.anim.abc_slide_out_bottom, R.anim.abc_slide_in_bottom);
-            ExtensionFragment frag = new ExtensionFragment();
-
-            /*if (frag==null) {
-                fragmentTransaction.attach(frag);
-                fragmentTransaction.show(frag);
-
-
-            } else {
-                fragmentTransaction.detach(frag);
-                fragmentTransaction.hide(frag);
-
-            }
-
-            fragmentTransaction.add(R.id.item2,frag);
-
-            fragmentTransaction.commit();
-
-            */
     }
 
     public void recommendMealButton(View v) {
@@ -735,8 +665,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void feedbackButton(View v) {
         Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
-
-        //Intent rate = new Intent(this, RateActivity.class);
         RatingDialog rate = new RatingDialog();
         rate.show(getFragmentManager(),"rating");
 
@@ -1093,6 +1021,112 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    public void floatButton() {
+        ImageView image = new ImageView(this);
+        image.setImageResource(R.drawable.ic_new_float);
+
+        actionButton = new FloatingActionButton.Builder(this)
+                .setContentView(image)
+                .setBackgroundDrawable(R.drawable.selector_file_red)
+                .build();
+
+
+        ImageView iconAbout = new ImageView(this);
+        iconAbout.setImageResource(R.drawable.abouticon);
+
+        ImageView iconShare = new ImageView(this);
+        iconShare.setImageResource(R.drawable.shareicon);
+
+        ImageView iconManual = new ImageView(this);
+        iconManual.setImageResource(R.drawable.manualicon);
+
+        ImageView iconGift = new ImageView(this);
+        iconGift.setImageResource(R.drawable.gift);
+
+        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
+        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
+
+        SubActionButton buttonAbout = itemBuilder.setContentView(iconAbout).build();
+        SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
+        SubActionButton buttonManual = itemBuilder.setContentView(iconManual).build();
+        SubActionButton buttonGift = itemBuilder.setContentView(iconGift).build();
+
+        buttonAbout.setTag(TAG_ABOUT);
+        buttonShare.setTag(TAG_SHARE);
+        buttonManual.setTag(TAG_MANUAL);
+        buttonGift.setTag(TAG_GIFT);
+
+        buttonAbout.setOnClickListener(this);
+        buttonShare.setOnClickListener(this);
+        buttonManual.setOnClickListener(this);
+        buttonGift.setOnClickListener(this);
+
+        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
+                .addSubActionView(buttonAbout)
+                .addSubActionView(buttonShare)
+                .addSubActionView(buttonGift)
+                .addSubActionView(buttonManual)
+                .attachTo(actionButton)
+                .build();
+
+
+    }
+
+
+
+    private void showFloating(){
+
+         Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //super.onAnimationEnd(animation);
+                ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton,"alpha",0.0f,1.0f);
+                animator.setDuration(200).start();
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                //super.onAnimationStart(animation);
+                actionButton.setVisibility(View.INVISIBLE);
+            }
+        };
+        actionButton.animate().setListener(listener).start();
+        actionButton.setVisibility(View.VISIBLE);
+
+
+
+
+    }
+
+    private void hideFloating(){
+
+        Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //super.onAnimationEnd(animation);
+                ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
+                alpha.setDuration(200).start();
+
+            }
+
+            
+        };
+
+     actionButton.animate().setListener(listener).start();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                actionButton.setVisibility(View.GONE);
+            }
+        }, 500);
+
+
+
+
+
+    }
+
     private class ScrollListener implements ListView.OnScrollListener{
 
         @Override
@@ -1113,10 +1147,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     //Toast.makeText(getApplicationContext(),"Scroll Down",Toast.LENGTH_SHORT).show();
                     //hidePromoItems();
                     collapseList();
+                    hideFloating();
 
                 }else if(currentPosition>firstItemPosition ){
                     //scrolling up
                     //Toast.makeText(getApplicationContext(),"Scroll Up",Toast.LENGTH_SHORT).show();
+
 
                 }else if((scrollState == SCROLL_STATE_IDLE)&&(topValue==0)&& (promoList.getVisibility()!=View.VISIBLE)){
                     //reveal redeemable gifts
@@ -1124,7 +1160,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                    // Toast.makeText(getApplicationContext(),"At top SHOW GIFTS",Toast.LENGTH_SHORT).show();
                     //showPromoItems();
 
+                    showFloating();
                     extendList();
+
                 }
 
                 currentPosition = firstItemPosition;

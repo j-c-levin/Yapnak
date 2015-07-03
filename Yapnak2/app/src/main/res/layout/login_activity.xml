@@ -31,7 +31,7 @@
             android:id="@+id/initialsEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="170dp"
+            android:layout_marginTop="200dp"
             android:alpha="0.4"
             android:hint="Initials"
             android:inputType="text"
@@ -82,13 +82,14 @@
             android:alpha="0.4" />
 
 
+
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_below="@id/loginButton"
-            android:layout_centerHorizontal="true" />
+            android:layout_below="@+id/imageButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"/>
 
 
 

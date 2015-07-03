@@ -31,24 +31,27 @@
                 android:id="@+id/clientEmailEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="150dp"
                 android:alpha="0.4"
                 android:hint="Restaurant Client Email"
                 android:inputType="textEmailAddress"
                android:textColor="#FFF"
-                android:textColorHint="#FFF" />
+                android:textColorHint="#FFF"
+                android:layout_below="@+id/sign_in_button"
+                android:layout_alignParentLeft="true" />
 
 
             <EditText
                 android:id="@+id/clientPassEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="220dp"
+                android:layout_marginTop="58dp"
                 android:alpha="0.4"
                 android:inputType="textPassword"
                 android:hint="Password"
                 android:textColor="#FFF"
-                android:textColorHint="#FFF" />
+                android:textColorHint="#FFF"
+                android:layout_below="@+id/sign_in_button"
+                android:layout_alignParentLeft="true" />
 
 
 
@@ -57,21 +60,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alpha="0.4"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="38dp"
                 android:text="Login"
-                android:layout_below="@+id/clientEmailEdit"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:onClick="clientLogin"/>
+                android:onClick="clientLogin"
+                android:layout_below="@+id/clientPassEdit"
+                android:layout_alignParentLeft="true" />
 
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:layout_below="@id/clientLoginButton"
-                android:layout_centerHorizontal="true" />
+                android:layout_below="@+id/imageButton"
+                android:layout_alignLeft="@+id/imageButton"
+                android:layout_marginLeft="125dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+               />
 
 
 

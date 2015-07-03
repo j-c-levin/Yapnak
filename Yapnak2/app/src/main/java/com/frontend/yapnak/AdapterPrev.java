@@ -35,15 +35,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-
-
-        //LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-
-        //View view = layoutInflater.inflate(R.layout.item2,parent,false);
-
-
-
-        if(convertView == null){
+         if(convertView == null){
 
             LayoutInflater layoutInflater = ((Activity)getContext()).getLayoutInflater();
 

@@ -8,6 +8,7 @@
         android:title="NS-6438"
         android:showAsAction="ifRoom|collapseActionView|always"/>-->
 
+    <!--
     <item
         android:id="@+id/action_feedback"
         android:title="@string/action_feedback"
@@ -26,6 +27,13 @@
       app:showAsAction = "ifRoom"
 
      />
+     -->
+
+    <item
+        android:id="@+id/userNameToolBar"
+        android:title="USER"
+        app:showAsAction="ifRoom"
+    />
 
 
 
