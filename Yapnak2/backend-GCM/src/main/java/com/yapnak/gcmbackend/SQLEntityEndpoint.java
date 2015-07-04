@@ -137,7 +137,7 @@ public class SQLEntityEndpoint {
         }*/
         Connection connection;
         double distance = 0.02;
-        ArrayList<SQLEntity> list2 = new ArrayList();
+        ArrayList<SQLEntity> list2 = new ArrayList<>();
         SQLEntity s = new SQLEntity();
         try {
             if (SystemProperty.environment.value() ==

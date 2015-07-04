@@ -19,17 +19,28 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
 /**
  * Created by Nand on 24/03/15.
  */
 public class Login extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
 
+    private final String FILE_NAME = "yapnak_details";
     private EditText initials;
     private EditText phone;
     private Button loginButton;
     private EditText promo;
     private MenuItem itemMen;
     private FragmentManager fragmentManager;
+    private boolean needToCreateNewFile;
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
@@ -175,6 +186,106 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             if (!mGoogleApiClient.isConnected()) {
                 mGoogleApiClient.reconnect();
             }
+        }
+    }
+
+    private boolean checkUserPass(){
+
+        FileInputStream checkFile =null;
+        BufferedReader reader =null;
+        String[] userPass = new String[2];
+
+        try{
+
+            checkFile = openFileInput(FILE_NAME);
+
+            reader = new BufferedReader(new InputStreamReader(checkFile));
+
+                String lines = reader.readLine();
+                int i = 0;
+                while(lines!=null){
+
+                    userPass[i] = lines;
+                    i++;
+                }
+
+                reader.close();
+
+
+
+            //TODO: Compare user and pass to database, if they match - automatically sign into main login page.
+
+            SecureDetails details = new SecureDetails();
+            String [] decryptedDetails = new String[2];
+            try {
+                decryptedDetails= details.decrypt(userPass[0], userPass[1]);
+
+
+            }catch(Exception e){
+
+            }
+
+            if(decryptedDetails[0].equals("") && decryptedDetails[1].equals("")){
+                //allow user to login
+                return true;
+            }
+            return false;
+
+
+        }catch(FileNotFoundException file){
+
+            file.printStackTrace();
+            //TODO: needToCreateNewFile ?  need to open an output stream and encrypt pass/user then write into a private file.
+            needToCreateNewFile = true;
+            return false;
+
+        }catch(IOException ex){
+            ex.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public boolean createNewFile(String[] userPass){
+
+        //Encrypt USER and PASS
+        SecureDetails details = new SecureDetails();
+        String [] encryptedUserPass = new String[2];
+
+        try {
+
+            encryptedUserPass = details.encrypt(userPass[0], userPass[1]);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+
+        FileOutputStream write = null;
+        BufferedWriter writer = null;
+
+        try {
+            write = openFileOutput(FILE_NAME, MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(write));
+
+
+                writer.write(encryptedUserPass[0]);
+                writer.newLine();
+                writer.write(encryptedUserPass[1]);
+                writer.close();
+
+            return true;
+
+        }catch(FileNotFoundException e){
+
+            e.printStackTrace();
+            return false;
+
+        }catch(IOException ex){
+            //
+            ex.printStackTrace();
+            return false;
+
         }
     }
 }
