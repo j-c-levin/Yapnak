@@ -1,9 +1,7 @@
 package com.uq.yapnak;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
+import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
 import java.util.ArrayList;
 
@@ -120,13 +118,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     private ArrayList<Item> items;
 
-    public Adapter(SQLEntity sql) {
+    public Adapter(SQLList sql) {
         super();
 
         // Create some items
         items = new ArrayList<Item>();
         for (int i = 0; i < sql.getList().size(); i++) {
-            items.add(new Item(sql.getList().get(i).getName(), sql.getList().get(i).getOffer(), sql.getX(), sql.getY()));
+            items.add(new Item(sql.getList().get(i).getName(), sql.getList().get(i).getOffer(), sql.getList().get(i).getX(), sql.getList().get(i).getY()));
         }
     }
 

@@ -1,9 +1,8 @@
-package com.uq.yapnak;
+package com.frontend.yapnak.client;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.frontend.yapnak.client.MainClientActivity;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;

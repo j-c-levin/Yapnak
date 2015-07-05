@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/NNavK6QsQzS4I7cwYukJnTJA8uU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/QVs60_D-4n-R0nzgEhPp9BQCboU\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -114,12 +114,6 @@
      "type": "string",
      "format": "int64"
     },
-    "list": {
-     "type": "array",
-     "items": {
-      "$ref": "SQLEntity"
-     }
-    },
     "name": {
      "type": "string"
     },
@@ -140,6 +134,18 @@
     "y": {
      "type": "number",
      "format": "double"
+    }
+   }
+  },
+  "SQLList": {
+   "id": "SQLList",
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": {
+      "$ref": "SQLEntity"
+     }
     }
    }
   }
@@ -165,7 +171,7 @@
     "y"
    ],
    "returns": {
-    "$ref": "SQLEntity"
+    "$ref": "SQLList"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

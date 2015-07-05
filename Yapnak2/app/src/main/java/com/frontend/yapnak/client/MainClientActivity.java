@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.uq.yapnak.R;
-import com.uq.yapnak.clientSearchUserAsyncTask;
 import com.yapnak.gcmbackend.sQLEntityApi.model.PointsEntity;
 
 /**

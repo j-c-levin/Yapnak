@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/NNavK6QsQzS4I7cwYukJnTJA8uU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/QVs60_D-4n-R0nzgEhPp9BQCboU\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -116,12 +116,6 @@
      "type": "string",
      "format": "int64"
     },
-    "list": {
-     "type": "array",
-     "items": {
-      "$ref": "SQLEntity"
-     }
-    },
     "name": {
      "type": "string"
     },
@@ -144,12 +138,24 @@
      "format": "double"
     }
    }
+  },
+  "SQLList": {
+   "id": "SQLList",
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": {
+      "$ref": "SQLEntity"
+     }
+    }
+   }
   }
  },
  "methods": {
   "getClients": {
    "id": "sQLEntityApi.getClients",
-   "path": "sQLEntity_clients",
+   "path": "sQLEntity_client",
    "httpMethod": "GET",
    "parameters": {
     "x": {
@@ -170,7 +176,7 @@
     "y"
    ],
    "response": {
-    "$ref": "SQLEntity"
+    "$ref": "SQLList"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

@@ -3,9 +3,6 @@ package com.yapnak.gcmbackend;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Joshua on 17/05/2015.
  */
@@ -20,6 +17,7 @@ public class SQLEntity {
     String name;
     String offer;
     String photo;
+    double rating;
 
     public double getRating() {
         return rating;
@@ -27,17 +25,6 @@ public class SQLEntity {
 
     public void setRating(double rating) {
         this.rating = rating;
-    }
-
-    double rating;
-    List list;
-
-    public List<SQLEntity> getList() {
-        return list;
-    }
-
-    public void setList(ArrayList<SQLEntity> list) {
-        this.list = list;
     }
 
     public long getId() {
