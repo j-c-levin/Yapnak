@@ -288,4 +288,21 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
         }
     }
+
+    public boolean signedOut(){
+        try{
+            FileOutputStream stream = openFileOutput(FILE_NAME,MODE_PRIVATE);
+            String empty = "";
+            stream.write(empty.getBytes());
+            stream.close();
+            /*BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream));
+            writer.write("");
+            writer.close();
+            */
+            return true;
+
+        }catch(IOException e ){
+           return false;
+        }
+    }
 }

@@ -59,6 +59,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.koushikdutta.ion.Ion;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private  LinearLayout extendHeight;
     private  String initials;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,19 +139,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
 
-        temp = getIntent();
-        initials = temp.getStringExtra("initials");
-
-
-        getSupportActionBar().setSubtitle(initials);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
         load();
         floatButton();
+
         //navBarToggle();
         //navigationBarContent();
 
     }
+
 
 
     private boolean exit = false;
@@ -160,6 +159,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (exit) {
             finish();
         }
+    }
+
+    public void setUserName(Menu menu){
+        MenuItem item = menu.findItem(R.id.userNameToolBar);
+        try{
+        String userName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+        String[]name = userName.split("@");
+
+        item.setTitle(name[0]);
+
+        }catch(Exception e){
+
+            temp = getIntent();
+            initials = temp.getStringExtra("initials");
+            item.setTitle(initials);
+
+
+
+
+        }
+
     }
 
 
@@ -226,8 +247,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        setUserName(menu);
+
         return true;
     }
+
+
 
 
     public class Feedback extends AppCompatActivity {
@@ -299,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         }
+
+
         return super.onOptionsItemSelected(item);
 
 
@@ -751,55 +778,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return y;
             }
         });
-
-
-
-
-
-
-
-
-        ImageView iconAbout = new ImageView(this);
-        iconAbout.setImageResource(R.drawable.abouticon);
-
-        ImageView iconShare = new ImageView(this);
-        iconShare.setImageResource(R.drawable.shareicon);
-
-        ImageView iconManual = new ImageView(this);
-        iconManual.setImageResource(R.drawable.manualicon);
-
-        ImageView iconGift = new ImageView(this);
-        iconGift.setImageResource(R.drawable.gift);
-
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
-
-        SubActionButton buttonAbout = itemBuilder.setContentView(iconAbout).build();
-        SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
-        SubActionButton buttonManual = itemBuilder.setContentView(iconManual).build();
-        SubActionButton buttonGift = itemBuilder.setContentView(iconGift).build();
-
-        buttonAbout.setTag(TAG_ABOUT);
-        buttonShare.setTag(TAG_SHARE);
-        buttonManual.setTag(TAG_MANUAL);
-        buttonGift.setTag(TAG_GIFT);
-
-        buttonAbout.setOnClickListener(this);
-        buttonShare.setOnClickListener(this);
-        buttonManual.setOnClickListener(this);
-        buttonGift.setOnClickListener(this);
-
-        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
-                .addSubActionView(buttonAbout)
-                .addSubActionView(buttonShare)
-                .addSubActionView(buttonGift)
-                .addSubActionView(buttonManual)
-                .attachTo(actionButton)
-                .build();
-
-
-
-    }*/
+}*/
 
 
 
@@ -1021,6 +1000,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    private SubActionButton buttonAbout;
+    private SubActionButton buttonShare;
+    private SubActionButton buttonManual;
+    private SubActionButton buttonGift;
+
     public void floatButton() {
         ImageView image = new ImageView(this);
         image.setImageResource(R.drawable.ic_new_float);
@@ -1046,10 +1030,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
 
-        SubActionButton buttonAbout = itemBuilder.setContentView(iconAbout).build();
-        SubActionButton buttonShare = itemBuilder.setContentView(iconShare).build();
-        SubActionButton buttonManual = itemBuilder.setContentView(iconManual).build();
-        SubActionButton buttonGift = itemBuilder.setContentView(iconGift).build();
+         buttonAbout = itemBuilder.setContentView(iconAbout).build();
+         buttonShare = itemBuilder.setContentView(iconShare).build();
+         buttonManual = itemBuilder.setContentView(iconManual).build();
+         buttonGift = itemBuilder.setContentView(iconGift).build();
 
         buttonAbout.setTag(TAG_ABOUT);
         buttonShare.setTag(TAG_SHARE);
@@ -1081,17 +1065,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationEnd(Animator animation) {
                 //super.onAnimationEnd(animation);
                 ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton,"alpha",0.0f,1.0f);
-                animator.setDuration(200).start();
+                ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",0.0f,1.0f);
+                ObjectAnimator share = ObjectAnimator.ofFloat(buttonShare,"alpha",0.0f,1.0f);
+                ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",0.0f,1.0f);
+                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",0.0f,1.0f);
+                AnimatorSet s = new AnimatorSet();
+                s.playTogether(animator,about,share,manual,gift);
+                s.setDuration(200).start();
             }
 
             @Override
             public void onAnimationStart(Animator animation) {
                 //super.onAnimationStart(animation);
                 actionButton.setVisibility(View.INVISIBLE);
+                buttonAbout.setVisibility(View.INVISIBLE);
+                buttonShare.setVisibility(View.INVISIBLE);
+                buttonManual.setVisibility(View.INVISIBLE);
+                buttonGift.setVisibility(View.INVISIBLE);
             }
         };
         actionButton.animate().setListener(listener).start();
         actionButton.setVisibility(View.VISIBLE);
+        buttonAbout.setVisibility(View.VISIBLE);
+        buttonShare.setVisibility(View.VISIBLE);
+        buttonManual.setVisibility(View.VISIBLE);
+        buttonGift.setVisibility(View.VISIBLE);
 
 
 
@@ -1105,7 +1103,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationEnd(Animator animation) {
                 //super.onAnimationEnd(animation);
                 ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
-                alpha.setDuration(200).start();
+                ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",1.0f,0.0f);
+                ObjectAnimator share = ObjectAnimator.ofFloat(buttonShare,"alpha",1.0f,0.0f);
+                ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",1.0f,0.0f);
+                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",1.0f,0.0f);
+
+                AnimatorSet s = new AnimatorSet();
+                s.playTogether(alpha, about, share, manual, gift);
+                s.setDuration(200).start();
+
+
 
             }
 
@@ -1118,6 +1125,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 actionButton.setVisibility(View.GONE);
+                buttonAbout.setVisibility(View.GONE);
+                buttonShare.setVisibility(View.GONE);
+                buttonManual.setVisibility(View.GONE);
+                buttonGift.setVisibility(View.GONE);
+
             }
         }, 500);
 
@@ -1144,25 +1156,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if(firstItemPosition>currentPosition){
                      //scrolling down
-                    //Toast.makeText(getApplicationContext(),"Scroll Down",Toast.LENGTH_SHORT).show();
-                    //hidePromoItems();
-                    collapseList();
+
+                    //collapseList();
                     hideFloating();
 
                 }else if(currentPosition>firstItemPosition ){
                     //scrolling up
-                    //Toast.makeText(getApplicationContext(),"Scroll Up",Toast.LENGTH_SHORT).show();
+
+                    hideFloating();
 
 
                 }else if((scrollState == SCROLL_STATE_IDLE)&&(topValue==0)&& (promoList.getVisibility()!=View.VISIBLE)){
                     //reveal redeemable gifts
-
-                   // Toast.makeText(getApplicationContext(),"At top SHOW GIFTS",Toast.LENGTH_SHORT).show();
-                    //showPromoItems();
-
+                    //extendList();
+                }
+                else if(scrollState==SCROLL_STATE_IDLE || (topValue==0)){
                     showFloating();
-                    extendList();
-
                 }
 
                 currentPosition = firstItemPosition;
@@ -1401,9 +1410,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(){
 
-        ip = new ItemPrev[5];
+        ip = new ItemPrev[50];
 
 
+        for(int i =0 ;i<50;i++) {
 
             ItemPrev temp = new ItemPrev();
             temp.setLatitude(51.523992);
@@ -1417,8 +1427,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp.setSubText("Happy Meal £2");
             //TODO: points
             temp.setPoints("to be added");
-            ip[0] = temp;
+            ip[i] = temp;
 
+            /*
             ItemPrev temp2 = new ItemPrev();
             temp2.setLatitude(51.523992);
             temp2.setLongitude(-0.03798);
@@ -1431,7 +1442,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp2.setSubText("Buy 1 Get 1 Free = £4");
             //TODO: points
             temp2.setPoints("to be added");
-            ip[1] = temp2;
+            ip[i + 1] = temp2;
 
 
             ItemPrev temp3 = new ItemPrev();
@@ -1446,7 +1457,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp3.setSubText("Half Price = £4");
             //TODO: points
             temp3.setPoints("to be added");
-            ip[2] = temp3;
+            ip[i + 2] = temp3;
 
 
             ItemPrev temp4 = new ItemPrev();
@@ -1461,7 +1472,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp4.setSubText("£10 off Meal - £5");
             //TODO: points
             temp4.setPoints("to be added");
-            ip[3] = temp4;
+            ip[i + 3] = temp4;
 
 
             ItemPrev temp5 = new ItemPrev();
@@ -1476,8 +1487,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp5.setSubText("Sandwich,Drink,Snack = £3 ");
             //TODO: points
             temp5.setPoints("to be added");
-            ip[4] = temp5;
+            ip[i + 4] = temp5;
+            */
 
+        }
 
 
 
@@ -1488,6 +1501,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(SQLEntity sql) {
 
+
+
         try{
 
             ip = new ItemPrev[sql.getList().size()];
@@ -1497,7 +1512,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //TODO:add generic location to database
                 temp.setDistance("to be added");
                 //TODO: add photo download from google storage
-                temp.setLogo(R.drawable.mcdonalds);
+               // temp.setLogo(R.drawable.mcdonalds);
+
+                //Implement Koush Ion - populate ListView
+                String url = sql.getList().get(i).getPhoto();
+                temp.setFetchImageURL(url);
+                /////////////////////////////////////////////
+
                 temp.setMainText(sql.getList().get(i).getFoodStyle());
                 temp.setRestaurantName(sql.getList().get(i).getName());
                 temp.setSubText(sql.getList().get(i).getOffer());

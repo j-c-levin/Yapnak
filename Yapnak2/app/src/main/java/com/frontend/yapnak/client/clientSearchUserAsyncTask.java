@@ -1,4 +1,4 @@
-package com.uq.yapnak;
+package com.frontend.yapnak.client;
 
 import android.os.AsyncTask;
 import android.util.Log;

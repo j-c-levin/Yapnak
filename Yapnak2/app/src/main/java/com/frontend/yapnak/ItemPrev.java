@@ -1,5 +1,7 @@
 package com.frontend.yapnak;
 
+import android.widget.ImageView;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.uq.yapnak.R;
 
@@ -22,6 +24,7 @@ public class ItemPrev {
     private final String loyaltyPointsTitle= "Loyalty Points";
     private int locationIcon;
     private String restaurantName;
+    private String fetchImageURL;
 
 
 
@@ -103,5 +106,14 @@ public class ItemPrev {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+
+    public String getFetchImageURL() {
+        return fetchImageURL;
+    }
+
+    public void setFetchImageURL(String fetchImageURL) {
+        this.fetchImageURL = fetchImageURL;
     }
 }

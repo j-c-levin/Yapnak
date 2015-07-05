@@ -42,6 +42,7 @@
             android:layout_alignParentEnd="true"
             android:background="#EEEEEE"
             android:divider="#00000000"
+            android:visibility="gone"
 
     />
 

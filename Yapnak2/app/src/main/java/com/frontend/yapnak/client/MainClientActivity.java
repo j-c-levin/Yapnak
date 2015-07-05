@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.uq.yapnak.R;
-import com.uq.yapnak.clientSearchUserAsyncTask;
+import com.frontend.yapnak.client.clientSearchUserAsyncTask;
 import com.yapnak.gcmbackend.sQLEntityApi.model.PointsEntity;
 
 /**
@@ -45,7 +45,7 @@ public class MainClientActivity extends Activity{
 
         userCode = (EditText) findViewById(R.id.userCodeText);
         //change this so that it puts the client's email into it
-        new clientSearchUserAsyncTask(this, userCode.toString(), "joshua.c.levin@gmail.com").execute();
+        new clientSearchUserAsyncTask(this, userCode.getText().toString(), "joshua.c.levin@gmail.com").execute();
 
         //TODO:Compare user code against Database and return boolean
 
@@ -53,8 +53,6 @@ public class MainClientActivity extends Activity{
 
             CodeErrorDialog errorDialog = new CodeErrorDialog();
             errorDialog.show(getFragmentManager(),"UserCodeError");
-
-        }else{
 
         }
 

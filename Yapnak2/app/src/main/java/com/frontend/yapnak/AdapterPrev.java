@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
 import com.uq.yapnak.MoreInfo;
 import com.uq.yapnak.R;
 
@@ -21,6 +22,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
     private View view;
     private ItemPrev deal;
+    private final String FILE_NAME = "yapnak_details";
 
 
 
@@ -54,11 +56,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             ImageView restaurantLogo = (ImageView) view.findViewById(R.id.logo);
 
 
-        /*
-        locationLayout = (LinearLayout) view.findViewById(R.id.switch_to_location);
-        buttonsLayout = (LinearLayout)view.findViewById(R.id.extendLayout);
-        textForButtonLayout= (LinearLayout) view.findViewById(R.id.customIconLayout);
-        */
 
             mainText.setText(deal.getMainText());
             subText.setText(deal.getSubText());
@@ -68,46 +65,37 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             points.setText(deal.getPoints());
             restaurantLogo.setImageResource(deal.getLogo());
 
+            //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
+
+             Ion.with(restaurantLogo)
+                    .placeholder(R.drawable.manualicon)
+                    .load(deal.getFetchImageURL());
+
+             //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
+
+
+             //Load more images after authentication
 
 
 
-            //Show Ratings and Comments page with long click;
-            /*
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Intent intent = new Intent(getContext(),MoreInfo.class);
-
-                    intent.putExtra("logo",deal.getLogo());
-                    intent.putExtra("location",deal.getDistance());
-                    intent.putExtra("rating",2.1);
-
-                    getContext().startActivity(intent);
 
 
 
-                    return true;
-                }
-            });
-            */
+             //Load more images after authentication
 
 
-
-            convertView.setTag(deal);
+             convertView.setTag(deal);
 
 
         }else{
             deal = (ItemPrev) convertView.getTag();
         }
 
-
-
-
-
-
         return convertView;
 
     }
+
+
 
 
 
