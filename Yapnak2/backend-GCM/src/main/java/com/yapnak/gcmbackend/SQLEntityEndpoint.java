@@ -3,14 +3,10 @@ package com.yapnak.gcmbackend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.CollectionResponse;
-import com.google.api.server.spi.response.NotFoundException;
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
+import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
-import com.googlecode.objectify.cmd.Query;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,13 +14,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
-
-import static com.googlecode.objectify.ObjectifyService.ofy;
 
 /**
  * WARNING: This generated code is intended as a sample or starting point for using a
@@ -80,29 +72,43 @@ public class SQLEntityEndpoint {
                 stmt.setString(1, userID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
-                    statement= "SELECT clientID from client where email = ?";
+                    logger.info("found user");
+                    statement = "SELECT clientID from client where email = ?";
                     stmt = connection.prepareStatement(statement);
                     stmt.setString(1, clientEmail);
                     rs = stmt.executeQuery();
                     rs.next();
                     points.setClientID(rs.getInt("clientID"));
+                    points.setUserID(userID);
                     statement = "SELECT points FROM points where userID = ? AND clientID = ?";
                     stmt = connection.prepareStatement(statement);
                     stmt.setString(1, userID);
                     stmt.setInt(2, rs.getInt("clientID"));
                     rs = stmt.executeQuery();
-                    rs.next();
-                    points.setPoints(rs.getInt("points"));
-                    //change the number here to adjust points given)
-                    points.setPoints(points.getPoints() + 5);
-                    points.setUserID(userID);
-                    statement = "UPDATE points SET points = ? where userID = ? AND clientID = ?";
-                    stmt = connection.prepareStatement(statement);
-                    stmt.setInt(1, points.getPoints());
-                    stmt.setString(2, points.getUserID());
-                    stmt.setInt(3, points.getClientID());
-                    stmt.executeUpdate();
+                    if (rs.next()) {
+                        points.setPoints(rs.getInt("points") + 5);
+                        //change the number here to adjust points given)
+                        logger.info("points: " + points.getPoints());
+                        statement = "UPDATE points SET points = ? where userID = ? AND clientID = ?";
+                        stmt = connection.prepareStatement(statement);
+                        stmt.setInt(1, points.getPoints());
+                        stmt.setString(2, points.getUserID());
+                        stmt.setInt(3, points.getClientID());
+                        stmt.executeUpdate();
+                    } else {
+                        logger.info("creating " + points.getPoints() + " " + points.getUserID() + " " + points.getClientID());
+                        statement = "INSERT INTO points (points,userID,clientID) VALUES (?,?,?)";
+                        stmt = connection.prepareStatement(statement);
+                        //number of points per visit
+                        stmt.setInt(1, 5);
+                        stmt.setString(2, points.getUserID());
+                        stmt.setInt(3, points.getClientID());
+                        stmt.executeUpdate();
+                        points.setPoints(5);
+                    }
+
                 } else {
+                    logger.info("couldn't find user");
                     points = null;
                 }
             } finally {
@@ -289,39 +295,6 @@ public class SQLEntityEndpoint {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * List all entities.
-     *
-     * @param cursor used for pagination to determine which page to return
-     * @param limit  the maximum number of entries to return
-     * @return a response that encapsulates the result list and the next page token/cursor
-     */
-    @ApiMethod(
-            name = "list",
-            path = "sQLEntity",
-            httpMethod = ApiMethod.HttpMethod.GET)
-    public CollectionResponse<SQLEntity> list(@Nullable @Named("cursor") String cursor, @Nullable @Named("limit") Integer limit) {
-        limit = limit == null ? DEFAULT_LIST_LIMIT : limit;
-        Query<SQLEntity> query = ofy().load().type(SQLEntity.class).limit(limit);
-        if (cursor != null) {
-            query = query.startAt(Cursor.fromWebSafeString(cursor));
-        }
-        QueryResultIterator<SQLEntity> queryIterator = query.iterator();
-        List<SQLEntity> sQLEntityList = new ArrayList<SQLEntity>(limit);
-        while (queryIterator.hasNext()) {
-            sQLEntityList.add(queryIterator.next());
-        }
-        return CollectionResponse.<SQLEntity>builder().setItems(sQLEntityList).setNextPageToken(queryIterator.getCursor().toWebSafeString()).build();
-    }
-
-    private void checkExists(String name) throws NotFoundException {
-        try {
-            ofy().load().type(SQLEntity.class).id(name).safe();
-        } catch (com.googlecode.objectify.NotFoundException e) {
-            throw new NotFoundException("Could not find SQLEntity with ID: " + name);
         }
     }
 }
