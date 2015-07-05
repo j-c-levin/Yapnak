@@ -32,7 +32,7 @@ public class clientSearchUserAsyncTask extends AsyncTask<Void, Void, PointsEntit
                 .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
         sqlEntity = builder.build();
         try {
-            PointsEntity x = sqlEntity.getUser(userID, clientEmail).execute();
+            PointsEntity x = sqlEntity.getUser(userID, "joshua.c.levin@gmail.com").execute();
             if (x == null) {
                 Log.d("Debug", "user not found");
                 return null;
