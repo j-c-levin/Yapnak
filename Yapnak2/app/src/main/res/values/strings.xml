@@ -29,7 +29,7 @@
     <string name="about_action_item">About</string>
     <string name="submit_client_button">Submit Code</string>
     <string name="enter_user_code">Enter User Code</string>
-
+    <string name="na">N/A</string>
 
 
 </resources>

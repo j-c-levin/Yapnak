@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
@@ -59,16 +58,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-import com.koushikdutta.ion.Ion;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 
-import java.io.FileOutputStream;
 
-
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
     private static final int NOTIFICATION_ID = 0;
 
@@ -112,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PromoItem promoItem;
     private FloatingActionButton actionButton;
     private ListView deals,promoList;
-    private Intent temp;
+    private Intent temp,name;
 
     private String firstName;
     private String lastName;
@@ -122,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private  LinearLayout extendText;
     private  LinearLayout extendHeight;
     private  String initials;
+    private String personName;
 
 
     @Override
@@ -138,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .build();
+
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
@@ -161,23 +160,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private final String LOG_INFO="log";
     public void setUserName(Menu menu){
         MenuItem item = menu.findItem(R.id.userNameToolBar);
+
         try{
-        String userName = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+       /*String userName = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
         String[]name = userName.split("@");
 
-        item.setTitle(name[0]);
+        item.setTitle(name[0]);*/
+
+            Log.d(LOG_INFO,"item SETTING TITLE");
+
+            name = getIntent();
+            personName= name.getStringExtra("accName");
+            item.setTitle(personName);
+
+            Log.d(LOG_INFO, "item SET TITLE");
 
         }catch(Exception e){
 
+            e.printStackTrace();
             temp = getIntent();
             initials = temp.getStringExtra("initials");
             item.setTitle(initials);
-
-
-
 
         }
 
@@ -192,6 +200,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("debug", "Location Found: " + mLastLocation.toString());
             new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
         }
+
+            if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
+
+                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+                personName = currentPerson.getDisplayName();
+
+            }
+
         Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
     }
 
@@ -249,13 +265,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setUserName(menu);
 
+
         return true;
     }
 
 
 
 
-    public class Feedback extends AppCompatActivity {
+    public class Feedback extends ActionBarActivity {
 
         //@Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -1154,13 +1171,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 float topValue = v==null ? 0 : v.getTop()-deals.getPaddingTop();
 
 
-                if(firstItemPosition>currentPosition){
+                if(firstItemPosition>currentPosition && (actionButton.getVisibility()!=View.GONE) && (scrollState==SCROLL_STATE_FLING) &&(scrollState != SCROLL_STATE_TOUCH_SCROLL)){
                      //scrolling down
 
                     //collapseList();
                     hideFloating();
 
-                }else if(currentPosition>firstItemPosition ){
+                }else if(currentPosition>firstItemPosition && (actionButton.getVisibility()!=View.GONE) &&(scrollState==SCROLL_STATE_FLING) &&(scrollState != SCROLL_STATE_TOUCH_SCROLL)){
                     //scrolling up
 
                     hideFloating();
@@ -1170,7 +1187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //reveal redeemable gifts
                     //extendList();
                 }
-                else if(scrollState==SCROLL_STATE_IDLE || (topValue==0)){
+                else if((scrollState==SCROLL_STATE_IDLE || (topValue==0)) && actionButton.getVisibility()!=View.VISIBLE){
                     showFloating();
                 }
 
@@ -1290,7 +1307,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ItemPrev item = (ItemPrev)parent.getItemAtPosition(position);
             Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
             intent.putExtra("logo", item.getLogo());
-            intent.putExtra("location", item.getDistance());
+            intent.putExtra("location", item.getDistanceTime());
             intent.putExtra("rating",2.1);
             startActivity(intent);
             return true;
@@ -1356,7 +1373,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
                     intent.putExtra("logo", itemTemp.getLogo());
-                    intent.putExtra("location", itemTemp.getDistance());
+                    intent.putExtra("location", itemTemp.getDistanceTime());
                     intent.putExtra("rating",2.1);
                     startActivity(intent);
                     return true;
@@ -1410,16 +1427,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(){
 
-        ip = new ItemPrev[50];
+        ip = new ItemPrev[5];
 
 
-        for(int i =0 ;i<50;i++) {
+        //for(int i =0 ;i<5;i++) {
 
             ItemPrev temp = new ItemPrev();
             temp.setLatitude(51.523992);
             temp.setLongitude(-0.03798);
             //TODO:add generic location to database
-            temp.setDistance("100 Metres");
+            temp.setDistanceTime("2 mins");
             //TODO: add photo download from google storage
             temp.setLogo(R.drawable.mcdonalds);
             temp.setMainText("Happy Meal");
@@ -1427,14 +1444,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp.setSubText("Happy Meal £2");
             //TODO: points
             temp.setPoints("to be added");
-            ip[i] = temp;
+            ip[0] = temp;
 
-            /*
+
             ItemPrev temp2 = new ItemPrev();
             temp2.setLatitude(51.523992);
             temp2.setLongitude(-0.03798);
             //TODO:add generic location to database
-            temp2.setDistance("1 km");
+            temp2.setDistanceTime("1 km");
             //TODO: add photo download from google storage
             temp2.setLogo(R.drawable.wrapitup);
             temp2.setMainText("Burrito Deal");
@@ -1442,14 +1459,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp2.setSubText("Buy 1 Get 1 Free = £4");
             //TODO: points
             temp2.setPoints("to be added");
-            ip[i + 1] = temp2;
+            ip[1] = temp2;
 
 
             ItemPrev temp3 = new ItemPrev();
             //TODO:add generic location to database
             temp3.setLatitude(51.523992);
             temp3.setLongitude(-0.03798);
-            temp3.setDistance("80 Metres");
+            temp3.setDistanceTime("80 Metres");
             //TODO: add photo download from google storage
             temp3.setLogo(R.drawable.pizzaexpresslogo);
             temp3.setMainText("Any Size Pizza");
@@ -1457,14 +1474,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp3.setSubText("Half Price = £4");
             //TODO: points
             temp3.setPoints("to be added");
-            ip[i + 2] = temp3;
+            ip[2] = temp3;
 
 
             ItemPrev temp4 = new ItemPrev();
             //TODO:add generic location to database
             temp4.setLatitude(51.523992);
             temp4.setLongitude(-0.03798);
-            temp4.setDistance("80 Metres");
+            temp4.setDistanceTime("80 Metres");
             //TODO: add photo download from google storage
             temp4.setLogo(R.drawable.gbklogo);
             temp4.setMainText("Main Meal Deal");
@@ -1472,14 +1489,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp4.setSubText("£10 off Meal - £5");
             //TODO: points
             temp4.setPoints("to be added");
-            ip[i + 3] = temp4;
+            ip[3] = temp4;
 
 
             ItemPrev temp5 = new ItemPrev();
             //TODO:add generic location to database
             temp5.setLatitude(51.523992);
             temp5.setLongitude(-0.03798);
-            temp5.setDistance("2 km");
+            temp5.setDistanceTime("2 km");
             //TODO: add photo download from google storage
             temp5.setLogo(R.drawable.tescologo);
             temp5.setMainText("Meal Deal");
@@ -1487,10 +1504,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             temp5.setSubText("Sandwich,Drink,Snack = £3 ");
             //TODO: points
             temp5.setPoints("to be added");
-            ip[i + 4] = temp5;
-            */
+            ip[4] = temp5;
 
-        }
+
+        //}
 
 
 
@@ -1510,7 +1527,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             for (int i = 0; i < ip.length; i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
-                temp.setDistance("to be added");
+                temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
                // temp.setLogo(R.drawable.mcdonalds);
 
@@ -1539,7 +1556,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             ItemPrev temp = new ItemPrev();
             //TODO:add generic location to database
-            temp.setDistance("to be added");
+            temp.setDistanceTime("to be added");
             //TODO: add photo download from google storage
             temp.setLogo(R.drawable.mcdonalds);
             temp.setMainText("Cannot Retrieve Information");

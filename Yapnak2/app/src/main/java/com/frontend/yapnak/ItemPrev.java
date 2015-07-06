@@ -51,11 +51,11 @@ public class ItemPrev {
         this.points = points;
     }
 
-    public String getDistance() {
+    public String getDistanceTime() {
         return location;
     }
 
-    public void setDistance(String location) {
+    public void setDistanceTime(String location) {
         this.location = location;
     }
 
