@@ -5,8 +5,6 @@ import android.widget.ImageView;
 import com.google.android.gms.maps.model.LatLng;
 import com.uq.yapnak.R;
 
-import java.util.List;
-
 /**
  * Created by vahizan on 17/04/2015.
  */

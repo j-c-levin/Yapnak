@@ -3,7 +3,6 @@ package com.frontend.yapnak.client;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.frontend.yapnak.client.MainClientActivity;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
@@ -33,15 +32,7 @@ public class clientSearchUserAsyncTask extends AsyncTask<Void, Void, PointsEntit
                 .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
         sqlEntity = builder.build();
         try {
-            PointsEntity x = sqlEntity.getUser(userID, clientEmail).execute();
-            if (x == null) {
-                Log.d("Debug", "user not found");
-                return null;
-            }
-            else {
-                Log.d("debug", "found user: " + x.getUserID() + " : " + x.getPoints());
-            }
-            return x;
+            return sqlEntity.getUser(userID, "joshua.c.levin@gmail.com").execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

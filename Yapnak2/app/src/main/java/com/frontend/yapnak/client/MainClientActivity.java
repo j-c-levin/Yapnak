@@ -2,6 +2,7 @@ package com.frontend.yapnak.client;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +61,7 @@ public class MainClientActivity extends Activity{
 
     public void load(PointsEntity result) {
         //make a notification of some kind in here
+        Log.d("debug", result.getUserID() + " " + result.getPoints());
     }
 
     @Override

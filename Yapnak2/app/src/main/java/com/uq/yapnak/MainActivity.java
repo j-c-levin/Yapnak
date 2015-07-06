@@ -2,7 +2,6 @@ package com.uq.yapnak;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
@@ -20,7 +19,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -62,7 +60,13 @@ import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
+import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
+<<<<<<< HEAD
+=======
+import java.util.ArrayList;
+import java.util.List;
+>>>>>>> backend
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
@@ -976,7 +980,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-    public void load(SQLEntity sql) {
+    public void load(SQLList sql) {
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
@@ -1506,27 +1510,30 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             temp5.setPoints("to be added");
             ip[4] = temp5;
 
+<<<<<<< HEAD
 
         //}
 
 
 
 
+=======
+>>>>>>> backend
         return ip;
 
     }
 
-    public ItemPrev[] dealList(SQLEntity sql) {
+    public ItemPrev[] dealList(SQLList sql) {
 
 
 
         try{
-
-            ip = new ItemPrev[sql.getList().size()];
-
+            List<SQLEntity> list = new ArrayList<SQLEntity>(sql.getList());
+            ip = new ItemPrev[list.size()];
             for (int i = 0; i < ip.length; i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
+<<<<<<< HEAD
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
                // temp.setLogo(R.drawable.mcdonalds);
@@ -1541,16 +1548,30 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setSubText(sql.getList().get(i).getOffer());
                 temp.setLatitude(sql.getList().get(i).getY());
                 temp.setLongitude(sql.getList().get(i).getX());
+=======
+                temp.setDistance("to be added");
+
+
+                //download and display image from url
+                String url = list.get(i).getPhoto();
+
+
+                temp.setLogo(R.drawable.yapnakmonster);
+                temp.setMainText(list.get(i).getFoodStyle());
+                temp.setRestaurantName(list.get(i).getName());
+                temp.setSubText(list.get(i).getOffer());
+                temp.setLatitude(list.get(i).getY());
+                temp.setLongitude(list.get(i).getX());
+>>>>>>> backend
                 //TODO: points
                 temp.setPoints("to be added");
                 ip[i] = temp;
-
             }
 
             return ip;
 
         }catch(Exception e){
-
+            e.printStackTrace();
             ip = new ItemPrev[1];
 
 

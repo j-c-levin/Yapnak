@@ -3,9 +3,13 @@ package com.yapnak.gcmbackend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.NotFoundException;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
-import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.ObjectifyService;
 
 import java.sql.Connection;
@@ -14,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -95,6 +100,8 @@ public class SQLEntityEndpoint {
                         stmt.setString(2, points.getUserID());
                         stmt.setInt(3, points.getClientID());
                         stmt.executeUpdate();
+                        connection.close();
+                        return points;
                     } else {
                         logger.info("creating " + points.getPoints() + " " + points.getUserID() + " " + points.getClientID());
                         statement = "INSERT INTO points (points,userID,clientID) VALUES (?,?,?)";
@@ -105,6 +112,8 @@ public class SQLEntityEndpoint {
                         stmt.setInt(3, points.getClientID());
                         stmt.executeUpdate();
                         points.setPoints(5);
+                        connection.close();
+                        return points;
                     }
 
                 } else {
@@ -135,16 +144,17 @@ public class SQLEntityEndpoint {
      */
     @ApiMethod(
             name = "getClients",
-            path = "sQLEntity_clients",
+            path = "sQLEntity_client",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLEntity get(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
+    public SQLList getClients(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
 /*        if (user == null) {
             throw new OAuthRequestException("User is not valid " + user);
         }*/
         Connection connection;
         double distance = 0.02;
-        ArrayList<SQLEntity> list2 = new ArrayList<>();
-        SQLEntity s = new SQLEntity();
+        List<SQLEntity> list = new ArrayList<SQLEntity>();
+        SQLEntity sql = new SQLEntity();
+        SQLList sqlList = new SQLList();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -156,48 +166,60 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-            try {
-                String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
-                PreparedStatement stmt = connection.prepareStatement(statement);
-                double t = x - distance;
-                stmt.setDouble(1, t);
-                t = x + distance;
-                stmt.setDouble(2, t);
-                t = y - distance;
-                stmt.setDouble(3, t);
-                t = y + distance;
-                stmt.setDouble(4, t);
-                ResultSet rs = stmt.executeQuery();
-                rs.last();
-                logger.info("number of results: " + rs.getRow());
-                int p = rs.getRow();
-                rs.beforeFirst();
-                for (int i = 0; i < p; i++) {
-                    rs.next();
-                    SQLEntity sql = new SQLEntity();
-                    sql.setName(rs.getString("clientName"));
-                    sql.setOffer(rs.getString("clientOffer"));
-                    sql.setX(rs.getDouble("clientX"));
-                    sql.setY(rs.getDouble("clientY"));
-                    sql.setFoodStyle(rs.getString("clientFoodStyle"));
-                    sql.setPhoto(rs.getString("clientPhoto"));
-                    sql.setRating((rs.getDouble("rating")));
-                    list2.add(sql);
-                    logger.info("found client: " + rs.getString("clientName"));
+            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            double t = x - distance;
+            stmt.setDouble(1, t);
+            t = x + distance;
+            stmt.setDouble(2, t);
+            t = y - distance;
+            stmt.setDouble(3, t);
+            t = y + distance;
+            stmt.setDouble(4, t);
+            ResultSet rs = stmt.executeQuery();
+            rs.last();
+            logger.info("number of results: " + rs.getRow());
+            int p = rs.getRow();
+            rs.beforeFirst();
+            for (int i = 0; i < p; i++) {
+                logger.info("loop: " + (i + 1) + "/" + p);
+                rs.next();
+                sql = new SQLEntity();
+                sql.setName(rs.getString("clientName"));
+                sql.setOffer(rs.getString("clientOffer"));
+                sql.setX(rs.getDouble("clientX"));
+                sql.setY(rs.getDouble("clientY"));
+                sql.setFoodStyle(rs.getString("clientFoodStyle"));
+                //get photo from blobstore
+                String url = null;
+                if (rs.getString("clientPhoto") != null) {
+                    logger.info("photo: " + rs.getString("clientPhoto"));
+                    if (SystemProperty.environment.value() ==
+                            SystemProperty.Environment.Value.Production) {
+                        ImagesService services = ImagesServiceFactory.getImagesService();
+                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "=s50"));    // Blobkey of the image uploaded to BlobStore.
+                        url = services.getServingUrl(serve);
+                    } else {
+                        url = rs.getString("clientPhoto");
+                    }
+                } else {
+                    logger.info("no photo found");
+                    url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
                 }
-                s.setList(list2);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                connection.close();
-                return s;
+                sql.setPhoto(url);
+                sql.setRating((rs.getDouble("rating")));
+                list.add(sql);
             }
+
+            connection.close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            sqlList.setList(list);
+            return sqlList;
         }
-        return null;
     }
 
     /**
