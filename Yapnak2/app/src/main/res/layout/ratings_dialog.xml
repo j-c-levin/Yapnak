@@ -8,18 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Rate Deal"
-
+        android:text="@string/rate_deal"
         android:gravity="center"
         android:id="@+id/RateTitle"
+        android:layout_marginRight="100dp"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.07" />
 
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/rateDeal"
         style="@style/yapnakRatingBar"
         android:layout_gravity="center_horizontal" />

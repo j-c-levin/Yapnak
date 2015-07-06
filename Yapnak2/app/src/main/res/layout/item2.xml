@@ -86,7 +86,7 @@
                 android:layout_marginTop="93dp"
                 android:text="Loyalty Points:"
                 android:textColor="#9E9E9E"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
 
             <TextView
@@ -97,7 +97,7 @@
                 android:layout_marginTop="93dp"
                 android:text="10"
                 android:textColor="#9E9E9E"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
             <ImageView
                 android:id="@+id/locationIcon"
@@ -116,7 +116,7 @@
                 android:text="hello"
                 android:textColor="#9E9E9E"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="normal" />
 
 
 
