@@ -17,7 +17,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Account;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -41,6 +43,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
     private MenuItem itemMen;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
+    private String personName;
+    Person person;
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
@@ -128,6 +132,17 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
         Intent i = new Intent(this, MainActivity.class);
+
+        //person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+        //this.personName = person.getDisplayName();
+
+        String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+        i.putExtra("accName",acc);
+
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }
 
@@ -140,7 +155,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         if (view.getId() == R.id.sign_in_button && !mGoogleApiClient.isConnecting()) {
             mSignInClicked = true;
             mGoogleApiClient.connect();
-        }
+
+          }
     }
 
     @Override
@@ -166,6 +182,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
     protected void onStart() {
         super.onStart();
         mGoogleApiClient.connect();
+
     }
 
     @Override

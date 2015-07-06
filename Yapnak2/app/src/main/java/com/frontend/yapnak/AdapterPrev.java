@@ -2,7 +2,7 @@ package com.frontend.yapnak;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.uq.yapnak.MoreInfo;
 import com.uq.yapnak.R;
 
 /**
@@ -52,8 +51,20 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             TextView locationName = (TextView)view.findViewById(R.id.distance);
             TextView loyaltyPointsTitle = (TextView)view.findViewById(R.id.loyalty);
             TextView points = (TextView)view.findViewById(R.id.loyaltyPoints);
+
+            /* Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),"fonts/canela_light.otf");
+             mainText.setTypeface(custom_font);
+             subText.setTypeface(custom_font);
+             locationName.setTypeface(custom_font);
+             loyaltyPointsTitle.setTypeface(custom_font);
+             points.setTypeface(custom_font);
+             */
+
+
             ImageView locationLogo = (ImageView) view.findViewById(R.id.locationIcon);
             ImageView restaurantLogo = (ImageView) view.findViewById(R.id.logo);
+
+
 
 
 
@@ -61,15 +72,16 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             subText.setText(deal.getSubText());
             locationLogo.setImageResource(deal.getLocationIcon());
             loyaltyPointsTitle.setText(deal.getLoyaltyPointsTitle());
-            locationName.setText(deal.getDistance());
+            locationName.setText(deal.getDistanceTime());
             points.setText(deal.getPoints());
             restaurantLogo.setImageResource(deal.getLogo());
 
             //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
 
-             Ion.with(restaurantLogo)
+             /*Ion.with(restaurantLogo)
                     .placeholder(R.drawable.manualicon)
                     .load(deal.getFetchImageURL());
+             */
 
              //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
 
