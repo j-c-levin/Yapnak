@@ -107,6 +107,8 @@ public class SQLEntityEndpoint {
                         stmt.setString(2, points.getUserID());
                         stmt.setInt(3, points.getClientID());
                         stmt.executeUpdate();
+                        connection.close();
+                        return points;
                     } else {
                         logger.info("creating " + points.getPoints() + " " + points.getUserID() + " " + points.getClientID());
                         statement = "INSERT INTO points (points,userID,clientID) VALUES (?,?,?)";
@@ -117,6 +119,8 @@ public class SQLEntityEndpoint {
                         stmt.setInt(3, points.getClientID());
                         stmt.executeUpdate();
                         points.setPoints(5);
+                        connection.close();
+                        return points;
                     }
 
                 } else {

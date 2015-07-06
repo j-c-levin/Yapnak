@@ -2,6 +2,7 @@ package com.frontend.yapnak.client;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,7 +45,7 @@ public class MainClientActivity extends Activity{
 
         userCode = (EditText) findViewById(R.id.userCodeText);
         //change this so that it puts the client's email into it
-        new clientSearchUserAsyncTask(this, userCode.toString(), "joshua.c.levin@gmail.com").execute();
+        new clientSearchUserAsyncTask(this, userCode.getText().toString(), "joshua.c.levin@gmail.com").execute();
 
         //TODO:Compare user code against Database and return boolean
 
@@ -61,6 +62,7 @@ public class MainClientActivity extends Activity{
 
     public void load(PointsEntity result) {
         //make a notification of some kind in here
+        Log.d("debug", result.getUserID() + " " + result.getPoints());
     }
 
     @Override
