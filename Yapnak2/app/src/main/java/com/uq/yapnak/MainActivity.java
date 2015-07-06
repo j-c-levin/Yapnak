@@ -2,6 +2,7 @@ package com.uq.yapnak;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -62,11 +64,10 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
-<<<<<<< HEAD
-=======
+
 import java.util.ArrayList;
 import java.util.List;
->>>>>>> backend
+
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult> {
@@ -176,13 +177,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         item.setTitle(name[0]);*/
 
-            Log.d(LOG_INFO,"item SETTING TITLE");
+
 
             name = getIntent();
             personName= name.getStringExtra("accName");
             item.setTitle(personName);
+            personName = name.getStringExtra("accName");
 
-            Log.d(LOG_INFO, "item SET TITLE");
+
+            String[]name = personName.split("@");
+
+            item.setTitle(name[0]);
+
+
+
+
+
+
 
         }catch(Exception e){
 
@@ -1187,12 +1198,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     hideFloating();
 
 
-                }else if((scrollState == SCROLL_STATE_IDLE)&&(topValue==0)&& (promoList.getVisibility()!=View.VISIBLE)){
+                }else if((scrollState == SCROLL_STATE_IDLE)&&(topValue==0)&& (actionButton.getVisibility()!=View.VISIBLE)){
                     //reveal redeemable gifts
                     //extendList();
-                }
-                else if((scrollState==SCROLL_STATE_IDLE || (topValue==0)) && actionButton.getVisibility()!=View.VISIBLE){
                     showFloating();
+                }
+                else if((scrollState==SCROLL_STATE_IDLE) && actionButton.getVisibility()!=View.VISIBLE){
+                    //showFloating();
+
+                }
+                else if(scrollState==SCROLL_STATE_IDLE && (topValue==0) && (promoList.getVisibility()!=View.VISIBLE)){
+
                 }
 
                 currentPosition = firstItemPosition;
@@ -1431,10 +1447,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(){
 
-        ip = new ItemPrev[5];
+        ip = new ItemPrev[50];
 
 
-        //for(int i =0 ;i<5;i++) {
+        for(int i =0 ;i<50;i++) {
 
             ItemPrev temp = new ItemPrev();
             temp.setLatitude(51.523992);
@@ -1448,9 +1464,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             temp.setSubText("Happy Meal £2");
             //TODO: points
             temp.setPoints("to be added");
-            ip[0] = temp;
+            //ip[0] = temp;
+            ip[i] = temp;
 
-
+            /*
             ItemPrev temp2 = new ItemPrev();
             temp2.setLatitude(51.523992);
             temp2.setLongitude(-0.03798);
@@ -1509,16 +1526,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //TODO: points
             temp5.setPoints("to be added");
             ip[4] = temp5;
-
-<<<<<<< HEAD
-
-        //}
+            */
 
 
 
+        }
 
-=======
->>>>>>> backend
+
+
+
         return ip;
 
     }
@@ -1533,13 +1549,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             for (int i = 0; i < ip.length; i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
-<<<<<<< HEAD
+
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
                // temp.setLogo(R.drawable.mcdonalds);
 
                 //Implement Koush Ion - populate ListView
-                String url = sql.getList().get(i).getPhoto();
+
+                //download and display image from url
+                String url = list.get(i).getPhoto();
+                //String url = sql.getList().get(i).getPhoto();
                 temp.setFetchImageURL(url);
                 /////////////////////////////////////////////
 
@@ -1548,12 +1567,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setSubText(sql.getList().get(i).getOffer());
                 temp.setLatitude(sql.getList().get(i).getY());
                 temp.setLongitude(sql.getList().get(i).getX());
-=======
-                temp.setDistance("to be added");
+
+                temp.setDistanceTime("to be added");
 
 
-                //download and display image from url
-                String url = list.get(i).getPhoto();
+
 
 
                 temp.setLogo(R.drawable.yapnakmonster);
@@ -1562,7 +1580,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setSubText(list.get(i).getOffer());
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());
->>>>>>> backend
+
                 //TODO: points
                 temp.setPoints("to be added");
                 ip[i] = temp;
