@@ -63,6 +63,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
             ImageView locationLogo = (ImageView) view.findViewById(R.id.locationIcon);
             ImageView restaurantLogo = (ImageView) view.findViewById(R.id.logo);
+            ImageView hotDeal = (ImageView) view.findViewById(R.id.heatIcon);
 
 
 
@@ -75,6 +76,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             locationName.setText(deal.getDistanceTime());
             points.setText(deal.getPoints());
             restaurantLogo.setImageResource(deal.getLogo());
+            hotDeal.setImageResource(deal.getHotDeal());
 
             //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
 

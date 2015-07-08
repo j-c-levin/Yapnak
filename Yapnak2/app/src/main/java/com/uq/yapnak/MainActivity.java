@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -119,9 +120,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private String lastName;
 
     private GPSTrack tracker;
-    private  LinearLayout extendIcon;
-    private  LinearLayout extendText;
-    private  LinearLayout extendHeight;
+    private RelativeLayout extendIcon;
+    private RelativeLayout extendText;
+    private RelativeLayout extendHeight;
     private  String initials;
     private String personName;
 
@@ -529,9 +530,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void extendInfo(View v) {
         //Extend info: Rate,like and Take Me There
-         extendHeight= (LinearLayout) v.findViewById(R.id.extendHeight);
-         extendIcon =(LinearLayout)v.findViewById(R.id.extendIconLayout);
-         extendText =(LinearLayout)v.findViewById(R.id.extendTextLayout);
+         extendHeight= (RelativeLayout) v.findViewById(R.id.extendHeight);
+         extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
+         extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
 
 
 
@@ -1447,10 +1448,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(){
 
-        ip = new ItemPrev[50];
+        ip = new ItemPrev[10];
 
 
-        for(int i =0 ;i<50;i++) {
+       // for(int i =0 ;i<50;i++) {
 
             ItemPrev temp = new ItemPrev();
             temp.setLatitude(51.523992);
@@ -1462,17 +1463,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             temp.setMainText("Happy Meal");
             temp.setRestaurantName("Mc Donalds");
             temp.setSubText("Happy Meal £2");
+             temp.setHotDeal(R.drawable.yapnak_colorsmall);
             //TODO: points
             temp.setPoints("to be added");
             //ip[0] = temp;
-            ip[i] = temp;
+            ip[0] = temp;
 
-            /*
+
             ItemPrev temp2 = new ItemPrev();
             temp2.setLatitude(51.523992);
             temp2.setLongitude(-0.03798);
             //TODO:add generic location to database
-            temp2.setDistanceTime("1 km");
+            temp2.setDistanceTime("1 min");
             //TODO: add photo download from google storage
             temp2.setLogo(R.drawable.wrapitup);
             temp2.setMainText("Burrito Deal");
@@ -1487,7 +1489,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //TODO:add generic location to database
             temp3.setLatitude(51.523992);
             temp3.setLongitude(-0.03798);
-            temp3.setDistanceTime("80 Metres");
+            temp3.setDistanceTime("1 min");
             //TODO: add photo download from google storage
             temp3.setLogo(R.drawable.pizzaexpresslogo);
             temp3.setMainText("Any Size Pizza");
@@ -1502,7 +1504,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //TODO:add generic location to database
             temp4.setLatitude(51.523992);
             temp4.setLongitude(-0.03798);
-            temp4.setDistanceTime("80 Metres");
+            temp4.setDistanceTime("3 mins");
             //TODO: add photo download from google storage
             temp4.setLogo(R.drawable.gbklogo);
             temp4.setMainText("Main Meal Deal");
@@ -1517,7 +1519,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //TODO:add generic location to database
             temp5.setLatitude(51.523992);
             temp5.setLongitude(-0.03798);
-            temp5.setDistanceTime("2 km");
+            temp5.setDistanceTime("2 mins");
             //TODO: add photo download from google storage
             temp5.setLogo(R.drawable.tescologo);
             temp5.setMainText("Meal Deal");
@@ -1526,11 +1528,89 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //TODO: points
             temp5.setPoints("to be added");
             ip[4] = temp5;
-            */
+
+
+            ItemPrev temp6 = new ItemPrev();
+            temp6.setLatitude(51.523992);
+            temp6.setLongitude(-0.03798);
+            //TODO:add generic location to database
+            temp6.setDistanceTime("7 mins");
+            //TODO: add photo download from google storage
+            temp6.setLogo(R.drawable.wrapitup);
+            temp6.setMainText("Burritos Deal");
+            temp6.setRestaurantName("Wrap It Up");
+            temp6.setSubText("Buy 1 get 1 half price £5");
+            //TODO: points
+            temp6.setPoints("to be added");
+            //ip[0] = temp;
+            ip[5] = temp6;
+
+
+            ItemPrev temp7 = new ItemPrev();
+            temp7.setLatitude(51.523992);
+            temp7.setLongitude(-0.03798);
+            //TODO:add generic location to database
+            temp7.setDistanceTime("1 min");
+            //TODO: add photo download from google storage
+            temp7.setLogo(R.drawable.pizzaexpresslogo);
+            temp7.setMainText("Any Size Pizza");
+            temp7.setHotDeal(R.drawable.yapnak_colorsmall);
+            temp7.setRestaurantName("Pizza Express");
+            temp7.setSubText("Any Size Pizza  = £4");
+            //TODO: points
+            temp7.setPoints("to be added");
+            ip[6] = temp7;
+
+
+            ItemPrev temp8 = new ItemPrev();
+            //TODO:add generic location to database
+            temp8.setLatitude(51.523992);
+            temp8.setLongitude(-0.03798);
+            temp8.setDistanceTime("7 mins");
+            //TODO: add photo download from google storage
+            temp8.setLogo(R.drawable.pizzaexpresslogo);
+            temp8.setMainText("Any Size Pizza");
+            temp8.setRestaurantName("Pizza Express");
+            temp8.setSubText("Half Price = £4");
+            //TODO: points
+            temp8.setPoints("to be added");
+            ip[7] = temp8;
+
+
+            ItemPrev temp9 = new ItemPrev();
+            //TODO:add generic location to database
+            temp9.setLatitude(51.523992);
+            temp9.setLongitude(-0.03798);
+            temp9.setDistanceTime("6 mins");
+            //TODO: add photo download from google storage
+            temp9.setLogo(R.drawable.gbklogo);
+            temp9.setMainText("Main Meal Deal");
+            temp9.setRestaurantName("Gourmet Burger Kitchen");
+            temp9.setSubText("£10 off Meal - £5");
+            //TODO: points
+            temp9.setPoints("to be added");
+            ip[8] = temp9;
+
+
+            ItemPrev temp10 = new ItemPrev();
+            //TODO:add generic location to database
+            temp10.setLatitude(51.523992);
+            temp10.setLongitude(-0.03798);
+            temp10.setDistanceTime("5 mins");
+            //TODO: add photo download from google storage
+            temp10.setLogo(R.drawable.tescologo);
+            temp10.setMainText("Meal Deal");
+            temp10.setRestaurantName("Tesco");
+            temp10.setSubText("Sandwich,Drink,Snack = £3 ");
+            //TODO: points
+            temp10.setPoints("to be added");
+            ip[9] = temp10;
 
 
 
-        }
+
+
+       // }
 
 
 
