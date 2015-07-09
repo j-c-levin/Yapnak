@@ -1,10 +1,6 @@
 {
  "kind": "discovery#restDescription",
-<<<<<<< HEAD
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/fdi7aL90lH4VuAosBMWyr5k5CxU\"",
-=======
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/QVs60_D-4n-R0nzgEhPp9BQCboU\"",
->>>>>>> backend
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/hRQfEyNClLH_4rB_zaqHQ6FGjc0\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",

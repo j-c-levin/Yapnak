@@ -1,5 +1,8 @@
 package com.yapnak.gcmbackend;
 
+import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Result;
+import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -47,6 +50,8 @@ public class SQLEntityEndpoint {
 
     private static final Logger logger = Logger.getLogger(SQLEntityEndpoint.class.getName());
 
+    private static final String API_KEY = System.getProperty("gcm.api.key");
+
     private static final int DEFAULT_LIST_LIMIT = 20;
 
     static {
@@ -72,12 +77,19 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT userID FROM user where userID = ?";
+                String statement = "SELECT userID, pushKey FROM user where userID = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, userID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     logger.info("found user");
+
+                    //push notification
+                    String message = "you have gained points!";
+                    Sender sender = new Sender(API_KEY);
+                    Message msg = new Message.Builder().addData("message", message).build();
+                    Result result = sender.send(msg, rs.getString("pushKey"), 5);
+
                     statement = "SELECT clientID from client where email = ?";
                     stmt = connection.prepareStatement(statement);
                     stmt.setString(1, clientEmail);

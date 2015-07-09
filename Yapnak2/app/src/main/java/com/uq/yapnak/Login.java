@@ -1,7 +1,6 @@
 package com.uq.yapnak;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -11,13 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.plus.Account;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
@@ -123,7 +120,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
             }
         });
-        new GcmRegistrationAsyncTask(this).execute();
     }
 
     @Override

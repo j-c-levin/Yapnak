@@ -10,7 +10,12 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
+import com.google.appengine.api.utils.SystemProperty;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -42,11 +47,42 @@ public class RegistrationEndpoint {
     public void registerDevice(@Named("regId") String regId) {
         if (findRecord(regId) != null) {
             log.info("Device " + regId + " already registered, skipping register");
-            return;
         }
-        RegistrationRecord record = new RegistrationRecord();
-        record.setRegId(regId);
-        ofy().save().entity(record).now();
+        else {
+            RegistrationRecord record = new RegistrationRecord();
+            record.setRegId(regId);
+            ofy().save().entity(record).now();
+        }
+        String key = findRecord(regId).getRegId();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "UPDATE user SET pushKey = ? where userID = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, key);
+                stmt.setString(2, "3333");
+                stmt.executeUpdate();
+            }
+            finally {
+                connection.close();
+                return;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
