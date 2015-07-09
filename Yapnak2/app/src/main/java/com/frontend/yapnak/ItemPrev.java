@@ -23,6 +23,7 @@ public class ItemPrev {
     private int locationIcon;
     private String restaurantName;
     private String fetchImageURL;
+    private int hotDeal;
 
 
 
@@ -113,5 +114,13 @@ public class ItemPrev {
 
     public void setFetchImageURL(String fetchImageURL) {
         this.fetchImageURL = fetchImageURL;
+    }
+
+    public int getHotDeal() {
+        return hotDeal;
+    }
+
+    public void setHotDeal(int hotDeal) {
+        this.hotDeal = hotDeal;
     }
 }
