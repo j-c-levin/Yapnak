@@ -472,6 +472,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return animator;
     }
 
+    private int initialHeight;
     public void extend(){
 
         extendIcon.setVisibility(View.VISIBLE);
@@ -482,7 +483,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         extendHeight.measure(widthSpec,heightSpec);
 
-        ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(),extendHeight.getMeasuredHeight());
+        initialHeight=extendHeight.getHeight();
+        ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(),(extendHeight.getMeasuredHeight()-5));
         valueAnimator.start();
 
 
@@ -491,7 +493,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void collapse(){
         int finalHeight = extendHeight.getHeight();
 
-        ValueAnimator animator = slideAnimator(finalHeight,(extendHeight.getHeight()/2));
+        ValueAnimator animator = slideAnimator(finalHeight,initialHeight);
 
         animator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -1191,18 +1193,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                      //scrolling down
 
                     //collapseList();
-                    hideFloating();
+                    //hideFloating();
 
                 }else if(currentPosition>firstItemPosition && (actionButton.getVisibility()!=View.GONE) &&(scrollState==SCROLL_STATE_FLING) &&(scrollState != SCROLL_STATE_TOUCH_SCROLL)){
                     //scrolling up
 
-                    hideFloating();
+                    //hideFloating();
 
 
                 }else if((scrollState == SCROLL_STATE_IDLE)&&(topValue==0)&& (actionButton.getVisibility()!=View.VISIBLE)){
                     //reveal redeemable gifts
                     //extendList();
-                    showFloating();
+                    //showFloating();
                 }
                 else if((scrollState==SCROLL_STATE_IDLE) && actionButton.getVisibility()!=View.VISIBLE){
                     //showFloating();
@@ -1606,10 +1608,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             temp10.setPoints("to be added");
             ip[9] = temp10;
 
-
-
-
-
        // }
 
 
@@ -1649,10 +1647,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setLongitude(sql.getList().get(i).getX());
 
                 temp.setDistanceTime("to be added");
-
-
-
-
 
                 temp.setLogo(R.drawable.yapnakmonster);
                 temp.setMainText(list.get(i).getFoodStyle());

@@ -7,16 +7,17 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:id="@+id/item2"
-    android:background="#EEEEEE"
+    android:background="#E0E0E0"
     android:descendantFocusability="blocksDescendants">
 
-    <!--android:onClick="extendInfo"-->
+    <!--android:onClick="extendInfo"
+    android:background="#EEEEEE"-->
 
 
     <RelativeLayout
         android:id = "@+id/extendHeight"
         android:orientation="vertical"
-        android:layout_height="140dp"
+        android:layout_height="105dp"
         android:layout_width="match_parent"
         android:layout_marginBottom="5dp"
         android:padding="5dp"
@@ -28,19 +29,17 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/tempId"
-
-            >
+            android:id="@+id/tempId">
 
 
 
 
             <ImageView
                 android:id="@+id/heatIcon"
-                android:layout_width="40dp"
-                android:layout_height="30dp"
+                android:layout_width="25dp"
+                android:layout_height="15dp"
                 android:visibility="visible"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_alignRight="@+id/subtitle" />
 
@@ -86,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="83dp"
+                android:layout_marginTop="73dp"
                 android:text="Loyalty Points:"
                 android:textColor="#9E9E9E"
                 android:textStyle="normal" />
@@ -96,7 +95,7 @@
                 android:id="@+id/loyaltyPoints"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="83dp"
+                android:layout_marginTop="73dp"
                 android:layout_toRightOf="@id/loyalty"
                 android:text="10"
                 android:textColor="#9E9E9E"
@@ -128,40 +127,44 @@
 
           <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="130dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="100dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
                 android:id="@+id/extendIconLayout"
-                >
+              android:layout_alignBottom="@+id/extendTextLayout">
 
 
                 <Button
                     android:id="@+id/recommendMeal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="56dp"
+
                     android:onClick="recommendMealButton"
                     android:background="@drawable/custom_recommend"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/takeMeThere" />
 
                 <Button
                     android:id="@+id/takeMeThere"
-                    android:layout_toRightOf="@+id/recommendMeal"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="50dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:onClick="takeMeThereButton"
                     android:background="@drawable/custom_takemethere"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_centerHorizontal="true" />
 
                 <Button
                     android:id="@+id/feedbackButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="41dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="38dp"
                     android:onClick="feedbackButton"
                     android:background="@drawable/custom_rate"
                     android:textSize="12sp"
@@ -180,37 +183,37 @@
                 android:layout_height="20dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
-                android:layout_marginTop="200dp"
-
-
-
-                >
+                android:layout_marginTop="145dp">
 
                 <TextView
                     android:id="@+id/recommendText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
                     android:textSize="12sp"
-                    android:text="Recommend" />
+                    android:text="Recommend"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/takeMeThereText"
+                    android:layout_marginRight="20dp" />
 
                 <TextView
                     android:id="@+id/takeMeThereText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
                     android:textSize="12sp"
-                    android:layout_toRightOf="@id/recommendText"
-                    android:text="Take Me There" />
+                    android:text="Take Me There"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
 
                 <TextView
                     android:id="@+id/rateText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="45dp"
                     android:textSize="12sp"
-                    android:layout_toRightOf="@+id/takeMeThereText"
-                    android:text="Rate" />
+                    android:text="Rate"
+                    android:layout_marginLeft="29dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/takeMeThereText" />
 
 
             </RelativeLayout>
