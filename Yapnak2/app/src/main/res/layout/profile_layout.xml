@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#EEEEEE">
+    <!--android:textColor="#FFF"-->
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <RelativeLayout
+        android:id="@+id/userDetails"
+        android:layout_width="match_parent"
+        android:layout_height="330dp">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:textSize="15sp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/phoneNumTitle"
+            android:text="Phone Number"
+            >
+        </TextView>
+
+        <EditText
+            android:id="@+id/phoneNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:hint="Enter Phone Number"
+            android:layout_marginBottom="10dp"
+            android:gravity="top"
+            android:textSize="12sp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/phoneNumTitle"
+
+            />
+
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:textSize="15sp"
+            android:layout_marginRight="20dp"
+            android:layout_below="@+id/phoneNumberEditText"
+            android:id="@+id/nameTitle"
+            android:text="Name"
+            >
+        </TextView>
+
+        <EditText
+            android:id="@+id/nameEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:hint="Enter Name"
+            android:gravity="top"
+            android:textSize="12sp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/nameTitle"
+
+            />
+
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:textSize="15sp"
+            android:layout_below="@+id/nameEdit"
+            android:id="@+id/dobText"
+            android:text="Date Of Birth"
+            >
+        </TextView>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
+            android:layout_marginTop="10dp"
+            android:id="@+id/dateInput"
+            android:hint="Date Of Birth"
+            android:textSize="12sp"
+            android:layout_below="@+id/dobText"
+            android:layout_alignLeft="@+id/dobText" />
+
+
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textSize="15sp"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/chooseGender"
+            android:text="Gender"
+            android:layout_below="@+id/dateInput"
+            android:layout_centerHorizontal="true">
+        </TextView>
+
+
+
+
+
+        <RadioGroup
+            android:id="@+id/genderGroupButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/chooseGender"
+            android:layout_alignLeft="@+id/chooseGender">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"
+                android:layout_margin="10dp"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"
+                android:layout_margin="10dp"/>
+
+
+        </RadioGroup>
+
+
+        <!--FEEDBACK MENU
+         android:textColor="#FFF"
+        -->
+
+
+        <LinearLayout
+            android:layout_below="@id/genderGroupButtons"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+
+
+            <TextView
+                android:id="@+id/nameLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Please choose an option for your feedback"
+                android:textSize="15sp"
+                android:textStyle="normal" />
+
+
+
+
+            <LinearLayout
+                android:id="@+id/radioLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+
+                <RadioGroup
+                    android:id="@+id/feedbackRadioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/radioHappy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Happy"
+                        />
+                    <RadioButton
+                        android:id="@+id/radioUnhappy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unhappy"
+                         />
+
+                    <RadioButton
+                        android:id="@+id/radioStoreCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Store did not accept my code"
+                         />
+                </RadioGroup>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/commentLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:text="Additional Comments"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/commentField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:alpha="0.8"
+                android:background="@color/midGrey"
+                android:gravity="top"
+                android:hint="Your Feedback"
+                android:lines="5"
+                android:padding="10dp"
+                android:singleLine="false"
+                android:textColor="#000000"
+                android:textSize="13dp" />
+
+            <!--
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Cancel"
+                    android:layout_marginRight="20dp"
+                    android:textColor="#ff535357" />
+
+                <Button
+                    android:id="@+id/submitButton"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Submit"
+                    android:textColor="#ff535357" />
+            </LinearLayout>
+            -->
+
+
+        </LinearLayout>
+
+
+
+
+
+
+        <!--FEEDBACK MENU-->
+
+
+
+    </RelativeLayout>
+
+
+
+
+
+
+</ScrollView>
+
+
+</RelativeLayout>

@@ -75,5 +75,6 @@
 
     <color name="floatColour">#F44336</color>
     <color name="cardGrey">#F5F5F5</color>
+    <color name= "midGrey">#9E9E9E</color>
     <color name="lightBrown">#BCAAA4</color>
 </resources>

@@ -10,6 +10,7 @@ import android.app.FragmentManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -48,6 +49,7 @@ import com.frontend.yapnak.navigationdrawer.NavBarItem;
 import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
 import com.frontend.yapnak.promotion.PromoItem;
 import com.frontend.yapnak.promotion.PromotionAdapter;
+import com.frontend.yapnak.rate.RatingBuilder;
 import com.frontend.yapnak.rate.RatingDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -85,6 +87,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private static String TAG_SHARE = "Share";
     private static String TAG_MANUAL = "Manual";
     private static String TAG_GIFT = "Gifts";
+    private static String TAG_PROFILE ="Profile";
     private android.widget.RelativeLayout.LayoutParams layoutParams;
     private static final String ACTION_BUTTON_TAG = "ActionButton";
     private Button cancelButton;
@@ -450,6 +453,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
         } else if (v.getTag().equals(TAG_GIFT)) {
             userItems();
+        }else if(v.getTag().equals(TAG_PROFILE)){
+            //SHOW PROFILE
+            AlertDialog.Builder dialog =  new ProfileDialog(this,this);
+            dialog.setTitle("Profile");
+            dialog.setPositiveButton("Save/Submit", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.cancel();
+                }
+            });
+            dialog.show();
+
         }
 
     }
@@ -727,9 +751,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void feedbackButton(View v) {
         Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
-        RatingDialog rate = new RatingDialog();
-        rate.show(getFragmentManager(),"rating");
+        //RatingDialog rate = new RatingDialog();
+        //rate.show(getFragmentManager(),"rating");
 
+        AlertDialog.Builder ratings = new RatingBuilder(this,this);
+        ratings.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //TODO:Submit Ratings to DB
+                dialog.dismiss();
+            }
+        });
+
+        ratings.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.cancel();
+            }
+        });
+
+        ratings.setTitle("Rate Deal");
+        ratings.show();
     }
 
     public void setLongPress(boolean lp) {
@@ -831,7 +875,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     //Listener
 
-
     private class DrawerItemListener implements ListView.OnItemClickListener {
 
         FragmentManager fragmentManager;
@@ -848,7 +891,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     }
-
 
     private void selectedItem(String item) {
 
@@ -887,7 +929,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
     }
-
 
     @Override
     public void setTitle(CharSequence title) {
@@ -1039,6 +1080,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private SubActionButton buttonShare;
     private SubActionButton buttonManual;
     private SubActionButton buttonGift;
+    private SubActionButton buttonProfile;
 
     public void floatButton() {
         ImageView image = new ImageView(this);
@@ -1062,6 +1104,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ImageView iconGift = new ImageView(this);
         iconGift.setImageResource(R.drawable.gift);
 
+        ImageView iconProfile = new ImageView(this);
+        iconProfile.setImageResource(R.drawable.yapnak_colorsmall);
+
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
 
@@ -1069,22 +1114,26 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
          buttonShare = itemBuilder.setContentView(iconShare).build();
          buttonManual = itemBuilder.setContentView(iconManual).build();
          buttonGift = itemBuilder.setContentView(iconGift).build();
+         buttonProfile = itemBuilder.setContentView(iconProfile).build();
 
         buttonAbout.setTag(TAG_ABOUT);
         buttonShare.setTag(TAG_SHARE);
         buttonManual.setTag(TAG_MANUAL);
         buttonGift.setTag(TAG_GIFT);
+        buttonProfile.setTag(TAG_PROFILE);
 
         buttonAbout.setOnClickListener(this);
         buttonShare.setOnClickListener(this);
         buttonManual.setOnClickListener(this);
         buttonGift.setOnClickListener(this);
+        buttonProfile.setOnClickListener(this);
 
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(buttonAbout)
                 .addSubActionView(buttonShare)
                 .addSubActionView(buttonGift)
                 .addSubActionView(buttonManual)
+                .addSubActionView(buttonProfile)
                 .attachTo(actionButton)
                 .build();
 
