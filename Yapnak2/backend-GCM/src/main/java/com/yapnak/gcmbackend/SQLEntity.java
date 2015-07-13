@@ -18,6 +18,15 @@ public class SQLEntity {
     String offer;
     String photo;
     double rating;
+    int points;
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
 
     public double getRating() {
         return rating;

@@ -163,7 +163,7 @@ public class SQLEntityEndpoint {
             throw new OAuthRequestException("User is not valid " + user);
         }*/
         Connection connection;
-        double distance = 0.02;
+        double distance = 0.04;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
         SQLEntity sql = new SQLEntity();
         SQLList sqlList = new SQLList();
@@ -178,7 +178,7 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
             double t = x - distance;
             stmt.setDouble(1, t);
@@ -193,8 +193,8 @@ public class SQLEntityEndpoint {
             logger.info("number of results: " + rs.getRow());
             int p = rs.getRow();
             rs.beforeFirst();
+            ResultSet rt = null;
             for (int i = 0; i < p; i++) {
-                logger.info("loop: " + (i + 1) + "/" + p);
                 rs.next();
                 sql = new SQLEntity();
                 sql.setName(rs.getString("clientName"));
@@ -220,6 +220,18 @@ public class SQLEntityEndpoint {
                 }
                 sql.setPhoto(url);
                 sql.setRating((rs.getDouble("rating")));
+                statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
+                stmt = connection.prepareStatement(statement);
+                stmt.setInt(1,rs.getInt("clientID"));
+                //TODO:put in user name here
+                stmt.setString(2,"3333");
+                rt = stmt.executeQuery();
+                if (rt.next()) {
+                    sql.setPoints(rt.getInt("points"));
+                }
+                else {
+                    sql.setPoints(0);
+                }
                 list.add(sql);
             }
 

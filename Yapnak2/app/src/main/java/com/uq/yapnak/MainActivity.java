@@ -63,7 +63,6 @@ import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
 import com.frontend.yapnak.promotion.PromoItem;
 import com.frontend.yapnak.promotion.PromotionAdapter;
 import com.frontend.yapnak.rate.RatingBuilder;
-import com.frontend.yapnak.rate.RatingDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -1965,7 +1964,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setLongitude(list.get(i).getX());
 
                 //TODO: points
-                temp.setPoints("to be added");
+                temp.setPoints(list.get(i).getPoints().toString());
                 ip[i] = temp;
             }
 
