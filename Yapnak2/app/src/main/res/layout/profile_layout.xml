@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="#EEEEEE">
+    android:background="#EEEEEE"
+    android:id="@+id/profileLayout">
     <!--android:textColor="#FFF"-->
 
 <ScrollView
@@ -13,45 +14,25 @@
     <RelativeLayout
         android:id="@+id/userDetails"
         android:layout_width="match_parent"
-        android:layout_height="330dp">
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:textSize="15sp"
-            android:layout_marginRight="20dp"
-            android:id="@+id/phoneNumTitle"
-            android:text="Phone Number"
-            >
-        </TextView>
+        android:layout_height="330dp"
+        >
 
         <EditText
             android:id="@+id/phoneNumberEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
+            android:imeOptions="actionNext"
+            android:inputType="phone"
             android:hint="Enter Phone Number"
             android:layout_marginBottom="10dp"
             android:gravity="top"
-            android:textSize="12sp"
+            android:textSize="15sp"
+            android:layout_marginTop="50dp"
             android:layout_marginLeft="10dp"
-            android:layout_below="@id/phoneNumTitle"
 
             />
 
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:textSize="15sp"
-            android:layout_marginRight="20dp"
-            android:layout_below="@+id/phoneNumberEditText"
-            android:id="@+id/nameTitle"
-            android:text="Name"
-            >
-        </TextView>
 
         <EditText
             android:id="@+id/nameEdit"
@@ -59,54 +40,27 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:hint="Enter Name"
+            android:maxLines="1"
+            android:singleLine="true"
             android:gravity="top"
-            android:textSize="12sp"
-            android:layout_marginLeft="10dp"
-            android:layout_below="@id/nameTitle"
-
-            />
-
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp"
+            android:imeOptions="actionNext"
             android:textSize="15sp"
-            android:layout_below="@+id/nameEdit"
-            android:id="@+id/dobText"
-            android:text="Date Of Birth"
-            >
-        </TextView>
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/phoneNumberEditText" />
 
-        <EditText
+
+
+        <Button
+            android:id="@+id/dateInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:ems="10"
-            android:layout_marginTop="10dp"
-            android:id="@+id/dateInput"
-            android:hint="Date Of Birth"
-            android:textSize="12sp"
-            android:layout_below="@+id/dobText"
-            android:layout_alignLeft="@+id/dobText" />
-
-
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:textSize="15sp"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:id="@+id/chooseGender"
-            android:text="Gender"
-            android:layout_below="@+id/dateInput"
-            android:layout_centerHorizontal="true">
-        </TextView>
-
-
+            android:layout_marginLeft="15dp"
+            android:layout_below="@+id/nameEdit"
+            android:ems="10"
+            android:hint="Date Of Birth"
+            android:textSize="15sp"
+            />
 
 
 
@@ -115,16 +69,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@+id/chooseGender"
-            android:layout_alignLeft="@+id/chooseGender">
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/dateInput"
+            android:layout_alignLeft="@+id/dateInput">
 
             <RadioButton
+                android:id="@+id/male"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Male"
                 android:layout_margin="10dp"/>
 
             <RadioButton
+                android:id="@+id/female"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Female"
@@ -139,6 +96,7 @@
         -->
 
 
+        <!--
         <LinearLayout
             android:layout_below="@id/genderGroupButtons"
             android:layout_width="match_parent"
@@ -227,7 +185,7 @@
                 android:textColor="#000000"
                 android:textSize="13dp" />
 
-            <!--
+            <!-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -253,11 +211,12 @@
             </LinearLayout>
             -->
 
-
+    <!--
         </LinearLayout>
 
 
 
+      -->
 
 
 

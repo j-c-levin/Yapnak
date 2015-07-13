@@ -104,6 +104,7 @@
         android:textColor="#000000"
         android:textSize="13dp" />
 
+        <!--
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -127,6 +128,8 @@
             android:text="Submit"
             android:textColor="#ff535357" />
     </LinearLayout>
+
+        -->
 
 
     </LinearLayout>
