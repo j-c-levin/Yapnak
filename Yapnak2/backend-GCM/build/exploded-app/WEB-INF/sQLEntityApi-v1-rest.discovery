@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/4y1udWxwaTjoKEBakYiX-mmrX5I\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/3sQZwRjRt8Op9Bcq-EYfNUEjc48\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -241,14 +241,20 @@
    "path": "sQLEntity_user",
    "httpMethod": "POST",
    "parameters": {
-    "name": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "password": {
      "type": "string",
      "required": true,
      "location": "query"
     }
    },
    "parameterOrder": [
-    "name"
+    "email",
+    "password"
    ],
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
