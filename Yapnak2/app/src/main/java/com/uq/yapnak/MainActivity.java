@@ -5,8 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,6 +23,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
@@ -25,20 +32,26 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +79,7 @@ import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -85,6 +99,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private static String TAG_ABOUT = "About";
     private static String TAG_SHARE = "Share";
     private static String TAG_MANUAL = "Manual";
+    private static String TAG_FEEDBACK ="Feddback";
     private static String TAG_GIFT = "Gifts";
     private static String TAG_PROFILE ="Profile";
     private android.widget.RelativeLayout.LayoutParams layoutParams;
@@ -292,10 +307,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public class Feedback extends ActionBarActivity {
 
+        /*
         //@Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             final View view = inflater.inflate(R.layout.feedback_activity, null);
 
+            /
             cancelButton = (Button) view.findViewById(R.id.cancelButton);
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -325,6 +342,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     //load(sql);
 
 
+
                 }
             });
 
@@ -332,6 +350,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             return view;
         }
 
+        */
     }
 
 
@@ -443,9 +462,43 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             aboutYapnak();
             Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
 
-        } else if (v.getTag().equals(TAG_SHARE)) {
+        } else if (v.getTag().equals(TAG_FEEDBACK)) {
 
-            Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show();
+            final FeedbackDialog feedback = new FeedbackDialog(this,this);
+
+            feedback.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO:submit feedback - store string into db table
+
+
+
+                    EditText feedbackComment = feedback.getComments();
+
+                    String text = feedbackComment.getText().toString();
+                    //TODO:text must be stored in feedback table in the database
+
+                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback  "+ text, Toast.LENGTH_SHORT).show();
+
+                    //load();
+                    //load(sql);
+
+                    dialog.dismiss();
+                }
+            });
+
+            feedback.setNegativeButton("CANCEL" , new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.cancel();
+
+                }
+            });
+
+            feedback.setTitle("Feedback");
+            feedback.show();
+
 
         } else if (v.getTag().equals(TAG_MANUAL)) {
             howToUseYapnak();
@@ -454,9 +507,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             userItems();
         }else if(v.getTag().equals(TAG_PROFILE)){
             //SHOW PROFILE
-            AlertDialog.Builder dialog =  new ProfileDialog(this,this);
+
+           /* AlertDialog.Builder dialog =  new ProfileDialog(this,this);
             dialog.setTitle("Profile");
-            dialog.setPositiveButton("Save/Submit", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -464,18 +518,159 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
             });
 
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
                     dialog.cancel();
                 }
             });
+
             dialog.show();
+            */
+
+            profileDialog(v);
 
         }
 
     }
+
+
+
+    private Button date;
+    private RadioGroup gender;
+    private void profileDialog(View v){
+
+        //ProfileDialog userItems = new ProfileDialog(this,this);
+
+        AlertDialog.Builder userItems= new AlertDialog.Builder(v.getContext());
+
+        final LinearLayout linearLayout = new LinearLayout(v.getContext());
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        layoutParams.setMargins(20, 20, 20, 20);
+        final EditText phoneNumber = new EditText(v.getContext());
+        phoneNumber.setHint("Enter Phone Number");
+        phoneNumber.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        phoneNumber.setMaxLines(1);
+        phoneNumber.setSingleLine();
+        phoneNumber.setGravity(Gravity.TOP);
+
+        final EditText name = new EditText(v.getContext());
+        name.setHint("Enter Full Name");
+        name.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        name.setMaxLines(1);
+        name.setSingleLine();
+        name.setGravity(Gravity.TOP);
+
+        date = new Button(v.getContext());
+
+        LinearLayout.LayoutParams dateParams= new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        dateParams.gravity = Gravity.CENTER_HORIZONTAL;
+        dateParams.setMargins(50, 20, 50, 20);
+
+
+        date.setText("Enter Date Of Birth");
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateDialog dialog = new DateDialog();
+                dialog.show(getFragmentManager(),"dateDialog");
+            }
+        });
+
+        gender = new RadioGroup(v.getContext());
+
+        final RadioButton male = new RadioButton(v.getContext());
+        male.setText("Male");
+        final RadioButton female = new RadioButton(v.getContext());
+        female.setText("Female");
+
+        gender.addView(male);
+        gender.addView(female);
+        gender.setOrientation(LinearLayout.HORIZONTAL);
+
+        LinearLayout.LayoutParams genderParams= new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //genderParams.gravity=Gravity.CENTER;
+        genderParams.setMargins(100,20,50,40);
+
+
+
+        userItems.setTitle("Profile");
+        linearLayout.addView(phoneNumber,layoutParams);
+        linearLayout.addView(name,layoutParams);
+        linearLayout.addView(date,dateParams);
+        linearLayout.addView(gender,genderParams);
+        userItems.setView(linearLayout);
+        userItems.setPositiveButton("OK", null);
+        userItems.setNegativeButton("CANCEL", null);
+
+
+
+        /*
+        input.setHint("EG: NS-6438");
+        input.setSingleLine(false);
+        input.setMaxLines(1);
+        input.setTextColor(Color.BLACK);
+        linearLayout.addView(message);
+        linearLayout.addView(input);
+        linearLayout.addView(OR);
+        linearLayout.addView(contactButton);
+        userItems.setView(linearLayout);
+        */
+
+
+        //AlertDialog dialog = userItems.create();
+        userItems.show();
+    }
+
+
+
+    private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+
+        private int day, month, year;
+        private Bundle bundle;
+        private final int DATEFRAGMENT = 1;
+
+
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            final Calendar calendar = Calendar.getInstance();
+            day = calendar.get(Calendar.DAY_OF_MONTH);
+            month = calendar.get(Calendar.MONTH);
+            year = calendar.get(Calendar.YEAR);
+
+
+            DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, day, month, year);
+
+            return pickerDialog;
+
+
+        }
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+
+            //setTargetFragment(this, DATEFRAGMENT);
+
+
+            int month = monthOfYear+1;
+
+            String dateString = dayOfMonth + " / " + month + " / " + year;
+
+            date.setText(dateString);
+
+
+            this.dismiss();
+
+        }
+    }
+
 
     private ValueAnimator slideAnimator(int start,int end){
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
@@ -574,12 +769,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    //private ListView list;
     public void recommendMealButton(View v) {
         Button recommendMeal = (Button) v.findViewById(R.id.recommendMeal);
 
 
+
         AlertDialog.Builder userItems = new AlertDialog.Builder(v.getContext());
-        LinearLayout linearLayout = new LinearLayout(v.getContext());
+        final LinearLayout linearLayout = new LinearLayout(v.getContext());
 
         userItems.setTitle("👥 Recommend");
         userItems.setMessage("Enter your friends Yapnak iD");
@@ -592,17 +789,79 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         TextView message = new TextView(v.getContext());
         final EditText input = new EditText(v.getContext());
 
+        TextView OR = new TextView(v.getContext());
+        OR.setText("OR");
+
+        final Button contactButton = new Button(v.getContext());
+
+
+        contactButton.setText("Select Yapnak User");
+
+        contactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(),ContactListFragment.class);
+                startActivity(intent);
+
+
+
+            }
+        });
+
+        //list = (ListView) findViewById(R.id.contactList);
+
+        /*
+        final RecommendDialog dialog = new RecommendDialog(this,this);
+
+        dialog.setPositiveButton("OK", null);
+        dialog.setNegativeButton("CANCEL", null);
+
+        dialog.getContactListButton().setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //list
+                //Fragment contactList = new ContactListFragment();
+                //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                //transaction.replace(dialog.getLayoutId(),contactList).addToBackStack(null).commit();
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Intent intent = new Intent(getApplicationContext(),ContactListFragment.class);
+                        startActivity(intent);
+                    }
+                });
+
+
+
+            }
+        });
+        */
+
+
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        buttonParams.gravity = Gravity.CENTER;
+        buttonParams.setMargins(0,20,0,20);
+
         input.setHint("EG: NS-6438");
         input.setSingleLine(false);
         input.setMaxLines(1);
         input.setTextColor(Color.BLACK);
         linearLayout.addView(message);
         linearLayout.addView(input);
+        linearLayout.addView(OR,buttonParams);
+        linearLayout.addView(contactButton,buttonParams);
         userItems.setView(linearLayout);
 
 
-        AlertDialog dialog = userItems.create();
-        dialog.show();
+
+        //AlertDialog dialog = userItems.create();
+        //dialog.show();
+        userItems.show();
 
 
     }
@@ -754,7 +1013,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //rate.show(getFragmentManager(),"rating");
 
         AlertDialog.Builder ratings = new RatingBuilder(this,this);
-        ratings.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -1076,8 +1335,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private SubActionButton buttonAbout;
-    private SubActionButton buttonShare;
-    private SubActionButton buttonManual;
+    private SubActionButton buttonFeedback;
+    //private SubActionButton buttonManual;
     private SubActionButton buttonGift;
     private SubActionButton buttonProfile;
 
@@ -1094,11 +1353,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ImageView iconAbout = new ImageView(this);
         iconAbout.setImageResource(R.drawable.abouticon);
 
-        ImageView iconShare = new ImageView(this);
-        iconShare.setImageResource(R.drawable.shareicon);
+        ImageView iconFeedback = new ImageView(this);
+        iconFeedback.setImageResource(R.drawable.shareicon);
 
-        ImageView iconManual = new ImageView(this);
-        iconManual.setImageResource(R.drawable.manualicon);
+        //ImageView iconManual = new ImageView(this);
+        //iconManual.setImageResource(R.drawable.manualicon);
 
         ImageView iconGift = new ImageView(this);
         iconGift.setImageResource(R.drawable.gift);
@@ -1110,28 +1369,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
 
          buttonAbout = itemBuilder.setContentView(iconAbout).build();
-         buttonShare = itemBuilder.setContentView(iconShare).build();
-         buttonManual = itemBuilder.setContentView(iconManual).build();
+         buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
+         //buttonManual = itemBuilder.setContentView(iconManual).build();
          buttonGift = itemBuilder.setContentView(iconGift).build();
          buttonProfile = itemBuilder.setContentView(iconProfile).build();
 
         buttonAbout.setTag(TAG_ABOUT);
-        buttonShare.setTag(TAG_SHARE);
-        buttonManual.setTag(TAG_MANUAL);
+        buttonFeedback.setTag(TAG_FEEDBACK);
+        //buttonManual.setTag(TAG_MANUAL);
         buttonGift.setTag(TAG_GIFT);
         buttonProfile.setTag(TAG_PROFILE);
 
         buttonAbout.setOnClickListener(this);
-        buttonShare.setOnClickListener(this);
-        buttonManual.setOnClickListener(this);
+        buttonFeedback.setOnClickListener(this);
+        //buttonManual.setOnClickListener(this);
         buttonGift.setOnClickListener(this);
         buttonProfile.setOnClickListener(this);
 
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(buttonAbout)
-                .addSubActionView(buttonShare)
+                .addSubActionView(buttonFeedback)
                 .addSubActionView(buttonGift)
-                .addSubActionView(buttonManual)
                 .addSubActionView(buttonProfile)
                 .attachTo(actionButton)
                 .build();
@@ -1149,11 +1407,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //super.onAnimationEnd(animation);
                 ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton,"alpha",0.0f,1.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",0.0f,1.0f);
-                ObjectAnimator share = ObjectAnimator.ofFloat(buttonShare,"alpha",0.0f,1.0f);
-                ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",0.0f,1.0f);
+                ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",0.0f,1.0f);
+                //ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",0.0f,1.0f);
                 ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",0.0f,1.0f);
                 AnimatorSet s = new AnimatorSet();
-                s.playTogether(animator,about,share,manual,gift);
+                //s.playTogether(animator,about,share,manual,gift);
+                s.playTogether(animator,about,share,gift);
                 s.setDuration(200).start();
             }
 
@@ -1162,16 +1421,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //super.onAnimationStart(animation);
                 actionButton.setVisibility(View.INVISIBLE);
                 buttonAbout.setVisibility(View.INVISIBLE);
-                buttonShare.setVisibility(View.INVISIBLE);
-                buttonManual.setVisibility(View.INVISIBLE);
+                buttonFeedback.setVisibility(View.INVISIBLE);
+                //buttonManual.setVisibility(View.INVISIBLE);
                 buttonGift.setVisibility(View.INVISIBLE);
             }
         };
         actionButton.animate().setListener(listener).start();
         actionButton.setVisibility(View.VISIBLE);
         buttonAbout.setVisibility(View.VISIBLE);
-        buttonShare.setVisibility(View.VISIBLE);
-        buttonManual.setVisibility(View.VISIBLE);
+        buttonFeedback.setVisibility(View.VISIBLE);
+        //buttonManual.setVisibility(View.VISIBLE);
         buttonGift.setVisibility(View.VISIBLE);
 
 
@@ -1187,12 +1446,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //super.onAnimationEnd(animation);
                 ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",1.0f,0.0f);
-                ObjectAnimator share = ObjectAnimator.ofFloat(buttonShare,"alpha",1.0f,0.0f);
-                ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",1.0f,0.0f);
+                ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",1.0f,0.0f);
+                //ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",1.0f,0.0f);
                 ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",1.0f,0.0f);
 
                 AnimatorSet s = new AnimatorSet();
-                s.playTogether(alpha, about, share, manual, gift);
+                //s.playTogether(alpha, about, share, manual, gift);
+                s.playTogether(alpha, about, share, gift);
                 s.setDuration(200).start();
 
 
@@ -1209,8 +1469,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void run() {
                 actionButton.setVisibility(View.GONE);
                 buttonAbout.setVisibility(View.GONE);
-                buttonShare.setVisibility(View.GONE);
-                buttonManual.setVisibility(View.GONE);
+                buttonFeedback.setVisibility(View.GONE);
+                //buttonManual.setVisibility(View.GONE);
                 buttonGift.setVisibility(View.GONE);
 
             }

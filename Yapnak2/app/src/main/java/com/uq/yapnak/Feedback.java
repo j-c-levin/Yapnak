@@ -18,6 +18,7 @@ public class Feedback extends DialogFragment implements View.OnClickListener {
     private EditText additionalComments;
 
 
+    /*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.feedback_activity, null);
@@ -30,18 +31,7 @@ public class Feedback extends DialogFragment implements View.OnClickListener {
         return view;
     }
 
-    @Override
-    public void onClick(final View v) {
 
-        if (v.getId() == R.id.cancelButton) {
-            dismiss();
-
-        } else {
-            Toast.makeText(getActivity(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-            dismiss();
-
-        }
-    }
 
     public void setCancel(Button cancel){
         this.cancel=cancel;
@@ -59,6 +49,20 @@ public class Feedback extends DialogFragment implements View.OnClickListener {
         return this.submit;
     }
 
+*/
 
+    @Override
+    public void onClick(final View v) {
+
+       /* if (v.getId() == R.id.cancelButton) {
+            dismiss();
+
+        } else {
+            Toast.makeText(getActivity(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
+            dismiss();
+
+        }
+        */
+    }
 
 }
