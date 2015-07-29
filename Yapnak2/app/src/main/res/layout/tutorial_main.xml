@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+
+        android:layout_marginTop="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:id="@+id/tutorialList" />
+
+    <LinearLayout
+        android:background="#FFCDD2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="200dp">
+
+       <ImageView
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:src="@drawable/yapnakmonster_bnwoutline"
+        />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnakmonster_bnwoutline"
+        />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnakmonster_bnwoutline"
+        />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnakmonster_bnwoutline"
+        />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnakmonster_bnwoutline"
+        />
+
+    </LinearLayout>
+    
+
+
+</LinearLayout>

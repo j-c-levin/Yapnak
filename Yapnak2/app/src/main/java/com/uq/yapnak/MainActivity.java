@@ -5,14 +5,11 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -23,9 +20,9 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -51,9 +48,9 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.frontend.yapnak.AdapterPrev;
 import com.frontend.yapnak.ItemPrev;
@@ -189,15 +186,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         try{
 
-       /*String userName = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
-        String[]name = userName.split("@");
-
-        item.setTitle(name[0]);*/
-
-
-
-            name = getIntent();
+           name = getIntent();
             personName= name.getStringExtra("accName");
             item.setTitle(personName);
             personName = name.getStringExtra("accName");
@@ -206,12 +195,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             String[]name = personName.split("@");
 
             item.setTitle(name[0]);
-
-
-
-
-
-
 
         }catch(Exception e){
 
@@ -225,7 +208,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-        @Override
+    @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("debug", "onConnected");
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -234,12 +217,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
         }
 
-            if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
+        if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
 
-                Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-                personName = currentPerson.getDisplayName();
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+            personName = currentPerson.getDisplayName();
 
-            }
+        }
 
         Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
     }
@@ -365,7 +348,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_sign_out) {
             if (mGoogleApiClient.isConnected()) {
-           // Prior to disconnecting, run clearDefaultAccount().
+                // Prior to disconnecting, run clearDefaultAccount().
                 Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
                 Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
                         .setResultCallback(new ResultCallback<Status>() {
@@ -449,7 +432,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         //load(sql);
         load();
-       // navBarToggle();
+        // navBarToggle();
         //navigationBarContent();
         getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
 
@@ -680,7 +663,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void onAnimationUpdate(ValueAnimator animation) {
                 //Update The Height of the card
 
-                int value= (Integer) animation.getAnimatedValue();
+                int value = (Integer) animation.getAnimatedValue();
                 ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
                 layoutParams.height = value;
                 extendHeight.setLayoutParams(layoutParams);
@@ -750,9 +733,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void extendInfo(View v) {
         //Extend info: Rate,like and Take Me There
-         extendHeight= (RelativeLayout) v.findViewById(R.id.extendHeight);
-         extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
-         extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
+        extendHeight= (RelativeLayout) v.findViewById(R.id.extendHeight);
+        extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
+        extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
 
 
 
@@ -769,7 +752,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     //private ListView list;
+    private final int PICK_CONTACT = 1;
+
     public void recommendMealButton(View v) {
         Button recommendMeal = (Button) v.findViewById(R.id.recommendMeal);
 
@@ -779,9 +769,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         final LinearLayout linearLayout = new LinearLayout(v.getContext());
 
         userItems.setTitle("👥 Recommend");
-        userItems.setMessage("Enter your friends Yapnak iD");
+        //userItems.setMessage("Enter your friends Yapnak iD");
         userItems.setPositiveButton("OK", null);
         userItems.setNegativeButton("CANCEL", null);
+
+
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialog = inflater.inflate(R.layout.recommend_dialog,null);
+        userItems.setView(dialog);
+
 
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setPadding(40, 0, 40, 0);
@@ -795,19 +792,41 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         final Button contactButton = new Button(v.getContext());
 
 
-        contactButton.setText("Select Yapnak User");
+        contactButton.setText("Phonebook");
 
         contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getApplicationContext(),ContactListFragment.class);
-                startActivity(intent);
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //Self implemented contacts list - Go into ContactList if you want to DO SOMETHING Once a contact is selected.
+                        //Add code in onItemClick Method in contactList, if you want a list item to do something
+                        //Intent intent = new Intent(getApplicationContext(), ContactList.class);
+                        //startActivity(intent);
 
 
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);
+
+
+                        /*
+                        Showing the google stock contacts picker
+                        When contact chosen, DO SOMETHING in "onActivityResult" Method
+
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT );
+                        */
+
+                    }
+                });
 
             }
         });
+
+
 
         //list = (ListView) findViewById(R.id.contactList);
 
@@ -1368,11 +1387,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
 
-         buttonAbout = itemBuilder.setContentView(iconAbout).build();
-         buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
-         //buttonManual = itemBuilder.setContentView(iconManual).build();
-         buttonGift = itemBuilder.setContentView(iconGift).build();
-         buttonProfile = itemBuilder.setContentView(iconProfile).build();
+        buttonAbout = itemBuilder.setContentView(iconAbout).build();
+        buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
+        //buttonManual = itemBuilder.setContentView(iconManual).build();
+        buttonGift = itemBuilder.setContentView(iconGift).build();
+        buttonProfile = itemBuilder.setContentView(iconProfile).build();
 
         buttonAbout.setTag(TAG_ABOUT);
         buttonFeedback.setTag(TAG_FEEDBACK);
@@ -1401,10 +1420,22 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private void showFloating(){
 
-         Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+
+        Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+                actionButton.setVisibility(View.INVISIBLE);
+                buttonAbout.setVisibility(View.INVISIBLE);
+                buttonFeedback.setVisibility(View.INVISIBLE);
+                //buttonManual.setVisibility(View.VISIBLE);
+                buttonGift.setVisibility(View.INVISIBLE);
+
+            }
+
             @Override
             public void onAnimationEnd(Animator animation) {
-                //super.onAnimationEnd(animation);
                 ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton,"alpha",0.0f,1.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",0.0f,1.0f);
                 ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",0.0f,1.0f);
@@ -1412,19 +1443,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",0.0f,1.0f);
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(animator,about,share,manual,gift);
-                s.playTogether(animator,about,share,gift);
+                s.playTogether(animator, about, share, gift);
                 s.setDuration(200).start();
+
             }
 
-            @Override
-            public void onAnimationStart(Animator animation) {
-                //super.onAnimationStart(animation);
-                actionButton.setVisibility(View.INVISIBLE);
-                buttonAbout.setVisibility(View.INVISIBLE);
-                buttonFeedback.setVisibility(View.INVISIBLE);
-                //buttonManual.setVisibility(View.INVISIBLE);
-                buttonGift.setVisibility(View.INVISIBLE);
-            }
+
         };
         actionButton.animate().setListener(listener).start();
         actionButton.setVisibility(View.VISIBLE);
@@ -1436,45 +1460,48 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
+
+
+
     }
 
     private void hideFloating(){
 
         Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+
+
+            }
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 //super.onAnimationEnd(animation);
+
                 ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",1.0f,0.0f);
                 ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",1.0f,0.0f);
-                //ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",1.0f,0.0f);
                 ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",1.0f,0.0f);
 
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(alpha, about, share, manual, gift);
                 s.playTogether(alpha, about, share, gift);
+
                 s.setDuration(200).start();
 
-
-
             }
-
-
         };
 
-     actionButton.animate().setListener(listener).start();
+        actionButton.animate().setListener(listener).start();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                actionButton.setVisibility(View.GONE);
-                buttonAbout.setVisibility(View.GONE);
-                buttonFeedback.setVisibility(View.GONE);
-                //buttonManual.setVisibility(View.GONE);
-                buttonGift.setVisibility(View.GONE);
+        actionButton.setVisibility(View.GONE);
+        buttonAbout.setVisibility(View.GONE);
+        buttonFeedback.setVisibility(View.GONE);
+        buttonGift.setVisibility(View.GONE);
 
-            }
-        }, 500);
+
 
 
 
@@ -1495,8 +1522,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 View v = view.getChildAt(0);
                 float topValue = v==null ? 0 : v.getTop()-deals.getPaddingTop();
+                View bottom = view.getChildAt(view.getChildCount()-1);
+                float bottomValue = bottom==null? 0 : bottom.getBottom()-deals.getPaddingBottom();
 
-
+            /*
                 if(firstItemPosition>currentPosition && (actionButton.getVisibility()!=View.GONE) && (scrollState==SCROLL_STATE_FLING) &&(scrollState != SCROLL_STATE_TOUCH_SCROLL)){
                      //scrolling down
 
@@ -1520,6 +1549,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
                 else if(scrollState==SCROLL_STATE_IDLE && (topValue==0) && (promoList.getVisibility()!=View.VISIBLE)){
 
+                }
+
+                */
+
+
+
+                if(bottomValue == 0 && (scrollState==SCROLL_STATE_IDLE || actionButton.getVisibility()!=View.GONE)){
+                    hideFloating();
+                }else if(actionButton.getVisibility()!=View.VISIBLE){
+                    showFloating();
                 }
 
                 currentPosition = firstItemPosition;
@@ -1602,7 +1641,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animator animation) {
 
-               promoList.setVisibility(View.GONE);
+                promoList.setVisibility(View.GONE);
 
                 /*
                 ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
@@ -1639,7 +1678,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
             intent.putExtra("logo", item.getLogo());
             intent.putExtra("location", item.getDistanceTime());
-            intent.putExtra("rating",2.1);
+            intent.putExtra("rating", 2.1);
             startActivity(intent);
             return true;
 
@@ -1662,7 +1701,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
-         }
+        }
     }
 
 
@@ -1760,163 +1799,163 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ip = new ItemPrev[10];
 
+        setListSize(ip.length);
+        // for(int i =0 ;i<50;i++) {
 
-       // for(int i =0 ;i<50;i++) {
-
-            ItemPrev temp = new ItemPrev();
-            temp.setLatitude(51.523992);
-            temp.setLongitude(-0.03798);
-            //TODO:add generic location to database
-            temp.setDistanceTime("2 mins");
-            //TODO: add photo download from google storage
-            temp.setLogo(R.drawable.mcdonalds);
-            temp.setMainText("Happy Meal");
-            temp.setRestaurantName("Mc Donalds");
-            temp.setSubText("Happy Meal £2");
-             temp.setHotDeal(R.drawable.yapnak_colorsmall);
-            //TODO: points
-            temp.setPoints("to be added");
-            //ip[0] = temp;
-            ip[0] = temp;
-
-
-            ItemPrev temp2 = new ItemPrev();
-            temp2.setLatitude(51.523992);
-            temp2.setLongitude(-0.03798);
-            //TODO:add generic location to database
-            temp2.setDistanceTime("1 min");
-            //TODO: add photo download from google storage
-            temp2.setLogo(R.drawable.wrapitup);
-            temp2.setMainText("Burrito Deal");
-            temp2.setRestaurantName("Wrap It Up");
-            temp2.setSubText("Buy 1 Get 1 Free = £4");
-            //TODO: points
-            temp2.setPoints("to be added");
-            ip[1] = temp2;
+        ItemPrev temp = new ItemPrev();
+        temp.setLatitude(51.523992);
+        temp.setLongitude(-0.03798);
+        //TODO:add generic location to database
+        temp.setDistanceTime("2 mins");
+        //TODO: add photo download from google storage
+        temp.setLogo(R.drawable.mcdonalds);
+        temp.setMainText("Happy Meal");
+        temp.setRestaurantName("Mc Donalds");
+        temp.setSubText("Happy Meal £2");
+        temp.setHotDeal(R.drawable.yapnak_colorsmall);
+        //TODO: points
+        temp.setPoints("to be added");
+        //ip[0] = temp;
+        ip[0] = temp;
 
 
-            ItemPrev temp3 = new ItemPrev();
-            //TODO:add generic location to database
-            temp3.setLatitude(51.523992);
-            temp3.setLongitude(-0.03798);
-            temp3.setDistanceTime("1 min");
-            //TODO: add photo download from google storage
-            temp3.setLogo(R.drawable.pizzaexpresslogo);
-            temp3.setMainText("Any Size Pizza");
-            temp3.setRestaurantName("Pizza Express");
-            temp3.setSubText("Half Price = £4");
-            //TODO: points
-            temp3.setPoints("to be added");
-            ip[2] = temp3;
+        ItemPrev temp2 = new ItemPrev();
+        temp2.setLatitude(51.523992);
+        temp2.setLongitude(-0.03798);
+        //TODO:add generic location to database
+        temp2.setDistanceTime("1 min");
+        //TODO: add photo download from google storage
+        temp2.setLogo(R.drawable.wrapitup);
+        temp2.setMainText("Burrito Deal");
+        temp2.setRestaurantName("Wrap It Up");
+        temp2.setSubText("Buy 1 Get 1 Free = £4");
+        //TODO: points
+        temp2.setPoints("to be added");
+        ip[1] = temp2;
 
 
-            ItemPrev temp4 = new ItemPrev();
-            //TODO:add generic location to database
-            temp4.setLatitude(51.523992);
-            temp4.setLongitude(-0.03798);
-            temp4.setDistanceTime("3 mins");
-            //TODO: add photo download from google storage
-            temp4.setLogo(R.drawable.gbklogo);
-            temp4.setMainText("Main Meal Deal");
-            temp4.setRestaurantName("Gourmet Burger Kitchen");
-            temp4.setSubText("£10 off Meal - £5");
-            //TODO: points
-            temp4.setPoints("to be added");
-            ip[3] = temp4;
+        ItemPrev temp3 = new ItemPrev();
+        //TODO:add generic location to database
+        temp3.setLatitude(51.523992);
+        temp3.setLongitude(-0.03798);
+        temp3.setDistanceTime("1 min");
+        //TODO: add photo download from google storage
+        temp3.setLogo(R.drawable.pizzaexpresslogo);
+        temp3.setMainText("Any Size Pizza");
+        temp3.setRestaurantName("Pizza Express");
+        temp3.setSubText("Half Price = £4");
+        //TODO: points
+        temp3.setPoints("to be added");
+        ip[2] = temp3;
 
 
-            ItemPrev temp5 = new ItemPrev();
-            //TODO:add generic location to database
-            temp5.setLatitude(51.523992);
-            temp5.setLongitude(-0.03798);
-            temp5.setDistanceTime("2 mins");
-            //TODO: add photo download from google storage
-            temp5.setLogo(R.drawable.tescologo);
-            temp5.setMainText("Meal Deal");
-            temp5.setRestaurantName("Tesco");
-            temp5.setSubText("Sandwich,Drink,Snack = £3 ");
-            //TODO: points
-            temp5.setPoints("to be added");
-            ip[4] = temp5;
+        ItemPrev temp4 = new ItemPrev();
+        //TODO:add generic location to database
+        temp4.setLatitude(51.523992);
+        temp4.setLongitude(-0.03798);
+        temp4.setDistanceTime("3 mins");
+        //TODO: add photo download from google storage
+        temp4.setLogo(R.drawable.gbklogo);
+        temp4.setMainText("Main Meal Deal");
+        temp4.setRestaurantName("Gourmet Burger Kitchen");
+        temp4.setSubText("£10 off Meal - £5");
+        //TODO: points
+        temp4.setPoints("to be added");
+        ip[3] = temp4;
 
 
-            ItemPrev temp6 = new ItemPrev();
-            temp6.setLatitude(51.523992);
-            temp6.setLongitude(-0.03798);
-            //TODO:add generic location to database
-            temp6.setDistanceTime("7 mins");
-            //TODO: add photo download from google storage
-            temp6.setLogo(R.drawable.wrapitup);
-            temp6.setMainText("Burritos Deal");
-            temp6.setRestaurantName("Wrap It Up");
-            temp6.setSubText("Buy 1 get 1 half price £5");
-            //TODO: points
-            temp6.setPoints("to be added");
-            //ip[0] = temp;
-            ip[5] = temp6;
+        ItemPrev temp5 = new ItemPrev();
+        //TODO:add generic location to database
+        temp5.setLatitude(51.523992);
+        temp5.setLongitude(-0.03798);
+        temp5.setDistanceTime("2 mins");
+        //TODO: add photo download from google storage
+        temp5.setLogo(R.drawable.tescologo);
+        temp5.setMainText("Meal Deal");
+        temp5.setRestaurantName("Tesco");
+        temp5.setSubText("Sandwich,Drink,Snack = £3 ");
+        //TODO: points
+        temp5.setPoints("to be added");
+        ip[4] = temp5;
 
 
-            ItemPrev temp7 = new ItemPrev();
-            temp7.setLatitude(51.523992);
-            temp7.setLongitude(-0.03798);
-            //TODO:add generic location to database
-            temp7.setDistanceTime("1 min");
-            //TODO: add photo download from google storage
-            temp7.setLogo(R.drawable.pizzaexpresslogo);
-            temp7.setMainText("Any Size Pizza");
-            temp7.setHotDeal(R.drawable.yapnak_colorsmall);
-            temp7.setRestaurantName("Pizza Express");
-            temp7.setSubText("Any Size Pizza  = £4");
-            //TODO: points
-            temp7.setPoints("to be added");
-            ip[6] = temp7;
+        ItemPrev temp6 = new ItemPrev();
+        temp6.setLatitude(51.523992);
+        temp6.setLongitude(-0.03798);
+        //TODO:add generic location to database
+        temp6.setDistanceTime("7 mins");
+        //TODO: add photo download from google storage
+        temp6.setLogo(R.drawable.wrapitup);
+        temp6.setMainText("Burritos Deal");
+        temp6.setRestaurantName("Wrap It Up");
+        temp6.setSubText("Buy 1 get 1 half price £5");
+        //TODO: points
+        temp6.setPoints("to be added");
+        //ip[0] = temp;
+        ip[5] = temp6;
 
 
-            ItemPrev temp8 = new ItemPrev();
-            //TODO:add generic location to database
-            temp8.setLatitude(51.523992);
-            temp8.setLongitude(-0.03798);
-            temp8.setDistanceTime("7 mins");
-            //TODO: add photo download from google storage
-            temp8.setLogo(R.drawable.pizzaexpresslogo);
-            temp8.setMainText("Any Size Pizza");
-            temp8.setRestaurantName("Pizza Express");
-            temp8.setSubText("Half Price = £4");
-            //TODO: points
-            temp8.setPoints("to be added");
-            ip[7] = temp8;
+        ItemPrev temp7 = new ItemPrev();
+        temp7.setLatitude(51.523992);
+        temp7.setLongitude(-0.03798);
+        //TODO:add generic location to database
+        temp7.setDistanceTime("1 min");
+        //TODO: add photo download from google storage
+        temp7.setLogo(R.drawable.pizzaexpresslogo);
+        temp7.setMainText("Any Size Pizza");
+        temp7.setHotDeal(R.drawable.yapnak_colorsmall);
+        temp7.setRestaurantName("Pizza Express");
+        temp7.setSubText("Any Size Pizza  = £4");
+        //TODO: points
+        temp7.setPoints("to be added");
+        ip[6] = temp7;
 
 
-            ItemPrev temp9 = new ItemPrev();
-            //TODO:add generic location to database
-            temp9.setLatitude(51.523992);
-            temp9.setLongitude(-0.03798);
-            temp9.setDistanceTime("6 mins");
-            //TODO: add photo download from google storage
-            temp9.setLogo(R.drawable.gbklogo);
-            temp9.setMainText("Main Meal Deal");
-            temp9.setRestaurantName("Gourmet Burger Kitchen");
-            temp9.setSubText("£10 off Meal - £5");
-            //TODO: points
-            temp9.setPoints("to be added");
-            ip[8] = temp9;
+        ItemPrev temp8 = new ItemPrev();
+        //TODO:add generic location to database
+        temp8.setLatitude(51.523992);
+        temp8.setLongitude(-0.03798);
+        temp8.setDistanceTime("7 mins");
+        //TODO: add photo download from google storage
+        temp8.setLogo(R.drawable.pizzaexpresslogo);
+        temp8.setMainText("Any Size Pizza");
+        temp8.setRestaurantName("Pizza Express");
+        temp8.setSubText("Half Price = £4");
+        //TODO: points
+        temp8.setPoints("to be added");
+        ip[7] = temp8;
 
 
-            ItemPrev temp10 = new ItemPrev();
-            //TODO:add generic location to database
-            temp10.setLatitude(51.523992);
-            temp10.setLongitude(-0.03798);
-            temp10.setDistanceTime("5 mins");
-            //TODO: add photo download from google storage
-            temp10.setLogo(R.drawable.tescologo);
-            temp10.setMainText("Meal Deal");
-            temp10.setRestaurantName("Tesco");
-            temp10.setSubText("Sandwich,Drink,Snack = £3 ");
-            //TODO: points
-            temp10.setPoints("to be added");
-            ip[9] = temp10;
+        ItemPrev temp9 = new ItemPrev();
+        //TODO:add generic location to database
+        temp9.setLatitude(51.523992);
+        temp9.setLongitude(-0.03798);
+        temp9.setDistanceTime("6 mins");
+        //TODO: add photo download from google storage
+        temp9.setLogo(R.drawable.gbklogo);
+        temp9.setMainText("Main Meal Deal");
+        temp9.setRestaurantName("Gourmet Burger Kitchen");
+        temp9.setSubText("£10 off Meal - £5");
+        //TODO: points
+        temp9.setPoints("to be added");
+        ip[8] = temp9;
 
-       // }
+
+        ItemPrev temp10 = new ItemPrev();
+        //TODO:add generic location to database
+        temp10.setLatitude(51.523992);
+        temp10.setLongitude(-0.03798);
+        temp10.setDistanceTime("5 mins");
+        //TODO: add photo download from google storage
+        temp10.setLogo(R.drawable.tescologo);
+        temp10.setMainText("Meal Deal");
+        temp10.setRestaurantName("Tesco");
+        temp10.setSubText("Sandwich,Drink,Snack = £3 ");
+        //TODO: points
+        temp10.setPoints("to be added");
+        ip[9] = temp10;
+
+        // }
 
 
 
@@ -1931,6 +1970,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         try{
             List<SQLEntity> list = new ArrayList<SQLEntity>(sql.getList());
+
+            setListSize(list.size());
+
             ip = new ItemPrev[list.size()];
             for (int i = 0; i < ip.length; i++) {
                 ItemPrev temp = new ItemPrev();
@@ -1938,7 +1980,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
-               // temp.setLogo(R.drawable.mcdonalds);
+                // temp.setLogo(R.drawable.mcdonalds);
 
                 //Implement Koush Ion - populate ListView
 
@@ -1994,6 +2036,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
+    }
+    private int size;
+    private int getListSize(){
+        return this.size;
+    }
+
+    private void setListSize(int size){
+        this.size = size;
     }
 
     public void aboutYapnak() {

@@ -1,5 +1,6 @@
 package com.uq.yapnak;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
@@ -15,6 +16,14 @@ public class MoreInfo extends ActionBarActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.more_info);
+        result();
+    }
+
+    private void result(){
+        Intent i = new Intent();
+        i.putExtra("success","Swipe Left");
+        i.putExtra("swipeleft",R.drawable.swipeleft);
+        setResult(1,i);
     }
 
 

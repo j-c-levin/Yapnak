@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    -->
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:id="@+id/item2"
+    android:background="#E0E0E0"
+    android:descendantFocusability="blocksDescendants"
+    android:weightSum="1">
+
+    <!--android:onClick="extendInfo"
+    android:background="#EEEEEE"-->
+
+
+    <RelativeLayout
+        android:layout_marginTop="60dp"
+        android:id = "@+id/extendHeight"
+        android:orientation="vertical"
+        android:layout_height="175dp"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="0dp"
+        android:padding="5dp"
+        android:background="@drawable/curved_card"
+        android:weightSum="1"
+        >
+
+        <!--android:background="@color/bright_foreground_inverse_material_light"-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tempId"
+            android:background="@drawable/border"
+            android:alpha="1">
+
+
+
+
+
+
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/Base.TextAppearance.AppCompat.Headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:singleLine="true"
+                android:text="Title"
+                android:textColor="#ff707070"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.pkmmte.view.CircularImageView
+                android:id="@+id/logo"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/placeholder"
+                app:border="true"
+                app:border_color="#EEEEEE"
+                app:border_width="4dp"
+                app:shadow="true"
+
+
+                />
+
+            <TextView
+                android:id="@+id/subtitle"
+                style="@style/Base.TextAppearance.AppCompat.Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="35dp"
+
+                android:text="Subtitle"
+                android:textColor="#ff707070" />
+
+            <TextView
+                android:id="@+id/loyalty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="73dp"
+                android:text="Loyalty Points:"
+                android:textColor="#9E9E9E"
+                android:textStyle="normal" />
+
+
+            <TextView
+                android:id="@+id/loyaltyPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="73dp"
+                android:layout_toRightOf="@id/loyalty"
+                android:text="10"
+                android:textColor="#9E9E9E"
+                android:textStyle="normal" />
+
+            <ImageView
+                android:id="@+id/locationIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="220dp"
+                android:background="@drawable/locationicon"
+                android:layout_alignTop="@+id/loyaltyPoints"
+                />
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+
+                android:text="distance"
+                android:textColor="#9E9E9E"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:layout_alignBottom="@+id/loyaltyPoints"
+                android:layout_toRightOf="@+id/locationIcon" />
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginTop="100dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:id="@+id/extendIconLayout"
+                android:layout_alignBottom="@+id/extendTextLayout">
+
+
+                <Button
+                    android:id="@+id/recommendMeal"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="56dp"
+                    android:background="@drawable/custom_recommend"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/takeMeThere" />
+
+                <Button
+                    android:id="@+id/takeMeThere"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/custom_takemethere"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_centerHorizontal="true" />
+
+                <Button
+                    android:id="@+id/feedbackButton"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="38dp"
+                    android:background="@drawable/custom_rate"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/takeMeThere" />
+
+
+
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/extendTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_marginTop="145dp">
+
+                <TextView
+                    android:id="@+id/recommendText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="Recommend"
+                    android:layout_marginLeft="10dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/takeMeThereText"
+                    android:layout_marginRight="20dp" />
+
+                <TextView
+                    android:id="@+id/takeMeThereText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="Take Me There"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:id="@+id/rateText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="Rate"
+                    android:layout_marginLeft="29dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/takeMeThereText" />
+
+
+            </RelativeLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+        <!--
+        <fragment
+           android:name="com.example.nand.abc.ExtensionFragment"
+           android:layout_width="match_parent"
+           android:layout_height="100dp"
+           android:id="@+id/itemExtension"
+
+
+            >
+         </fragment>
+
+       -->
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:background="#FFCDD2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/linearLayout2">
+
+        <ImageView
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:src="@drawable/yapnak_colorsmall"
+            />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnak_colorsmall"
+            />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnak_colorsmall"
+            />
+
+        <ImageView
+            android:layout_height="20dp"
+            android:layout_width="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/yapnakmonster_bnwoutline"
+            />
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="39dp"
+        android:layout_height="100dp"
+        android:src="@drawable/linepoint"
+        android:id="@+id/lineImg2"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/extendHeight"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_marginLeft="50dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Press and hold onto card for more information."
+        android:id="@+id/longHoldText"
+        android:layout_below="@+id/lineImg2" />
+
+
+</RelativeLayout>
+
+<!--
+</ScrollView>
+-->

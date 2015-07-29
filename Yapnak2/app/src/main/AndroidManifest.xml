@@ -97,6 +97,28 @@
 
 
 
+        <!--Tutorial Info-->
+
+
+        <activity
+            android:name="com.frontend.yapnak.tutorial.FragmentSlideActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".Login">
+
+            <meta-data
+                android:name = "android.support.PARENT_ACTIVITY"
+                android:value=".Login"
+                />
+
+
+        </activity>
+
+
+
+
+        <!--Tutorial Info-->
+
+
 
 
 
@@ -172,7 +194,7 @@
 
         </activity>
 
-        <activity android:name=".ContactListFragment"
+        <activity android:name=".ContactList"
             android:label="ContactList"
             android:theme="@style/Base.Theme.AppCompat.Dialog"
             android:parentActivityName="com.uq.yapnak.MainActivity">

@@ -9,6 +9,8 @@
     android:paddingTop="10dp"
     android:weightSum="1">
 
+    <!-- android:background="#ff3a3a3c"-->
+
 <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">

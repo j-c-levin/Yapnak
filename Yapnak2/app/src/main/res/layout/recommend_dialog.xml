@@ -39,7 +39,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Yapnak Contact"
+        android:text="Phonebook"
         android:id="@+id/ChooseYapnakContact"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>
