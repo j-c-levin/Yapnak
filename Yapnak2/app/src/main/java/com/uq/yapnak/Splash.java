@@ -51,6 +51,8 @@ public class Splash extends Activity {
     private long startTime;
     private long updatedTime;
 
+    private boolean isIn;
+
 
     @Override
     protected void onPause() {
@@ -62,6 +64,7 @@ public class Splash extends Activity {
 
         if (mGoogleApiClient.isConnected()) {
 
+            isIn=true;
             Intent i = new Intent(Splash.this, MainActivity.class);
             newHandler.removeCallbacks(runnable);
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
@@ -82,9 +85,9 @@ public class Splash extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
-       // Toast.makeText(getApplicationContext(), "IN ON RESUME", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "IN ON RESUME", Toast.LENGTH_LONG).show();
         //pushYapnak();
+
         newHandler = new Handler();
         newHandler.postDelayed(runnable,2000);
 
@@ -92,23 +95,18 @@ public class Splash extends Activity {
             @Override
             public void run() {
 
-
-                Intent i = new Intent(Splash.this, MainLoginActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-                finish();
-
-
+                if(!isIn) {
+                    Intent i = new Intent(Splash.this, MainLoginActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    finish();
+                }else{
+                    newHandler.removeCallbacks(this);
+                }
             }
         };
-
-
-
-
-
-
     }
 
     @Override
