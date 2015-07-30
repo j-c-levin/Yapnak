@@ -189,7 +189,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         try{
 
-           name = getIntent();
+            name = getIntent();
             personName= name.getStringExtra("accName");
             item.setTitle(personName);
             personName = name.getStringExtra("accName");

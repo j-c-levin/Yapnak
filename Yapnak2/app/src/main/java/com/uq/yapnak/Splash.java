@@ -107,12 +107,12 @@ public class Splash extends Activity {
                         finish();
                     } else if (mGoogleApiClient.isConnected()) {
 
-                        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"Connected in Splash",Toast.LENGTH_SHORT).show();
                         newHandler.removeCallbacks(this);
                         Intent i = new Intent(Splash.this, MainActivity.class);
                         String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
                         i.putExtra("accName", acc);
-                        Toast.makeText(getApplicationContext(), acc, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), acc+" IN SPLASH", Toast.LENGTH_LONG).show();
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

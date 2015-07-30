@@ -257,7 +257,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
         boolean vis =  userB.getVisibility()!=View.VISIBLE;
 
-        Toast.makeText(this,"Visibility : " + vis,Toast.LENGTH_LONG).show();
+
 
 
         arrow.setOnClickListener(new View.OnClickListener() {
@@ -332,7 +332,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("Debug", "User is connected");
-        Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
         Intent i = new Intent(this, FragmentSlideActivity.class);
@@ -343,7 +343,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
         i.putExtra("accName",acc);
-
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

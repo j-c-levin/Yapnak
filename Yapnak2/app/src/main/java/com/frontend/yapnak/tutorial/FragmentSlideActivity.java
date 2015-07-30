@@ -1,5 +1,6 @@
 package com.frontend.yapnak.tutorial;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -15,7 +16,7 @@ import com.uq.yapnak.R;
  */
 public class FragmentSlideActivity extends FragmentActivity {
 
-
+    private Intent getI;
     private final int PAGES = 4;
     private ViewPager pager;
 
@@ -59,7 +60,10 @@ public class FragmentSlideActivity extends FragmentActivity {
 
                 case 3:
 
-                    return new TutorialFour();
+                    getI= getIntent();
+                    String gName = getI.getStringExtra("accName");
+                    String defaultName = getI.getStringExtra("initials");
+                    return new TutorialFour(gName,defaultName);
 
                 default:
 
