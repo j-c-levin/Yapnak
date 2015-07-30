@@ -1,17 +1,27 @@
 package com.uq.yapnak;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.frontend.yapnak.client.ClientLogin;
+import com.frontend.yapnak.subview.MyEditText;
 import com.frontend.yapnak.tutorial.FragmentSlideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
@@ -88,9 +98,17 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         promo = (EditText) findViewById(R.id.promoBox);
 
+        Color c = new Color();
+
+        promo.getBackground().setColorFilter(c.parseColor("#FF5722"), PorterDuff.Mode.SRC_IN);
+
+
+        arrow = (ImageView) findViewById(R.id.arrowDownUser);
+        userB = (Button) findViewById(R.id.userButton);
+
         loginButton = (Button) findViewById(R.id.loginButton);
         fragmentManager = getFragmentManager();
-
+        arrowTouch();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,25 +137,96 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     v.getContext().startActivity(i);
-                    finish();
 
 
-                }catch(StringIndexOutOfBoundsException e){
+
+                } catch (StringIndexOutOfBoundsException e) {
 
                     ErrorDialog error = new ErrorDialog();
 
-                    error.show(fragmentManager,"error");
+                    error.show(fragmentManager, "error");
 
 
                 }
+            }
+        });
 
 
+    }
+
+    private ImageView arrow;
+    private Button userB;
+
+    private void arrowTouch(){
+
+        final float originalY = userB.getY();
+
+        boolean vis =  userB.getVisibility()!=View.VISIBLE;
+
+        Toast.makeText(this,"Visibility : " + vis,Toast.LENGTH_LONG).show();
+
+
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Animator.AnimatorListener animate = new AnimatorListenerAdapter() {
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        //super.onAnimationStart(animation);
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //super.onAnimationEnd(animation);
+
+                        if(userB.getVisibility()!=View.VISIBLE) {
+
+                            ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y", -1000, userB.getY());
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 0.0f, 0.5f, 1.0f);
+
+                            AnimatorSet s = new AnimatorSet();
+                            s.playTogether(moveY, alpha);
+                            s.setDuration(400);
+                            s.setInterpolator(new AccelerateDecelerateInterpolator());
+                            s.start();
+
+                        }else{
+
+                            ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y",originalY,-1000);
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 1.0f, 0.5f, 0.0f);
+
+                            AnimatorSet s = new AnimatorSet();
+                            s.playTogether(moveY, alpha);
+                            s.setDuration(400);
+                            s.setInterpolator(new AccelerateDecelerateInterpolator());
+                            s.start();
+
+                        }
+
+                    }
+                };
+                      userB.animate().setListener(animate).start();
+
+
+                userB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent clientActivity = new Intent(getApplicationContext(), ClientLogin.class);
+                        startActivity(clientActivity);
+                    }
+                });
 
 
 
             }
         });
+
     }
+
+
 
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -145,7 +234,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, FragmentSlideActivity.class);
 
         //person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         //this.personName = person.getDisplayName();

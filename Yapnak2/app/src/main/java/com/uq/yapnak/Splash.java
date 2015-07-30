@@ -53,13 +53,12 @@ public class Splash extends Activity {
 
     private boolean isIn;
 
+    private BackgroundWork work;
 
     @Override
     protected void onPause() {
         super.onPause();
         timePaused += timeInSecs;
-        Toast.makeText(getApplicationContext(), "IN ON PAUSE", Toast.LENGTH_LONG).show();
-
 
 
         if (mGoogleApiClient.isConnected()) {
@@ -80,7 +79,9 @@ public class Splash extends Activity {
 
 
 
+
     }
+
 
     @Override
     protected void onResume() {
@@ -88,23 +89,38 @@ public class Splash extends Activity {
         //Toast.makeText(getApplicationContext(), "IN ON RESUME", Toast.LENGTH_LONG).show();
         //pushYapnak();
 
+        mGoogleApiClient.connect();
         newHandler = new Handler();
         newHandler.postDelayed(runnable,2000);
+
 
         runnable = new Runnable() {
             @Override
             public void run() {
 
-                if(!isIn) {
-                    Intent i = new Intent(Splash.this, MainLoginActivity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    finish();
-                }else{
-                    newHandler.removeCallbacks(this);
-                }
+                  if (!isIn) {
+                        Intent i = new Intent(Splash.this, Login.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        startActivity(i);
+                        finish();
+                    } else if (mGoogleApiClient.isConnected()) {
+
+                        Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
+                        newHandler.removeCallbacks(this);
+                        Intent i = new Intent(Splash.this, MainActivity.class);
+                        String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                        i.putExtra("accName", acc);
+                        Toast.makeText(getApplicationContext(), acc, Toast.LENGTH_LONG).show();
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        startActivity(i);
+                        finish();
+                    }
             }
         };
     }
@@ -120,10 +136,10 @@ public class Splash extends Activity {
         activity = this;
 
 
-        BackgroundWork work = new BackgroundWork();
+        work = new BackgroundWork();
         mGoogleApiClient = work.doInBackground();
-        mSignInClicked = true;
-        mGoogleApiClient.connect();
+        //mSignInClicked = true;
+        //mGoogleApiClient.connect();
 
     }
 
@@ -158,6 +174,7 @@ public class Splash extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+        mSignInClicked = true;
         mGoogleApiClient.connect();
 
     }
@@ -173,7 +190,13 @@ public class Splash extends Activity {
     private class BackgroundWork extends AsyncTask<Void,Integer,GoogleApiClient> implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
         private GoogleApiClient mClient;
+        private final int CANCELLED = 1;
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
 
         @Override
         protected GoogleApiClient doInBackground(Void... params) {
@@ -185,6 +208,8 @@ public class Splash extends Activity {
                     .addScope(new Scope("profile"))
                     .addScope(Plus.SCOPE_PLUS_LOGIN)
                     .addScope(Plus.SCOPE_PLUS_PROFILE).build();
+
+
 
 
             return mClient;
