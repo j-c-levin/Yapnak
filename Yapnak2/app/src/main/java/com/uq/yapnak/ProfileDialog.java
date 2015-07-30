@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 
 
+import com.frontend.yapnak.subview.RedEditText;
 
 import java.util.Calendar;
 
@@ -25,6 +27,8 @@ public class ProfileDialog extends AlertDialog.Builder {
     private Activity activity;
     private Context context;
     private  Button button;
+    private Color color;
+    private RedEditText name,phone;
 
     public ProfileDialog(Context context,Activity activity) {
         super(context);
@@ -36,6 +40,9 @@ public class ProfileDialog extends AlertDialog.Builder {
 
         View v = inflater.inflate(R.layout.profile_layout,null);
         this.setView(v);
+
+
+
         chooseDate(v);
 
 

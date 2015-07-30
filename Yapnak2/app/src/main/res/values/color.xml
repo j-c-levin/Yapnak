@@ -78,4 +78,5 @@
     <color name= "midGrey">#9E9E9E</color>
     <color name= "lightGrey">#E0E0E0</color>
     <color name="lightBrown">#BCAAA4</color>
+    <color name ="deepOrange">#FF5722</color>
 </resources>

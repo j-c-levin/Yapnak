@@ -1,6 +1,10 @@
 package com.frontend.yapnak.tutorial;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,7 +27,8 @@ public class TutorialThree extends Fragment {
     private RelativeLayout rel;
     private final int RESULT = 1;
     private TextView longText;
-    private ImageView line;
+    private ImageView line,confirm;
+
 
 
     @Nullable
@@ -35,6 +40,7 @@ public class TutorialThree extends Fragment {
         v= container;
         longText = (TextView) v.findViewById(R.id.longHoldText);
         line = (ImageView) v.findViewById(R.id.lineImg2);
+        confirm = (ImageView) v.findViewById(R.id.confirm);
         clicked();
 
         return container;
@@ -56,9 +62,6 @@ public class TutorialThree extends Fragment {
                 intent.putExtra("rating","Rating");
                 startActivityForResult(intent, 1);
                 return true;
-
-
-
             }
         });
 
@@ -71,8 +74,37 @@ public class TutorialThree extends Fragment {
 
         if(requestCode == RESULT){
 
-            longText.setText(data.getStringExtra("success"));
-            line.setImageResource(data.getIntExtra("swipeleft",R.drawable.swipeleft));
+            Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    //super.onAnimationEnd(animation);
+
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(longText,"alpha",1.0f,0.0f);
+                    ObjectAnimator alphaArrow = ObjectAnimator.ofFloat(line,"alpha",1.0f,0.0f);
+
+                    ObjectAnimator transformImageY = ObjectAnimator.ofFloat(confirm,"y",-1000,confirm.getY());
+                    ObjectAnimator alphaImage = ObjectAnimator.ofFloat(confirm,"alpha",0.0f,1.0f);
+
+                    AnimatorSet s = new AnimatorSet();
+
+                    s.playTogether(transformImageY,alphaImage,alphaText,alphaArrow);
+                    s.setDuration(400);
+                    s.start();
+
+                }
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    //super.onAnimationStart(animation);
+
+
+                }
+            };
+
+            confirm.animate().setListener(listener).start();
+            //confirm.setVisibility(View.VISIBLE);
+
+
 
 
 

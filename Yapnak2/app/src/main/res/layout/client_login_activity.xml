@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff3a3a3c"
+    android:background="@drawable/login_background"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -27,11 +27,13 @@
                 android:layout_height="100dp"
                 android:id="@+id/imageButton" />
 
-            <EditText
+            <com.frontend.yapnak.subview.MyEditText
                 android:id="@+id/clientEmailEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alpha="0.4"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:hint="Restaurant Client Email"
                 android:inputType="textEmailAddress"
                android:textColor="#FFF"
@@ -40,12 +42,14 @@
                 android:layout_alignParentLeft="true" />
 
 
-            <EditText
+            <com.frontend.yapnak.subview.MyEditText
                 android:id="@+id/clientPassEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="58dp"
                 android:alpha="0.4"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:inputType="textPassword"
                 android:hint="Password"
                 android:textColor="#FFF"
@@ -62,6 +66,8 @@
                 android:alpha="0.4"
                 android:layout_marginTop="38dp"
                 android:text="Login"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:onClick="clientLogin"
                 android:layout_below="@+id/clientPassEdit"
                 android:layout_alignParentLeft="true" />
@@ -78,6 +84,36 @@
                 android:layout_marginBottom="20dp"
                />
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="100dp"
+                android:layout_height="200dp"
+                android:layout_alignBottom="@+id/sign_in_button"
+                android:layout_alignParentRight="true">
+
+
+                <ImageView
+                    android:id="@+id/arrowDownClient"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/dropdown_arrow"/>
+
+                <Button
+                    android:id="@+id/clientButton"
+                    android:layout_width="74dp"
+                    android:layout_height="40dp"
+                    android:text="User?"
+                    android:visibility="invisible"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="5dp"
+                    android:textColor="#FFF"
+                    android:background="#FF8A80"/>
+
+
+
+            </LinearLayout>
 
 
         </RelativeLayout>

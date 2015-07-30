@@ -89,7 +89,7 @@
         android:textSize="15sp"
         android:textStyle="bold" />
 
-    <EditText
+    <MyEditText
         android:id="@+id/commentField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

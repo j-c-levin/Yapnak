@@ -2,24 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff3a3a3c"
+    android:background="@drawable/login_background"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
     android:weightSum="1">
 
-    <!-- android:background="#ff3a3a3c"-->
+    <!-- android:background="#ff3a3a3c"
+    android:textColor="#FFF"
+    android:textColorHint="#FFF"
+    -->
 
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <RelativeLayout
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="496dp"
-        android:layout_weight="5.30">
+
+        android:layout_marginTop="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
         <ImageButton
             android:background="@drawable/yapnakmonster"
@@ -29,40 +34,48 @@
             android:layout_height="100dp"
             android:id="@+id/imageButton" />
 
-        <EditText
+        <com.frontend.yapnak.subview.MyEditText
             android:id="@+id/initialsEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="220dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:hint="Initials"
-            android:inputType="text"
             android:textColor="#FFF"
-            android:textColorHint="#FFF" />
+            android:textColorHint="#FFF"
+            android:layout_alignParentLeft="true" />
 
-        <EditText
+        <com.frontend.yapnak.subview.MyEditText
             android:id="@+id/phoneNumberEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/initialsEdit"
             android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:hint="Phone Number"
             android:inputType="phone"
             android:digits="+0123456789"
             android:textColor="#FFF"
-            android:textColorHint="#FFF" />
+            android:textColorHint="#FFF"
+             />
 
-        <EditText
+        <com.frontend.yapnak.subview.MyEditText
             android:id="@+id/promoBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/phoneNumberEdit"
             android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:hint="Promo Code"
             android:textColor="#FFF"
-            android:textColorHint="#FFF" />
+            android:textColorHint="#FFF"
+            />
 
         <TextView
             android:id="@+id/loginText"
@@ -71,8 +84,11 @@
             android:layout_below="@id/phoneNumberEdit"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="100dp"
-            android:text="Login"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:textColor="#FFF"
+            android:textColorHint="#FFF"
+            android:text="Login"
             android:textStyle="bold" />
 
         <Button
@@ -81,6 +97,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/phoneNumberEdit"
             android:layout_marginTop="85dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:alpha="0.4" />
 
 
@@ -93,6 +111,36 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"/>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="100dp"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true">
+
+
+            <ImageView
+                android:id="@+id/arrowDownUser"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/dropdown_arrow"/>
+
+            <Button
+                android:id="@+id/userButton"
+                android:layout_width="75dp"
+                android:layout_height="40dp"
+                android:text="Client?"
+                android:visibility="invisible"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:textColor="#FFF"
+                android:background="#FF8A80"/>
+
+
+
+        </LinearLayout>
 
 
     </RelativeLayout>

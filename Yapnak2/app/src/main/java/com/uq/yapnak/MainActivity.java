@@ -60,6 +60,9 @@ import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
 import com.frontend.yapnak.promotion.PromoItem;
 import com.frontend.yapnak.promotion.PromotionAdapter;
 import com.frontend.yapnak.rate.RatingBuilder;
+import com.frontend.yapnak.subview.MyEditText;
+import com.frontend.yapnak.subview.RedEditText;
+import com.frontend.yapnak.subview.RedRadioButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -524,8 +527,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private RadioGroup gender;
     private void profileDialog(View v){
 
-        //ProfileDialog userItems = new ProfileDialog(this,this);
+        AlertDialog.Builder userItems = new ProfileDialog(this,this);
+        userItems.setPositiveButton(R.string.OK,null);
+        userItems.setNegativeButton(R.string.Cancel,null);
 
+
+
+
+        /*
         AlertDialog.Builder userItems= new AlertDialog.Builder(v.getContext());
 
         final LinearLayout linearLayout = new LinearLayout(v.getContext());
@@ -533,14 +542,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
         layoutParams.setMargins(20, 20, 20, 20);
-        final EditText phoneNumber = new EditText(v.getContext());
+        final RedEditText phoneNumber = new RedEditText(v.getContext());
         phoneNumber.setHint("Enter Phone Number");
         phoneNumber.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         phoneNumber.setMaxLines(1);
         phoneNumber.setSingleLine();
         phoneNumber.setGravity(Gravity.TOP);
 
-        final EditText name = new EditText(v.getContext());
+        final RedEditText name = new RedEditText(v.getContext());
         name.setHint("Enter Full Name");
         name.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         name.setMaxLines(1);
@@ -588,6 +597,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         userItems.setView(linearLayout);
         userItems.setPositiveButton("OK", null);
         userItems.setNegativeButton("CANCEL", null);
+
+        */
 
 
 

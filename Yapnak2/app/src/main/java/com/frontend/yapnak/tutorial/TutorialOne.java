@@ -2,11 +2,13 @@ package com.frontend.yapnak.tutorial;
 
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ public class TutorialOne extends Fragment {
     private RelativeLayout extendHeight;
     private RelativeLayout extendIcon;
     private RelativeLayout extendText;
+    private ImageView confirm;
 
 
     @Nullable
@@ -36,6 +39,7 @@ public class TutorialOne extends Fragment {
         //return super.onCreateView(inflater, container, savedInstanceState);
         container = (ViewGroup) inflater.inflate(R.layout.tutorialone, container, false);
         v = container;
+        confirm = (ImageView) v.findViewById(R.id.confirm);
         clickExpand();
         return container;
     }
@@ -71,14 +75,19 @@ public class TutorialOne extends Fragment {
 
     }
 
+    private TextView text ;
+    private ImageView arrow ;
     private void replaceText(){
 
-        final TextView text = (TextView)v.findViewById(R.id.cardexpandText);
-        final ImageView arrow = (ImageView)v.findViewById(R.id.lineImg);
+         text = (TextView)v.findViewById(R.id.cardexpandText);
+          arrow = (ImageView)v.findViewById(R.id.lineImg);
 
-        Animator.AnimatorListener animator = new Animator.AnimatorListener() {
+        Animator.AnimatorListener animator = new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
+
+
+
 
             }
 
@@ -90,32 +99,38 @@ public class TutorialOne extends Fragment {
                 PropertyValuesHolder transformX = PropertyValuesHolder.ofFloat("scaleX",arrow.getWidth(),0.0f);
                 PropertyValuesHolder transformY = PropertyValuesHolder.ofFloat("scaleY",arrow.getHeight(),0.0f);
 
-                ObjectAnimator transform = ObjectAnimator.ofPropertyValuesHolder(arrow,transformX,transformY);
+                ObjectAnimator transform = ObjectAnimator.ofPropertyValuesHolder(arrow, transformX, transformY);
+
+                ObjectAnimator transformImageY = ObjectAnimator.ofFloat(confirm,"y",-1000,confirm.getY());
+                ObjectAnimator alphaImage = ObjectAnimator.ofFloat(confirm,"alpha",0.0f,1.0f);
+
+
 
                 AnimatorSet set = new AnimatorSet();
 
-                set.playTogether(alpha,arrowAlpha,transform);
+                set.playTogether(alpha,arrowAlpha,transform,transformImageY,alphaImage);
+                //set.playTogether(alpha, arrowAlpha, transform);
 
-                set.setDuration(400);
+                set.setDuration(500);
                 set.start();
-
-
             }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
 
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
         };
 
-        text.animate().setListener(animator);
-        text.setVisibility(View.GONE);
-        arrow.setVisibility(View.GONE);
+        text.animate().setListener(animator).start();
+
+        //confirm.setVisibility(View.VISIBLE);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                text.setVisibility(View.GONE);
+                arrow.setVisibility(View.GONE);
+            }
+        }, 552);
+
+
 
 
     }
@@ -127,15 +142,11 @@ public class TutorialOne extends Fragment {
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-
-
                 int value = (Integer) animation.getAnimatedValue();
                 ViewGroup.LayoutParams layout = extendHeight.getLayoutParams();
                 layout.height = value;
                 extendHeight.setLayoutParams(layout);
             }
-
-
         });
 
         return animator;

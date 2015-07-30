@@ -29,8 +29,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_yapnak_monster"
         android:label="@string/app_name"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        android:theme="@style/AppTheme">
         <activity
+            android:theme="@style/AppTheme"
             android:name="com.uq.yapnak.MainActivity"
             android:label="@string/app_name"
             android:parentActivityName=".MainActivity"
@@ -52,46 +53,34 @@
             </intent-filter>
         </activity>
 
-        <!--Login Info-->
-
-        <activity android:name=".MainLoginActivity"
-            android:parentActivityName=".MainLoginActivity"
-            >
-
-            <meta-data
-                android:name = "android.support.PARENT_ACTIVITY"
-                android:value=".MainLoginActivity"
-                />
-
-        </activity>
-
-
         <activity
             android:name="com.uq.yapnak.Login"
             android:label="@string/app_name"
-            android:parentActivityName=".MainLoginActivity">
+            android:parentActivityName=".Login">
 
             <meta-data
               android:name = "android.support.PARENT_ACTIVITY"
-              android:value=".MainLoginActivity"
+              android:value=".Login"
              />
 
 
         </activity>
 
 
+
         <activity
             android:name="com.frontend.yapnak.client.ClientLogin"
             android:label="@string/app_name"
-            android:parentActivityName=".MainLoginActivity">
+            android:parentActivityName=".Login">
 
             <meta-data
                 android:name = "android.support.PARENT_ACTIVITY"
-                android:value=".MainLoginActivity"
+                android:value=".Login"
                 />
 
 
         </activity>
+
 
         <!--Login Info-->
 
@@ -152,6 +141,7 @@
         <!-- User Info-->
 
         <activity
+            android:theme="@style/AppTheme"
             android:name="com.uq.yapnak.MapPane"
             android:label="Yapnak"
             android:parentActivityName="com.uq.yapnak.MainActivity">
@@ -163,6 +153,7 @@
          </activity>
 
         <activity
+            android:theme="@style/AppTheme"
             android:name="com.frontend.yapnak.maps.features.MapActivity"
             android:label="@string/map_activity"
             android:parentActivityName="com.uq.yapnak.MainActivity">
@@ -174,6 +165,7 @@
         </activity>
 
         <activity
+            android:theme="@style/AppTheme"
             android:name="com.uq.yapnak.MoreInfo"
             android:label="Additional Info"
             android:parentActivityName="com.uq.yapnak.MainActivity">
@@ -206,6 +198,7 @@
         </activity>
 
         <activity
+            android:theme="@style/AppTheme"
             android:name="com.frontend.yapnak.rate.RateActivity"
             android:parentActivityName="com.uq.yapnak.MainActivity">
 

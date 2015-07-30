@@ -40,7 +40,7 @@
         <Button
             android:id="@+id/enterActivity"
             android:layout_width="170dp"
-            android:layout_height="170dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/start"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />

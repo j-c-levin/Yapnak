@@ -2,10 +2,12 @@ package com.frontend.yapnak.tutorial;
 
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -39,8 +41,8 @@ public class TutorialTwo extends Fragment {
     private Button rate;
     private LayoutInflater inflater;
     private boolean click1,click2,click3;
-    private TextView longText;
-    private ImageView line;
+    private TextView longText,recommendT,rateT,takeMe;
+    private ImageView line,lineRec,lineRate,lineTake,confirm;
     private RelativeLayout layout;
 
     @Nullable
@@ -51,15 +53,73 @@ public class TutorialTwo extends Fragment {
         container = (ViewGroup) inflater.inflate(R.layout.tutorialtwo, container, false);
         v=container;
         this.inflater = inflater;
+
         layout = (RelativeLayout) v.findViewById(R.id.toggleTutorial);
         line = (ImageView) v.findViewById(R.id.swipeleft);
         longText= (TextView) v.findViewById(R.id.swipe);
+
+        lineRec = (ImageView) v.findViewById(R.id.lineImg);
+        recommendT= (TextView) v.findViewById(R.id.textRecommend);
+
+        lineRate = (ImageView) v.findViewById(R.id.lineImg3);
+        rateT= (TextView) v.findViewById(R.id.textView5);
+
+        lineTake = (ImageView)v.findViewById(R.id.lineImg2);
+        takeMe=(TextView) v.findViewById(R.id.textView4);
+
+        confirm = (ImageView) v.findViewById(R.id.confirm);
+
+
         clicked();
-        allClicked();
+
+
+         allClicked();
+
         return container;
     }
 
    private final int PICK_CONTACT = 1;
+
+    private void recommendAnim(){
+        Animator.AnimatorListener animatorListener = new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                //super.onAnimationStart(animation);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //super.onAnimationEnd(animation);
+
+                ObjectAnimator slideText = ObjectAnimator.ofFloat(recommendT,"y",recommendT.getY(),-1000);
+                ObjectAnimator slideImg = ObjectAnimator.ofFloat(lineRec, "y", lineRec.getY(),-1000);
+                ObjectAnimator alphaText = ObjectAnimator.ofFloat(recommendT,"alpha",1.0f,0.5f,0.0f);
+                ObjectAnimator alphaImg = ObjectAnimator.ofFloat(lineRec,"alpha",1.0f,0.5f,0.0f);
+
+                AnimatorSet s = new AnimatorSet();
+                s.playTogether(slideImg, slideText, alphaImg, alphaText);
+                s.setDuration(400);
+                s.start();
+                //recommendT.setVisibility(View.GONE);
+                //lineRec.setVisibility(View.GONE);
+
+            }
+        };
+
+        recommendT.animate().setListener(animatorListener).start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                recommendT.setVisibility(View.INVISIBLE);
+                lineRec.setVisibility(View.INVISIBLE);
+
+            }
+        }, 450);
+
+
+    }
+
 
     public void clicked(){
         recommend = (Button)v.findViewById(R.id.recommendMeal);
@@ -77,8 +137,20 @@ public class TutorialTwo extends Fragment {
 
                 userItems.setTitle("👥 Recommend");
                 //userItems.setMessage("Enter your friends Yapnak iD");
-                userItems.setPositiveButton("OK", null);
-                userItems.setNegativeButton("CANCEL", null);
+                userItems.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        recommendAnim();
+
+                    }
+                });
+                userItems.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        recommendAnim();
+                    }
+                });
 
 
 
@@ -134,6 +206,7 @@ public class TutorialTwo extends Fragment {
 
 
 
+
                 LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 buttonParams.gravity = Gravity.CENTER;
                 buttonParams.setMargins(0,20,0,20);
@@ -148,10 +221,10 @@ public class TutorialTwo extends Fragment {
                 linearLayout.addView(contactButton,buttonParams);
                 userItems.setView(linearLayout);
 
-
-
-
                 userItems.show();
+
+
+
 
             }
         });
@@ -160,8 +233,43 @@ public class TutorialTwo extends Fragment {
         takeMeThere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                click2 =true;
+
                 Toast.makeText(getActivity().getApplicationContext(),"This will provide you with directions to the restaurant that is providing the deal",Toast.LENGTH_LONG).show();
+                Animator.AnimatorListener animatorListener = new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        //super.onAnimationStart(animation);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //super.onAnimationEnd(animation);
+
+                        ObjectAnimator slideText = ObjectAnimator.ofFloat(takeMe, "y",  takeMe.getY(),-1000);
+                        ObjectAnimator slideImg = ObjectAnimator.ofFloat(lineTake, "y", lineTake.getY(),-1000);
+                        ObjectAnimator alphaText = ObjectAnimator.ofFloat(takeMe,"alpha",1.0f,0.5f,0.0f);
+                        ObjectAnimator alphaImg = ObjectAnimator.ofFloat(lineTake,"alpha",1.0f,0.5f,0.0f);
+
+                        AnimatorSet s = new AnimatorSet();
+                        s.playTogether(slideImg, slideText, alphaImg, alphaText);
+                        s.setDuration(400);
+                        s.start();
+                        //takeMe.setVisibility(View.GONE);
+                        //lineTake.setVisibility(View.GONE);
+
+                    }
+                };
+                takeMe.animate().setListener(animatorListener).start();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        takeMe.setVisibility(View.INVISIBLE);
+                        lineTake.setVisibility(View.INVISIBLE);
+                    }
+                }, 452);
+
+
+
              }
         });
 
@@ -170,18 +278,90 @@ public class TutorialTwo extends Fragment {
             public void onClick(View v) {
                 click3 = true;
                 Toast.makeText(getActivity().getApplicationContext(), "This will allow you to rate this deal", Toast.LENGTH_LONG).show();
+
+                Animator.AnimatorListener animatorListener = new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        //super.onAnimationStart(animation);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //super.onAnimationEnd(animation);
+
+                        ObjectAnimator slideText = ObjectAnimator.ofFloat(rateT, "y", rateT.getY(), -1000);
+                        ObjectAnimator slideImg = ObjectAnimator.ofFloat(lineRate, "y", lineRate.getY(), -1000);
+
+                        ObjectAnimator alphaText = ObjectAnimator.ofFloat(rateT, "alpha", 1.0f, 0.5f, 0.0f);
+                        ObjectAnimator alphaImg = ObjectAnimator.ofFloat(lineRate, "alpha", 1.0f, 0.5f, 0.0f);
+
+                        AnimatorSet s = new AnimatorSet();
+                        s.playTogether(slideImg, slideText, alphaImg, alphaText);
+                        s.setDuration(400);
+                        s.start();
+                        //rateT.setVisibility(View.GONE);
+                        //lineRate.setVisibility(View.GONE);
+
+                    }
+                };
+
+                rateT.animate().setListener(animatorListener).start();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rateT.setVisibility(View.INVISIBLE);
+                        lineRate.setVisibility(View.INVISIBLE);
+                    }
+                }, 452);
+
+
             }
         });
-
-
-
 
     }
 
     private void allClicked(){
-        if(click1 || click2 || click3 ){
 
-            Animator.AnimatorListener listener = new Animator.AnimatorListener() {
+        if(rateT.getVisibility()==View.INVISIBLE && recommendT.getVisibility()==View.INVISIBLE&& takeMe.getVisibility()==View.INVISIBLE){
+
+
+            Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    //super.onAnimationEnd(animation);
+
+                    ObjectAnimator transformImageY = ObjectAnimator.ofFloat(confirm,"y",-1000,confirm.getY());
+                    ObjectAnimator alphaImage = ObjectAnimator.ofFloat(confirm,"alpha",0.0f,1.0f);
+
+
+
+                    AnimatorSet s = new AnimatorSet();
+                    s.playTogether(transformImageY,alphaImage);
+                    s.setDuration(400);
+                    s.start();
+
+                }
+
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    //super.onAnimationStart(animation);
+
+
+
+                }
+            };
+
+            confirm.animate().setListener(listener).start();
+            confirm.setVisibility(View.VISIBLE);
+
+
+        }
+    }
+
+
+    private void commented(){
+        /* Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
@@ -238,8 +418,8 @@ public class TutorialTwo extends Fragment {
                 }
             };
 
-            layout.animate().setListener(listener).start();
-
-        }
+            layout.animate().setListener(listener).start();*/
     }
 }
+
+

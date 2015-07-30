@@ -114,7 +114,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="220dp"
-                android:background="@drawable/locationicon"
+                android:background="@drawable/locationicon_red"
                 android:layout_alignTop="@+id/loyaltyPoints"
                 />
 
@@ -247,9 +247,9 @@
 
 
     <ImageView
-        android:layout_width="39dp"
-        android:layout_height="150dp"
-        android:src="@drawable/linepoint"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:src="@drawable/linepoint_small"
         android:id="@+id/lineImg"
         android:layout_marginLeft="150dp"
         android:layout_below="@id/extendHeight"
@@ -266,6 +266,18 @@
         android:id="@+id/cardexpandText"
         android:layout_below="@id/lineImg"
         android:layout_gravity="center_horizontal" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:id="@+id/confirm"
+        android:visibility="invisible"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/extendHeight"
+        android:src="@drawable/swipeconfirm"
+        android:layout_centerHorizontal="true"/>
+
+
 
     <LinearLayout
         android:layout_below="@id/extendHeight"

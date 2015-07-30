@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -11,10 +12,12 @@ import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -61,6 +64,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
      */
+
+    private float originalUserY;
     private boolean mSignInClicked;
 
     /**
@@ -106,9 +111,12 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         arrow = (ImageView) findViewById(R.id.arrowDownUser);
         userB = (Button) findViewById(R.id.userButton);
 
+        originalUserY = userB.getY();
+
         loginButton = (Button) findViewById(R.id.loginButton);
         fragmentManager = getFragmentManager();
-        arrowTouch();
+        //arrowTouch();
+        buttonAnimate();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +164,92 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
     private ImageView arrow;
     private Button userB;
+
+    private AnimatorSet arrowAppear(){
+        ValueAnimator animator = ValueAnimator.ofFloat(-1000.0f,(originalUserY+110));
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+
+                float y = (Float) animation.getAnimatedValue();
+
+
+                userB.setY(y);
+
+            }
+        });
+
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(userB,"alpha",0.0f,1.0f);
+
+        AnimatorSet s = new AnimatorSet();
+        s.playTogether(animator, alpha);
+
+        return s;
+
+    }
+
+
+    private AnimatorSet arrowGone(){
+        ValueAnimator animator = ValueAnimator.ofFloat(originalUserY,-1000.0f);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+
+                float y = (float) animation.getAnimatedValue();
+
+
+                userB.setY(y);
+
+            }
+        });
+
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(userB,"alpha",1.0f,0.0f);
+
+        AnimatorSet s = new AnimatorSet();
+        s.playTogether(animator, alpha);
+
+        return s;
+    }
+
+    private void buttonAnimate(){
+
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(userB.getVisibility()!=View.VISIBLE){
+                    arrowAppear().setDuration(400).start();
+                    userB.setVisibility(View.VISIBLE);
+
+                    userB.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent clientActivity = new Intent(getApplicationContext(), ClientLogin.class);
+                            startActivity(clientActivity);
+                        }
+                    });
+
+                }else{
+                    arrowGone().setDuration(400).start();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            userB.setVisibility(View.INVISIBLE);
+                        }
+                    }, 300);
+                }
+
+            }
+        });
+
+
+    }
 
     private void arrowTouch(){
 
@@ -208,13 +302,20 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
                     }
                 };
+                float userX = userB.getX();
+                float userY = userB.getY();
+                //TranslateAnimation buttonAnim = new TranslateAnimation(-);
                       userB.animate().setListener(animate).start();
+                      userB.setVisibility(View.VISIBLE);
 
 
                 userB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent clientActivity = new Intent(getApplicationContext(), ClientLogin.class);
+                        clientActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        clientActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        clientActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(clientActivity);
                     }
                 });
