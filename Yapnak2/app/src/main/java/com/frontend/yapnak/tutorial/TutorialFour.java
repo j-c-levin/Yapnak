@@ -57,7 +57,7 @@ public class TutorialFour extends Fragment {
 
                 Intent i = new Intent(getActivity(), MainActivity.class);
 
-                Toast.makeText(getActivity().getApplicationContext(),getInfo.getStringExtra("accName"),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(),getInfo.getStringExtra("initials"),Toast.LENGTH_SHORT).show();
                 i.putExtra("initials",dName);
                 i.putExtra("accName",gName);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

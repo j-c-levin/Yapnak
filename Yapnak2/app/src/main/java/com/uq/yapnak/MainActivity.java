@@ -186,27 +186,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private final String LOG_INFO="log";
     public void setUserName(Menu menu){
         MenuItem item = menu.findItem(R.id.userNameToolBar);
+        name = getIntent();
 
-        try{
+        personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
 
-            name = getIntent();
-            personName= name.getStringExtra("accName");
-            item.setTitle(personName);
-            personName = name.getStringExtra("accName");
 
 
             String[]name = personName.split("@");
 
             item.setTitle(name[0]);
 
-        }catch(Exception e){
 
-            e.printStackTrace();
-            temp = getIntent();
-            initials = temp.getStringExtra("initials");
-            item.setTitle(initials);
-
-        }
 
     }
 
