@@ -7,23 +7,26 @@
 
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="400dp"
+    android:background="#FFAB91"
+    android:id="@+id/scrollView">
 
 
 
     <RelativeLayout
         android:id="@+id/userDetails"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         >
 
 
-        <EditText
+        <com.frontend.yapnak.subview.RedEditText
+            android:background="@android:color/transparent"
             android:id="@+id/phoneNumberEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:imeOptions="actionNext"
             android:inputType="phone"
+            android:layout_height="30dp"
             android:hint="Enter Phone Number"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
@@ -35,14 +38,14 @@
             android:layout_centerHorizontal="true" />
 
 
-        <EditText
+        <com.frontend.yapnak.subview.RedEditText
             android:id="@+id/nameEdit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="30dp"
-
             android:hint="Enter Name"
+            android:background="@android:color/transparent"
             android:maxLines="1"
             android:singleLine="true"
             android:gravity="top"
@@ -51,57 +54,6 @@
             android:textColorHint="#000"
             android:layout_marginLeft="20dp"
             android:layout_below="@+id/phoneNumberEditText" />
-
-
-
-
-        <Button
-            android:id="@+id/dateInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Date Of Birth"
-            android:textSize="15sp"
-            android:layout_centerVertical="true"
-            android:layout_alignLeft="@+id/nameEdit" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gender"
-            android:textSize="15sp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="270dp"
-            android:id="@+id/textView3" />
-
-        <RadioGroup
-            android:id="@+id/genderGroupButtons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@+id/textView3"
-            android:layout_alignLeft="@+id/dateInput">
-
-            <RadioButton
-                android:layout_margin="10dp"
-                android:button="@drawable/red_radio"
-                android:id="@+id/male"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Male"
-                />
-
-            <RadioButton
-                android:layout_margin="10dp"
-                android:id="@+id/female"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/red_radio"
-                android:text="Female"
-                />
-
-
-        </RadioGroup>
 
 
         <!--FEEDBACK MENU
@@ -245,6 +197,85 @@
 
 
 </ScrollView>
+
+    <RadioGroup
+        android:id="@+id/genderGroupButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="42dp"
+        android:layout_above="@+id/linearLayout3"
+        android:layout_alignParentLeft="true">
+
+        <RadioButton
+            android:layout_margin="10dp"
+            android:button="@drawable/red_radio"
+            android:id="@+id/male"
+            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:text="Male"
+            />
+
+        <RadioButton
+            android:layout_margin="10dp"
+            android:id="@+id/female"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:button="@drawable/red_radio"
+            android:text="Female"
+            />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gender"
+        android:textSize="15sp"
+        android:id="@+id/textView3"
+        android:layout_above="@+id/genderGroupButtons"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="24dp" />
+
+    <Button
+        android:id="@+id/dateInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Date Of Birth"
+        android:textSize="15sp"
+        android:layout_above="@+id/textView3"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_marginBottom="30dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/scrollView"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/linearLayout3">
+
+        <Button
+            android:layout_marginLeft="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="CANCEL"
+            android:id="@+id/cancelProfile"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="OK"
+            android:id="@+id/submitProfile"
+            />
+
+
+
+    </LinearLayout>
 
 
 </RelativeLayout>

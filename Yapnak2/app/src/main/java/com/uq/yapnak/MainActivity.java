@@ -420,6 +420,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     //view the main activitiy - clean up code and make it simpler
 
+
     private void showMain(){
 
 
@@ -430,6 +431,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
 
     }
+
+    private AlertDialog neg,pos;
 
     @Override
     public void onClick(View v) {
@@ -442,11 +445,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             final FeedbackDialog feedback = new FeedbackDialog(this,this);
 
-            feedback.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
+
+
+            /*
+            pos = feedback.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //TODO:submit feedback - store string into db table
-
 
 
                     EditText feedbackComment = feedback.getComments();
@@ -454,25 +459,48 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     String text = feedbackComment.getText().toString();
                     //TODO:text must be stored in feedback table in the database
 
-                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback  "+ text, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback  " + text, Toast.LENGTH_SHORT).show();
 
                     //load();
                     //load(sql);
 
                     dialog.dismiss();
                 }
+            }).create();
+
+            pos.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Color c = new Color();
+                    pos.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(c.parseColor("#B71C1C"));
+                }
             });
 
-            feedback.setNegativeButton("CANCEL" , new DialogInterface.OnClickListener() {
+            //neg =
+
+            feedback.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
                     dialog.cancel();
 
                 }
-            });
+            });.create();
 
-            feedback.setTitle("Feedback");
+            */
+
+            /*
+            neg.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Color c = new Color();
+                    neg.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(c.parseColor(""));
+                }
+            });
+            */
+
+
+
             feedback.show();
 
 
@@ -484,26 +512,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }else if(v.getTag().equals(TAG_PROFILE)){
             //SHOW PROFILE
 
-           /* AlertDialog.Builder dialog =  new ProfileDialog(this,this);
-            dialog.setTitle("Profile");
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    dialog.cancel();
-                }
-            });
-
-            dialog.show();
-            */
 
             profileDialog(v);
 
@@ -515,11 +523,36 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private Button date;
     private RadioGroup gender;
+    private AlertDialog posProf;
     private void profileDialog(View v){
 
-        AlertDialog.Builder userItems = new ProfileDialog(this,this);
-        userItems.setPositiveButton(R.string.OK,null);
-        userItems.setNegativeButton(R.string.Cancel,null);
+        ///AlertDialog.Builder userItems = new ProfileDialog(this,this);
+
+        AlertDialog userItems = new ProfileDialog(this,this);
+
+       /* posProf=userItems.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create();
+
+        posProf.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Color c = new Color();
+                posProf.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(c.parseColor("#B71C1C"));
+            }
+        });
+
+        userItems.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        */
 
 
 
@@ -761,11 +794,66 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //private ListView list;
     private final int PICK_CONTACT = 1;
 
+    AlertDialog posRec;
     public void recommendMealButton(View v) {
-        Button recommendMeal = (Button) v.findViewById(R.id.recommendMeal);
+
+        RecommendDialog recommend = new RecommendDialog(this,this);
+
+        recommend.getContactListButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //Self implemented contacts list - Go into ContactList if you want to DO SOMETHING Once a contact is selected.
+                        //Add code in onItemClick Method in contactList, if you want a list item to do something
+                        //Intent intent = new Intent(getApplicationContext(), ContactList.class);
+                        //startActivity(intent);
+
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT);
+
+                        /*
+                        Showing the google stock contacts picker
+                        When contact chosen, DO SOMETHING in "onActivityResult" Method
+
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT );
+                        */
+                    }
+                });
+
+            }
+        });
+
+        /*
+
+        posRec = recommend.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+
+            }
+        }).create();
+
+        posRec.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Color c = new Color();
+                posRec.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(c.parseColor("B71C1C"));
+                posRec.getButton(AlertDialog.BUTTON_POSITIVE).setHighlightColor(c.parseColor("B71C1C"));
+            }
+        });
+
+        */
 
 
 
+        /*
         AlertDialog.Builder userItems = new AlertDialog.Builder(v.getContext());
         final LinearLayout linearLayout = new LinearLayout(v.getContext());
 
@@ -821,11 +909,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         startActivityForResult(intent, PICK_CONTACT );
                         */
 
-                    }
-                });
+              //      }
+            //    });
 
-            }
-        });
+          //  }
+        //});
+
+
 
 
 
@@ -863,6 +953,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         */
 
 
+        /*
         LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
         buttonParams.gravity = Gravity.CENTER;
         buttonParams.setMargins(0,20,0,20);
@@ -882,6 +973,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //AlertDialog dialog = userItems.create();
         //dialog.show();
         userItems.show();
+        */
+
+        recommend.show();
 
 
     }
@@ -1031,8 +1125,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
         //RatingDialog rate = new RatingDialog();
         //rate.show(getFragmentManager(),"rating");
+        //AlertDialog.Builder ratings = new RatingBuilder(this,this);
 
-        AlertDialog.Builder ratings = new RatingBuilder(this,this);
+        RatingBuilder ratings = new RatingBuilder(this,this);
+
+        /*
         ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -1051,6 +1148,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         });
 
         ratings.setTitle("Rate Deal");
+        */
+
         ratings.show();
     }
 
