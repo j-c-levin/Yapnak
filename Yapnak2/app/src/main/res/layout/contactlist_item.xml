@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/lightGrey">
+
+    <!--android:background="#616161"-->
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:id="@+id/contactListItem">
+        android:id="@+id/contactListItem"
+        android:background="@color/lightGrey">
 
 
         <TextView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:text="SAMPLE"
-            android:padding="5dp"
+            android:padding="0dp"
             android:textColor="#fff"
-            android:background="#616161"
             android:textSize="30sp"
             android:id="@+id/contactName"
             android:clickable="true"

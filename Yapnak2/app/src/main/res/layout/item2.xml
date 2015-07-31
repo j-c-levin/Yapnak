@@ -106,7 +106,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="220dp"
-                android:background="@drawable/locationicon"
+                android:background="@drawable/locationicon_red"
                 android:layout_alignTop="@+id/loyaltyPoints"
                  />
 

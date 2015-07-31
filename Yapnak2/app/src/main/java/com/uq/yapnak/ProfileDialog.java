@@ -6,41 +6,92 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 
+import com.frontend.yapnak.subview.RedEditText;
 
 import java.util.Calendar;
 
 /**
  * Created by vahizan on 11/07/2015.
  */
-public class ProfileDialog extends AlertDialog.Builder {
+public class ProfileDialog extends AlertDialog {
 
 
     private Activity activity;
     private Context context;
-    private  Button button;
+    private  Button button,submit,cancel;
+    private Color color;
+    private RedEditText name,phone;
+    private AlertDialog d;
 
     public ProfileDialog(Context context,Activity activity) {
         super(context);
 
         this.activity=activity;
         this.context=context;
+        d = this;
 
         LayoutInflater inflater = activity.getLayoutInflater();
 
         View v = inflater.inflate(R.layout.profile_layout,null);
         this.setView(v);
+
+        submit = (Button) v.findViewById(R.id.submitProfile);
+        cancel = (Button) v.findViewById(R.id.cancelProfile);
+
+
+        TextView title = new TextView(this.getContext());
+        title.setText("Profile");
+        title.setGravity(Gravity.LEFT);
+        title.setPadding(20, 40, 0, 40);
+        title.setTextSize(25);
+        title.setBackgroundColor(Color.parseColor("#FFAB91"));
+        title.setTextColor(Color.parseColor("#BF360C"));
+        setCustomTitle(title);
+
+        submitProfile();
+        cancelProfile();
+
         chooseDate(v);
 
 
 
 
+    }
+
+
+    private void submitProfile(){
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                d.dismiss();
+
+
+            }
+        });
+    }
+
+
+    private void cancelProfile(){
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                d.cancel();
+
+            }
+        });
     }
 
     public void chooseDate(View v){
@@ -106,5 +157,16 @@ public class ProfileDialog extends AlertDialog.Builder {
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        final Resources res = getContext().getResources();
+        final int id = res.getIdentifier("titleDivider", "id", "android");
+        final View divider = findViewById(id);
+
+        if(divider!=null){
+            divider.setBackgroundColor(Color.parseColor("#BF360C"));
+        }
+    }
 }

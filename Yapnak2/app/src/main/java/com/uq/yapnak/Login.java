@@ -1,22 +1,41 @@
 package com.uq.yapnak;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.frontend.yapnak.client.ClientLogin;
+import com.frontend.yapnak.subview.MyEditText;
+import com.frontend.yapnak.tutorial.FragmentSlideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.uq.yapnak.ErrorDialog;
+import com.uq.yapnak.MainActivity;
+import com.uq.yapnak.R;
+import com.uq.yapnak.SecureDetails;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,9 +46,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-/**
- * Created by Nand on 24/03/15.
- */
+
+
 public class Login extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
 
     private final String FILE_NAME = "yapnak_details";
@@ -46,6 +64,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
      */
+
+    private float originalUserY;
     private boolean mSignInClicked;
 
     /**
@@ -78,56 +98,244 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         gSignInButton.setSize(SignInButton.SIZE_WIDE);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
+
         initials = (EditText) findViewById(R.id.initialsEdit);
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         promo = (EditText) findViewById(R.id.promoBox);
 
+        Color c = new Color();
+
+        promo.getBackground().setColorFilter(c.parseColor("#FF5722"), PorterDuff.Mode.SRC_IN);
+
+
+        arrow = (ImageView) findViewById(R.id.arrowDownUser);
+        userB = (Button) findViewById(R.id.userButton);
+
+        originalUserY = userB.getY();
+
         loginButton = (Button) findViewById(R.id.loginButton);
         fragmentManager = getFragmentManager();
-
+        //arrowTouch();
+        buttonAnimate();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-             try {
-                 String[] details = {initials.getText().toString() + phone.getText().toString().substring(7), phone.getText().toString(), promo.getText().toString()};
-                 //new UserLoginAsyncTask(getApplicationContext(), details).execute();
-                 //note: the details argument has been removed and probably won't be re-added.
-                 //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
+                try {
+                    String[] details = {initials.getText().toString() + phone.getText().toString().substring(7), phone.getText().toString(), promo.getText().toString()};
+                    //new UserLoginAsyncTask(getApplicationContext(), details).execute();
+                    //note: the details argument has been removed and probably won't be re-added.
+                    //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
 
 
-                 Intent i = new Intent(Login.this, MainActivity.class);
-                 i.putExtra("initials", initials.getText().toString());
-                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                 v.getContext().startActivity(i);
-                 finish();
-
-             }catch(StringIndexOutOfBoundsException e){
-
-                 ErrorDialog error = new ErrorDialog();
-
-                 error.show(fragmentManager,"error");
+                    /* Intent i = new Intent(Login.this, MainActivity.class);
+                     i.putExtra("initials", initials.getText().toString());
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                     v.getContext().startActivity(i);
+                     finish();
+                        */
 
 
-             }
+                    Intent i = new Intent(Login.this, FragmentSlideActivity.class);
+                    i.putExtra("initials", initials.getText().toString());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    v.getContext().startActivity(i);
 
 
+
+                } catch (StringIndexOutOfBoundsException e) {
+
+                    ErrorDialog error = new ErrorDialog();
+
+                    error.show(fragmentManager, "error");
+
+
+                }
+            }
+        });
+
+
+    }
+
+    private ImageView arrow;
+    private Button userB;
+
+    private AnimatorSet arrowAppear(){
+        ValueAnimator animator = ValueAnimator.ofFloat(-1000.0f,(originalUserY+110));
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+
+                float y = (Float) animation.getAnimatedValue();
+
+
+                userB.setY(y);
+
+            }
+        });
+
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(userB,"alpha",0.0f,1.0f);
+
+        AnimatorSet s = new AnimatorSet();
+        s.playTogether(animator, alpha);
+
+        return s;
+
+    }
+
+
+    private AnimatorSet arrowGone(){
+        ValueAnimator animator = ValueAnimator.ofFloat(originalUserY,-1000.0f);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+
+
+                float y = (float) animation.getAnimatedValue();
+
+
+                userB.setY(y);
+
+            }
+        });
+
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(userB,"alpha",1.0f,0.0f);
+
+        AnimatorSet s = new AnimatorSet();
+        s.playTogether(animator, alpha);
+
+        return s;
+    }
+
+    private void buttonAnimate(){
+
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(userB.getVisibility()!=View.VISIBLE){
+                    arrowAppear().setDuration(400).start();
+                    userB.setVisibility(View.VISIBLE);
+
+                    userB.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent clientActivity = new Intent(getApplicationContext(), ClientLogin.class);
+                            startActivity(clientActivity);
+                        }
+                    });
+
+                }else{
+                    arrowGone().setDuration(400).start();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            userB.setVisibility(View.INVISIBLE);
+                        }
+                    }, 300);
+                }
+
+            }
+        });
+
+
+    }
+
+    private void arrowTouch(){
+
+        final float originalY = userB.getY();
+
+        boolean vis =  userB.getVisibility()!=View.VISIBLE;
+
+
+
+
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Animator.AnimatorListener animate = new AnimatorListenerAdapter() {
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        //super.onAnimationStart(animation);
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //super.onAnimationEnd(animation);
+
+                        if(userB.getVisibility()!=View.VISIBLE) {
+
+                            ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y", -1000, userB.getY());
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 0.0f, 0.5f, 1.0f);
+
+                            AnimatorSet s = new AnimatorSet();
+                            s.playTogether(moveY, alpha);
+                            s.setDuration(400);
+                            s.setInterpolator(new AccelerateDecelerateInterpolator());
+                            s.start();
+
+                        }else{
+
+                            ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y",originalY,-1000);
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 1.0f, 0.5f, 0.0f);
+
+                            AnimatorSet s = new AnimatorSet();
+                            s.playTogether(moveY, alpha);
+                            s.setDuration(400);
+                            s.setInterpolator(new AccelerateDecelerateInterpolator());
+                            s.start();
+
+                        }
+
+                    }
+                };
+                float userX = userB.getX();
+                float userY = userB.getY();
+                //TranslateAnimation buttonAnim = new TranslateAnimation(-);
+                      userB.animate().setListener(animate).start();
+                      userB.setVisibility(View.VISIBLE);
+
+
+                userB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent clientActivity = new Intent(getApplicationContext(), ClientLogin.class);
+                        clientActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        clientActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        clientActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(clientActivity);
+                    }
+                });
 
 
 
             }
         });
+
     }
+
+
 
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("Debug", "User is connected");
+        //Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, FragmentSlideActivity.class);
 
         //person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         //this.personName = person.getDisplayName();
@@ -135,7 +343,6 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
         i.putExtra("accName",acc);
-
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -152,7 +359,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             mSignInClicked = true;
             mGoogleApiClient.connect();
 
-          }
+        }
     }
 
     @Override
@@ -214,15 +421,15 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
             reader = new BufferedReader(new InputStreamReader(checkFile));
 
-                String lines = reader.readLine();
-                int i = 0;
-                while(lines!=null){
+            String lines = reader.readLine();
+            int i = 0;
+            while(lines!=null){
 
-                    userPass[i] = lines;
-                    i++;
-                }
+                userPass[i] = lines;
+                i++;
+            }
 
-                reader.close();
+            reader.close();
 
 
 
@@ -282,10 +489,10 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             writer = new BufferedWriter(new OutputStreamWriter(write));
 
 
-                writer.write(encryptedUserPass[0]);
-                writer.newLine();
-                writer.write(encryptedUserPass[1]);
-                writer.close();
+            writer.write(encryptedUserPass[0]);
+            writer.newLine();
+            writer.write(encryptedUserPass[1]);
+            writer.close();
 
             return true;
 
@@ -315,7 +522,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             return true;
 
         }catch(IOException e ){
-           return false;
+            return false;
         }
     }
 }

@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="AppTheme.Base">
+    <style name="AppTheme.Base" parent="AppTheme.Base">
 
         <item name="android:colorPrimary">@color/primaryColour</item>
         <item name="android:colorPrimaryDark">@color/primaryColourDark</item>
         <item name="android:colorAccent">@color/accentColour</item>
 
     </style>
+
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Customize your theme here. -->
+    <item name="colorPrimary">#D32F2F</item>
+    <item name="colorPrimaryDark">#B71C1C</item>
+    <item name="android:navigationBarColor">#C62828</item>
+    </style>
+
+
+    <style name="EditTextTheme" parent="android:Widget.TextView">
+
+        <item name ="android:colorActivatedHighlight">@color/deepOrange</item>
+        <item name="android:colorControlNormal">#fff</item>
+        <item name="android:colorControlActivated">@color/deepOrange</item>
+        <item name="android:editTextColor">@color/deepOrange</item>
+        <item name="android:colorPressedHighlight">@color/deepOrange</item>
+    </style>
+
+
 </resources>

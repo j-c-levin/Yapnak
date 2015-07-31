@@ -29,7 +29,7 @@ public class ItemPrev {
 
 
     public ItemPrev(){
-       locationIcon = R.drawable.locationicon;
+       locationIcon = R.drawable.locationicon_red;
 
     }
 

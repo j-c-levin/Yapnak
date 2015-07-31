@@ -35,5 +35,30 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.07" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelRating"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Cancel"
+            android:layout_marginRight="20dp"
+            android:textColor="#ff535357" />
+
+        <Button
+            android:id="@+id/submitRating"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Submit"
+            android:textColor="#ff535357" />
+    </LinearLayout>
+
+
 
 </LinearLayout>

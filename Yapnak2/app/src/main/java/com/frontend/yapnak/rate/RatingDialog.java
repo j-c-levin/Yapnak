@@ -44,7 +44,7 @@ public class RatingDialog extends DialogFragment {
 
 
             }
-        });;
+        });
 
         //Add Action Buttons Cancel and OK
         builder.setPositiveButton(R.string.OK,new DialogInterface.OnClickListener() {
