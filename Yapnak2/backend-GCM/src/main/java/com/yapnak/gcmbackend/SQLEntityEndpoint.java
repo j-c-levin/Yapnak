@@ -161,9 +161,9 @@ public class SQLEntityEndpoint {
      */
     @ApiMethod(
             name = "getClients",
-            path = "sQLEntity_client",
+            path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLList getClients(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
+    public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y) throws NotFoundException, OAuthRequestException {
 /*        if (user == null) {
             throw new OAuthRequestException("User is not valid " + user);
         }*/
@@ -214,7 +214,7 @@ public class SQLEntityEndpoint {
                     if (SystemProperty.environment.value() ==
                             SystemProperty.Environment.Value.Production) {
                         ImagesService services = ImagesServiceFactory.getImagesService();
-                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "=s50"));    // Blobkey of the image uploaded to BlobStore.
+                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "=s100"));    // Blobkey of the image uploaded to BlobStore.
                         url = services.getServingUrl(serve);
                     } else {
                         url = rs.getString("clientPhoto");
@@ -250,56 +250,6 @@ public class SQLEntityEndpoint {
             return sqlList;
         }
     }
-
-    /**
-     * Inserts a new client {@code SQLEntity}.
-     */
-    @ApiMethod(
-            name = "insertClient",
-            path = "sQLEntity_client",
-            httpMethod = ApiMethod.HttpMethod.POST)
-    public void insertClient(@Named("name") String name, @Named("x") double x, @Named("y") double y, @Named("offer") String offer) {
-        Connection connection;
-        try {
-            if (SystemProperty.environment.value() ==
-                    SystemProperty.Environment.Value.Production) {
-                // Load the class that provides the new "jdbc:google:mysql://" prefix.
-                Class.forName("com.mysql.jdbc.GoogleDriver");
-                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
-            } else {
-                // Local MySQL instance to use during development.
-                Class.forName("com.mysql.jdbc.Driver");
-//                String url = "jdbc:mysql://localhost:3306/yapnak_main?user=client&password=g7lFVLRzYdJoWXc3";
-//                connection = DriverManager.getConnection(url);
-                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
-                // Alternatively, connect to a Google Cloud SQL instance using:
-
-                // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
-            }
-            int success = 0;
-            try {
-                String statement = "INSERT INTO client (clientName,clientLocation, clientX, clientY, clientOffer) VALUES(?,Point(?,?),?,?,?)";
-                PreparedStatement stmt = connection.prepareStatement(statement);
-                stmt.setString(1, name);
-                stmt.setDouble(2, x);
-                stmt.setDouble(3, y);
-                stmt.setDouble(4, x);
-                stmt.setDouble(5, y);
-                stmt.setString(6, offer);
-                success = stmt.executeUpdate();
-                logger.info("returned: " + success);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                connection.close();
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     static String bytesToHex(byte[] bytes) {
@@ -356,7 +306,7 @@ public class SQLEntityEndpoint {
      */
     @ApiMethod(
             name = "insertUser",
-            path = "sQLEntity_user",
+            path = "insertUser",
             httpMethod = ApiMethod.HttpMethod.POST)
     public void insert(@Named("email") String email, @Named("password") String password) {
 

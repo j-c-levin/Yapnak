@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/3sQZwRjRt8Op9Bcq-EYfNUEjc48\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/B6Ubcv50NFOa-didLwVdFG4Naeg\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -144,16 +144,16 @@
  "methods": {
   "getClients": {
    "id": "sQLEntityApi.getClients",
-   "path": "sQLEntity_client",
+   "path": "getClients",
    "httpMethod": "GET",
    "parameters": {
-    "x": {
+    "latitude": {
      "type": "number",
      "required": true,
      "format": "double",
      "location": "query"
     },
-    "y": {
+    "longitude": {
      "type": "number",
      "required": true,
      "format": "double",
@@ -161,8 +161,8 @@
     }
    },
    "parameterOrder": [
-    "x",
-    "y"
+    "latitude",
+    "longitude"
    ],
    "response": {
     "$ref": "SQLList"
@@ -198,47 +198,9 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "insertClient": {
-   "id": "sQLEntityApi.insertClient",
-   "path": "sQLEntity_client",
-   "httpMethod": "POST",
-   "parameters": {
-    "name": {
-     "type": "string",
-     "required": true,
-     "location": "query"
-    },
-    "offer": {
-     "type": "string",
-     "required": true,
-     "location": "query"
-    },
-    "x": {
-     "type": "number",
-     "required": true,
-     "format": "double",
-     "location": "query"
-    },
-    "y": {
-     "type": "number",
-     "required": true,
-     "format": "double",
-     "location": "query"
-    }
-   },
-   "parameterOrder": [
-    "name",
-    "offer",
-    "x",
-    "y"
-   ],
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
   "insertUser": {
    "id": "sQLEntityApi.insertUser",
-   "path": "sQLEntity_user",
+   "path": "insertUser",
    "httpMethod": "POST",
    "parameters": {
     "email": {
