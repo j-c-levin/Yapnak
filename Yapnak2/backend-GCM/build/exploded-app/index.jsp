@@ -66,21 +66,20 @@ body {
 
   <body>
 
-    <div class="container">
-
-      <form class="form-signin" action="/signup" method="post">
-        <h2 class="form-signin-heading">Sign up here</h2>
+      <form class="form-signin" id = "login" action="/login" method="post">
+        <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="clientID" name="email" class="form-control" placeholder="Email" required>
+        <input type="email" id="clientID" name="username" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Your desired password" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name = "save" value="remember-me"> Remember me for a week
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       </form>
     </div> <!-- /container -->
-
-        <div class="form-signin">
-        <a href="/login.jsp" class="btn btn-lg btn-primary btn-block" role="button">Log in</a>
-        </div>
 
   </body>
 </html>
