@@ -64,7 +64,7 @@ public class RatingBuilder extends AlertDialog {
         title.setText("Feedback");
         title.setTextSize(25);
         title.setPadding(20, 40, 0, 40);
-        title.setBackgroundColor(Color.parseColor("#FFAB91"));
+        //title.setBackgroundColor(Color.parseColor("#FFAB91"));
         title.setTextColor(Color.parseColor("#BF360C"));
         title.setGravity(Gravity.LEFT);
 

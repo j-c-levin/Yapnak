@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,10 +49,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     private EditText startAddressText,endAddressText;
     private GPSTrack tracker;
     private Toast errorToast;
-
-
-
-
+    private String name;
 
 
 
@@ -62,6 +60,9 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         Intent i = getIntent();
         getSupportActionBar().setSubtitle(i.getStringExtra("init"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        name = i.getStringExtra("accName");
+
         tracker = new GPSTrack(MapActivity.this);
 
         if(tracker.canGetLoc()){
@@ -286,6 +287,18 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main,menu);
+
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+
+        MenuItem item = menu.findItem(R.id.userNameToolBar);
+
+        String [] splitter = name.split("@");
+
+        this.name=splitter[0];
+
+        item.setTitle(splitter[0]);
+
+
         return true;
     }
 
@@ -293,15 +306,12 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
        int id = item.getItemId();
 
-
-
-        if(onOptionsItemSelected(item)){
-
-            finishActivity(1);
+        if(item.getItemId() == android.R.id.home){
+            Intent intent = NavUtils.getParentActivityIntent(this);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            NavUtils.navigateUpTo(this, intent);
             return true;
-
         }
-
 
         return super.onOptionsItemSelected(item);
     }

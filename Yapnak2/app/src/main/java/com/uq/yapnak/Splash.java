@@ -1,5 +1,6 @@
 package com.uq.yapnak;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -10,6 +11,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -90,7 +92,21 @@ public class Splash extends Activity {
 
         mGoogleApiClient.connect();
         newHandler = new Handler();
-        newHandler.postDelayed(runnable,2000);
+        newHandler.postDelayed(runnable, 2000);
+
+
+        ImageView glow = (ImageView) findViewById(R.id.yapnakGlow);
+        glow.setAlpha(0.0f);
+
+        ObjectAnimator alphaGlow = ObjectAnimator.ofFloat(glow,"alpha",0.0f,0.5f,0.1f,0.5f,0.0f);
+
+        for(int i =0 ;i<4;i++){
+
+            alphaGlow.setDuration(1000).start();
+
+        }
+
+
 
 
         runnable = new Runnable() {
@@ -129,7 +145,6 @@ public class Splash extends Activity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-
         setContentView(R.layout.splash_activity);
 
         activity = this;
@@ -139,6 +154,9 @@ public class Splash extends Activity {
         mGoogleApiClient = work.doInBackground();
         //mSignInClicked = true;
         //mGoogleApiClient.connect();
+
+
+
 
     }
 

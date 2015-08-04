@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -12,6 +11,7 @@
     <!-- android:background="#ff3a3a3c"
     android:textColor="#FFF"
     android:textColorHint="#FFF"
+    android:background="@drawable/login_background"
     -->
 
 <ScrollView
@@ -42,12 +42,14 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
+            android:textColor="#000"
+            android:textColorHint="#000"
             android:hint="Initials"
-            android:textColor="#FFF"
-            android:textColorHint="#FFF"
             android:layout_alignParentLeft="true" />
 
         <com.frontend.yapnak.subview.MyEditText
+            android:textColor="#000"
+            android:textColorHint="#000"
             android:id="@+id/phoneNumberEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,11 +61,11 @@
             android:hint="Phone Number"
             android:inputType="phone"
             android:digits="+0123456789"
-            android:textColor="#FFF"
-            android:textColorHint="#FFF"
              />
 
         <com.frontend.yapnak.subview.MyEditText
+            android:textColor="#000"
+            android:textColorHint="#000"
             android:id="@+id/promoBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -73,8 +75,6 @@
             android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:hint="Promo Code"
-            android:textColor="#FFF"
-            android:textColorHint="#FFF"
             />
 
         <TextView
@@ -86,8 +86,6 @@
             android:layout_marginTop="100dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:textColor="#FFF"
-            android:textColorHint="#FFF"
             android:text="Login"
             android:textStyle="bold" />
 

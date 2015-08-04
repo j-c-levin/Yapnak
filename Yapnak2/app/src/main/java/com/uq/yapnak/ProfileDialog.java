@@ -55,7 +55,7 @@ public class ProfileDialog extends AlertDialog {
         title.setGravity(Gravity.LEFT);
         title.setPadding(20, 40, 0, 40);
         title.setTextSize(25);
-        title.setBackgroundColor(Color.parseColor("#FFAB91"));
+        //title.setBackgroundColor(Color.parseColor("#FFAB91"));
         title.setTextColor(Color.parseColor("#BF360C"));
         setCustomTitle(title);
 
