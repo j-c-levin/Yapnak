@@ -2,12 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="10dp"
     android:weightSum="1">
+
+    <!-- android:background="@drawable/login_background"
+     android:textColor="#FFF"
+     android:textColorHint="#FFF"-->
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,10 +37,10 @@
                 android:alpha="0.4"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:textColor="#000"
+                android:textColorHint="#000"
                 android:hint="Restaurant Client Email"
                 android:inputType="textEmailAddress"
-               android:textColor="#FFF"
-                android:textColorHint="#FFF"
                 android:layout_below="@+id/sign_in_button"
                 android:layout_alignParentLeft="true" />
 
@@ -52,8 +55,8 @@
                 android:layout_marginRight="20dp"
                 android:inputType="textPassword"
                 android:hint="Password"
-                android:textColor="#FFF"
-                android:textColorHint="#FFF"
+                android:textColor="#000"
+                android:textColorHint="#000"
                 android:layout_below="@+id/sign_in_button"
                 android:layout_alignParentLeft="true" />
 

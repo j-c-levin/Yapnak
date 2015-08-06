@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
+<!--android:background="#FF7043"
+android:textColor="#FFF"-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FF7043"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -30,7 +30,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="30dp"
         android:text="Please choose an option.."
-        android:textColor="#FFF"
+        android:textColor="#000"
         android:textSize="15sp"
         android:textStyle="normal" />
 
@@ -63,7 +63,7 @@
                 android:layout_height="30dp"
                 android:text="Happy"
                 android:button="@drawable/red_radio"
-                android:textColor="#FFF" />
+                android:textColor="#000" />
             <RadioButton
                 android:id="@+id/radioUnhappy"
                 android:layout_margin="10dp"
@@ -72,7 +72,7 @@
                 android:layout_height="30dp"
                 android:text="Unhappy"
                 android:button="@drawable/red_radio"
-                android:textColor="#FFF" />
+                android:textColor="#000" />
 
             <RadioButton
                 android:layout_margin="10dp"
@@ -82,7 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:text="Store did not accept my code"
-                android:textColor="#FFF"
+                android:textColor="#000"
                 android:layout_weight="0.13" />
         </RadioGroup>
 
@@ -96,7 +96,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="30dp"
         android:text="Additional Comments"
-        android:textColor="#FFF"
+        android:textColor="#000"
+        android:textColorHint="#000"
         android:textSize="15sp"
         android:textStyle="bold" />
 
@@ -112,7 +113,8 @@
         android:lines="5"
         android:padding="10dp"
         android:singleLine="false"
-        android:textColor="#000000"
+        android:textColor="#000"
+        android:textColorHint="#000"
         android:textSize="13dp" />
 
 
@@ -128,6 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Cancel"
+            android:background="@android:color/transparent"
             android:layout_marginRight="20dp"
             android:textColor="#ff535357" />
 
@@ -137,6 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Submit"
+            android:background="@android:color/transparent"
             android:textColor="#ff535357" />
     </LinearLayout>
 

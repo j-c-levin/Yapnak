@@ -55,7 +55,7 @@ public class FeedbackDialog extends AlertDialog {
         title.setText("Feedback");
         title.setTextSize(25);
         title.setPadding(20, 40, 0, 40);
-        title.setBackgroundColor(Color.parseColor("#FFAB91"));
+        //title.setBackgroundColor(Color.parseColor("#FFAB91"));
         title.setTextColor(Color.parseColor("#BF360C"));
         title.setGravity(Gravity.LEFT);
 
@@ -89,6 +89,8 @@ public class FeedbackDialog extends AlertDialog {
             @Override
             public void onClick(View v) {
 
+                Toast.makeText(getContext(), " Feedback Wasn't Sent  " , Toast.LENGTH_SHORT).show();
+
                 d.cancel();
             }
         });
@@ -106,7 +108,7 @@ public class FeedbackDialog extends AlertDialog {
                 String text = feedbackComment.getText().toString();
                 //TODO:text must be stored in feedback table in the database
 
-                Toast.makeText(getContext(), "Thank You For Your Feedback  " + text, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), " Thank You For Your Feedback  " , Toast.LENGTH_SHORT).show();
 
                 //load();
                 //load(sql);
