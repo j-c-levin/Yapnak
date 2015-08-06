@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -51,6 +52,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Void, SQLList> {
     protected void onPostExecute(SQLList result) {
         if (result != null) {
             Log.d("Debug", "completed: " + result.getList());
+            Toast.makeText(context,"COMPLETED",Toast.LENGTH_SHORT).show();
             main.load(result);
         } else {
             Log.d("Debug", "Failed");

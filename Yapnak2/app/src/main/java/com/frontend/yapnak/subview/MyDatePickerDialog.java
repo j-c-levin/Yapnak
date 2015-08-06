@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -34,7 +35,7 @@ public class MyDatePickerDialog extends AlertDialog {
     private ListView day,month,year;
     private int yearStart;
     private YearList popYear;
-    private ListAdapter dayAdapter,monthAdapter,yearAdapter;
+    private ArrayAdapter dayAdapter,monthAdapter,yearAdapter;
 
     public String dayB,monthB,yearB;
     public MyDatePickerDialog(Context context, Activity activity) {
@@ -80,10 +81,17 @@ public class MyDatePickerDialog extends AlertDialog {
     public String getYear(){
         return yearB;
     }
+    private void setData(DateItem [] item){
+        this.days = item;
+    }
 
+    private DateItem[] getData(){
+        return this.days;
+    }
 
     private void populateList(){
         popYear = new YearList();
+        boolean leapYear;
 
         day = (ListView) v.findViewById(R.id.day);
         month = (ListView) v.findViewById(R.id.month);
@@ -93,26 +101,24 @@ public class MyDatePickerDialog extends AlertDialog {
 
         DateItem[] years = popYear.doInBackground(1920);
         yearAdapter = new DatePickerAdapter(this.context,R.id.year,years);
-        dayAdapter = new DatePickerAdapter(this.context,R.id.day,defaultList());
 
+        setData(defaultList());
+        dayAdapter = new DatePickerAdapter(this.context, R.id.day, getData());
 
         month.setAdapter(monthAdapter);
         month.setOnScrollListener(new ScrollListener());
-        //month.setOnTouchListener(new Touch());
 
         year.setAdapter(yearAdapter);
         year.setOnScrollListener(new ScrollListener());
-        //year.setOnTouchListener(new Touch());
 
         day.setAdapter(dayAdapter);
         day.setOnScrollListener(new ScrollListener());
-      //  day.setOnTouchListener(new Touch());
-
 
 
 
     }
 
+    private DateItem[] days;
     private DateItem[] defaultList(){
         DateItem [] items = new DateItem[30];
         int j=1;
@@ -154,25 +160,49 @@ public class MyDatePickerDialog extends AlertDialog {
     private class ScrollListener implements ListView.OnScrollListener{
         //private DateItem yearItem,monthItem,dayItem;
 
+        private boolean leapYear;
+        private int secondPosition;
+        private boolean scrollIdle;
+        private DayList popDay = new DayList();
+
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
+            DateItem dItem = (DateItem) view.getItemAtPosition(secondPosition);
+            if(scrollState==SCROLL_STATE_IDLE){
+                //Toast.makeText(getContext(),"Second Position = " + secondPosition,Toast.LENGTH_SHORT).show();
+                //dItem.setBackgroundColor("#BF360C");
+
+                scrollIdle =true;
+
+            }else{
+                //dItem.setBackgroundColor("#9E9E9E");
+                scrollIdle = false;
+            }
 
         }
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-            boolean leapYear;
-            DayList popDay = new DayList();
-            secondPosition = firstVisibleItem+1;
 
+              secondPosition = firstVisibleItem+1;
             //Toast.makeText(getContext(),"VISIBLE ITEM COUNT = " + visibleItemCount + " FIRST VISIBLE ITEM = " + firstVisibleItem,Toast.LENGTH_LONG).show();
             //secondPosition = view.getFirstVisiblePosition()+1;
 
             if(view.getId()==day.getId()){
                 //dayItem =  (DateItem) day.getItemAtPosition(day.getFirstVisiblePosition()+1);
                 dayItem =  (DateItem) day.getItemAtPosition(firstVisibleItem+1);
-                //Toast.makeText(getContext(),"Second Position Day : " + secondPosition,Toast.LENGTH_SHORT).show();
+
+
+                /*if(scrollIdle && day.isFocused()){
+
+                    dayItem.setBackgroundColor("#BF360C");
+
+                }else{
+                    dayItem.setBackgroundColor("#9E9E9E");
+                }
+                */
+
 
             }
 
@@ -180,20 +210,38 @@ public class MyDatePickerDialog extends AlertDialog {
                 //yearItem = (DateItem) year.getItemAtPosition(day.getFirstVisiblePosition()+1);
                 //Toast.makeText(getContext(),"Second Position Year : " + secondPosition,Toast.LENGTH_SHORT).show();
                 yearItem =  (DateItem) year.getItemAtPosition(firstVisibleItem+1);
+
+
                 int year = Integer.parseInt(yearItem.getValue());
                 leapYear = (year % 4==0) ;
                 popDay.setLeap(leapYear);
+
+                if(scrollIdle && day.isFocused()){
+
+                    yearItem.setBackgroundColor("#BF360C");
+
+                }else{
+                    yearItem.setBackgroundColor("#9E9E9E");
+                }
+
+                 Toast.makeText(getContext(),"Is Leap Year?: " + leapYear,Toast.LENGTH_SHORT).show();
             }
+
 
             if(view.getId()==month.getId()){
                 //monthItem = (DateItem) month.getItemAtPosition(month.getFirstVisiblePosition() + 1);
                 monthItem =  (DateItem) month.getItemAtPosition(firstVisibleItem+1);
-                //Toast.makeText(getContext(),"Second Position Month: " + secondPosition + " Month Name " + monthItem.getValue(),Toast.LENGTH_SHORT).show();
-                int month = monthItem.getMonthValue();
-                DayAdapter adapter = new DayAdapter();
-                dayAdapter = adapter.doInBackground(popDay.doInBackground(month));
-            }
+                int iMonth = monthItem.getMonthValue();
+                //DayAdapter adapter = new DayAdapter();
+                //dayAdapter = adapter.doInBackground(popDay.doInBackground(iMonth));
 
+
+                Toast.makeText(getContext(),"How Many Days in This Month -> " + monthItem.getValue() + " =  " + days.length,Toast.LENGTH_SHORT).show();
+                setData(popDay.doInBackground(iMonth));
+                dayAdapter.notifyDataSetChanged();
+
+
+            }
 
         }
     }
@@ -211,11 +259,8 @@ public class MyDatePickerDialog extends AlertDialog {
             temp.setValue(months[i]);
             temp.setMonthValue(monthValues[i]);
             monthNum[i] = temp;
-
             i++;
         }
-
-        //Toast.makeText(this.context,"Get Year Value "+monthNum[3].getValue(), Toast.LENGTH_LONG).show();
 
         return monthNum;
     }
@@ -248,16 +293,13 @@ public class MyDatePickerDialog extends AlertDialog {
             return yearItems;
 
         }
-
-
-
     }
 
-    private class DayAdapter extends  AsyncTask<DateItem[],String,ListAdapter>{
+    private class DayAdapter extends  AsyncTask<DateItem[],String,ArrayAdapter>{
 
         @Override
-        protected ListAdapter doInBackground(DateItem[]... params) {
-            ListAdapter adapter = new DatePickerAdapter(getContext(),R.id.day,params[0]);
+        protected ArrayAdapter doInBackground(DateItem[]... params) {
+            ArrayAdapter adapter = new DatePickerAdapter(getContext(),R.id.day,params[0]);
             return adapter;
         }
     }
@@ -268,12 +310,13 @@ public class MyDatePickerDialog extends AlertDialog {
         @Override
         protected DateItem[] doInBackground(Integer... params) {
 
-            return backgroundSupport(params[0],leap);
+            return backgroundSupport(params[0]);
         }
 
-        protected DateItem[] backgroundSupport(Integer month,boolean isLeap){
+        protected DateItem[] backgroundSupport(Integer month){
 
             DateItem [] days;
+
 
            if(month == 1 || month == 3 || month == 5 || month == 7 || month ==8 || month ==10 || month ==12){
 
@@ -292,7 +335,7 @@ public class MyDatePickerDialog extends AlertDialog {
 
            }else if(month == 2){
 
-               if(isLeap){
+               if(getLeap()){
 
 
                    days = new DateItem[29];
@@ -347,6 +390,9 @@ public class MyDatePickerDialog extends AlertDialog {
 
         protected void setLeap(boolean leap){
             this.leap=leap;
+        }
+        protected boolean getLeap(){
+            return this.leap;
         }
 
     }

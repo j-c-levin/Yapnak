@@ -143,6 +143,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private RelativeLayout extendHeight;
     private  String initials;
     private String personName;
+    private SQLList clientList;
 
 
     @Override
@@ -166,7 +167,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
-        load();
+
+        SQLConnectAsyncTask connectSQL = new SQLConnectAsyncTask(this,getLocation(),this);
+        clientList = connectSQL.doInBackground();
+
+        load(clientList);
         floatButton();
 
         //navBarToggle();
@@ -220,6 +225,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if (mLastLocation != null) {
             Log.d("debug", "Location Found: " + mLastLocation.toString());
             new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
+            //load(clientList);
         }
 
         if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
@@ -1133,85 +1139,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return this.longPress;
     }
 
-    /*public void floatButton() {
-        final ImageView image = new ImageView(this);
-        image.setImageResource(R.drawable.ic_new_float);
-
-        actionButton = new FloatingActionButton.Builder(this)
-                .setContentView(image)
-                .setBackgroundDrawable(R.drawable.selector_file_red)
-                .build();
-
-        actionButton.setTag(ACTION_BUTTON_TAG);
-
-        actionButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if(getClick()==true) {
-                    setLongPress(true);
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        //After long press, allow the button to move.
-
-        actionButton.setOnTouchListener(new View.OnTouchListener() {
-            private float x,y;
-            private RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relLayout);
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    setClick(true);
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    setLongPress(false);
-
-
-                }if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    x = event.getRawX() - (v.getHeight() / 2);
-                    y = event.getRawY() - (v.getWidth() / 2);
-
-                    if(getLongPress()==true && x<relativeLayout.getWidth() && y<relativeLayout.getHeight()) {
-
-
-                        actionButton.setX(x);
-                        actionButton.setY(y);
-                        setClick(false);
-                        return true;
-
-                    }
-
-                }
-
-                return false;
-
-            }
-
-            public void setX(float x) {
-                this.x = x;
-
-            }
-
-            public void setY(float y) {
-                this.y = y;
-            }
-
-            public float getX() {
-                return x;
-            }
-
-            public float getY() {
-                return y;
-            }
-        });
-}*/
-
-
-
-
-
 
     /*
      *
@@ -1306,7 +1233,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //actionBarDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-
     public void navigationBarContent() {
 
         //String [] tempList= {"About YapNak","How To Use YapNak","Misc"};
@@ -1332,8 +1258,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         navBarItems.setOnItemClickListener(new DrawerItemListener());
         */
     }
-
-
 
     //commented out because we have code to actually grab information from the database.
     public void load() {
@@ -2231,5 +2155,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         notif.notify(NOTIFICATION_ID, note);
 
+    }
+
+    private Location getLocation(){
+        GPSTrack track = new GPSTrack(MainActivity.this);
+        return track.getLocation();
     }
 }
