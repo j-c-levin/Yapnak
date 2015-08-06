@@ -61,6 +61,7 @@ import com.frontend.yapnak.navigationdrawer.NavigationBarAdapter;
 import com.frontend.yapnak.promotion.PromoItem;
 import com.frontend.yapnak.promotion.PromotionActivity;
 import com.frontend.yapnak.promotion.PromotionAdapter;
+import com.frontend.yapnak.promotion.PromotionDialog;
 import com.frontend.yapnak.rate.RatingBuilder;
 import com.frontend.yapnak.subview.MyEditText;
 import com.frontend.yapnak.subview.RedEditText;
@@ -167,8 +168,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_main1);
         load();
         floatButton();
-
-
 
         //navBarToggle();
         //navigationBarContent();
@@ -533,8 +532,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void profileDialog(View v){
 
         ///AlertDialog.Builder userItems = new ProfileDialog(this,this);
-
-        AlertDialog userItems = new ProfileDialog(this,this);
+        ProfileDialog userItems = new ProfileDialog(this,this);
 
        /* posProf=userItems.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
             @Override
@@ -542,7 +540,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 dialog.dismiss();
             }
         }).create();
-
         posProf.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -550,7 +547,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 posProf.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(c.parseColor("#B71C1C"));
             }
         });
-
         userItems.setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -559,9 +555,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         });
 
         */
-
-
-
 
         /*
         AlertDialog.Builder userItems= new AlertDialog.Builder(v.getContext());
@@ -616,8 +609,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //genderParams.gravity=Gravity.CENTER;
         genderParams.setMargins(100,20,50,40);
 
-
-
         userItems.setTitle("Profile");
         linearLayout.addView(phoneNumber,layoutParams);
         linearLayout.addView(name,layoutParams);
@@ -628,8 +619,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         userItems.setNegativeButton("CANCEL", null);
 
         */
-
-
 
         /*
         input.setHint("EG: NS-6438");
@@ -643,14 +632,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         userItems.setView(linearLayout);
         */
 
-
         //AlertDialog dialog = userItems.create();
         userItems.show();
     }
 
     private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
-
         private int day, month, year;
         private Bundle bundle;
         private final int DATEFRAGMENT = 1;
@@ -665,9 +651,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             month = calendar.get(Calendar.MONTH);
             year = calendar.get(Calendar.YEAR);
 
-
             DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, day, month, year);
-
             return pickerDialog;
 
 
@@ -675,20 +659,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-
             //setTargetFragment(this, DATEFRAGMENT);
-
-
             int month = monthOfYear+1;
-
             String dateString = dayOfMonth + " / " + month + " / " + year;
-
             date.setText(dateString);
-
-
             this.dismiss();
-
         }
     }
 
@@ -2186,12 +2161,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void aboutYapnak() {
-        AlertDialog.Builder aboutYapnak = new AlertDialog.Builder(this);
+       /* AlertDialog.Builder aboutYapnak = new AlertDialog.Builder(this);
 
         aboutYapnak.setTitle("About Yapnak");
         aboutYapnak.setMessage("Yapnak finds you lunch for a £5er! 💰💰💰");
         aboutYapnak.setPositiveButton("OK", null);
         aboutYapnak.show();
+        */
+
+        AboutYapnakDialog dialog = new AboutYapnakDialog(this,this);
+        dialog.show();
     }
 
 
@@ -2221,10 +2200,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         dialog.show();
         */
 
+        /*
 
         Intent promo = new Intent(this, PromotionActivity.class);
         promo.putExtra("accName",personName);
         startActivity(promo);
+        */
+
+        PromotionDialog promo = new PromotionDialog(this,this);
+        promo.show();
 
     }
 

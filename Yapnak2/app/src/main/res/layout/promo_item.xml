@@ -23,12 +23,13 @@
 
         >
 
-        <!--android:background="@color/bright_foreground_inverse_material_light"-->
+        <!--android:background="@color/bright_foreground_inverse_material_light"
+        android:background="#FFECB3"-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/someId"
-            android:background="#FFECB3"
+
 
             >
 

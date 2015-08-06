@@ -17,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 
+import com.frontend.yapnak.subview.MyDatePickerDialog;
 import com.frontend.yapnak.subview.RedEditText;
 
 import java.util.Calendar;
@@ -48,6 +49,8 @@ public class ProfileDialog extends AlertDialog {
 
         submit = (Button) v.findViewById(R.id.submitProfile);
         cancel = (Button) v.findViewById(R.id.cancelProfile);
+
+
 
 
         TextView title = new TextView(this.getContext());
@@ -94,10 +97,12 @@ public class ProfileDialog extends AlertDialog {
         });
     }
 
+    private MyDatePickerDialog datePicker;
     public void chooseDate(View v){
 
         button = (Button) v.findViewById(R.id.dateInput);
-        final DateDialog date = new DateDialog();
+        //final DateDialog date = new DateDialog();
+        datePicker = new MyDatePickerDialog(getContext(),activity);
 
 
 
@@ -105,7 +110,9 @@ public class ProfileDialog extends AlertDialog {
             @Override
             public void onClick(View v) {
 
-                date.show(activity.getFragmentManager(), "datePicker");
+
+                //date.show(activity.getFragmentManager(), "datePicker");
+                datePicker.show();
             }
         });
 
@@ -120,15 +127,19 @@ public class ProfileDialog extends AlertDialog {
         private Bundle bundle;
         private final int DATEFRAGMENT = 1;
 
+       @Override
+       public void onCreate(Bundle savedInstanceState) {
+           super.onCreate(savedInstanceState);
+       }
 
-
-        @Override
+       @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
             final Calendar calendar = Calendar.getInstance();
             day = calendar.get(Calendar.DAY_OF_MONTH);
             month = calendar.get(Calendar.MONTH);
             year = calendar.get(Calendar.YEAR);
+
 
 
             DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, day, month, year);

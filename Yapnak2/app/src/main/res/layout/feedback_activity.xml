@@ -130,6 +130,7 @@ android:textColor="#FFF"-->
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Cancel"
+            android:background="@android:color/transparent"
             android:layout_marginRight="20dp"
             android:textColor="#ff535357" />
 
@@ -139,6 +140,7 @@ android:textColor="#FFF"-->
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Submit"
+            android:background="@android:color/transparent"
             android:textColor="#ff535357" />
     </LinearLayout>
 
