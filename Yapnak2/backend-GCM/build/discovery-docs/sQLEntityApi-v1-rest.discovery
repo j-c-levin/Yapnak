@@ -1,0 +1,226 @@
+{
+ "kind": "discovery#restDescription",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/B6Ubcv50NFOa-didLwVdFG4Naeg\"",
+ "discoveryVersion": "v1",
+ "id": "sQLEntityApi:v1",
+ "name": "sQLEntityApi",
+ "version": "v1",
+ "description": "This is an API",
+ "ownerDomain": "gcmbackend.yapnak.com",
+ "ownerName": "gcmbackend.yapnak.com",
+ "icons": {
+  "x16": "http://www.google.com/images/icons/product/search-16.gif",
+  "x32": "http://www.google.com/images/icons/product/search-32.gif"
+ },
+ "protocol": "rest",
+ "baseUrl": "https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/",
+ "basePath": "/_ah/api/sQLEntityApi/v1/",
+ "rootUrl": "https://yapnak-app.appspot.com/_ah/api/",
+ "servicePath": "sQLEntityApi/v1/",
+ "batchPath": "batch",
+ "parameters": {
+  "alt": {
+   "type": "string",
+   "description": "Data format for the response.",
+   "default": "json",
+   "enum": [
+    "json"
+   ],
+   "enumDescriptions": [
+    "Responses with Content-Type of application/json"
+   ],
+   "location": "query"
+  },
+  "fields": {
+   "type": "string",
+   "description": "Selector specifying which fields to include in a partial response.",
+   "location": "query"
+  },
+  "key": {
+   "type": "string",
+   "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+   "location": "query"
+  },
+  "oauth_token": {
+   "type": "string",
+   "description": "OAuth 2.0 token for the current user.",
+   "location": "query"
+  },
+  "prettyPrint": {
+   "type": "boolean",
+   "description": "Returns response with indentations and line breaks.",
+   "default": "true",
+   "location": "query"
+  },
+  "quotaUser": {
+   "type": "string",
+   "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters. Overrides userIp if both are provided.",
+   "location": "query"
+  },
+  "userIp": {
+   "type": "string",
+   "description": "IP address of the site where the request originates. Use this if you want to enforce per-user limits.",
+   "location": "query"
+  }
+ },
+ "auth": {
+  "oauth2": {
+   "scopes": {
+    "https://www.googleapis.com/auth/userinfo.email": {
+     "description": "View your email address"
+    }
+   }
+  }
+ },
+ "schemas": {
+  "PointsEntity": {
+   "id": "PointsEntity",
+   "type": "object",
+   "properties": {
+    "clientID": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "points": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "userID": {
+     "type": "string"
+    }
+   }
+  },
+  "SQLEntity": {
+   "id": "SQLEntity",
+   "type": "object",
+   "properties": {
+    "foodStyle": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "name": {
+     "type": "string"
+    },
+    "offer": {
+     "type": "string"
+    },
+    "photo": {
+     "type": "string"
+    },
+    "points": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "rating": {
+     "type": "number",
+     "format": "double"
+    },
+    "x": {
+     "type": "number",
+     "format": "double"
+    },
+    "y": {
+     "type": "number",
+     "format": "double"
+    }
+   }
+  },
+  "SQLList": {
+   "id": "SQLList",
+   "type": "object",
+   "properties": {
+    "list": {
+     "type": "array",
+     "items": {
+      "$ref": "SQLEntity"
+     }
+    }
+   }
+  }
+ },
+ "methods": {
+  "getClients": {
+   "id": "sQLEntityApi.getClients",
+   "path": "getClients",
+   "httpMethod": "GET",
+   "parameters": {
+    "latitude": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    },
+    "longitude": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "latitude",
+    "longitude"
+   ],
+   "response": {
+    "$ref": "SQLList"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getUser": {
+   "id": "sQLEntityApi.getUser",
+   "path": "sqlentity/{userID}/{clientEmail}",
+   "httpMethod": "GET",
+   "parameters": {
+    "clientEmail": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    },
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "path"
+    }
+   },
+   "parameterOrder": [
+    "userID",
+    "clientEmail"
+   ],
+   "response": {
+    "$ref": "PointsEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "insertUser": {
+   "id": "sQLEntityApi.insertUser",
+   "path": "insertUser",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "password"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  }
+ }
+}

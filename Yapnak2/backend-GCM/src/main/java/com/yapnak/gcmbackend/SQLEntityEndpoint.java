@@ -15,6 +15,10 @@ import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -156,9 +161,9 @@ public class SQLEntityEndpoint {
      */
     @ApiMethod(
             name = "getClients",
-            path = "sQLEntity_client",
+            path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLList getClients(@Named("x") double x, @Named("y") double y) throws NotFoundException, OAuthRequestException {
+    public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y) throws NotFoundException, OAuthRequestException {
 /*        if (user == null) {
             throw new OAuthRequestException("User is not valid " + user);
         }*/
@@ -209,7 +214,7 @@ public class SQLEntityEndpoint {
                     if (SystemProperty.environment.value() ==
                             SystemProperty.Environment.Value.Production) {
                         ImagesService services = ImagesServiceFactory.getImagesService();
-                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "=s50"));    // Blobkey of the image uploaded to BlobStore.
+                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "=s100"));    // Blobkey of the image uploaded to BlobStore.
                         url = services.getServingUrl(serve);
                     } else {
                         url = rs.getString("clientPhoto");
@@ -246,53 +251,54 @@ public class SQLEntityEndpoint {
         }
     }
 
-    /**
-     * Inserts a new client {@code SQLEntity}.
-     */
-    @ApiMethod(
-            name = "insertClient",
-            path = "sQLEntity_client",
-            httpMethod = ApiMethod.HttpMethod.POST)
-    public void insertClient(@Named("name") String name, @Named("x") double x, @Named("y") double y, @Named("offer") String offer) {
-        Connection connection;
-        try {
-            if (SystemProperty.environment.value() ==
-                    SystemProperty.Environment.Value.Production) {
-                // Load the class that provides the new "jdbc:google:mysql://" prefix.
-                Class.forName("com.mysql.jdbc.GoogleDriver");
-                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
-            } else {
-                // Local MySQL instance to use during development.
-                Class.forName("com.mysql.jdbc.Driver");
-//                String url = "jdbc:mysql://localhost:3306/yapnak_main?user=client&password=g7lFVLRzYdJoWXc3";
-//                connection = DriverManager.getConnection(url);
-                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
-                // Alternatively, connect to a Google Cloud SQL instance using:
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for (int j = 0; j < bytes.length; j++) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
-                // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
-            }
-            int success = 0;
-            try {
-                String statement = "INSERT INTO client (clientName,clientLocation, clientX, clientY, clientOffer) VALUES(?,Point(?,?),?,?,?)";
-                PreparedStatement stmt = connection.prepareStatement(statement);
-                stmt.setString(1, name);
-                stmt.setDouble(2, x);
-                stmt.setDouble(3, y);
-                stmt.setDouble(4, x);
-                stmt.setDouble(5, y);
-                stmt.setString(6, offer);
-                success = stmt.executeUpdate();
-                logger.info("returned: " + success);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                connection.close();
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+    private static String SALT = "Y3aQcfpTiUUdpSAY";
+
+    // A password hashing method.
+    static String hashPassword(String in) {
+        try {
+            MessageDigest md = MessageDigest
+                    .getInstance("SHA-256");
+            md.update(SALT.getBytes());        // <-- Prepend SALT.
+            md.update(in.getBytes());
+
+            byte[] out = md.digest();
+            return bytesToHex(out);            // <-- Return the Hex Hash.
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        return "";
+    }
+
+    static String secureInt() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32).substring(5,9);
+    }
+
+    public static int randInt() {
+
+        // NOTE: Usually this should be a field rather than a method
+        // variable so that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int max = 9998;
+        int min = 1000;
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 
     /**
@@ -300,16 +306,9 @@ public class SQLEntityEndpoint {
      */
     @ApiMethod(
             name = "insertUser",
-            path = "sQLEntity_user",
+            path = "insertUser",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public void insert(@Named("name") String name) {
-        // Typically in a RESTful API a POST does not have a known ID (assuming the ID is used in the resource path).
-        // You should validate that sQLEntity.name has not been set. If the ID type is not supported by the
-        // Objectify ID generator, e.g. long or String, then you should generate the unique ID yourself prior to saving.
-        //
-        // If your client provides the ID then you should probably use PUT instead.
-//        ofy().save().entity(sQLEntity).now();
-//        logger.info("Created SQLEntity with ID: " + sQLEntity.getName());
+    public void insert(@Named("email") String email, @Named("password") String password) {
 
         Connection connection;
         try {
@@ -327,15 +326,32 @@ public class SQLEntityEndpoint {
                 // Alternatively, connect to a Google Cloud SQL instance using:
                 // jdbc:mysql://ip-address-of-google-cloud-sql-instance:3306/guestbook?user=root
             }
-
+            int success = -1;
             try {
-                String statement = "INSERT INTO user (userID) VALUES(?)";
+                String statement = "INSERT INTO user (userID, email, password) VALUES(?,?,?)";
                 PreparedStatement stmt = connection.prepareStatement(statement);
-                stmt.setString(1, name);
-                int success = stmt.executeUpdate();
-                connection.close();
+
+                //Generate userID
+                String userID = "";
+                userID = email.substring(0,4) + randInt();
+
+                //Generate password
+                String newPassword = hashPassword(email);
+
+                stmt.setString(1, userID);
+                stmt.setString(2, email);
+                stmt.setString(3, newPassword);
+                success = stmt.executeUpdate();
+                if (success == -1) {
+                    logger.warning("Inserting user failed");
+                }
+                else {
+                    logger.info("Successfully inserted the user");
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                connection.close();
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
