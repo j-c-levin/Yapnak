@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <title>Yapnak</title>
+
+    <!--angularjs-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+</head>
+<body>
+    <script>
+        angular.module('app', [])
+
+        .controller('main', function($scope){
+        $scope.text="no, fuck you!";
+        })
+    </script>
+
+<div ng-controller="main">
+    <label class="login-input item item-input">
+        <input type="text" ng-model="text">
+    </label>
+</div>
+<h1>testing</h1>
+
+</body>

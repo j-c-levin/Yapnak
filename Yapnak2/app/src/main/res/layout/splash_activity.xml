@@ -17,9 +17,10 @@
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:id="@+id/yapnakGlow"
-        android:src="@drawable/yapnakmonster_glow"
+        android:src="@drawable/yapnakmonster"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+    <!--android:src="@drawable/yapnakmonster_glow"-->
 
 
 </RelativeLayout>
