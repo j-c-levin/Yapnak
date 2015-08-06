@@ -142,6 +142,7 @@ body {
   ImagesService services = ImagesServiceFactory.getImagesService();
   ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
   url = services.getServingUrl(serve);
+  url = url + "=s100";
   }
   else {
   url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";

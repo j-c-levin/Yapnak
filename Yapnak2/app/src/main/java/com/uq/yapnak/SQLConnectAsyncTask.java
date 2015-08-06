@@ -51,7 +51,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Void, SQLList> {
     protected void onPostExecute(SQLList result) {
         if (result != null) {
             Log.d("Debug", "completed: " + result.getList());
-            main.load(result);
+            //main.load(result);
         } else {
             Log.d("Debug", "Failed");
         }

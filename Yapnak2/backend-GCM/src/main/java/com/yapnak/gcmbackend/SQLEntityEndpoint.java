@@ -214,8 +214,9 @@ public class SQLEntityEndpoint {
                     if (SystemProperty.environment.value() ==
                             SystemProperty.Environment.Value.Production) {
                         ImagesService services = ImagesServiceFactory.getImagesService();
-                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto") + "=s100"));    // Blobkey of the image uploaded to BlobStore.
+                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
                         url = services.getServingUrl(serve);
+                        url = url + "=s100";
                     } else {
                         url = rs.getString("clientPhoto");
                     }
