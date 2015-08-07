@@ -7,10 +7,10 @@ angular.module('app', [])
         var data = {
             userID: userID, clientEmail: 'joshua.c.levin@gmail.com'
         }
-        console.log(data);
         return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/sqlentity/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
             return response.data;
         }, function (error) {
+            console.log("called");
             return error;
         })
     };
@@ -22,13 +22,16 @@ angular.module('app', [])
 
     $scope.data = {};
 
-    $scope.data.points = "30";
-
-    $scope.submit = function (keypress) {
-        if (keypress.which == 13) {
-            webfactory.submit($scope.text, 'joshua.c.levin@gmail.com').then(function (response) {
+    $scope.submit = function () {
+        $scope.userFound = "searching";
+        webfactory.submit($scope.text, 'joshua.c.levin@gmail.com').then(function (response) {
+            if (response == "") {
+                $scope.userFound = false;
+            }
+            else {
                 $scope.data.points = response.points;
-            })
-        }
+                $scope.userFound = true;
+            }
+        })
     }
 })

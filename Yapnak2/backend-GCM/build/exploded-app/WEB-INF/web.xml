@@ -72,6 +72,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <static-files>
         <include path="**.html"></include>
         <include path="**.js"></include>
+        <include path="/**.png"></include>
     </static-files>
 
     <welcome-file-list>

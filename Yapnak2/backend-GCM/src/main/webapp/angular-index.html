@@ -7,22 +7,45 @@
     <!--angularjs-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
 
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
     <link href="css/index.css" rel="stylesheet">
     <script src="app.js"></script>
 
 </head>
-<body class="content">
+<body class="content container">
 
-<div ng-controller="main">
-    <label class="input">
-        <input type="text" ng-model="text" ng-keypress="submit($event)">
-    </label>
+<div class="main-container" ng-controller="main">
 
-    <div class="points-container">
-        <h3>Points: </h3>
-        <p class="points">{{data.points}}</p>
+    <div class="logo">
+        <img src="images/yapnakmonster.png" />
+    </div>
+
+    <div class="input input-group-lg">
+        <input type="text" ng-model="text" class="form-control input-box" placeholder="Yapnak ID here">
+    </div>
+
+    <div class="submit-button-container">
+        <input class="btn btn-default submit-button" value="Submit" ng-click="submit()" />
+    </div>
+
+    <div ng-switch="userFound">
+        <div ng-switch-when="true" ng-show="data.points >
+                0" class="container">
+            <div class="points-container">
+                <h3 class="inline">Found a valid user, they have</h3>
+                <div class="inline points">{{data.points}}</div>
+                <h3 class="inline">  points.</h3>
+            </div>
+        </div>
+        <div class="switch-false" ng-switch-when="false">
+            <h3>Sorry, we can't find that user.</h3>
+        </div>
+        <div class="switch-false" ng-switch-when="searching">
+            <h3>Searching for user...</h3>
+        </div>
     </div>
 </div>
-
 </body>
 </html>
