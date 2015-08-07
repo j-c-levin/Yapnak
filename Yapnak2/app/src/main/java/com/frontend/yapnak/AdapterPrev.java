@@ -38,7 +38,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
     private View view;
     private ItemPrev deal;
     private final String FILE_NAME = "yapnak_details";
-    private ImageView restaurantLogo;
 
     public AdapterPrev(Context context, int resourse, ItemPrev[] values) {
 
@@ -75,7 +74,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
 
             ImageView locationLogo = (ImageView) view.findViewById(R.id.locationIcon);
-            restaurantLogo = (ImageView) view.findViewById(R.id.logo);
+            ImageView restaurantLogo = (ImageView) view.findViewById(R.id.logo);
             ImageView hotDeal = (ImageView) view.findViewById(R.id.heatIcon);
             mainText.setText(deal.getMainText());
             subText.setText(deal.getSubText());
@@ -83,7 +82,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             loyaltyPointsTitle.setText(deal.getLoyaltyPointsTitle());
             locationName.setText(deal.getDistanceTime());
             points.setText(deal.getPoints());
-            //restaurantLogo.setImageResource(deal.getLogo());
             hotDeal.setImageResource(deal.getHotDeal());
 
             //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
@@ -92,7 +90,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
                     .load(deal.getFetchImageURL());
              */
              Toast.makeText(getContext(),"URL= " + deal.getFetchImageURL(),Toast.LENGTH_LONG).show();
-             new DownloadImage().execute(deal.getFetchImageURL());
+             new DownloadImage(restaurantLogo).execute(deal.getFetchImageURL());
              //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
              //Load more images after authentication
              convertView.setTag(deal);
@@ -112,8 +110,12 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
         private HttpGet get;
         private HttpEntity entity;
         private InputStream stream;
+        private ImageView image;
 
 
+        private DownloadImage(ImageView view){
+            image = view;
+        }
 
         @Override
         protected Bitmap doInBackground(String... urls) {
@@ -150,10 +152,10 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
             if(bitmap!=null){
 
-                restaurantLogo.setImageBitmap(bitmap);
+                image.setImageBitmap(bitmap);
             }else{
                 Toast.makeText(getContext(),"Null = true ",Toast.LENGTH_LONG).show();
-                restaurantLogo.setImageResource(R.drawable.yapnakmonster);
+                image.setImageResource(R.drawable.yapnakmonster);
             }
         }
     }
