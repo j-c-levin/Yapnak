@@ -5,7 +5,6 @@ import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -44,7 +43,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 //            SQLEntity x = sqlEntity.getClients(location.getLongitude(), location.getLatitude()).execute();
 //            hard-coded just for debugging purposes because it's where I've stuck in some dummy data
         try {
-            return sqlEntity.getClients(-0.308850, 51.685292).execute();
+            return sqlEntity.getClients(51.685292, -0.308850).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
