@@ -102,7 +102,7 @@ public class ProfileDialog extends AlertDialog {
 
         button = (Button) v.findViewById(R.id.dateInput);
         //final DateDialog date = new DateDialog();
-        datePicker = new MyDatePickerDialog(getContext(),activity);
+        datePicker = new MyDatePickerDialog(button,getContext(),activity);
 
 
 
@@ -113,6 +113,7 @@ public class ProfileDialog extends AlertDialog {
 
                 //date.show(activity.getFragmentManager(), "datePicker");
                 datePicker.show();
+
             }
         });
 
