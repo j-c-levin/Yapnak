@@ -66,7 +66,7 @@ public class SQLEntityEndpoint {
 
     @ApiMethod(
             name = "getUser",
-            httpMethod = ApiMethod.HttpMethod.GET)
+            httpMethod = ApiMethod.HttpMethod.POST)
     public PointsEntity getUser(@Named("userID") String userID, @Named("clientEmail") String clientEmail) {
         Connection connection;
         PointsEntity points = new PointsEntity();

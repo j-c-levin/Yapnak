@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/B6Ubcv50NFOa-didLwVdFG4Naeg\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/doWDmFF98wu4Tyr8vfzKHAT7MaI\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -168,7 +168,6 @@
   },
   "sQLEntityApi.getUser": {
    "id": "sQLEntityApi.getUser",
-   "allowGet": true,
    "parameters": {
     "clientEmail": {
      "type": "string",

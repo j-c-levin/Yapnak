@@ -6,21 +6,61 @@
 
     <!--angularjs-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
-</head>
-<body>
+
+    <link href="css/index.css" rel="stylesheet">
+
     <script>
+
         angular.module('app', [])
 
-        .controller('main', function($scope){
-        $scope.text="no, fuck you!";
+.factory('webfactory', ['$http', function ($http) {
+    var result = {};
+
+    result.submit = function (userID, clientEmail) {
+        var data = {
+            userID: userID, clientEmail: 'joshua.c.levin@gmail.com'
+        }
+        console.log(data);
+        return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/sqlentity/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
+            return response.data;
+        }, function (error) {
+            return error;
         })
-    </script>
+    };
+
+    return result;
+}])
+
+.controller('main', function ($scope, webfactory) {
+
+    $scope.data = {};
+
+    $scope.data.points = "30";
+
+    $scope.submit = function (keypress) {
+        if (keypress.which == 13) {
+            webfactory.submit($scope.text, 'joshua.c.levin@gmail.com').then(function (response) {
+                $scope.data.points = response.points;
+            })
+        }
+    }
+})
+
+</script>
+</head>
+<body class="content">
 
 <div ng-controller="main">
-    <label class="login-input item item-input">
-        <input type="text" ng-model="text">
+    <label class="input">
+        <input type="text" ng-model="text" ng-keypress="submit($event)">
     </label>
+
+    <div class="points-container">
+        <h3>Points: </h3>
+
+        <p class="points">{{data.points}}</p>
+    </div>
 </div>
-<h1>testing</h1>
 
 </body>
+</html>

@@ -1,0 +1,23 @@
+.content {
+    background-color:#ddd;
+}
+
+.points-container {
+    margin-top:20px;
+}
+
+.points-container p, h3 {
+    display:inline;
+}
+
+.points {
+    display: inline;
+}
+
+.points {
+    font-weight:bold;
+}
+
+.input {
+    display:inline;
+}

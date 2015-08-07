@@ -15,9 +15,12 @@ public class DatePickerAdapter extends ArrayAdapter<DateItem> {
 
    private DateItem item;
    private TextView text;
+   private DateItem [] items;
 
     public DatePickerAdapter(Context context, int resource, DateItem[] objects) {
         super(context,R.layout.date_item, objects);
+
+        this.items=objects;
 
 
     }
@@ -33,7 +36,11 @@ public class DatePickerAdapter extends ArrayAdapter<DateItem> {
             item = getItem(position);
             text = (TextView) convertView.findViewById(R.id.numberText);
             text.setText(item.getValue());
-            //text.setTextColor(Color.parseColor(item.getBackgroundColor()));
+            try {
+                text.setTextColor(Color.parseColor(item.getBackgroundColor()));
+            }catch (Exception e){
+                text.setTextColor(Color.parseColor("#9E9E9E"));
+            }
             convertView.setTag(item);
 
         }else{
@@ -41,5 +48,11 @@ public class DatePickerAdapter extends ArrayAdapter<DateItem> {
         }
 
         return convertView;
+    }
+
+    @Override
+    public DateItem getItem(int position) {
+       // return super.getItem(position);
+        return items[position];
     }
 }
