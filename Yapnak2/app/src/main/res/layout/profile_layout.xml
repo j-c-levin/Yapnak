@@ -247,6 +247,7 @@
         android:ems="10"
         android:hint="Date Of Birth"
         android:textSize="15sp"
+        android:background="@android:color/transparent"
         android:layout_above="@+id/textView3"
         android:layout_alignLeft="@+id/textView3"
         android:layout_marginBottom="30dp" />
@@ -259,6 +260,7 @@
         android:id="@+id/linearLayout3">
 
         <Button
+            android:background="@android:color/transparent"
             android:layout_marginLeft="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -267,6 +269,7 @@
             android:id="@+id/cancelProfile"/>
 
         <Button
+            android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

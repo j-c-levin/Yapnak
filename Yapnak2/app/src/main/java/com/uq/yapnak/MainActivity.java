@@ -69,6 +69,7 @@ import com.frontend.yapnak.subview.RedRadioButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
@@ -153,25 +154,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         new GcmRegistrationAsyncTask(this).execute();
 
 
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
                 .addApi(Plus.API)
+                .addScope(new Scope("profile"))
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .addScope(Plus.SCOPE_PLUS_PROFILE)
-                .build();
+                .addScope(Plus.SCOPE_PLUS_PROFILE).build();
 
 
+        //Toast.makeText(this,"Connected ? "  + mGoogleApiClient.isConnected(),Toast.LENGTH_LONG).show();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
 
-        SQLConnectAsyncTask connectSQL = new SQLConnectAsyncTask(this,getLocation(),this);
-        clientList = connectSQL.doInBackground();
-
-        load(clientList);
         floatButton();
 
         //navBarToggle();
@@ -211,21 +207,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
             });
 
-
-
-
-
     }
 
 
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("debug", "onConnected");
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            Log.d("debug", "Location Found: " + mLastLocation.toString());
-            new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
-            //load(clientList);
+        //Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        //if (mLastLocation != null) {
+        Location locationCheck = getLocation();
+        if(locationCheck!=null){
+           // Log.d("debug", "Location Found: " + mLastLocation.toString());
+            Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
+            //new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
+            new SQLConnectAsyncTask(getApplicationContext(), getLocation(), this).execute();
         }
 
         if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
@@ -1736,8 +1731,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             GetItemPrev threadGetItem =  new GetItemPrev();
             threadGetItem.doInBackground(itemTemp);
 
+
             ExtendInfoInBackGround extend = new ExtendInfoInBackGround();
             extend.doInBackground(view);
+
 
 
 
@@ -2160,5 +2157,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Location getLocation(){
         GPSTrack track = new GPSTrack(MainActivity.this);
         return track.getLocation();
+    }
+    private boolean isLocationOn(){
+        GPSTrack t = new GPSTrack(MainActivity.this);
+        return t.canGetLoc();
     }
 }

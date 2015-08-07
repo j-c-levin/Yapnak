@@ -36,13 +36,14 @@ public class MyDatePickerDialog extends AlertDialog {
     private int yearStart;
     private YearList popYear;
     private ArrayAdapter dayAdapter,monthAdapter,yearAdapter;
-
-    public String dayB,monthB,yearB;
-    public MyDatePickerDialog(Context context, Activity activity) {
+    private Button mainButton;
+    private String dayB,monthB,yearB;
+    public MyDatePickerDialog(Button b,Context context, Activity activity) {
         super(context);
 
         this.a = activity;
         this.context = context;
+        this.mainButton = b;
 
         v = activity.getLayoutInflater().inflate(R.layout.custom_datepicker,null);
         this.setView(v);
@@ -54,6 +55,7 @@ public class MyDatePickerDialog extends AlertDialog {
                 monthB = monthItem.getValue();
                 yearB = yearItem.getValue();
                 Toast.makeText(getContext(),"DOB : " + dayB + " " + monthB + " " + yearB,Toast.LENGTH_SHORT).show();
+                mainButton.setText(dayB + " " +monthB +" "+ yearB);
 
                 dismiss();
             }
@@ -232,8 +234,8 @@ public class MyDatePickerDialog extends AlertDialog {
                 //monthItem = (DateItem) month.getItemAtPosition(month.getFirstVisiblePosition() + 1);
                 monthItem =  (DateItem) month.getItemAtPosition(firstVisibleItem+1);
                 int iMonth = monthItem.getMonthValue();
-                //DayAdapter adapter = new DayAdapter();
-                //dayAdapter = adapter.doInBackground(popDay.doInBackground(iMonth));
+                DayAdapter adapter = new DayAdapter();
+                dayAdapter = adapter.doInBackground(popDay.doInBackground(iMonth));
 
 
                 Toast.makeText(getContext(),"How Many Days in This Month -> " + monthItem.getValue() + " =  " + days.length,Toast.LENGTH_SHORT).show();

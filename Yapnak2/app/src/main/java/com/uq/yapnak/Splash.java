@@ -122,7 +122,7 @@ public class Splash extends Activity {
                         startActivity(i);
                         finish();
                     } else if (mGoogleApiClient.isConnected()) {
-
+                       /*
                         //Toast.makeText(getApplicationContext(),"Connected in Splash",Toast.LENGTH_SHORT).show();
                         newHandler.removeCallbacks(this);
                         Intent i = new Intent(Splash.this, MainActivity.class);
@@ -135,6 +135,7 @@ public class Splash extends Activity {
 
                         startActivity(i);
                         finish();
+                      */
                     }
             }
         };
@@ -151,21 +152,14 @@ public class Splash extends Activity {
 
 
         work = new BackgroundWork();
+        //work.execute();
         mGoogleApiClient = work.doInBackground();
+        work.execute();
         //mSignInClicked = true;
-        //mGoogleApiClient.connect();
-
-
-
-
+        mGoogleApiClient.connect();
     }
 
-
-
-       // pushYapnak();
-
-
-
+    // pushYapnak();
 
     private void pushYapnak(){
 
@@ -186,8 +180,6 @@ public class Splash extends Activity {
 
     }
 
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -200,6 +192,7 @@ public class Splash extends Activity {
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        //mGoogleApiClient.connect();
     }
 
 
@@ -243,17 +236,11 @@ public class Splash extends Activity {
             //this.personName = person.getDisplayName();
 
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
-            i.putExtra("accName",acc);
-
+            i.putExtra("accName", acc);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
-
-
-
-
         }
 
         @Override
@@ -288,6 +275,7 @@ public class Splash extends Activity {
             super.onPostExecute(googleApiClient);
 
             mSignInClicked=true;
+            //mGoogleApiClient = googleApiClient;
 
         }
 
@@ -299,11 +287,6 @@ public class Splash extends Activity {
 
         }
     }
-
-
-
-
-
 }
 
 

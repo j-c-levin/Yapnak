@@ -20,9 +20,9 @@ public class GPSTrack extends Service implements LocationListener {
     private final Context context;
     private Location userLocation;
 
-    boolean isGPSEnabled = false;
-    boolean canGetLoc = false;
-    boolean isNetworkEnabled = false;
+    private boolean isGPSEnabled;
+    private boolean canGetLoc;
+    private boolean isNetworkEnabled;
 
     private double longitude;
     private double latitude;
@@ -37,6 +37,9 @@ public class GPSTrack extends Service implements LocationListener {
     public GPSTrack(Context context){
 
         this.context = context;
+        isNetworkEnabled = false;
+        isGPSEnabled= false;
+        canGetLoc = false;
         getLocation();
 
     }
