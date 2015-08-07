@@ -2026,6 +2026,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //Implement Koush Ion - populate ListView
 
                 //download and display image from url
+
                 String url = list.get(i).getPhoto();
                 //String url = sql.getList().get(i).getPhoto();
                 temp.setFetchImageURL(url);
@@ -2039,7 +2040,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 temp.setDistanceTime("to be added");
 
-                temp.setLogo(R.drawable.yapnakmonster);
+                //temp.setLogo(R.drawable.yapnakmonster);
                 temp.setMainText(list.get(i).getFoodStyle());
                 temp.setRestaurantName(list.get(i).getName());
                 temp.setSubText(list.get(i).getOffer());
