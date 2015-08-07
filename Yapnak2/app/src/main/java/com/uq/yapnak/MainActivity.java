@@ -162,11 +162,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE).build();
 
-
-        //Toast.makeText(this,"Connected ? "  + mGoogleApiClient.isConnected(),Toast.LENGTH_LONG).show();
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
+
+        locationCheck = getLocation();
+        try {
+            new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Turn Location On", Toast.LENGTH_SHORT).show();
+        }
+
 
         floatButton();
 
@@ -202,7 +207,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Toast.makeText(getApplicationContext(), "Hello normal", Toast.LENGTH_SHORT).show();
+
                     return true;
                 }
             });
@@ -210,17 +215,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    private Location locationCheck;
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("debug", "onConnected");
         //Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         //if (mLastLocation != null) {
-        Location locationCheck = getLocation();
+
         if(locationCheck!=null){
            // Log.d("debug", "Location Found: " + mLastLocation.toString());
             Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
             //new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
-            new SQLConnectAsyncTask(getApplicationContext(), getLocation(), this).execute();
+            //new SQLConnectAsyncTask(getApplicationContext(), getLocation(), this).execute();
         }
 
         if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
@@ -2015,25 +2021,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
-                // temp.setLogo(R.drawable.mcdonalds);
 
-                //Implement Koush Ion - populate ListView
-
+               
                 //download and display image from url
                 String url = list.get(i).getPhoto();
-                //String url = sql.getList().get(i).getPhoto();
                 temp.setFetchImageURL(url);
+
                 /////////////////////////////////////////////
-
-                temp.setMainText(sql.getList().get(i).getFoodStyle());
-                temp.setRestaurantName(sql.getList().get(i).getName());
-                temp.setSubText(sql.getList().get(i).getOffer());
-                temp.setLatitude(sql.getList().get(i).getY());
-                temp.setLongitude(sql.getList().get(i).getX());
-
+                temp.setMainText(list.get(i).getFoodStyle());
+                temp.setRestaurantName(list.get(i).getName());
+                temp.setSubText(list.get(i).getOffer());
+                temp.setLatitude(list.get(i).getY());
+                temp.setLongitude(list.get(i).getX());
                 temp.setDistanceTime("to be added");
-
-                temp.setLogo(R.drawable.yapnakmonster);
                 temp.setMainText(list.get(i).getFoodStyle());
                 temp.setRestaurantName(list.get(i).getName());
                 temp.setSubText(list.get(i).getOffer());
