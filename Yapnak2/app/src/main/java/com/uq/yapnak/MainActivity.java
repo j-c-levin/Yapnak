@@ -162,11 +162,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE).build();
 
-
-        //Toast.makeText(this,"Connected ? "  + mGoogleApiClient.isConnected(),Toast.LENGTH_LONG).show();
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
+
+        locationCheck = getLocation();
+        try {
+            new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), "Turn Location On", Toast.LENGTH_SHORT).show();
+        }
+
 
         floatButton();
 
@@ -202,7 +207,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    Toast.makeText(getApplicationContext(), "Hello normal", Toast.LENGTH_SHORT).show();
+
                     return true;
                 }
             });
@@ -210,17 +215,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    private Location locationCheck;
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("debug", "onConnected");
         //Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         //if (mLastLocation != null) {
-        Location locationCheck = getLocation();
+
         if(locationCheck!=null){
            // Log.d("debug", "Location Found: " + mLastLocation.toString());
             Toast.makeText(getApplicationContext(),"Connected",Toast.LENGTH_SHORT).show();
             //new SQLConnectAsyncTask(getApplicationContext(), mLastLocation, this).execute();
-            new SQLConnectAsyncTask(getApplicationContext(), getLocation(), this).execute();
+            //new SQLConnectAsyncTask(getApplicationContext(), getLocation(), this).execute();
         }
 
         if(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient)!=null){
