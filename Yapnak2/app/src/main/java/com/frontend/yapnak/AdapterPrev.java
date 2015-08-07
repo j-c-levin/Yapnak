@@ -151,10 +151,9 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             super.onPostExecute(bitmap);
 
             if(bitmap!=null){
-
                 image.setImageBitmap(bitmap);
             }else{
-                Toast.makeText(getContext(),"Null = true ",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"Error in loading images",Toast.LENGTH_LONG).show();
                 image.setImageResource(R.drawable.yapnakmonster);
             }
         }

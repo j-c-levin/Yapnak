@@ -2021,26 +2021,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
-                // temp.setLogo(R.drawable.mcdonalds);
 
-                //Implement Koush Ion - populate ListView
-
+               
                 //download and display image from url
-
                 String url = list.get(i).getPhoto();
-                //String url = sql.getList().get(i).getPhoto();
                 temp.setFetchImageURL(url);
+
                 /////////////////////////////////////////////
-
-                temp.setMainText(sql.getList().get(i).getFoodStyle());
-                temp.setRestaurantName(sql.getList().get(i).getName());
-                temp.setSubText(sql.getList().get(i).getOffer());
-                temp.setLatitude(sql.getList().get(i).getY());
-                temp.setLongitude(sql.getList().get(i).getX());
-
+                temp.setMainText(list.get(i).getFoodStyle());
+                temp.setRestaurantName(list.get(i).getName());
+                temp.setSubText(list.get(i).getOffer());
+                temp.setLatitude(list.get(i).getY());
+                temp.setLongitude(list.get(i).getX());
                 temp.setDistanceTime("to be added");
-
-                //temp.setLogo(R.drawable.yapnakmonster);
                 temp.setMainText(list.get(i).getFoodStyle());
                 temp.setRestaurantName(list.get(i).getName());
                 temp.setSubText(list.get(i).getOffer());

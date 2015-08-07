@@ -7,11 +7,11 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:id="@+id/item2"
-    android:background="#E0E0E0"
     android:descendantFocusability="blocksDescendants">
 
     <!--android:onClick="extendInfo"
-    android:background="#EEEEEE"-->
+    android:background="#EEEEEE"
+    android:background="#E0E0E0"-->
 
 
     <RelativeLayout
