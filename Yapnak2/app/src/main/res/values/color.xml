@@ -79,4 +79,7 @@
     <color name= "lightGrey">#E0E0E0</color>
     <color name="lightBrown">#BCAAA4</color>
     <color name ="deepOrange">#FF5722</color>
+    <color name="darkRed">#BF360C</color>
+    <color name="peach">#FFAB91</color>
+    <color name="lightPeach">#FFCCBC</color>
 </resources>

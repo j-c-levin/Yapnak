@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -19,9 +20,20 @@ import java.io.IOException;
 public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     private static SQLEntityApi sqlEntity;
+     static boolean useDialog;
+    private static boolean listLoaded=false;
     private Context context;
     private Location location;
     MainActivity main;
+
+    private static void setListLoaded(boolean loaded){
+        listLoaded = loaded;
+    }
+
+    public static boolean getListLoaded(){
+        return listLoaded;
+    }
+
     private ProgressDialog progressDialog;
 
     SQLConnectAsyncTask(Context context, Location location, MainActivity main) {
@@ -53,17 +65,37 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     @Override
     protected void onPreExecute() {
         //super.onPreExecute();
-        progressDialog.setMessage("Please Wait For List To Load...");
-        progressDialog.show();
+        if(useDialog) {
+            progressDialog.setMessage("Please Wait For List To Load...");
+            progressDialog.show();
+        }
     }
 
 
     protected void onPostExecute(SQLList result) {
-        if (result != null) {
+        Location loc = main.getLocation();
+        if (result != null && loc!=null) {
             Log.d("Debug", "completed: " + result.getList());
             main.load(result);
-            progressDialog.cancel();
+            main.floatButton();
+            main.swipeRefresh(main);
+
+            if(useDialog) {
+                progressDialog.cancel();
+            }
+            setListLoaded(true);
         } else {
+            main.load();
+            main.floatButton();
+            main.swipeRefresh(main);
+
+            if(useDialog) {
+                progressDialog.cancel();
+            }
+            setListLoaded(true);
+
+            Toast.makeText(context,"Please Turn Location On",Toast.LENGTH_SHORT).show();
+
             Log.d("Debug", "Failed");
         }
     }

@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
@@ -88,7 +89,7 @@ import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        ResultCallback<People.LoadPeopleResult> {
+       ResultCallback<People.LoadPeopleResult> {
     private static final int NOTIFICATION_ID = 0;
 
 
@@ -165,20 +166,28 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
 
-        locationCheck = getLocation();
-        try {
-            new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
-        }catch (Exception e){
+       // locationCheck = getLocation();
+       // if(locationCheck!=null) {
+             SQLConnectAsyncTask.useDialog = true;
+             new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
+             if (SQLConnectAsyncTask.getListLoaded()) {
+                 dealList.notifyDataSetChanged();
+             }
+
+
+        /*}else {
+            load();
             Toast.makeText(getApplicationContext(), "Turn Location On", Toast.LENGTH_SHORT).show();
+            floatButton();
         }
+        */
 
-
-        floatButton();
 
         //navBarToggle();
         //navigationBarContent();
 
     }
+
 
 
 
@@ -364,6 +373,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             }
                         });
 
+            }else{
+                Intent intent = new Intent(this,Login.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         }
 
@@ -1218,9 +1233,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         drawerLayout.setDrawerListener(actionBarDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-
     }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -1261,12 +1275,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     //commented out because we have code to actually grab information from the database.
-    public void load() {
 
+    public void load() {
         setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
-
-
         ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
@@ -1279,15 +1291,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setOnItemClickListener(new ItemInfoListener());
         deals.setOnScrollListener(new ScrollListener());
-
-
     }
 
 
+    private AdapterPrev dealList;
     public void load(SQLList sql) {
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+         dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
 
         ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
@@ -1299,7 +1310,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setAdapter(dealList);
         deals.setOnItemClickListener(new ItemInfoListener());
         deals.setOnItemLongClickListener(new OnLongTouchListener());
+        /*if(deals.getAdapter().getCount()<=5){
+            actionButton.setAlpha(1.0f);
+            buttonAbout.setAlpha(1.0f);
+            buttonFeedback.setAlpha(1.0f);
+            buttonGift.setAlpha(1.0f);
+            buttonProfile.setAlpha(1.0f);
+            actionButton.setVisibility(View.VISIBLE);
+            buttonAbout.setVisibility(View.VISIBLE);
+            buttonFeedback.setVisibility(View.VISIBLE);
+            buttonGift.setVisibility(View.VISIBLE);
+            buttonProfile.setVisibility(View.VISIBLE);
+        }
+        */
         deals.setOnScrollListener(new ScrollListener());
+
         deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
 
@@ -1505,8 +1530,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-
-
             if(view.getId()==deals.getId()){
 
                 final int firstItemPosition = deals.getFirstVisiblePosition();
@@ -1556,63 +1579,84 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     showFloating();
                     //buttonAnimator(0.0f,1.0f).setDuration(300).start();
                     //actionButton.setVisibility(View.VISIBLE);
-
-
-
                 }
                 */
+                if(deals.getAdapter().getCount()>=5) {
 
-                if(deals.getLastVisiblePosition()!=deals.getAdapter().getCount()-1 && !(deals.getChildAt(deals.getChildCount()-1).getBottom()<= deals.getHeight())){
+                    if (deals.getLastVisiblePosition() != deals.getAdapter().getCount() - 1 && !(deals.getChildAt(deals.getChildCount() - 1).getBottom() <= deals.getHeight())) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                actionButton.setAlpha(1.0f);
+                                buttonAbout.setAlpha(1.0f);
+                                buttonFeedback.setAlpha(1.0f);
+                                buttonGift.setAlpha(1.0f);
+                                buttonProfile.setAlpha(1.0f);
+                                actionButton.setVisibility(View.VISIBLE);
+                                buttonAbout.setVisibility(View.VISIBLE);
+                                buttonFeedback.setVisibility(View.VISIBLE);
+                                buttonGift.setVisibility(View.VISIBLE);
+                                buttonProfile.setVisibility(View.VISIBLE);
+                            }
+                        }, 300);
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            actionButton.setAlpha(1.0f);
-                            buttonAbout.setAlpha(1.0f);
-                            buttonFeedback.setAlpha(1.0f);
-                            buttonGift.setAlpha(1.0f);
-                            buttonProfile.setAlpha(1.0f);
-                            actionButton.setVisibility(View.VISIBLE);
-                            buttonAbout.setVisibility(View.VISIBLE);
-                            buttonFeedback.setVisibility(View.VISIBLE);
-                            buttonGift.setVisibility(View.VISIBLE);
-                            buttonProfile.setVisibility(View.VISIBLE);
-
-                        }
-                    }, 200);
-
-
-
-
-
-                }else if(deals.getLastVisiblePosition()==deals.getAdapter().getCount()-1 && (deals.getChildAt(deals.getChildCount()-1).getBottom()<= deals.getHeight())){
-
-                    buttonAnimator(1.0f,0.0f).setDuration(300).start();
-
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            actionButton.setVisibility(View.INVISIBLE);
-                            buttonAbout.setVisibility(View.INVISIBLE);
-                            buttonFeedback.setVisibility(View.INVISIBLE);
-                            buttonGift.setVisibility(View.INVISIBLE);
-                            buttonProfile.setVisibility(View.INVISIBLE);
-
-                        }
-                    }, 310);
-
-
+                    } else if (deals.getLastVisiblePosition() == deals.getAdapter().getCount() - 1 && (deals.getChildAt(deals.getChildCount() - 1).getBottom() <= deals.getHeight())) {
+                        buttonAnimator(1.0f, 0.0f).setDuration(300).start();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                actionButton.setVisibility(View.INVISIBLE);
+                                buttonAbout.setVisibility(View.INVISIBLE);
+                                buttonFeedback.setVisibility(View.INVISIBLE);
+                                buttonGift.setVisibility(View.INVISIBLE);
+                                buttonProfile.setVisibility(View.INVISIBLE);
+                            }
+                        }, 310);
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(), "Count " + deals.getCount(), Toast.LENGTH_SHORT).show();
+                    actionButton.setAlpha(1.0f);
+                    buttonAbout.setAlpha(1.0f);
+                    buttonFeedback.setAlpha(1.0f);
+                    buttonGift.setAlpha(1.0f);
+                    buttonProfile.setAlpha(1.0f);
+                    actionButton.setVisibility(View.VISIBLE);
+                    buttonAbout.setVisibility(View.VISIBLE);
+                    buttonFeedback.setVisibility(View.VISIBLE);
+                    buttonGift.setVisibility(View.VISIBLE);
+                    buttonProfile.setVisibility(View.VISIBLE);
                 }
-
                 currentPosition = firstItemPosition;
 
             }
 
         }
 
+        private boolean enabled;
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+
+              /*
+
+         boolean firstItem;
+
+
+            boolean loaded = SQLConnectAsyncTask.getListLoaded();
+            if(view.getId()==deals.getId() && loaded){
+
+                if(view.getCount()>0 && view!=null){
+
+                    firstItem = deals.getFirstVisiblePosition()==0;
+                     enabled = firstItem && (deals.getChildAt(0).getTop()==0);
+                }
+
+            }
+
+            //refresh.setEnabled(enabled);
+        */
+
+
 
         }
     }
@@ -1837,8 +1881,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public ItemPrev[] dealList(){
-
         ip = new ItemPrev[10];
+        ArrayList<ItemPrev> items = new ArrayList<>();
 
         setListSize(ip.length);
         // for(int i =0 ;i<50;i++) {
@@ -2022,7 +2066,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
 
-               
+
                 //download and display image from url
                 String url = list.get(i).getPhoto();
                 temp.setFetchImageURL(url);
@@ -2154,12 +2198,50 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private Location getLocation(){
+    public Location getLocation(){
         GPSTrack track = new GPSTrack(MainActivity.this);
         return track.getLocation();
     }
     private boolean isLocationOn(){
         GPSTrack t = new GPSTrack(MainActivity.this);
         return t.canGetLoc();
+    }
+
+    private SwipeRefreshLayout refresh;
+
+
+    private Handler handler= new Handler();
+
+
+    public void swipeRefresh(MainActivity activity){
+        final MainActivity a =activity;
+        refresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        refresh.setColorSchemeResources(R.color.darkRed, R.color.floatColour, R.color.deepOrange, R.color.peach, R.color.lightPeach);
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //if(getLocation()!=null) {
+                            SQLConnectAsyncTask.useDialog = false;
+                            new SQLConnectAsyncTask(getApplicationContext(),getLocation(), a).execute();
+                            if (SQLConnectAsyncTask.getListLoaded()) {
+                                refresh.setRefreshing(false);
+                            }
+                        //}
+
+                        /*else{
+                            load();
+                            floatButton();
+                            refresh.setRefreshing(false);
+                        }
+                        */
+                    }
+                });
+
+            }
+        });
     }
 }

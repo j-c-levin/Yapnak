@@ -37,10 +37,10 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
     private View view;
     private ItemPrev deal;
+
     private final String FILE_NAME = "yapnak_details";
 
     public AdapterPrev(Context context, int resourse, ItemPrev[] values) {
-
         super(context, R.layout.item2,values);
 
     }
@@ -83,13 +83,13 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             locationName.setText(deal.getDistanceTime());
             points.setText(deal.getPoints());
             hotDeal.setImageResource(deal.getHotDeal());
+            restaurantLogo.setImageResource(deal.getLogo());
 
             //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
              /*Ion.with(restaurantLogo)
                     .placeholder(R.drawable.manualicon)
                     .load(deal.getFetchImageURL());
              */
-             Toast.makeText(getContext(),"URL= " + deal.getFetchImageURL(),Toast.LENGTH_LONG).show();
              new DownloadImage(restaurantLogo).execute(deal.getFetchImageURL());
              //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
              //Load more images after authentication
@@ -152,9 +152,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
 
             if(bitmap!=null){
                 image.setImageBitmap(bitmap);
-            }else{
-                Toast.makeText(getContext(),"Error in loading images",Toast.LENGTH_LONG).show();
-                image.setImageResource(R.drawable.yapnakmonster);
             }
         }
     }
