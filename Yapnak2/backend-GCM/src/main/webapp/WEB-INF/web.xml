@@ -68,6 +68,22 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>client</servlet-name>#
+        <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>client</servlet-name>
+        <url-pattern>/client</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>signup</servlet-name>#
+        <jsp-file>/signup.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>signup</servlet-name>
+        <url-pattern>/signup</url-pattern>
+    </servlet-mapping>
 
     <static-files>
         <include path="**.html"></include>
@@ -76,6 +92,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </static-files>
 
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>splash.html</welcome-file>
     </welcome-file-list>
 </web-app>

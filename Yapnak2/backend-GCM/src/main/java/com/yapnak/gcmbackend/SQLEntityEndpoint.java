@@ -168,7 +168,7 @@ public class SQLEntityEndpoint {
             throw new OAuthRequestException("User is not valid " + user);
         }*/
         Connection connection;
-        double distance = 0.04;
+        double distance = 0.1;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
         SQLEntity sql = new SQLEntity();
         SQLList sqlList = new SQLList();
@@ -230,7 +230,7 @@ public class SQLEntityEndpoint {
                 stmt = connection.prepareStatement(statement);
                 stmt.setInt(1,rs.getInt("clientID"));
                 //TODO:put in user name here
-                stmt.setString(2,"jos-3343");
+                stmt.setString(2,"uch1000");
                 rt = stmt.executeQuery();
                 if (rt.next()) {
                     sql.setPoints(rt.getInt("points"));

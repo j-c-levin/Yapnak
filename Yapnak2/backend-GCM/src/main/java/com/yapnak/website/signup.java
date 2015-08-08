@@ -87,10 +87,11 @@ public class signup extends HttpServlet {
                 ResultSet rs = stmt.executeQuery();
                 //check if user has signed up
                 if (rs.next()) {
-                    sql = "INSERT INTO client (email, password) VALUES (?,?)";
+                    sql = "INSERT INTO client (email, password, clientPhoto) VALUES (?,?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, rs.getString("email"));
                     stmt.setString(2, rs.getString("password"));
+                    stmt.setString(3, "");
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {

@@ -5,7 +5,7 @@ angular.module('app', [])
 
     result.submit = function (userID, clientEmail) {
         var data = {
-            userID: userID, clientEmail: 'joshua.c.levin@gmail.com'
+            userID: userID, clientEmail: clientEmail
         }
         return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/sqlentity/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
             return response.data;
@@ -24,7 +24,7 @@ angular.module('app', [])
 
     $scope.submit = function () {
         $scope.userFound = "searching";
-        webfactory.submit($scope.text, 'joshua.c.levin@gmail.com').then(function (response) {
+        webfactory.submit($scope.text, 'uche').then(function (response) {
             if (response == "") {
                 $scope.userFound = false;
             }

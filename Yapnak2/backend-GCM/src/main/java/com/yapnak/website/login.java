@@ -93,6 +93,7 @@ public class login extends HttpServlet {
                 hash = cookies[i].getValue();
             }
         }
+        //change to &&?
         if (email != null || hash != null) {
             out.println("email: " + email + " hash: " + hash);
             try {
