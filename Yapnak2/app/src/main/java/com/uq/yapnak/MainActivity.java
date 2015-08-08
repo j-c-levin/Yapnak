@@ -171,7 +171,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
              SQLConnectAsyncTask.useDialog = true;
              new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
              if (SQLConnectAsyncTask.getListLoaded()) {
-                 dealList.notifyDataSetChanged();
+                 //dealList.notifyDataSetChanged();
              }
 
 
@@ -374,10 +374,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         });
 
             }else{
-                Intent intent = new Intent(this,Login.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Intent intent = new Intent(MainActivity.this,Login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         }
@@ -2244,4 +2244,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
     }
+
+
+
 }
