@@ -18,8 +18,8 @@
 
     <div class="main-container" ng-controller="main">
 
-        <div class="logo">
-            <img src="images/yapnakmonster.png" />
+        <div class="logo" href="/client.jsp">
+            <a href="/client.jsp"><img src="images/yapnakmonster.png" /></a>
         </div>
 
         <div class="input input-group-lg">
@@ -32,7 +32,7 @@
 
         <div ng-switch="userFound">
             <div ng-switch-when="true" ng-show="data.points >
-                0" class="container">
+                0" class="switch-false container">
                 <div class="points-container">
                     <h3 class="inline">Found a valid user, they have</h3>
                     <div class="inline points">{{data.points}}</div>
@@ -40,7 +40,10 @@
                 </div>
             </div>
             <div class="switch-false" ng-switch-when="false">
-                <h3>Sorry, we can't find that user.</h3>
+			<div class="points-container">
+			<h3>Sorry, we can't find that user.</h3>
+			</div>
+                
             </div>
             <div class="switch-false" ng-switch-when="searching">
                 <h3>Searching for user...</h3>

@@ -230,7 +230,7 @@ public class SQLEntityEndpoint {
                 stmt = connection.prepareStatement(statement);
                 stmt.setInt(1,rs.getInt("clientID"));
                 //TODO:put in user name here
-                stmt.setString(2,"3333");
+                stmt.setString(2,"jos-3343");
                 rt = stmt.executeQuery();
                 if (rt.next()) {
                     sql.setPoints(rt.getInt("points"));

@@ -28,7 +28,7 @@
       <form class="form-signin" id = "login" action="/login" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="clientID" name="username" class="form-control" placeholder="Email" required autofocus>
+        <input type="text" id="clientID" name="username" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <div class="checkbox">

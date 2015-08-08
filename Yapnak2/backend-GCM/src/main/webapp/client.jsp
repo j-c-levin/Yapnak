@@ -114,6 +114,7 @@ body {
             }
   %>
 
+<a class="form-signin" href="angular-index.html">Go to input page</a>
 <form action="/update" method="post">
   <div class="form-signin">
     <label for="exampleInputEmail1">Restaurant Name</label>
