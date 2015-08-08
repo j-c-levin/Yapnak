@@ -159,6 +159,7 @@
             android:theme="@style/AppTheme"
             android:name="com.uq.yapnak.MapPane"
             android:label="Yapnak"
+            android:configChanges="keyboardHidden|orientation"
             android:parentActivityName="com.uq.yapnak.MainActivity">
 
             <meta-data
