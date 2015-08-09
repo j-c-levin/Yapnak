@@ -164,9 +164,7 @@ public class SQLEntityEndpoint {
             path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
     public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y) throws NotFoundException, OAuthRequestException {
-/*        if (user == null) {
-            throw new OAuthRequestException("User is not valid " + user);
-        }*/
+
         Connection connection;
         double distance = 0.1;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
@@ -194,23 +192,19 @@ public class SQLEntityEndpoint {
             t = y + distance;
             stmt.setDouble(4, t);
             ResultSet rs = stmt.executeQuery();
-            rs.last();
-            logger.info("number of results: " + rs.getRow());
-            int p = rs.getRow();
-            rs.beforeFirst();
-            ResultSet rt = null;
-            for (int i = 0; i < p; i++) {
-                rs.next();
+            ResultSet rt;
+            while (rs.next()) {
                 sql = new SQLEntity();
+                sql.setId(rs.getInt("clientID"));
                 sql.setName(rs.getString("clientName"));
                 sql.setOffer(rs.getString("clientOffer"));
                 sql.setX(rs.getDouble("clientX"));
                 sql.setY(rs.getDouble("clientY"));
+                sql.setRating((rs.getDouble("rating")));
                 sql.setFoodStyle(rs.getString("clientFoodStyle"));
                 //get photo from blobstore
-                String url = null;
-                if (rs.getString("clientPhoto") != null) {
-                    logger.info("photo: " + rs.getString("clientPhoto"));
+                String url;
+                if (!rs.getString("clientPhoto").equals("")) {
                     if (SystemProperty.environment.value() ==
                             SystemProperty.Environment.Value.Production) {
                         ImagesService services = ImagesServiceFactory.getImagesService();
@@ -221,21 +215,18 @@ public class SQLEntityEndpoint {
                         url = rs.getString("clientPhoto");
                     }
                 } else {
-                    logger.info("no photo found");
                     url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
                 }
                 sql.setPhoto(url);
-                sql.setRating((rs.getDouble("rating")));
                 statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
                 stmt = connection.prepareStatement(statement);
-                stmt.setInt(1,rs.getInt("clientID"));
+                stmt.setInt(1, rs.getInt("clientID"));
                 //TODO:put in user name here
-                stmt.setString(2,"uch1000");
+                stmt.setString(2, "uch1000");
                 rt = stmt.executeQuery();
                 if (rt.next()) {
                     sql.setPoints(rt.getInt("points"));
-                }
-                else {
+                } else {
                     sql.setPoints(0);
                 }
                 list.add(sql);
@@ -252,7 +243,69 @@ public class SQLEntityEndpoint {
         }
     }
 
+    /**
+     * Returns the {@link SQLEntity} with the corresponding ID.
+     *
+     * @return the entity with the corresponding ID
+     * @throws NotFoundException if there is no {@code SQLEntity} with the provided ID.
+     */
+    @ApiMethod(
+            name = "getAllClients",
+            path = "getAllClients",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public allList getAllClients() throws NotFoundException, OAuthRequestException {
+/*        if (user == null) {
+            throw new OAuthRequestException("User is not valid " + user);
+        }*/
+        Connection connection;
+        List<all> list = new ArrayList<all>();
+        ResultSet rs = null;
+        all all = null;
+        allList alllist = new allList();
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            String statement = "SELECT * FROM client WHERE clientX BETWEEN -0.408929 AND -0.208929 AND clientY BETWEEN 51.58543 AND 51.78543";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                all = new all();
+                all.setClientID(rs.getInt("clientID"));
+                all.setEmail(rs.getString("email"));
+                all.setPassword(rs.getString("password"));
+                all.setAdmin(rs.getInt("admin"));
+                all.setClientName(rs.getString("clientName"));
+                all.setClientX(rs.getDouble("clientX"));
+                all.setClientY(rs.getDouble("clientY"));
+                all.setClientFoodStyle(rs.getString("clientFoodStyle"));
+                all.setClientOffer(rs.getString("clientOffer"));
+                all.setClientPhoto(rs.getString("clientPhoto"));
+                all.setSalt(rs.getString("salt"));
+                all.setRating(rs.getDouble("rating"));
+                list.add(all);
+            }
+            connection.close();
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        } finally {
+            alllist.setList(list);
+            return alllist;
+        }
+    }
+
+
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         int v;
@@ -284,7 +337,7 @@ public class SQLEntityEndpoint {
 
     static String secureInt() {
         SecureRandom random = new SecureRandom();
-        return new BigInteger(130, random).toString(32).substring(5,9);
+        return new BigInteger(130, random).toString(32).substring(5, 9);
     }
 
     public static int randInt() {
@@ -334,7 +387,7 @@ public class SQLEntityEndpoint {
 
                 //Generate userID
                 String userID = "";
-                userID = email.substring(0,4) + randInt();
+                userID = email.substring(0, 4) + randInt();
 
                 //Generate password
                 String newPassword = hashPassword(email);
@@ -345,8 +398,7 @@ public class SQLEntityEndpoint {
                 success = stmt.executeUpdate();
                 if (success == -1) {
                     logger.warning("Inserting user failed");
-                }
-                else {
+                } else {
                     logger.info("Successfully inserted the user");
                 }
             } catch (SQLException e) {

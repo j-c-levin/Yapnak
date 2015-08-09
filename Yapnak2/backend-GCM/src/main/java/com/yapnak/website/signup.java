@@ -64,6 +64,7 @@ public class signup extends HttpServlet {
         }
         return "";
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //Finish signup
@@ -81,31 +82,50 @@ public class signup extends HttpServlet {
                     Class.forName("com.mysql.jdbc.Driver");
                     connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
                 }
-                sql = "SELECT email, password FROM signup WHERE hash = ?";
+                sql = "SELECT email, password, name FROM signup WHERE hash = ?";
                 PreparedStatement stmt = connection.prepareStatement(sql);
                 stmt.setString(1, user);
                 ResultSet rs = stmt.executeQuery();
                 //check if user has signed up
                 if (rs.next()) {
-                    sql = "INSERT INTO client (email, password, clientPhoto) VALUES (?,?,?)";
+                    sql = "INSERT INTO client (email, password, clientPhoto, clientName) VALUES (?,?,?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, rs.getString("email"));
                     stmt.setString(2, rs.getString("password"));
                     stmt.setString(3, "");
+                    stmt.setString(4, rs.getString("name"));
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {
-                        out.println("You're signed up!  Redirecting you to login.");
-                        resp.setHeader("Refresh", "3; url=/index.jsp");
+                        out.println(rs.getString("name") + "has been signed up and informed.");
+                        //inform of signup
+                        Properties props = new Properties();
+                        Session session = Session.getDefaultInstance(props, null);
+                        String msgBody = "Your account on Yapnak has been activated, you can now sign in with your details here: http://yapnak.com/client, enjoy!";
+                        try {
+                            Message msg = new MimeMessage(session);
+                            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                            msg.addRecipient(Message.RecipientType.TO,
+                                    new InternetAddress(rs.getString("email")));
+                            msg.setSubject("Yapnak registration request received");
+                            msg.setText(msgBody);
+                            Transport.send(msg);
+                        } catch (AddressException e) {
+                            e.printStackTrace();
+                        } catch (MessagingException e) {
+                            e.printStackTrace();
+                        }
+                        resp.setHeader("Refresh", "3; url=/client");
                     } else {
                         out.println("Huh, something went wrong.  We'll look into it.");
-                        resp.setHeader("Refresh", "3; url=/index.jsp");
+                        //TODO:Email us about the error
+                        resp.setHeader("Refresh", "3; url=/register");
                     }
                 }
                 //redirect if user hasn't signed up
                 else {
                     out.println("You don't appear to have signed up, go ahead and join");
-                    resp.setHeader("Refresh", "3; url=/index.jsp");
+                    resp.setHeader("Refresh", "3; url=/register");
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -116,24 +136,30 @@ public class signup extends HttpServlet {
         //redirect if user hasn't signed up
         else {
             out.println("You don't appear to have signed up, go ahead and join");
-            resp.setHeader("Refresh", "3; url=/index.jsp");
+            resp.setHeader("Refresh", "3; url=/register");
         }
     }
 
-    public void sendEmail(String email) {
+    public void sendEmail(String email, String name) {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         String link = "https://yapnak-app.appspot.com/signup?user=" + hashPassword(email);
-        //TODO:what happens if they didn't request the email?
-        String msgBody = "Hey there!\n\nYou've asked to signup to Yapnak, a startup connecting hungry people with quality lunchtime deals." +
-                "\n\nTo activate your account, please click the link: \n\n" + link + "\n\n\n***Don't reply to this e-mail***";
-        //TODO:integrate help support?  set it so that e-mails are forwarded to the yapnak account?
+        String msgBody = "Hey there,\n\nYou've asked to sign up to Yapnak, a platform connecting hungry people with quality deals.  We'll validate your account shortly, but if you didn't sign up then please reply and let us know!";
         try {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
             msg.addRecipient(Message.RecipientType.TO,
                     new InternetAddress(email));
-            msg.setSubject("Activate your Yapnak account");
+            msg.setSubject("Yapnak registration request received");
+            msg.setText(msgBody);
+            Transport.send(msg);
+
+            msgBody = name + " has signed up through the Yapnak registration portal.  To confirm their account, click: " + link + "\n\nTo ignore, do nothing.";
+            msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+            msg.addRecipient(Message.RecipientType.TO,
+                    new InternetAddress("yapnak.uq@gmail.com"));
+            msg.setSubject("Registration requested: " + name);
             msg.setText(msgBody);
             Transport.send(msg);
         } catch (AddressException e) {
@@ -143,6 +169,7 @@ public class signup extends HttpServlet {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -167,6 +194,7 @@ public class signup extends HttpServlet {
             try {
                 String email = req.getParameter("email");
                 String password = req.getParameter("password");
+                String name = req.getParameter("businessname");
                 sql = "SELECT email from signup where email = ?";
                 PreparedStatement stmt = connection.prepareStatement(sql);
                 stmt.setString(1, email);
@@ -174,26 +202,29 @@ public class signup extends HttpServlet {
 
                 //Resend email
                 if (rs.next()) {
-                    out.println("It looks like you've already signed up, we'll go ahead and resend confirmation");
-                    resp.setHeader("Refresh", "3; url=/index.jsp");
-                    sendEmail(email);
+                    out.println("It looks like you've already signed up, we'll go ahead and resend the confirmation");
+                    resp.setHeader("Refresh", "3; url=/client");
+                    name = name + " (re-submit)";
+                    sendEmail(email, name);
                 }
                 //Send e-mail confirmation
                 else {
-                    sql = "INSERT INTO signup (email, hash, password) VALUES (?,?,?)";
+                    sql = "INSERT INTO signup (email, hash, password, name) VALUES (?,?,?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, email);
                     stmt.setString(2, hashPassword(email));
                     stmt.setString(3, hashPassword(password));
+                    stmt.setString(4, name);
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {
-                        sendEmail(email);
+                        sendEmail(email, name);
                         out.println("Check your e-mail for confirmation");
-                        resp.setHeader("Refresh", "3; url=/index.jsp");
+                        resp.setHeader("Refresh", "3; url=/client");
                     } else {
                         out.println("Huh, something didn't work");
-                        resp.setHeader("Refresh", "3; url=/index.jsp");
+                        //TODO:Forward this somewhere for our attention
+                        resp.setHeader("Refresh", "3; url=/client");
                     }
                 }
             } finally {

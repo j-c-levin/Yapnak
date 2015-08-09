@@ -72,6 +72,7 @@ body {
         <h2 class="form-signin-heading">Sign up here</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="email" id="clientID" name="email" class="form-control" placeholder="Email" required autofocus>
+                <input type="text" id="businessname" name="businessname" class="form-control" placeholder="Business name" required>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
 

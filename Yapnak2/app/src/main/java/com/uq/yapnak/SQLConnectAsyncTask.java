@@ -75,7 +75,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     protected void onPostExecute(SQLList result) {
         Location loc = main.getLocation();
         if (result != null && loc!=null) {
-            Log.d("Debug", "completed: " + result.getList());
+            Log.d("Debug", "completed: " + result.getList().size());
             main.load(result);
             main.floatButton();
             main.swipeRefresh(main);

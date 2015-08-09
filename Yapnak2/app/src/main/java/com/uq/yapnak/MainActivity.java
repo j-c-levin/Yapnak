@@ -2054,10 +2054,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //download and display image from url
                 String url = list.get(i).getPhoto();
                 temp.setFetchImageURL(url);
-
+                Log.d("debug", list.get(i).getName());
                 /////////////////////////////////////////////
                 temp.setMainText(list.get(i).getName());
-                temp.setRestaurantName(list.get(i).getName());
+                temp.setRestaurantName(list.get(i).getFoodStyle());
                 temp.setSubText(list.get(i).getOffer());
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());

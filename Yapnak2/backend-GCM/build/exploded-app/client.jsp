@@ -117,10 +117,10 @@ body {
 <a class="form-signin" href="angular-index.html">Go to input page</a>
 <form action="/update" method="post">
   <div class="form-signin">
-    <label for="exampleInputEmail1">Restaurant Type</label>
+    <label for="exampleInputEmail1">Restaurant Name</label>
     <input type="text" class="form-control" name="name" id="name" placeholder="<%= rs.getString("clientName") %>">
   </div>
-  <div class="form-signin">  <label for="exampleInputPassword1">Restaurant Name</label>
+  <div class="form-signin">  <label for="exampleInputPassword1">Restaurant Type</label>
     <input type="text" class="form-control" name="type" id="type" placeholder="<%= rs.getString("clientFoodStyle") %>">
   </div>
   <div class="form-signin">
