@@ -201,42 +201,50 @@ public class SQLEntityEndpoint {
             stmt.setDouble(4, t);
             ResultSet rs = stmt.executeQuery();
             ResultSet rt;
-            while (rs.next()) {
-                sql = new SQLEntity();
-                sql.setId(rs.getInt("clientID"));
-                sql.setName(rs.getString("clientName"));
-                sql.setOffer(rs.getString("clientOffer"));
-                sql.setX(rs.getDouble("clientX"));
-                sql.setY(rs.getDouble("clientY"));
-                sql.setRating((rs.getDouble("rating")));
-                sql.setFoodStyle(rs.getString("clientFoodStyle"));
-                //get photo from blobstore
-                String url;
-                if (!rs.getString("clientPhoto").equals("")) {
-                    if (SystemProperty.environment.value() ==
-                            SystemProperty.Environment.Value.Production) {
-                        ImagesService services = ImagesServiceFactory.getImagesService();
-                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-                        url = services.getServingUrl(serve);
-                        url = url + "=s100";
+            if (rs.next()) {
+                rs.beforeFirst();
+                while (rs.next()) {
+                    sql = new SQLEntity();
+                    sql.setId(rs.getInt("clientID"));
+                    sql.setName(rs.getString("clientName"));
+                    sql.setOffer(rs.getString("clientOffer"));
+                    sql.setX(rs.getDouble("clientX"));
+                    sql.setY(rs.getDouble("clientY"));
+                    sql.setRating((rs.getDouble("rating")));
+                    sql.setFoodStyle(rs.getString("clientFoodStyle"));
+                    //get photo from blobstore
+                    String url;
+                    if (!rs.getString("clientPhoto").equals("")) {
+                        if (SystemProperty.environment.value() ==
+                                SystemProperty.Environment.Value.Production) {
+                            ImagesService services = ImagesServiceFactory.getImagesService();
+                            ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
+                            url = services.getServingUrl(serve);
+                            url = url + "=s100";
+                        } else {
+                            url = rs.getString("clientPhoto");
+                        }
                     } else {
-                        url = rs.getString("clientPhoto");
+                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
                     }
-                } else {
-                    url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                    sql.setPhoto(url);
+                    statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setInt(1, rs.getInt("clientID"));
+                    //TODO:put in user name here
+                    stmt.setString(2, "uch1000");
+                    rt = stmt.executeQuery();
+                    if (rt.next()) {
+                        sql.setPoints(rt.getInt("points"));
+                    } else {
+                        sql.setPoints(0);
+                    }
+                    list.add(sql);
                 }
-                sql.setPhoto(url);
-                statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
-                stmt = connection.prepareStatement(statement);
-                stmt.setInt(1, rs.getInt("clientID"));
-                //TODO:put in user name here
-                stmt.setString(2, "uch1000");
-                rt = stmt.executeQuery();
-                if (rt.next()) {
-                    sql.setPoints(rt.getInt("points"));
-                } else {
-                    sql.setPoints(0);
-                }
+            } else {
+                sql = new SQLEntity();
+                sql.setOffer("No clients found nearby :(");
+                sql.setName("Know any decent places?  Tell them to sign up!");
                 list.add(sql);
             }
 
