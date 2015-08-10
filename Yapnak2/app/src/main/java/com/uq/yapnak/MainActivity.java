@@ -1583,7 +1583,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         }, 310);
                     }
                 }else{
-                    Toast.makeText(getApplicationContext(), "Count " + deals.getCount(), Toast.LENGTH_SHORT).show();
                     actionButton.setAlpha(1.0f);
                     buttonAbout.setAlpha(1.0f);
                     buttonFeedback.setAlpha(1.0f);
@@ -1825,25 +1824,28 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     public PromoItem[] gift(){
-        PromoItem [] list = new PromoItem[4];
 
-        for(int i=0;i<list.length;i++){
+        ArrayList<PromoItem> items = new ArrayList<>();
+
+        for(int i=0;i<4;i++){
 
             PromoItem temp = new PromoItem();
             temp.setImage(R.drawable.gift);
             temp.setPromoSubTitle("Free Cookie!");
             temp.setPromoTitle("Free Item Alert!");
-            list[i]= temp;
+            items.add(temp);
         }
+
+        PromoItem[]list = items.toArray(new PromoItem[items.size()]);
 
         return list;
     }
 
     public ItemPrev[] dealList(){
-        ip = new ItemPrev[10];
+        //ip = new ItemPrev[10];
         ArrayList<ItemPrev> items = new ArrayList<>();
 
-        setListSize(ip.length);
+        setListSize(10);
         // for(int i =0 ;i<50;i++) {
 
         ItemPrev temp = new ItemPrev();
@@ -1860,7 +1862,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //TODO: points
         temp.setPoints("to be added");
         //ip[0] = temp;
-        ip[0] = temp;
+        items.add(temp);
 
 
         ItemPrev temp2 = new ItemPrev();
@@ -1875,7 +1877,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp2.setSubText("Buy 1 Get 1 Free = £4");
         //TODO: points
         temp2.setPoints("to be added");
-        ip[1] = temp2;
+        items.add(temp2);
 
 
         ItemPrev temp3 = new ItemPrev();
@@ -1890,7 +1892,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp3.setSubText("Half Price = £4");
         //TODO: points
         temp3.setPoints("to be added");
-        ip[2] = temp3;
+        items.add(temp3);
 
 
         ItemPrev temp4 = new ItemPrev();
@@ -1905,7 +1907,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp4.setSubText("£10 off Meal - £5");
         //TODO: points
         temp4.setPoints("to be added");
-        ip[3] = temp4;
+        items.add(temp4);;
 
 
         ItemPrev temp5 = new ItemPrev();
@@ -1920,7 +1922,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp5.setSubText("Sandwich,Drink,Snack = £3 ");
         //TODO: points
         temp5.setPoints("to be added");
-        ip[4] = temp5;
+        items.add(temp5);;
 
 
         ItemPrev temp6 = new ItemPrev();
@@ -1936,7 +1938,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //TODO: points
         temp6.setPoints("to be added");
         //ip[0] = temp;
-        ip[5] = temp6;
+        items.add(temp6);
 
 
         ItemPrev temp7 = new ItemPrev();
@@ -1952,7 +1954,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp7.setSubText("Any Size Pizza  = £4");
         //TODO: points
         temp7.setPoints("to be added");
-        ip[6] = temp7;
+        items.add(temp7);
 
 
         ItemPrev temp8 = new ItemPrev();
@@ -1967,7 +1969,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp8.setSubText("Half Price = £4");
         //TODO: points
         temp8.setPoints("to be added");
-        ip[7] = temp8;
+        items.add(temp8);
 
 
         ItemPrev temp9 = new ItemPrev();
@@ -1982,7 +1984,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp9.setSubText("£10 off Meal - £5");
         //TODO: points
         temp9.setPoints("to be added");
-        ip[8] = temp9;
+        items.add(temp9);
 
 
         ItemPrev temp10 = new ItemPrev();
@@ -1997,12 +1999,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         temp10.setSubText("Sandwich,Drink,Snack = £3 ");
         //TODO: points
         temp10.setPoints("to be added");
-        ip[9] = temp10;
+        items.add(temp10);
 
-        // }
-
-
-
+        ip = items.toArray(new ItemPrev[items.size()]);
 
         return ip;
 
@@ -2010,12 +2009,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(SQLList sql) {
 
-
-
-
         try{
             List<SQLEntity> list = new ArrayList<SQLEntity>(sql.getList());
-            Toast.makeText(this,"Size = " + list.size(),Toast.LENGTH_SHORT).show();
 
             setListSize(list.size());
 
