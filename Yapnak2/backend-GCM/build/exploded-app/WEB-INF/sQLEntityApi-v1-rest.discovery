@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/RwmOU_yQHksU8CNHsygRy5yDGU4\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/oSZ7rqRF3xiq1vptjzgTw-CXcW0\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -201,6 +201,37 @@
   }
  },
  "methods": {
+  "feedback": {
+   "id": "sQLEntityApi.feedback",
+   "path": "feedback",
+   "httpMethod": "POST",
+   "parameters": {
+    "Message": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "type": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "Message",
+    "type",
+    "userID"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getAllClients": {
    "id": "sQLEntityApi.getAllClients",
    "path": "getAllClients",
@@ -243,23 +274,23 @@
   },
   "getUser": {
    "id": "sQLEntityApi.getUser",
-   "path": "sqlentity/{userID}/{clientEmail}",
+   "path": "getUser",
    "httpMethod": "POST",
    "parameters": {
     "clientEmail": {
      "type": "string",
      "required": true,
-     "location": "path"
+     "location": "query"
     },
     "userID": {
      "type": "string",
      "required": true,
-     "location": "path"
+     "location": "query"
     }
    },
    "parameterOrder": [
-    "userID",
-    "clientEmail"
+    "clientEmail",
+    "userID"
    ],
    "response": {
     "$ref": "PointsEntity"

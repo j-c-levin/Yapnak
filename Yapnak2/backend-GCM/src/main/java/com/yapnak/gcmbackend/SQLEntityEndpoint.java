@@ -15,6 +15,7 @@ import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,10 +27,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 /**
  * WARNING: This generated code is intended as a sample or starting point for using a
@@ -66,6 +73,7 @@ public class SQLEntityEndpoint {
 
     @ApiMethod(
             name = "getUser",
+            path = "getUser",
             httpMethod = ApiMethod.HttpMethod.POST)
     public PointsEntity getUser(@Named("userID") String userID, @Named("clientEmail") String clientEmail) {
         Connection connection;
@@ -411,6 +419,67 @@ public class SQLEntityEndpoint {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @ApiMethod(
+            name = "feedback",
+            path = "feedback",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public void feedback(@Named("type") int type, @Named("Message") String message, @Named("userID") String userID) throws UnsupportedEncodingException,MessagingException  {
+
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        javax.mail.Message msg = new MimeMessage(session);
+        switch (type) {
+            //1 = positive
+            case 1:
+                props = new Properties();
+                session = Session.getDefaultInstance(props, null);
+                msg = new MimeMessage(session);
+                try {
+                    msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.setSubject("Positive feedback");
+                    msg.setText("From: " + userID + " - " + message);
+                    Transport.send(msg);
+                } finally {
+                }
+                break;
+            //1 = negative, general
+            case 2:
+                props = new Properties();
+                session = Session.getDefaultInstance(props, null);
+                msg = new MimeMessage(session);
+                try {
+                    msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.setSubject("Negative feedback");
+                    msg.setText("From: " + userID + " - " + message);
+                    Transport.send(msg);
+                } finally {
+
+                }
+                break;
+            //3 = negative, client didn't accept user code
+            case 3:
+                props = new Properties();
+                session = Session.getDefaultInstance(props, null);
+                msg = new MimeMessage(session);
+                try {
+                    msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.setSubject("Negative feedback - client didn't accept code");
+                    msg.setText("From: " + userID + " - " + message);
+                    Transport.send(msg);
+                } finally {
+
+                }
+                break;
+        }
+        return;
     }
 
 
