@@ -10,7 +10,6 @@ angular.module('app', [])
         return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/sqlentity/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
             return response.data;
         }, function (error) {
-            console.log("called");
             return error;
         })
     };

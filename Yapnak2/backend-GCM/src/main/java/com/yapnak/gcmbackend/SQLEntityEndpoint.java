@@ -15,6 +15,7 @@ import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,10 +27,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 /**
  * WARNING: This generated code is intended as a sample or starting point for using a
@@ -66,6 +73,7 @@ public class SQLEntityEndpoint {
 
     @ApiMethod(
             name = "getUser",
+            path = "getUser",
             httpMethod = ApiMethod.HttpMethod.POST)
     public PointsEntity getUser(@Named("userID") String userID, @Named("clientEmail") String clientEmail) {
         Connection connection;
@@ -90,7 +98,7 @@ public class SQLEntityEndpoint {
                     logger.info("found user");
 
                     //push notification
-                    String message = "you have gained points!";
+                    String message = "You've gained points, nice one.";
                     Sender sender = new Sender(API_KEY);
                     Message msg = new Message.Builder().addData("message", message).build();
                     Result result = sender.send(msg, rs.getString("pushKey"), 5);
@@ -164,9 +172,7 @@ public class SQLEntityEndpoint {
             path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
     public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y) throws NotFoundException, OAuthRequestException {
-/*        if (user == null) {
-            throw new OAuthRequestException("User is not valid " + user);
-        }*/
+
         Connection connection;
         double distance = 0.1;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
@@ -194,50 +200,51 @@ public class SQLEntityEndpoint {
             t = y + distance;
             stmt.setDouble(4, t);
             ResultSet rs = stmt.executeQuery();
-            rs.last();
-            logger.info("number of results: " + rs.getRow());
-            int p = rs.getRow();
-            rs.beforeFirst();
-            ResultSet rt = null;
-            for (int i = 0; i < p; i++) {
-                rs.next();
-                sql = new SQLEntity();
-                sql.setName(rs.getString("clientName"));
-                sql.setOffer(rs.getString("clientOffer"));
-                sql.setX(rs.getDouble("clientX"));
-                sql.setY(rs.getDouble("clientY"));
-                sql.setFoodStyle(rs.getString("clientFoodStyle"));
-                //get photo from blobstore
-                String url = null;
-                if (rs.getString("clientPhoto") != null) {
-                    logger.info("photo: " + rs.getString("clientPhoto"));
-                    if (SystemProperty.environment.value() ==
-                            SystemProperty.Environment.Value.Production) {
-                        ImagesService services = ImagesServiceFactory.getImagesService();
-                        ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-                        url = services.getServingUrl(serve);
-                        url = url + "=s100";
+            ResultSet rt;
+            if (rs.next()) {
+                rs.beforeFirst();
+                while (rs.next()) {
+                    sql = new SQLEntity();
+                    sql.setId(rs.getInt("clientID"));
+                    sql.setName(rs.getString("clientName"));
+                    sql.setOffer(rs.getString("clientOffer"));
+                    sql.setX(rs.getDouble("clientX"));
+                    sql.setY(rs.getDouble("clientY"));
+                    sql.setRating((rs.getDouble("rating")));
+                    sql.setFoodStyle(rs.getString("clientFoodStyle"));
+                    //get photo from blobstore
+                    String url;
+                    if (!rs.getString("clientPhoto").equals("")) {
+                        if (SystemProperty.environment.value() ==
+                                SystemProperty.Environment.Value.Production) {
+                            ImagesService services = ImagesServiceFactory.getImagesService();
+                            ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
+                            url = services.getServingUrl(serve);
+                            url = url + "=s100";
+                        } else {
+                            url = rs.getString("clientPhoto");
+                        }
                     } else {
-                        url = rs.getString("clientPhoto");
+                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
                     }
-                } else {
-                    logger.info("no photo found");
-                    url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                    sql.setPhoto(url);
+                    statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setInt(1, rs.getInt("clientID"));
+                    //TODO:put in user name here
+                    stmt.setString(2, "uch1000");
+                    rt = stmt.executeQuery();
+                    if (rt.next()) {
+                        sql.setPoints(rt.getInt("points"));
+                    } else {
+                        sql.setPoints(0);
+                    }
+                    list.add(sql);
                 }
-                sql.setPhoto(url);
-                sql.setRating((rs.getDouble("rating")));
-                statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
-                stmt = connection.prepareStatement(statement);
-                stmt.setInt(1,rs.getInt("clientID"));
-                //TODO:put in user name here
-                stmt.setString(2,"uch1000");
-                rt = stmt.executeQuery();
-                if (rt.next()) {
-                    sql.setPoints(rt.getInt("points"));
-                }
-                else {
-                    sql.setPoints(0);
-                }
+            } else {
+                sql = new SQLEntity();
+                sql.setOffer("No clients found nearby :(");
+                sql.setName("Know any decent places?  Tell them to sign up!");
                 list.add(sql);
             }
 
@@ -252,7 +259,69 @@ public class SQLEntityEndpoint {
         }
     }
 
+    /**
+     * Returns the {@link SQLEntity} with the corresponding ID.
+     *
+     * @return the entity with the corresponding ID
+     * @throws NotFoundException if there is no {@code SQLEntity} with the provided ID.
+     */
+    @ApiMethod(
+            name = "getAllClients",
+            path = "getAllClients",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public allList getAllClients() throws NotFoundException, OAuthRequestException {
+/*        if (user == null) {
+            throw new OAuthRequestException("User is not valid " + user);
+        }*/
+        Connection connection;
+        List<all> list = new ArrayList<all>();
+        ResultSet rs = null;
+        all all = null;
+        allList alllist = new allList();
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            String statement = "SELECT * FROM client WHERE clientX BETWEEN -0.408929 AND -0.208929 AND clientY BETWEEN 51.58543 AND 51.78543";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                all = new all();
+                all.setClientID(rs.getInt("clientID"));
+                all.setEmail(rs.getString("email"));
+                all.setPassword(rs.getString("password"));
+                all.setAdmin(rs.getInt("admin"));
+                all.setClientName(rs.getString("clientName"));
+                all.setClientX(rs.getDouble("clientX"));
+                all.setClientY(rs.getDouble("clientY"));
+                all.setClientFoodStyle(rs.getString("clientFoodStyle"));
+                all.setClientOffer(rs.getString("clientOffer"));
+                all.setClientPhoto(rs.getString("clientPhoto"));
+                all.setSalt(rs.getString("salt"));
+                all.setRating(rs.getDouble("rating"));
+                list.add(all);
+            }
+            connection.close();
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        } finally {
+            alllist.setList(list);
+            return alllist;
+        }
+    }
+
+
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
     static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         int v;
@@ -284,7 +353,7 @@ public class SQLEntityEndpoint {
 
     static String secureInt() {
         SecureRandom random = new SecureRandom();
-        return new BigInteger(130, random).toString(32).substring(5,9);
+        return new BigInteger(130, random).toString(32).substring(5, 9);
     }
 
     public static int randInt() {
@@ -334,7 +403,7 @@ public class SQLEntityEndpoint {
 
                 //Generate userID
                 String userID = "";
-                userID = email.substring(0,4) + randInt();
+                userID = email.substring(0, 4) + randInt();
 
                 //Generate password
                 String newPassword = hashPassword(email);
@@ -345,8 +414,7 @@ public class SQLEntityEndpoint {
                 success = stmt.executeUpdate();
                 if (success == -1) {
                     logger.warning("Inserting user failed");
-                }
-                else {
+                } else {
                     logger.info("Successfully inserted the user");
                 }
             } catch (SQLException e) {
@@ -361,5 +429,305 @@ public class SQLEntityEndpoint {
         }
     }
 
+    @ApiMethod(
+            name = "feedback",
+            path = "feedback",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public void feedback(@Named("type") int type, @Named("Message") String message, @Named("userID") String userID) throws UnsupportedEncodingException, MessagingException {
 
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        javax.mail.Message msg = new MimeMessage(session);
+        switch (type) {
+            //1 = positive
+            case 1:
+                props = new Properties();
+                session = Session.getDefaultInstance(props, null);
+                msg = new MimeMessage(session);
+                try {
+                    msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.setSubject("Positive feedback");
+                    msg.setText("From: " + userID + " - " + message);
+                    Transport.send(msg);
+                } finally {
+                }
+                break;
+            //1 = negative, general
+            case 2:
+                props = new Properties();
+                session = Session.getDefaultInstance(props, null);
+                msg = new MimeMessage(session);
+                try {
+                    msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.setSubject("Negative feedback");
+                    msg.setText("From: " + userID + " - " + message);
+                    Transport.send(msg);
+                } finally {
+
+                }
+                break;
+            //3 = negative, client didn't accept user code
+            case 3:
+                props = new Properties();
+                session = Session.getDefaultInstance(props, null);
+                msg = new MimeMessage(session);
+                try {
+                    msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                            new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                    msg.setSubject("Negative feedback - client didn't accept code");
+                    msg.setText("From: " + userID + " - " + message);
+                    Transport.send(msg);
+                } finally {
+
+                }
+                break;
+        }
+        return;
+    }
+
+    @ApiMethod(
+            name = "setUserDetails",
+            path = "setUserDetails",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public void setUserDetails(@Named("number") String mobNo, @Named("fName") String fName, @Named("lName") String lName, @Named("userID") String userID) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            int success = -1;
+            try {
+                String statement = "UPDATE user SET mobNo = ?, firstName = ?, lastName = ? WHERE userID = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, mobNo);
+                stmt.setString(2, fName);
+                stmt.setString(3, lName);
+                stmt.setString(4, userID);
+                success = stmt.executeUpdate();
+            } finally {
+                connection.close();
+                return;
+            }
+        } finally {
+            return;
+        }
+    }
+
+    @ApiMethod(
+            name = "getUserDetails",
+            path = "getUserDetails",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public UserEntity getUserDetails(@Named("userID") String userID) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        UserEntity user = new UserEntity();
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT firstName, lastName, mobNo, email FROM user WHERE userID = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, userID);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    user.setEmail(rs.getString("email"));
+                    user.setFirstName(rs.getString("firstName"));
+                    user.setLastName(rs.getString("lastName"));
+                    user.setMobNo(rs.getString("mobNo"));
+                }
+            } finally {
+                connection.close();
+                return user;
+            }
+        } finally {
+            return user;
+        }
+    }
+
+    @ApiMethod(
+            name = "recommend",
+            path = "recommend",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    private RecommendEntity recommend(@Named("user") String userID, @Named("clientID") int clientID, @Named("this user") String r_userID) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        RecommendEntity recommendation = new RecommendEntity();
+        String pushKey;
+        String statement;
+        PreparedStatement stmt;
+        ResultSet rs;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                //check if userID is in system
+                statement = "SELECT pushKey FROM user WHERE userID = ?";
+                stmt = connection.prepareStatement(statement);
+                stmt.setString(1, userID);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    //UserID exists in system, check if referred
+                    pushKey = rs.getString("pushKey");
+                    statement = "SELECT referrerID FROM points WHERE clientID = ? AND userID = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setInt(1, clientID);
+                    stmt.setString(2, userID);
+                    rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        //user is also ready referred
+                        recommendation.setSuccess(0);
+                    } else {
+                        //user hasn't been recommended, check the row exists
+                        statement = "SELECT points FROM points where clientID = ? and userID = ?";
+                        stmt = connection.prepareStatement(statement);
+                        stmt.setInt(1, clientID);
+                        stmt.setString(2, userID);
+                        rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            //update the referrerID
+                            statement = "UPDATE points SET referrerID = ? where clientID = ? and userID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setString(1, r_userID);
+                            stmt.setInt(2, clientID);
+                            stmt.setString(3, userID);
+                            stmt.executeUpdate();
+                            recommendation.setSuccess(1);
+                            //post update
+                            statement = "SELECT clientName from client where clientID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setInt(1, clientID);
+                            rs = stmt.executeQuery();
+                            rs.next();
+                            //push notification
+                            String message = "You have been recommended to eat at " + rs.getString("clientName");
+                            Sender sender = new Sender(API_KEY);
+                            Message msg = new Message.Builder().addData("message", message).build();
+                            sender.send(msg, pushKey, 5);
+                        } else {
+                            //add a new row to the points table with referrerID
+                            statement = "INSET INTO points (userID, clientID, referrerID) VALUES (?,?,?)";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setString(1, userID);
+                            stmt.setInt(2, clientID);
+                            stmt.setString(3, r_userID);
+                            stmt.executeUpdate();
+                            recommendation.setSuccess(1);
+                            //post update
+                            statement = "SELECT clientName from client where clientID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setInt(1, clientID);
+                            rs = stmt.executeQuery();
+                            rs.next();
+                            //push notification
+                            String message = "You have been recommended to eat at " + rs.getString("clientName");
+                            Sender sender = new Sender(API_KEY);
+                            Message msg = new Message.Builder().addData("message", message).build();
+                            sender.send(msg, pushKey, 5);
+                        }
+                    }
+                } else {
+                    //check if it's a mobile number
+                    statement = "SELECT pushKey FROM user WHERE mobNo = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setString(1, userID);
+                    rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        //mobNo is in system
+                        pushKey = rs.getString("pushKey");
+                        statement = "SELECT referrerID FROM points WHERE clientID = ? AND userID = ?";
+                        stmt = connection.prepareStatement(statement);
+                        stmt.setInt(1, clientID);
+                        stmt.setString(2, userID);
+                        rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            //user is also ready referred
+                            recommendation.setSuccess(0);
+                        } else {
+                            //user hasn't been recommended, check the row exists
+                            statement = "SELECT points FROM points where clientID = ? and userID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setInt(1, clientID);
+                            stmt.setString(2, userID);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                //update the referrerID
+                                statement = "UPDATE points SET referrerID = ? where clientID = ? and userID = ?";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setString(1, r_userID);
+                                stmt.setInt(2, clientID);
+                                stmt.setString(3, userID);
+                                stmt.executeUpdate();
+                                recommendation.setSuccess(1);
+                                //post update
+                                statement = "SELECT clientName from client where clientID = ?";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setInt(1, clientID);
+                                rs = stmt.executeQuery();
+                                rs.next();
+                                //push notification
+                                String message = "You have been recommended to eat at " + rs.getString("clientName");
+                                Sender sender = new Sender(API_KEY);
+                                Message msg = new Message.Builder().addData("message", message).build();
+                                sender.send(msg, pushKey, 5);
+                            } else {
+                                //add a new row to the points table with referrerID
+                                statement = "INSET INTO points (userID, clientID, referrerID) VALUES (?,?,?)";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setString(1, userID);
+                                stmt.setInt(2, clientID);
+                                stmt.setString(3, r_userID);
+                                stmt.executeUpdate();
+                                recommendation.setSuccess(1);
+                                //post update
+                                statement = "SELECT clientName from client where clientID = ?";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setInt(1, clientID);
+                                rs = stmt.executeQuery();
+                                rs.next();
+                                //push notification
+                                String message = "You have been recommended to eat at " + rs.getString("clientName");
+                                Sender sender = new Sender(API_KEY);
+                                Message msg = new Message.Builder().addData("message", message).build();
+                                sender.send(msg, pushKey, 5);
+                            }
+                        }
+                    } else {
+                        //user isn't in system, send a text
+                        recommendation.setSuccess(2);
+                    }
+                }
+            } finally {
+                connection.close();
+                return recommendation;
+            }
+        } finally {
+            return recommendation;
+        }
+    }
 }

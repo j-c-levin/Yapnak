@@ -13,7 +13,6 @@ import android.app.FragmentManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
@@ -23,14 +22,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,11 +68,9 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.TreeSet;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -1854,157 +1849,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         // for(int i =0 ;i<50;i++) {
 
         ItemPrev temp = new ItemPrev();
-        temp.setLatitude(51.523992);
-        temp.setLongitude(-0.03798);
+        temp.setLatitude(90.0);
+        temp.setLongitude(0.0);
         //TODO:add generic location to database
-        temp.setDistanceTime("2 mins");
         //TODO: add photo download from google storage
-        temp.setLogo(R.drawable.mcdonalds);
-        temp.setMainText("Happy Meal");
-        temp.setRestaurantName("Mc Donalds");
-        temp.setSubText("Happy Meal £2");
-        temp.setHotDeal(R.drawable.yapnak_colorsmall);
+        temp.setMainText("Is your internet on/location enabled?");
+        temp.setRestaurantName("We couldn't connect, sorry");
         //TODO: points
-        temp.setPoints("to be added");
         //ip[0] = temp;
         items.add(temp);
-
-
-        ItemPrev temp2 = new ItemPrev();
-        temp2.setLatitude(51.523992);
-        temp2.setLongitude(-0.03798);
-        //TODO:add generic location to database
-        temp2.setDistanceTime("1 min");
-        //TODO: add photo download from google storage
-        temp2.setLogo(R.drawable.wrapitup);
-        temp2.setMainText("Burrito Deal");
-        temp2.setRestaurantName("Wrap It Up");
-        temp2.setSubText("Buy 1 Get 1 Free = £4");
-        //TODO: points
-        temp2.setPoints("to be added");
-        items.add(temp2);
-
-
-        ItemPrev temp3 = new ItemPrev();
-        //TODO:add generic location to database
-        temp3.setLatitude(51.523992);
-        temp3.setLongitude(-0.03798);
-        temp3.setDistanceTime("1 min");
-        //TODO: add photo download from google storage
-        temp3.setLogo(R.drawable.pizzaexpresslogo);
-        temp3.setMainText("Any Size Pizza");
-        temp3.setRestaurantName("Pizza Express");
-        temp3.setSubText("Half Price = £4");
-        //TODO: points
-        temp3.setPoints("to be added");
-        items.add(temp3);
-
-
-        ItemPrev temp4 = new ItemPrev();
-        //TODO:add generic location to database
-        temp4.setLatitude(51.523992);
-        temp4.setLongitude(-0.03798);
-        temp4.setDistanceTime("3 mins");
-        //TODO: add photo download from google storage
-        temp4.setLogo(R.drawable.gbklogo);
-        temp4.setMainText("Main Meal Deal");
-        temp4.setRestaurantName("Gourmet Burger Kitchen");
-        temp4.setSubText("£10 off Meal - £5");
-        //TODO: points
-        temp4.setPoints("to be added");
-        items.add(temp4);;
-
-
-        ItemPrev temp5 = new ItemPrev();
-        //TODO:add generic location to database
-        temp5.setLatitude(51.523992);
-        temp5.setLongitude(-0.03798);
-        temp5.setDistanceTime("2 mins");
-        //TODO: add photo download from google storage
-        temp5.setLogo(R.drawable.tescologo);
-        temp5.setMainText("Meal Deal");
-        temp5.setRestaurantName("Tesco");
-        temp5.setSubText("Sandwich,Drink,Snack = £3 ");
-        //TODO: points
-        temp5.setPoints("to be added");
-        items.add(temp5);;
-
-
-        ItemPrev temp6 = new ItemPrev();
-        temp6.setLatitude(51.523992);
-        temp6.setLongitude(-0.03798);
-        //TODO:add generic location to database
-        temp6.setDistanceTime("7 mins");
-        //TODO: add photo download from google storage
-        temp6.setLogo(R.drawable.wrapitup);
-        temp6.setMainText("Burritos Deal");
-        temp6.setRestaurantName("Wrap It Up");
-        temp6.setSubText("Buy 1 get 1 half price £5");
-        //TODO: points
-        temp6.setPoints("to be added");
-        //ip[0] = temp;
-        items.add(temp6);
-
-
-        ItemPrev temp7 = new ItemPrev();
-        temp7.setLatitude(51.523992);
-        temp7.setLongitude(-0.03798);
-        //TODO:add generic location to database
-        temp7.setDistanceTime("1 min");
-        //TODO: add photo download from google storage
-        temp7.setLogo(R.drawable.pizzaexpresslogo);
-        temp7.setMainText("Any Size Pizza");
-        temp7.setHotDeal(R.drawable.yapnak_colorsmall);
-        temp7.setRestaurantName("Pizza Express");
-        temp7.setSubText("Any Size Pizza  = £4");
-        //TODO: points
-        temp7.setPoints("to be added");
-        items.add(temp7);
-
-
-        ItemPrev temp8 = new ItemPrev();
-        //TODO:add generic location to database
-        temp8.setLatitude(51.523992);
-        temp8.setLongitude(-0.03798);
-        temp8.setDistanceTime("7 mins");
-        //TODO: add photo download from google storage
-        temp8.setLogo(R.drawable.pizzaexpresslogo);
-        temp8.setMainText("Any Size Pizza");
-        temp8.setRestaurantName("Pizza Express");
-        temp8.setSubText("Half Price = £4");
-        //TODO: points
-        temp8.setPoints("to be added");
-        items.add(temp8);
-
-
-        ItemPrev temp9 = new ItemPrev();
-        //TODO:add generic location to database
-        temp9.setLatitude(51.523992);
-        temp9.setLongitude(-0.03798);
-        temp9.setDistanceTime("6 mins");
-        //TODO: add photo download from google storage
-        temp9.setLogo(R.drawable.gbklogo);
-        temp9.setMainText("Main Meal Deal");
-        temp9.setRestaurantName("Gourmet Burger Kitchen");
-        temp9.setSubText("£10 off Meal - £5");
-        //TODO: points
-        temp9.setPoints("to be added");
-        items.add(temp9);
-
-
-        ItemPrev temp10 = new ItemPrev();
-        //TODO:add generic location to database
-        temp10.setLatitude(51.523992);
-        temp10.setLongitude(-0.03798);
-        temp10.setDistanceTime("5 mins");
-        //TODO: add photo download from google storage
-        temp10.setLogo(R.drawable.tescologo);
-        temp10.setMainText("Meal Deal");
-        temp10.setRestaurantName("Tesco");
-        temp10.setSubText("Sandwich,Drink,Snack = £3 ");
-        //TODO: points
-        temp10.setPoints("to be added");
-        items.add(temp10);
 
         ip = items.toArray(new ItemPrev[items.size()]);
 
@@ -2032,10 +1885,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //download and display image from url
                 String url = list.get(i).getPhoto();
                 temp.setFetchImageURL(url);
-
+                Log.d("debug", list.get(i).getName());
                 /////////////////////////////////////////////
                 temp.setMainText(list.get(i).getName());
-                temp.setRestaurantName(list.get(i).getName());
+                temp.setRestaurantName(list.get(i).getFoodStyle());
                 temp.setSubText(list.get(i).getOffer());
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());
