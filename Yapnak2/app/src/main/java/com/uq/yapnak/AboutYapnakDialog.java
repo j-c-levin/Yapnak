@@ -5,12 +5,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.gms.appindexing.AndroidAppUri;
 
 /**
  * Created by vahizan on 04/08/2015.
@@ -81,6 +84,10 @@ public class AboutYapnakDialog extends AlertDialog {
         int id = res.getIdentifier("titleDivider", "id", "android");
         View view = findViewById(id);
 
-        view.setBackgroundColor(Color.parseColor("#BF360C"));
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.LOLLIPOP){
+
+            view.setBackgroundColor(Color.parseColor("#BF360C"));
+        }
+
     }
 }

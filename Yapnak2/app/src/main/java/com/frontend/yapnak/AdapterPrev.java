@@ -166,5 +166,13 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
     }
 
 
+    @Override
+    public int getItemViewType(int position) {
+       return position;
+    }
 
+    @Override
+    public int getViewTypeCount() {
+       return getCount();
+    }
 }
