@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/oSZ7rqRF3xiq1vptjzgTw-CXcW0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/yoyvXFqcUSfNOpw8uU1gCDdzTnM\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -137,6 +137,27 @@
      "items": {
       "$ref": "SQLEntity"
      }
+    }
+   }
+  },
+  "UserEntity": {
+   "id": "UserEntity",
+   "type": "object",
+   "properties": {
+    "email": {
+     "type": "string"
+    },
+    "firstName": {
+     "type": "string"
+    },
+    "lastName": {
+     "type": "string"
+    },
+    "mobNo": {
+     "type": "string"
+    },
+    "userID": {
+     "type": "string"
     }
    }
   },
@@ -299,6 +320,27 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getUserDetails": {
+   "id": "sQLEntityApi.getUserDetails",
+   "path": "getUserDetails",
+   "httpMethod": "POST",
+   "parameters": {
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "userID"
+   ],
+   "response": {
+    "$ref": "UserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "insertUser": {
    "id": "sQLEntityApi.insertUser",
    "path": "insertUser",
@@ -318,6 +360,42 @@
    "parameterOrder": [
     "email",
     "password"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "setUserDetails": {
+   "id": "sQLEntityApi.setUserDetails",
+   "path": "setUserDetails",
+   "httpMethod": "POST",
+   "parameters": {
+    "fName": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "lName": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "number": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "fName",
+    "lName",
+    "number",
+    "userID"
    ],
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

@@ -425,7 +425,7 @@ public class SQLEntityEndpoint {
             name = "feedback",
             path = "feedback",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public void feedback(@Named("type") int type, @Named("Message") String message, @Named("userID") String userID) throws UnsupportedEncodingException,MessagingException  {
+    public void feedback(@Named("type") int type, @Named("Message") String message, @Named("userID") String userID) throws UnsupportedEncodingException, MessagingException {
 
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -482,5 +482,76 @@ public class SQLEntityEndpoint {
         return;
     }
 
+    @ApiMethod(
+            name = "setUserDetails",
+            path = "setUserDetails",
+            httpMethod = ApiMethod.HttpMethod.POST)
+         public void setUserDetails(@Named("number") String mobNo, @Named("fName") String fName, @Named("lName") String lName, @Named("userID") String userID) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            int success = -1;
+            try {
+                String statement = "UPDATE user SET mobNo = ?, firstName = ?, lastName = ? WHERE userID = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, mobNo);
+                stmt.setString(2, fName);
+                stmt.setString(3, lName);
+                stmt.setString(4, userID);
+                success = stmt.executeUpdate();
+            } finally {
+                connection.close();
+                return;
+            }
+        } finally {
+            return;
+        }
+    }
 
+    @ApiMethod(
+            name = "getUserDetails",
+            path = "getUserDetails",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public UserEntity getUserDetails(@Named("userID") String userID) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        UserEntity user = new UserEntity();
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT firstName, lastName, mobNo, email FROM user WHERE userID = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1,userID);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    user.setEmail(rs.getString("email"));
+                    user.setFirstName(rs.getString("firstName"));
+                    user.setLastName(rs.getString("lastName"));
+                    user.setMobNo(rs.getString("mobNo"));
+                }
+            } finally {
+                connection.close();
+                return user;
+            }
+        } finally {
+            return user;
+        }
+    }
 }
