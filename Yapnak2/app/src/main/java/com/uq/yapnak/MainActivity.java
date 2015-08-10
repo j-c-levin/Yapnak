@@ -13,6 +13,7 @@ import android.app.FragmentManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.Location;
@@ -20,13 +21,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,9 +71,11 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -78,7 +84,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private GoogleApiClient mGoogleApiClient;
-
+    private Parcelable state;
     private SQLEntity sql;
 
     RecyclerView recyclerView;
@@ -152,12 +158,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
        // locationCheck = getLocation();
        // if(locationCheck!=null) {
+
              SQLConnectAsyncTask.useDialog = true;
              new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
              if (SQLConnectAsyncTask.getListLoaded()) {
                  //dealList.notifyDataSetChanged();
              }
-
 
         /*}else {
             load();
@@ -270,10 +276,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         Log.d("Location", "pausing googleAPI connection");
-        super.onPause();
+
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+
+        super.onPause();
     }
 
     @Override
@@ -365,7 +373,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 startActivity(intent);
             }
         }
-
 
         return super.onOptionsItemSelected(item);
 
@@ -1257,18 +1264,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         navBarItems.setOnItemClickListener(new DrawerItemListener());
         */
     }
-
     //commented out because we have code to actually grab information from the database.
-
     public void load() {
         setContentView(R.layout.activity_main1);
         ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
         ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
-
         scaleListY = promoList.getY();
-
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
@@ -1278,12 +1281,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+
     private AdapterPrev dealList;
     public void load(SQLList sql) {
+
         //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
-         dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
-
+        dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
         ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
@@ -1470,8 +1474,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onAnimationStart(Animator animation) {
 
-
-
             }
 
             @Override
@@ -1500,13 +1502,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buttonFeedback.setVisibility(View.GONE);
         buttonGift.setVisibility(View.GONE);
         buttonProfile.setVisibility(View.GONE);
-
-
-
-
-
-
-
     }
 
     private class ScrollListener implements ListView.OnScrollListener{
@@ -1550,15 +1545,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
 
                 */
-
-
                 /*
-
                 if(bottomValue == 0 && actionButton.getVisibility()==View.VISIBLE){
                     hideFloating();
                     //buttonAnimator(1.0f,0.0f).setDuration(300).start();
-
-
                 }else if(actionButton.getVisibility()!=View.VISIBLE){
                     showFloating();
                     //buttonAnimator(0.0f,1.0f).setDuration(300).start();
@@ -1619,14 +1609,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         private boolean enabled;
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
-              /*
-
+            /*
          boolean firstItem;
-
-
-            boolean loaded = SQLConnectAsyncTask.getListLoaded();
+         boolean loaded = SQLConnectAsyncTask.getListLoaded();
             if(view.getId()==deals.getId() && loaded){
 
                 if(view.getCount()>0 && view!=null){
@@ -1634,14 +1619,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     firstItem = deals.getFirstVisiblePosition()==0;
                      enabled = firstItem && (deals.getChildAt(0).getTop()==0);
                 }
-
-            }
-
-            //refresh.setEnabled(enabled);
+             }
+           //refresh.setEnabled(enabled);
         */
-
-
-
         }
     }
 
@@ -2037,13 +2017,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
+
         try{
             List<SQLEntity> list = new ArrayList<SQLEntity>(sql.getList());
+            Toast.makeText(this,"Size = " + list.size(),Toast.LENGTH_SHORT).show();
 
             setListSize(list.size());
 
-            ip = new ItemPrev[list.size()];
-            for (int i = 0; i < ip.length; i++) {
+            ArrayList<ItemPrev> items = new ArrayList<>();
+
+            for (int i = 0; i < list.size(); i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
 
@@ -2070,10 +2053,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 //TODO: points
                 temp.setPoints(list.get(i).getPoints().toString());
-                ip[i] = temp;
+                //ip[i] = temp;
+                items.add(temp);
             }
 
-            return ip;
+            ItemPrev[]i =  items.toArray(new ItemPrev[list.size()]);
+
+            return i;
 
         }catch(Exception e){
             e.printStackTrace();
