@@ -98,7 +98,7 @@ public class SQLEntityEndpoint {
                     logger.info("found user");
 
                     //push notification
-                    String message = "you have gained points!";
+                    String message = "You've gained points, nice one.";
                     Sender sender = new Sender(API_KEY);
                     Message msg = new Message.Builder().addData("message", message).build();
                     Result result = sender.send(msg, rs.getString("pushKey"), 5);
@@ -494,7 +494,7 @@ public class SQLEntityEndpoint {
             name = "setUserDetails",
             path = "setUserDetails",
             httpMethod = ApiMethod.HttpMethod.POST)
-         public void setUserDetails(@Named("number") String mobNo, @Named("fName") String fName, @Named("lName") String lName, @Named("userID") String userID) throws ClassNotFoundException, SQLException {
+    public void setUserDetails(@Named("number") String mobNo, @Named("fName") String fName, @Named("lName") String lName, @Named("userID") String userID) throws ClassNotFoundException, SQLException {
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -546,7 +546,7 @@ public class SQLEntityEndpoint {
             try {
                 String statement = "SELECT firstName, lastName, mobNo, email FROM user WHERE userID = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
-                stmt.setString(1,userID);
+                stmt.setString(1, userID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     user.setEmail(rs.getString("email"));
@@ -560,6 +560,174 @@ public class SQLEntityEndpoint {
             }
         } finally {
             return user;
+        }
+    }
+
+    @ApiMethod(
+            name = "recommend",
+            path = "recommend",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    private RecommendEntity recommend(@Named("user") String userID, @Named("clientID") int clientID, @Named("this user") String r_userID) throws ClassNotFoundException, SQLException {
+        Connection connection;
+        RecommendEntity recommendation = new RecommendEntity();
+        String pushKey;
+        String statement;
+        PreparedStatement stmt;
+        ResultSet rs;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                //check if userID is in system
+                statement = "SELECT pushKey FROM user WHERE userID = ?";
+                stmt = connection.prepareStatement(statement);
+                stmt.setString(1, userID);
+                rs = stmt.executeQuery();
+                if (rs.next()) {
+                    //UserID exists in system, check if referred
+                    pushKey = rs.getString("pushKey");
+                    statement = "SELECT referrerID FROM points WHERE clientID = ? AND userID = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setInt(1, clientID);
+                    stmt.setString(2, userID);
+                    rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        //user is also ready referred
+                        recommendation.setSuccess(0);
+                    } else {
+                        //user hasn't been recommended, check the row exists
+                        statement = "SELECT points FROM points where clientID = ? and userID = ?";
+                        stmt = connection.prepareStatement(statement);
+                        stmt.setInt(1, clientID);
+                        stmt.setString(2, userID);
+                        rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            //update the referrerID
+                            statement = "UPDATE points SET referrerID = ? where clientID = ? and userID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setString(1, r_userID);
+                            stmt.setInt(2, clientID);
+                            stmt.setString(3, userID);
+                            stmt.executeUpdate();
+                            recommendation.setSuccess(1);
+                            //post update
+                            statement = "SELECT clientName from client where clientID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setInt(1, clientID);
+                            rs = stmt.executeQuery();
+                            rs.next();
+                            //push notification
+                            String message = "You have been recommended to eat at " + rs.getString("clientName");
+                            Sender sender = new Sender(API_KEY);
+                            Message msg = new Message.Builder().addData("message", message).build();
+                            sender.send(msg, pushKey, 5);
+                        } else {
+                            //add a new row to the points table with referrerID
+                            statement = "INSET INTO points (userID, clientID, referrerID) VALUES (?,?,?)";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setString(1, userID);
+                            stmt.setInt(2, clientID);
+                            stmt.setString(3, r_userID);
+                            stmt.executeUpdate();
+                            recommendation.setSuccess(1);
+                            //post update
+                            statement = "SELECT clientName from client where clientID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setInt(1, clientID);
+                            rs = stmt.executeQuery();
+                            rs.next();
+                            //push notification
+                            String message = "You have been recommended to eat at " + rs.getString("clientName");
+                            Sender sender = new Sender(API_KEY);
+                            Message msg = new Message.Builder().addData("message", message).build();
+                            sender.send(msg, pushKey, 5);
+                        }
+                    }
+                } else {
+                    //check if it's a mobile number
+                    statement = "SELECT pushKey FROM user WHERE mobNo = ?";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setString(1, userID);
+                    rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        //mobNo is in system
+                        pushKey = rs.getString("pushKey");
+                        statement = "SELECT referrerID FROM points WHERE clientID = ? AND userID = ?";
+                        stmt = connection.prepareStatement(statement);
+                        stmt.setInt(1, clientID);
+                        stmt.setString(2, userID);
+                        rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            //user is also ready referred
+                            recommendation.setSuccess(0);
+                        } else {
+                            //user hasn't been recommended, check the row exists
+                            statement = "SELECT points FROM points where clientID = ? and userID = ?";
+                            stmt = connection.prepareStatement(statement);
+                            stmt.setInt(1, clientID);
+                            stmt.setString(2, userID);
+                            rs = stmt.executeQuery();
+                            if (rs.next()) {
+                                //update the referrerID
+                                statement = "UPDATE points SET referrerID = ? where clientID = ? and userID = ?";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setString(1, r_userID);
+                                stmt.setInt(2, clientID);
+                                stmt.setString(3, userID);
+                                stmt.executeUpdate();
+                                recommendation.setSuccess(1);
+                                //post update
+                                statement = "SELECT clientName from client where clientID = ?";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setInt(1, clientID);
+                                rs = stmt.executeQuery();
+                                rs.next();
+                                //push notification
+                                String message = "You have been recommended to eat at " + rs.getString("clientName");
+                                Sender sender = new Sender(API_KEY);
+                                Message msg = new Message.Builder().addData("message", message).build();
+                                sender.send(msg, pushKey, 5);
+                            } else {
+                                //add a new row to the points table with referrerID
+                                statement = "INSET INTO points (userID, clientID, referrerID) VALUES (?,?,?)";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setString(1, userID);
+                                stmt.setInt(2, clientID);
+                                stmt.setString(3, r_userID);
+                                stmt.executeUpdate();
+                                recommendation.setSuccess(1);
+                                //post update
+                                statement = "SELECT clientName from client where clientID = ?";
+                                stmt = connection.prepareStatement(statement);
+                                stmt.setInt(1, clientID);
+                                rs = stmt.executeQuery();
+                                rs.next();
+                                //push notification
+                                String message = "You have been recommended to eat at " + rs.getString("clientName");
+                                Sender sender = new Sender(API_KEY);
+                                Message msg = new Message.Builder().addData("message", message).build();
+                                sender.send(msg, pushKey, 5);
+                            }
+                        }
+                    } else {
+                        //user isn't in system, send a text
+                        recommendation.setSuccess(2);
+                    }
+                }
+            } finally {
+                connection.close();
+                return recommendation;
+            }
+        } finally {
+            return recommendation;
         }
     }
 }
