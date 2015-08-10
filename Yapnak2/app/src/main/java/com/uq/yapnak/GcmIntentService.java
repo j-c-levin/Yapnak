@@ -1,10 +1,17 @@
 package com.uq.yapnak;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -16,6 +23,8 @@ import java.util.logging.Logger;
  * Created by Joshua on 19/04/2015.
  */
 public class GcmIntentService extends IntentService {
+
+    private static final int NOTIFY_ID = 123;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -34,7 +43,9 @@ public class GcmIntentService extends IntentService {
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 Logger.getLogger("GCM_RECEIVED").log(Level.INFO, extras.toString());
 
-                showToast(extras.getString("message"));
+                //message from google cloud messaging service
+                //showToast(extras.getString("message"));
+                generateNotification(extras.getString("message"));
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
@@ -47,5 +58,27 @@ public class GcmIntentService extends IntentService {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void generateNotification(String message){
+        long notifyWhen = 1000;
+        int icon = R.drawable.yapnakmonster;
+        NotificationManager nm = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Intent notificationI = new Intent(getApplicationContext(),MainActivity.class);
+        notificationI.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationI, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        NotificationCompat.Builder notify = new NotificationCompat.Builder(getApplicationContext())
+                .setContentTitle("Alert")
+                .setContentText(message)
+                .setSmallIcon(icon).setAutoCancel(true);
+
+        notify.setContentIntent(pendingIntent);
+
+        nm.notify(NOTIFY_ID,notify.build());
+
     }
 }
