@@ -171,7 +171,7 @@ public class SQLEntityEndpoint {
             name = "getClients",
             path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y) throws NotFoundException, OAuthRequestException {
+    public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y, @Named("userID") String userID) throws NotFoundException, OAuthRequestException {
 
         Connection connection;
         double distance = 0.1;
@@ -232,7 +232,7 @@ public class SQLEntityEndpoint {
                     stmt = connection.prepareStatement(statement);
                     stmt.setInt(1, rs.getInt("clientID"));
                     //TODO:put in user name here
-                    stmt.setString(2, "uch1000");
+                    stmt.setString(2, userID);
                     rt = stmt.executeQuery();
                     if (rt.next()) {
                         sql.setPoints(rt.getInt("points"));

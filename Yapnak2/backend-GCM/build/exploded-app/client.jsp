@@ -139,6 +139,8 @@ body {
 
   <%
   String url = null;
+              if (SystemProperty.environment.value() ==
+                      SystemProperty.Environment.Value.Production) {
   if (!rs.getString("clientPhoto").equals("")) {
   ImagesService services = ImagesServiceFactory.getImagesService();
   ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
@@ -146,6 +148,9 @@ body {
   url = url + "=s100";
   }
   else {
+  url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+  }
+  } else {
   url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
   }
   %>

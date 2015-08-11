@@ -270,7 +270,7 @@ public class login extends HttpServlet {
                                 "<html><head></head><body>You are missing either a message or a name! Try again! " +
                                         "Redirecting in 3 seconds...</body></html>");
                     } else {
-                        String sql = "SELECT email, password FROM client WHERE email = ?";
+                        String sql = "SELECT email, password, clientID FROM client WHERE email = ?";
                         PreparedStatement stmt = connection.prepareStatement(sql);
                         stmt.setString(1, email);
                         ResultSet rs = null;

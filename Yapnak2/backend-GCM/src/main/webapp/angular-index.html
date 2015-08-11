@@ -6,6 +6,7 @@
 
     <!--angularjs-->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-cookies.js"></script>
 
     <!--bootstrap-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -28,6 +29,10 @@
 
     <div class="submit-button-container">
         <input class="btn btn-default submit-button" value="Submit" ng-click="submit()" />
+    </div>
+
+    <div class="submit-button-container">
+       <h3>{{email}}</h3>
     </div>
 
     <div ng-switch="userFound">

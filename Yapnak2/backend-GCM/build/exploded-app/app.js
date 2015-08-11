@@ -1,4 +1,4 @@
-angular.module('app', [])
+angular.module('app', ['ngCookies'])
 
 .factory('webfactory', ['$http', function ($http) {
     var result = {};
@@ -7,7 +7,7 @@ angular.module('app', [])
         var data = {
             userID: userID, clientEmail: clientEmail
         }
-        return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/sqlentity/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
+        return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getUser/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
             return response.data;
         }, function (error) {
             return error;
@@ -17,13 +17,15 @@ angular.module('app', [])
     return result;
 }])
 
-.controller('main', function ($scope, webfactory) {
+.controller('main', function ($scope, webfactory, $cookies ) {
+
+    $scope.email = $cookies.get("com.yapnak.email");
 
     $scope.data = {};
 
     $scope.submit = function () {
         $scope.userFound = "searching";
-        webfactory.submit($scope.text, 'uche').then(function (response) {
+        webfactory.submit($scope.text, $scope.email).then(function (response) {
             if (response == "") {
                 $scope.userFound = false;
             }

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/HNeidGEk33picPdT5gvsd4tygbs\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/6KnqM6TchBZB_iRtS6CwScp8h0E\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -280,11 +280,17 @@
      "required": true,
      "format": "double",
      "location": "query"
+    },
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "query"
     }
    },
    "parameterOrder": [
     "latitude",
-    "longitude"
+    "longitude",
+    "userID"
    ],
    "response": {
     "$ref": "SQLList"
