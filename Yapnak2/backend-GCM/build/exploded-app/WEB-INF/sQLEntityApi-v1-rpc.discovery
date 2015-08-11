@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/mXHpkTTM4psPrhuCgGp_whuW1N8\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/HNeidGEk33picPdT5gvsd4tygbs\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -315,6 +315,24 @@
    },
    "parameterOrder": [
     "userID"
+   ],
+   "returns": {
+    "$ref": "UserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "sQLEntityApi.insertExternalUser": {
+   "id": "sQLEntityApi.insertExternalUser",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "email"
    ],
    "returns": {
     "$ref": "UserEntity"
