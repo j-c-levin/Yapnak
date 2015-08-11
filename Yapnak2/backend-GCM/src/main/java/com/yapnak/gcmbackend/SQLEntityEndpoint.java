@@ -189,7 +189,7 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID,showOffer FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
             double t = x - distance;
             stmt.setDouble(1, t);
@@ -212,6 +212,7 @@ public class SQLEntityEndpoint {
                     sql.setY(rs.getDouble("clientY"));
                     sql.setRating((rs.getDouble("rating")));
                     sql.setFoodStyle(rs.getString("clientFoodStyle"));
+                    sql.setShowOffer(rs.getInt("showOffer"));
                     //get photo from blobstore
                     String url;
                     if (!rs.getString("clientPhoto").equals("")) {

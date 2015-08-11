@@ -19,6 +19,15 @@ public class SQLEntity {
     String photo;
     double rating;
     int points;
+    int showOffer;
+
+    public int getShowOffer() {
+        return showOffer;
+    }
+
+    public void setShowOffer(int showOffer) {
+        this.showOffer = showOffer;
+    }
 
     public int getPoints() {
         return points;

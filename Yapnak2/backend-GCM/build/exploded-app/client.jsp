@@ -129,6 +129,13 @@ body {
   </div>
   <div class="form-signin">
     <label for="exampleInputPassword1">Deal text</label><p>
+
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name = "show-offer" value="show-offer"> Show offer?
+        </label>
+    </div>
+
 	<textarea maxlength="250" class="form-control" name="deal" id = "deal" rows="3" placeholder="<%= rs.getString("clientOffer") %>"></textarea>
   </div>
   <div class ="form-signin">
