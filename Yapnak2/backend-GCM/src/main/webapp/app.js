@@ -7,7 +7,8 @@ angular.module('app', ['ngCookies'])
         var data = {
             userID: userID, clientEmail: clientEmail
         }
-        return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getUser/'.concat(data.userID).concat('/').concat(data.clientEmail)).then(function (response) {
+        console.log('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getUser?userID='.concat(data.userID).concat('&clientEmail=').concat(data.clientEmail));
+        return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getUser?userID='.concat(data.userID).concat('&clientEmail=').concat(data.clientEmail)).then(function (response) {
             return response.data;
         }, function (error) {
             return error;
@@ -33,6 +34,8 @@ angular.module('app', ['ngCookies'])
                 $scope.data.points = response.points;
                 $scope.userFound = true;
             }
+        }, function(error) {
+            $scope.data.points = error;
         })
     }
 })
