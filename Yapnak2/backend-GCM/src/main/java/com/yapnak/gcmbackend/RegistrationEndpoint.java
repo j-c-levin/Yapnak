@@ -67,6 +67,7 @@ public class RegistrationEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
+				//update this
                 String statement = "UPDATE user SET pushKey = ? where userID = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, key);
