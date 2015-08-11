@@ -95,14 +95,21 @@ public class update extends HttpServlet {
                     X = (double) details.get("lng");
                 }
                 out.print(name + " " + type + " " + deal + " " + X + " " + Y + " ");
-                    String sql = "UPDATE client SET clientName = ?, clientFoodStyle = ?, clientOffer = ?, clientX = ?, clientY = ? WHERE email = ?";
+                    String sql = "UPDATE client SET clientName = ?, clientFoodStyle = ?, clientOffer = ?, clientX = ?, clientY = ?, showOffer = ? WHERE email = ?";
                     PreparedStatement stmt = connection.prepareStatement(sql);
                     stmt.setString(1, name);
                     stmt.setString(2, type);
                     stmt.setString(3, deal);
                     stmt.setDouble(4, X);
                     stmt.setDouble(5, Y);
-                    stmt.setString(6, (String) session.getAttribute("email"));
+                int showOffer;
+                if (req.getParameter("show-offer") != null) {
+                    showOffer = 1;
+                } else {
+                    showOffer = 0;
+                }
+                    stmt.setDouble(6, showOffer);
+                    stmt.setString(7, (String) session.getAttribute("email"));
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {
