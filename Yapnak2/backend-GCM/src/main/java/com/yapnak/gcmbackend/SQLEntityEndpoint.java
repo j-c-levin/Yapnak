@@ -549,10 +549,28 @@ public class SQLEntityEndpoint {
                 stmt.setString(1, userID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
-                    user.setEmail(rs.getString("email"));
-                    user.setFirstName(rs.getString("firstName"));
-                    user.setLastName(rs.getString("lastName"));
-                    user.setMobNo(rs.getString("mobNo"));
+                    if (rs.getString("email") != null) {
+                        user.setEmail(rs.getString("email"));
+                    } else {
+                        user.setEmail("_null");
+                    }
+                    if (rs.getString("firstName") != null) {
+                        user.setFirstName(rs.getString("firstName"));
+                    } else {
+                        user.setFirstName("_null");
+                    }
+                    if (rs.getString("lastName") != null) {
+                        user.setLastName(rs.getString("lastName"));
+                    } else {
+                        user.setLastName("_null");
+                    }
+                    if (rs.getString("mobNo") != null) {
+                        user.setMobNo(rs.getString("mobNo"));
+                    } else {
+                        user.setMobNo("_null");
+                    }
+                } else {
+                    logger.info("nothing found");
                 }
             } finally {
                 connection.close();
