@@ -322,14 +322,14 @@ public class login extends HttpServlet {
                                 //TODO: Add the client page
                                 HttpSession session = req.getSession();
                                 session.setAttribute("email", email);
-                                resp.setHeader("Refresh", "0; url=/client");
+                                resp.setHeader("Refresh", "0; url=/console");
                             } else {
                                 out.println("Incorrect login.");
-                                resp.setHeader("Refresh", "0; url=/client");
+                                resp.setHeader("Refresh", "1; url=/client");
                             }
                         } else {
                             out.println("LOGIN FAILED!!!");
-                            resp.setHeader("Refresh", "0; url=/client");
+                            resp.setHeader("Refresh", "1; url=/client");
                         }
                     }
                 } finally {
