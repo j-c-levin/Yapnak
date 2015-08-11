@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/yoyvXFqcUSfNOpw8uU1gCDdzTnM\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/mXHpkTTM4psPrhuCgGp_whuW1N8\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -339,6 +339,9 @@
     "email",
     "password"
    ],
+   "returns": {
+    "$ref": "UserEntity"
+   },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

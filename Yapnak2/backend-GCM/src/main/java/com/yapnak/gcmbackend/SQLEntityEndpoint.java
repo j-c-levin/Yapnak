@@ -378,9 +378,10 @@ public class SQLEntityEndpoint {
             name = "insertUser",
             path = "insertUser",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public void insert(@Named("email") String email, @Named("password") String password) {
+    public UserEntity insert(@Named("email") String email, @Named("password") String password) {
 
         Connection connection;
+        UserEntity user = new UserEntity();
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -388,7 +389,7 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.GoogleDriver");
                 connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
             } else {
-                // Local MySQL instance to use during development.
+                // Local MySQL instance kto use during development.
                 Class.forName("com.mysql.jdbc.Driver");
 //                String url = "jdbc:mysql://localhost:3306/yapnak_main?user=client&password=g7lFVLRzYdJoWXc3";
 //                connection = DriverManager.getConnection(url);
@@ -404,16 +405,16 @@ public class SQLEntityEndpoint {
                 //Generate userID
                 String userID = "";
                 userID = email.substring(0, 4) + randInt();
-
+                user.setUserID(userID);
                 //Generate password
                 String newPassword = hashPassword(email);
-
                 stmt.setString(1, userID);
                 stmt.setString(2, email);
                 stmt.setString(3, newPassword);
                 success = stmt.executeUpdate();
                 if (success == -1) {
                     logger.warning("Inserting user failed");
+                    user.setUserID("Failed");
                 } else {
                     logger.info("Successfully inserted the user");
                 }
@@ -421,11 +422,14 @@ public class SQLEntityEndpoint {
                 e.printStackTrace();
             } finally {
                 connection.close();
+                return user;
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            return user;
         }
     }
 
