@@ -72,7 +72,8 @@ public class GcmIntentService extends IntentService {
 
 
         NotificationCompat.Builder notify = new NotificationCompat.Builder(getApplicationContext())
-                .setContentTitle("Alert")
+                .setContentTitle("Tasty!")
+                .setContentInfo("You've Gained Points!")
                 .setContentText(message)
                 .setSmallIcon(icon).setAutoCancel(true);
 
