@@ -21,6 +21,12 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
+
+import java.io.IOException;
 
 /**
  * Created by Nand on 23/03/15.
@@ -70,12 +76,26 @@ public class Splash extends Activity {
             Intent i = new Intent(Splash.this, MainActivity.class);
             newHandler.removeCallbacks(runnable);
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
             i.putExtra("accName", acc);
+
+            new UserID().execute(acc);
+            Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
+
+
+            userId = new UserID().doInBackground(acc);
+            if(userId!=null) {
+                i.putExtra("userID", userId);
+            }
+
+
+
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
             finish();
+
 
         }
 
@@ -119,7 +139,6 @@ public class Splash extends Activity {
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
                         startActivity(i);
                         finish();
                     } else if (mGoogleApiClient.isConnected()) {
@@ -196,6 +215,37 @@ public class Splash extends Activity {
         //mGoogleApiClient.connect();
     }
 
+    private String userId;
+
+
+     private class UserID extends AsyncTask<String,Integer,String>{
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try{
+                SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                        .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                builder.setApplicationName("Yapnak");
+
+                SQLEntityApi api = builder.build();
+                UserEntity user = api.insertExternalUser(params[0]).execute();
+                return user.getUserID();
+
+            }catch (IOException e){
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "PRoblem ",Toast.LENGTH_SHORT).show();
+                return null;
+            }
+
+        }
+
+         @Override
+         protected void onPostExecute(String s) {
+             userId = s;
+         }
+     }
 
 
     private class BackgroundWork extends AsyncTask<Void,Integer,GoogleApiClient> implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
@@ -219,12 +269,9 @@ public class Splash extends Activity {
                     .addScope(new Scope("profile"))
                     .addScope(Plus.SCOPE_PLUS_LOGIN)
                     .addScope(Plus.SCOPE_PLUS_PROFILE).build();
-
-
-
-
             return mClient;
         }
+
 
 
         @Override
@@ -237,11 +284,20 @@ public class Splash extends Activity {
             //this.personName = person.getDisplayName();
 
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            new UserID().execute(acc);
+
+            Toast.makeText(getApplicationContext(), "USER ID external user" + userId + " E Mail = " + acc,Toast.LENGTH_LONG).show();
             i.putExtra("accName", acc);
+
+            if(userId!=null) {
+                i.putExtra("userID", userId);
+            }
+
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
+
         }
 
         @Override
@@ -289,9 +345,6 @@ public class Splash extends Activity {
         }
     }
 }
-
-
-
 
     /*
          h = new Handler();

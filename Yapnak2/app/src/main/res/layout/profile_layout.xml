@@ -56,6 +56,23 @@
             android:layout_marginLeft="20dp"
             android:layout_below="@+id/phoneNumberEditText" />
 
+       <!-- <com.frontend.yapnak.subview.RedEditText
+            android:id="@+id/emailEdit"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="30dp"
+            android:hint="Enter Email"
+            android:background="@android:color/transparent"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:gravity="top"
+            android:imeOptions="actionNext"
+            android:textSize="15sp"
+            android:textColorHint="#000"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@+id/nameEdit" />-->
+
 
         <!--FEEDBACK MENU
          android:textColor="#FFF"
@@ -240,7 +257,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="24dp" />
 
-    <Button
+    <!--<Button
         android:id="@+id/dateInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -250,7 +267,7 @@
         android:background="@android:color/transparent"
         android:layout_above="@+id/textView3"
         android:layout_alignLeft="@+id/textView3"
-        android:layout_marginBottom="30dp" />
+        android:layout_marginBottom="30dp" />-->
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -63,7 +63,8 @@ public class FragmentSlideActivity extends FragmentActivity {
                     getI= getIntent();
                     String gName = getI.getStringExtra("accName");
                     String defaultName = getI.getStringExtra("initials");
-                    return new TutorialFour(gName,defaultName);
+                    String email = getI.getStringExtra("userID");
+                    return new TutorialFour(gName,defaultName,email);
 
                 default:
 

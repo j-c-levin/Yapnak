@@ -40,7 +40,7 @@ public class ProfileDialog extends AlertDialog {
     private Context context;
     private  Button button,submit,cancel;
     private Color color;
-    private EditText name,phone;
+    private EditText name,phone,email;
     private AlertDialog d;
     private String ID;
 
@@ -61,6 +61,7 @@ public class ProfileDialog extends AlertDialog {
         cancel = (Button) v.findViewById(R.id.cancelProfile);
         phone = (EditText) v.findViewById(R.id.phoneNumberEditText);
         name = (EditText) v.findViewById(R.id.nameEdit);
+       // email = (EditText)v.findViewById(R.id.emailEdit);
 
 
 
@@ -89,12 +90,9 @@ public class ProfileDialog extends AlertDialog {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 final String phoneNum = phone.getText().toString();
                 final String[] names = name.getText().toString().split(" ");
-
                 try{
-
                     SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
                     apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                     apiB.setApplicationName("Yapnak");
@@ -104,10 +102,7 @@ public class ProfileDialog extends AlertDialog {
                 }catch(IOException e){
                     e.printStackTrace();
                 }
-
                 d.dismiss();
-
-
             }
         });
     }
@@ -127,7 +122,7 @@ public class ProfileDialog extends AlertDialog {
     private MyDatePickerDialog datePicker;
     public void chooseDate(View v){
 
-        button = (Button) v.findViewById(R.id.dateInput);
+       // button = (Button) v.findViewById(R.id.dateInput);
         final DateDialog date = new DateDialog();
         //datePicker = new MyDatePickerDialog(button,getContext(),activity);
 
@@ -168,31 +163,17 @@ public class ProfileDialog extends AlertDialog {
             month = calendar.get(Calendar.MONTH);
             year = calendar.get(Calendar.YEAR);
 
-
-
             DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, day, month, year);
-
             return pickerDialog;
-
-
-        }
+       }
 
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-
             //setTargetFragment(this, DATEFRAGMENT);
-
-
             int month = monthOfYear+1;
-
             String dateString = dayOfMonth + " / " + month + " / " + year;
-
             button.setText(dateString);
-
-
             this.dismiss();
-
         }
     }
 
@@ -206,6 +187,10 @@ public class ProfileDialog extends AlertDialog {
 
         if(divider!=null){
             divider.setBackgroundColor(Color.parseColor("#BF360C"));
+        }
+
+        if(ID!=null){
+            new FillUserInfo().execute();
         }
     }
 
@@ -222,21 +207,21 @@ public class ProfileDialog extends AlertDialog {
 
                 SQLEntityApi sqlEntity = builder.build();
                 sqlEntity.getUserDetails(ID);
+                return sqlEntity.getUserDetails(ID).execute();
 
-
-
-                //return sqlEntity.getUserDetails(ID);
-
-
-                return null;
             }catch(IOException e){
               e.printStackTrace();
                 return null;
             }
         }
+        @Override
+        protected void onPostExecute(UserEntity userEntity) {
+
+            phone.setText(userEntity.getMobNo());
+            name.setText(userEntity.getFirstName()+" "+userEntity.getLastName());
+
+        }
     }
-
-
     public void setID(String id){
         ID = id;
     }

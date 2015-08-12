@@ -189,6 +189,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private final String LOG_INFO="log";
 
+
     public void setUserName(Menu menu){
         MenuItem item = menu.findItem(R.id.userNameToolBar);
 
@@ -196,9 +197,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             this.name = getIntent();
             personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
 
+            ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
+
             String[] names = personName.split("@");
 
-            item.setTitle(names[0]);
+            //item.setTitle(names[0]);
+            item.setTitle(ID);
             item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -458,6 +462,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
 
             final FeedbackDialog feedback = new FeedbackDialog(this,this);
+            feedback.setID(ID);
 
 
 
@@ -542,6 +547,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ///AlertDialog.Builder userItems = new ProfileDialog(this,this);
         ProfileDialog userItems = new ProfileDialog(this,this);
+        userItems.setID(ID);
 
        /* posProf=userItems.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
             @Override
