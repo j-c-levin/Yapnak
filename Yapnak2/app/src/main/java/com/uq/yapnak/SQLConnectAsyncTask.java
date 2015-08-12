@@ -44,6 +44,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         this.progressDialog = new ProgressDialog(this.main);
     }
 
+    private GPSTrack track;
     @Override
     protected SQLList doInBackground(Void... params) {
         if (sqlEntity == null) {
@@ -58,7 +59,8 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
         try {
 
-            return sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.ID).execute();
+            track = new GPSTrack(main);
+            return sqlEntity.getClients(track.getLatitude(),track.getLongitude(),main.ID).execute();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,7 +83,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     protected void onPostExecute(SQLList result) {
         Location loc = main.getLocation();
-        if (result != null && loc!=null) {
+        if (result != null && track!=null) {
             Log.d("Debug", "completed: " + result.getList().size());
             main.load(result);
             main.floatButton();

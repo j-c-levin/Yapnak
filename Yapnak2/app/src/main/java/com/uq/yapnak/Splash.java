@@ -80,7 +80,7 @@ public class Splash extends Activity {
             i.putExtra("accName", acc);
 
             new UserID().execute(acc);
-            Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
             if(userId!=null) {
                 i.putExtra("userID", userId);
             }
@@ -92,6 +92,7 @@ public class Splash extends Activity {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
             finish();
+
 
 
         }
@@ -217,23 +218,26 @@ public class Splash extends Activity {
 
      private class UserID extends AsyncTask<String,Integer,String>{
 
+         private String userName;
 
         @Override
         protected String doInBackground(String... params) {
+
 
             try{
                 SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                         .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 builder.setApplicationName("Yapnak");
-
                 SQLEntityApi api = builder.build();
                 UserEntity user = api.insertExternalUser(params[0]).execute();
-                return user.getUserID();
+                Log.d("userid",user.getUserID());
+                userName = user.getUserID();
+                return userName;
 
             }catch (IOException e){
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "PRoblem ",Toast.LENGTH_SHORT).show();
-                return null;
+                return userName;
             }
 
         }
@@ -283,13 +287,9 @@ public class Splash extends Activity {
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
             new UserID().execute(acc);
 
-            Toast.makeText(getApplicationContext(), "USER ID external user" + userId + " E Mail = " + acc,Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "USER ID external user" + userId + " E Mail = " + acc,Toast.LENGTH_LONG).show();
             i.putExtra("accName", acc);
-
-            if(userId!=null) {
-                i.putExtra("userID", userId);
-            }
-
+            i.putExtra("userID", userId);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
