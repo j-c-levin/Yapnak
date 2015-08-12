@@ -59,8 +59,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
         try {
 
-            track = new GPSTrack(main);
-            return sqlEntity.getClients(track.getLatitude(),track.getLongitude(),main.ID).execute();
+            //track = new GPSTrack(main);
+            //Location loc = track.getLocation();
+            return sqlEntity.getClients(location.getLatitude(),location.getLongitude(),"josh5721").execute();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,8 +83,8 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
 
     protected void onPostExecute(SQLList result) {
-        Location loc = main.getLocation();
-        if (result != null && track!=null) {
+       // Location loc = main.getLocation();
+        if (result != null && location!=null) {
             Log.d("Debug", "completed: " + result.getList().size());
             main.load(result);
             main.floatButton();

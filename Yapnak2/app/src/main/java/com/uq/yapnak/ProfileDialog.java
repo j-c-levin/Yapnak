@@ -45,12 +45,13 @@ public class ProfileDialog extends AlertDialog {
     private String ID;
 
 
-    public ProfileDialog(Context context,Activity activity) {
+    public ProfileDialog(Context context,Activity activity,String ID) {
         super(context);
 
         this.activity=activity;
         this.context=context;
         d = this;
+        this.ID = ID;
 
         LayoutInflater inflater = activity.getLayoutInflater();
 
@@ -128,16 +129,14 @@ public class ProfileDialog extends AlertDialog {
 
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        /*button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 date.show(activity.getFragmentManager(), "datePicker");
                 //datePicker.show();
-
             }
         });
+        */
 
 
 
@@ -189,8 +188,10 @@ public class ProfileDialog extends AlertDialog {
             divider.setBackgroundColor(Color.parseColor("#BF360C"));
         }
 
-        if(ID!=null){
+        try{
             new FillUserInfo().execute();
+        }catch(NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -218,7 +219,7 @@ public class ProfileDialog extends AlertDialog {
         protected void onPostExecute(UserEntity userEntity) {
 
             phone.setText(userEntity.getMobNo());
-            name.setText(userEntity.getFirstName()+" "+userEntity.getLastName());
+            name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
 
         }
     }

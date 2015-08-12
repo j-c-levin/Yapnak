@@ -80,12 +80,10 @@ public class Splash extends Activity {
             i.putExtra("accName", acc);
 
             new UserID().execute(acc);
-            //Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
             if(userId!=null) {
                 i.putExtra("userID", userId);
             }
-
-
 
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -229,6 +227,7 @@ public class Splash extends Activity {
                         .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 builder.setApplicationName("Yapnak");
                 SQLEntityApi api = builder.build();
+                Log.d("acc",params[0]);
                 UserEntity user = api.insertExternalUser(params[0]).execute();
                 Log.d("userid",user.getUserID());
                 userName = user.getUserID();
@@ -236,7 +235,7 @@ public class Splash extends Activity {
 
             }catch (IOException e){
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "PRoblem ",Toast.LENGTH_SHORT).show();
+                Log.d("error","error!!!!1");
                 return userName;
             }
 
