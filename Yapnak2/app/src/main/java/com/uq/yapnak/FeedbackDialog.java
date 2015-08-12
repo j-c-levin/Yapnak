@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +16,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+
+import java.io.IOException;
 
 import javax.xml.transform.Templates;
 
@@ -30,6 +37,8 @@ public class FeedbackDialog extends AlertDialog {
     private RadioGroup group;
     private Button submit,cancel;
     private AlertDialog d;
+    private int feedbackNumber;
+    private String ID;
 
     public FeedbackDialog(Context context,Activity activity) {
         super(context);
@@ -61,6 +70,8 @@ public class FeedbackDialog extends AlertDialog {
 
         setCustomTitle(title);
 
+        feedbackNum();
+
 
 
 
@@ -89,7 +100,7 @@ public class FeedbackDialog extends AlertDialog {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getContext(), " Feedback Wasn't Sent  " , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), " Feedback Wasn't Sent  ", Toast.LENGTH_SHORT).show();
 
                 d.cancel();
             }
@@ -103,20 +114,67 @@ public class FeedbackDialog extends AlertDialog {
             @Override
             public void onClick(View v) {
 
-                EditText feedbackComment = getComments();
-
-                String text = feedbackComment.getText().toString();
+                String text = comments.getText().toString();
                 //TODO:text must be stored in feedback table in the database
-
                 Toast.makeText(getContext(), " Thank You For Your Feedback  " , Toast.LENGTH_SHORT).show();
 
-                //load();
-                //load(sql);
+                new SubmitFeedback().execute(ID,text);
 
                 d.dismiss();
             }
         });
+    }
 
+    private void feedbackNum(){
+
+        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioHappy:
+                        feedbackNumber=1;
+                        break;
+                    case R.id.radioUnhappy:
+                        feedbackNumber=2;
+                        break;
+                    case R.id.radioStoreCode:
+                        feedbackNumber=3;
+                        break;
+                }
+            }
+        });
+
+
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    private class SubmitFeedback extends AsyncTask<String,String,Feedback>{
+
+        @Override
+        protected Feedback doInBackground(String... params) {
+            Feedback f = new Feedback();
+            f.setID(params[0]);
+            f.setComment(params[1]);
+            f.setFeedbackNumber(feedbackNumber);
+            return f;
+        }
+
+        @Override
+        protected void onPostExecute(Feedback feedback) {
+
+            try {
+                SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                apiB.setApplicationName("Yapnak");
+                SQLEntityApi api = apiB.build();
+                api.feedback(feedback.getComment(), feedback.getFeedbackNumber(), feedback.getID());
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -143,4 +201,8 @@ public class FeedbackDialog extends AlertDialog {
     public void setGroup(RadioGroup group) {
         this.group = group;
     }
+
+
+
+
 }

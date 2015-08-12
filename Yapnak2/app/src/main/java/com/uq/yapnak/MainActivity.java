@@ -131,6 +131,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private  String initials;
     private String personName;
     private SQLList clientList;
+    public String ID;
 
 
     @Override
@@ -1887,8 +1888,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setFetchImageURL(url);
                 Log.d("debug", list.get(i).getName());
                 /////////////////////////////////////////////
-                temp.setMainText(list.get(i).getName());
-                temp.setRestaurantName(list.get(i).getFoodStyle());
+
+                temp.setMainText(list.get(i).getFoodStyle());
+                temp.setRestaurantName(list.get(i).getName());
                 temp.setSubText(list.get(i).getOffer());
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());

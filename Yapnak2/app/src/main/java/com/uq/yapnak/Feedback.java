@@ -12,57 +12,32 @@ import android.widget.Toast;
 /**
  * Created by Nand on 14/03/15.
  */
-public class Feedback extends DialogFragment implements View.OnClickListener {
-    private Button cancel;
-    private Button submit;
-    private EditText additionalComments;
+public class Feedback  {
+   private String comment;
+    private String ID;
+   private int feedbackNumber;
 
-
-    /*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.feedback_activity, null);
-
-        cancel = (Button) view.findViewById(R.id.cancelButton);
-        cancel.setOnClickListener(this);
-        submit = (Button) view.findViewById(R.id.submitButton);
-        submit.setOnClickListener(this);
-
-        return view;
+    public String getComment() {
+        return comment;
     }
 
-
-
-    public void setCancel(Button cancel){
-        this.cancel=cancel;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
-    private Button getCancel(){
-
-        return this.cancel;
+    public String getID() {
+        return ID;
     }
 
-    public void setSubmit(Button submit){
-        this.submit=submit;
-    }
-    private Button getSubmit(){
-        return this.submit;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
-*/
-
-    @Override
-    public void onClick(final View v) {
-
-       /* if (v.getId() == R.id.cancelButton) {
-            dismiss();
-
-        } else {
-            Toast.makeText(getActivity(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-            dismiss();
-
-        }
-        */
+    public int getFeedbackNumber() {
+        return feedbackNumber;
     }
 
+    public void setFeedbackNumber(int feedbackNumber) {
+        this.feedbackNumber = feedbackNumber;
+    }
 }

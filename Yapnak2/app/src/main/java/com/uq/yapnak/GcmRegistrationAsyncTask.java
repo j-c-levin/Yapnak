@@ -62,6 +62,7 @@ class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
             // is using accounts.
             regService.register(regId).execute();
 
+
         } catch (IOException ex) {
             ex.printStackTrace();
             msg = "Error: " + ex.getMessage();
@@ -71,7 +72,7 @@ class GcmRegistrationAsyncTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(String msg) {
-        //Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-        Logger.getLogger("REGISTRATION").log(Level.INFO, msg);
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        //Logger.getLogger("REGISTRATION").log(Level.INFO, msg);
     }
 }
