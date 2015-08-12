@@ -55,7 +55,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 //            hard-coded just for debugging purposes because it's where I've stuck in some dummy data
 
         try {
-
+            Log.d("debug", "location: " + location.getLatitude() + " " + location.getLongitude());
             return sqlEntity.getClients(location.getLatitude(), location.getLongitude(), "josh5721").execute();
 
         } catch (IOException e) {
