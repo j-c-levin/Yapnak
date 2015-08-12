@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -19,17 +20,17 @@ import java.io.IOException;
 public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     private static SQLEntityApi sqlEntity;
-    static boolean useDialog;
-    private static boolean listLoaded = false;
+     static boolean useDialog;
+    private static boolean listLoaded=false;
     private Context context;
     private Location location;
     MainActivity main;
 
-    private static void setListLoaded(boolean loaded) {
+    private static void setListLoaded(boolean loaded){
         listLoaded = loaded;
     }
 
-    public static boolean getListLoaded() {
+    public static boolean getListLoaded(){
         return listLoaded;
     }
 
@@ -42,6 +43,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         this.progressDialog = new ProgressDialog(this.main);
     }
 
+    private GPSTrack track;
     @Override
     protected SQLList doInBackground(Void... params) {
         if (sqlEntity == null) {
@@ -55,13 +57,14 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 //            hard-coded just for debugging purposes because it's where I've stuck in some dummy data
 
         try {
-            Log.d("debug", "location: " + location.getLatitude() + " " + location.getLongitude());
-            return sqlEntity.getClients(location.getLatitude(), location.getLongitude(), "josh5721").execute();
+
+            track = new GPSTrack(main);
+            return sqlEntity.getClients(track.getLatitude(),track.getLongitude(),main.ID).execute();
 
         } catch (IOException e) {
             e.printStackTrace();
 
-        } catch (NullPointerException ex) {
+        }catch(NullPointerException ex){
             ex.printStackTrace();
         }
         return null;
@@ -70,7 +73,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     @Override
     protected void onPreExecute() {
         //super.onPreExecute();
-        if (useDialog) {
+        if(useDialog) {
             progressDialog.setMessage("Please Wait For List To Load...");
             progressDialog.show();
         }
@@ -79,38 +82,29 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     protected void onPostExecute(SQLList result) {
         Location loc = main.getLocation();
-//        if (result != null && loc!=null) {
-//            Log.d("Debug", "completed: " + result.getList().size());
-//            main.load(result);
-//            main.floatButton();
-//            main.swipeRefresh(main);
-//
-//            if(useDialog) {
-//                progressDialog.cancel();
-//            }
-//            setListLoaded(true);
-//        } else {
-//            main.load();
-//            main.floatButton();
-//            main.swipeRefresh(main);
-//
-//            if(useDialog) {
-//                progressDialog.cancel();
-//            }
-//            setListLoaded(true);
-//
-//            Toast.makeText(context,"Please Turn Location On",Toast.LENGTH_SHORT).show();
-//
-//            Log.d("Debug", "Failed");
-//        }
-        Log.d("Debug", "completed: " + result.getList().size());
-        main.load(result);
-        main.floatButton();
-        main.swipeRefresh(main);
+        if (result != null && track!=null) {
+            Log.d("Debug", "completed: " + result.getList().size());
+            main.load(result);
+            main.floatButton();
+            main.swipeRefresh(main);
 
-        if (useDialog) {
-            progressDialog.cancel();
+            if(useDialog) {
+                progressDialog.cancel();
+            }
+            setListLoaded(true);
+        } else {
+            main.load();
+            main.floatButton();
+            main.swipeRefresh(main);
+
+            if(useDialog) {
+                progressDialog.cancel();
+            }
+            setListLoaded(true);
+
+            Toast.makeText(context,"Please Turn Location On",Toast.LENGTH_SHORT).show();
+
+            Log.d("Debug", "Failed");
         }
-        setListLoaded(true);
     }
 }
