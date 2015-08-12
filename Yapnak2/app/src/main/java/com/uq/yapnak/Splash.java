@@ -228,6 +228,7 @@ public class Splash extends Activity {
 
                 SQLEntityApi api = builder.build();
                 UserEntity user = api.insertExternalUser(params[0]).execute();
+                Log.d("debug", user.getUserID());
                 return user.getUserID();
 
             }catch (IOException e){

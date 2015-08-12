@@ -466,6 +466,7 @@ public class SQLEntityEndpoint {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     //user already exists with a google sign in
+                    logger.info("found user " + rs.getString("userID"));
                     user.setUserID(rs.getString("userID"));
                 } else {
                     statement = "INSERT INTO user (userID, email) VALUES(?,?)";
@@ -481,7 +482,7 @@ public class SQLEntityEndpoint {
                         logger.warning("Inserting user failed");
                         user.setUserID("Failed");
                     } else {
-                        logger.info("Successfully inserted the user");
+                        logger.info("Successfully inserted the user " + user.getUserID());
                     }
                 }
             } finally {
