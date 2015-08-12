@@ -73,23 +73,23 @@ public class Splash extends Activity {
         if (mGoogleApiClient.isConnected()) {
 
             isIn=true;
-            Intent i = new Intent(Splash.this, MainActivity.class);
             newHandler.removeCallbacks(runnable);
+
+
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
+            /*Intent i = new Intent(Splash.this, MainActivity.class);
             i.putExtra("accName", acc);
-
-            new UserID().execute(acc);
+            userId = getExternalId(acc);
             Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
-            if(userId!=null) {
-                i.putExtra("userID", userId);
-            }
-
+            i.putExtra("userID", userId);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
-            finish();
+            */
+            //new UserID().execute(acc);
+            //finish();
 
 
 
@@ -213,14 +213,36 @@ public class Splash extends Activity {
 
     private String userId;
 
+    private String getExternalId(String acc){
+        String userName;
+        try{
+            SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+            builder.setApplicationName("Yapnak");
+            SQLEntityApi api = builder.build();
+            UserEntity user = api.insertExternalUser(acc).execute();
+            userName = user.getUserID();
+            return userName;
+
+        }catch (IOException e){
+            e.printStackTrace();
+            Log.d("error","error!!!!1");
+            return null;
+        }
+    }
+
 
      private class UserID extends AsyncTask<String,Integer,String>{
 
          private String userName;
+         private String accountName;
+
+
 
         @Override
         protected String doInBackground(String... params) {
 
+            accountName = params[0];
 
             try{
                 SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
@@ -239,11 +261,19 @@ public class Splash extends Activity {
                 return userName;
             }
 
+
+
         }
 
          @Override
          protected void onPostExecute(String s) {
-             userId = s;
+             Intent i = new Intent(Splash.this, MainActivity.class);
+             i.putExtra("accName", accountName);
+             i.putExtra("userID", s);
+             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+             startActivity(i);
          }
      }
 
@@ -278,21 +308,23 @@ public class Splash extends Activity {
         public void onConnected(Bundle bundle) {
             mSignInClicked = false;
             //retrieve user details and make whatever authenticated calls are necessary.
-            Intent i = new Intent(activity, MainActivity.class);
+            //Intent i = new Intent(activity, MainActivity.class);
 
             //person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
             //this.personName = person.getDisplayName();
 
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
-            new UserID().execute(acc);
-
+           /*userId = getExternalId(acc);
             //Toast.makeText(getApplicationContext(), "USER ID external user" + userId + " E Mail = " + acc,Toast.LENGTH_LONG).show();
             i.putExtra("accName", acc);
             i.putExtra("userID", userId);
+            Log.d("idc",userId);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
+            */
+            new UserID().execute(acc);
 
         }
 

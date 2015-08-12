@@ -1732,7 +1732,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             ItemPrev item = (ItemPrev) parent.getItemAtPosition(position);
             Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
-            intent.putExtra("accName",personName);
+            intent.putExtra("accName",ID);
             intent.putExtra("logo", item.getLogo());
             intent.putExtra("location", item.getDistanceTime());
             intent.putExtra("rating", 2.1);
