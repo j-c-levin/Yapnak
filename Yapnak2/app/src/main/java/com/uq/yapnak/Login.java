@@ -146,13 +146,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                         */
 
 
-                    Intent i = new Intent(Login.this, FragmentSlideActivity.class);
-                    new InternalUser().execute(initials.getText().toString(), phone.getText().toString());
-                    i.putExtra("initials", userID);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    v.getContext().startActivity(i);
+                    new InternalUser(v).execute(initials.getText().toString(), phone.getText().toString());
+
 
 
 
@@ -173,6 +168,11 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
     private class InternalUser extends AsyncTask<String,Integer,String>{
 
+        private View view;
+        public InternalUser(View v){
+
+            this.view = v;
+        }
         @Override
         protected String doInBackground(String... params) {
 
@@ -195,7 +195,13 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
         @Override
         protected void onPostExecute(String s) {
-            userID = s;
+            Intent i = new Intent(Login.this, FragmentSlideActivity.class);
+            i.putExtra("initials", s);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            view.getContext().startActivity(i);
+
         }
     }
 
