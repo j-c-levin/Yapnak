@@ -81,9 +81,6 @@ public class Splash extends Activity {
 
             new UserID().execute(acc);
             Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
-
-
-            userId = new UserID().doInBackground(acc);
             if(userId!=null) {
                 i.putExtra("userID", userId);
             }
