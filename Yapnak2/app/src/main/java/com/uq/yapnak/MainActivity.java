@@ -131,8 +131,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private  String initials;
     private String personName;
     private SQLList clientList;
-    public String ID;
+    private String ID;
 
+    public String getID(){
+        return this.ID;
+    }
+    public void setID(String id){
+        this.ID = id;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +158,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
 
-       // locationCheck = getLocation();
+        locationCheck = getLocation();
        // if(locationCheck!=null) {
 
              SQLConnectAsyncTask.useDialog = true;
@@ -189,6 +195,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private final String LOG_INFO="log";
 
+
     public void setUserName(Menu menu){
         MenuItem item = menu.findItem(R.id.userNameToolBar);
 
@@ -196,9 +203,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             this.name = getIntent();
             personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
 
+            ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
+
             String[] names = personName.split("@");
 
-            item.setTitle(names[0]);
+            //item.setTitle(names[0]);
+            item.setTitle(ID);
             item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -457,9 +467,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
 
-            final FeedbackDialog feedback = new FeedbackDialog(this,this);
-
-
+            final FeedbackDialog feedback = new FeedbackDialog(this,this,ID);
 
             /*
             pos = feedback.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
@@ -541,7 +549,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void profileDialog(View v){
 
         ///AlertDialog.Builder userItems = new ProfileDialog(this,this);
-        ProfileDialog userItems = new ProfileDialog(this,this);
+        ProfileDialog userItems = new ProfileDialog(this,this,ID);
+       //userItems.setID(ID);
 
        /* posProf=userItems.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
             @Override
@@ -806,8 +815,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         //Intent intent = new Intent(getApplicationContext(), ContactList.class);
                         //startActivity(intent);
 
+
                         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                         startActivityForResult(intent, PICK_CONTACT);
+                        
 
                         /*
                         Showing the google stock contacts picker
@@ -1720,7 +1731,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             ItemPrev item = (ItemPrev) parent.getItemAtPosition(position);
             Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
-            intent.putExtra("accName",personName);
+            intent.putExtra("accName",ID);
             intent.putExtra("logo", item.getLogo());
             intent.putExtra("location", item.getDistanceTime());
             intent.putExtra("rating", 2.1);
@@ -1823,7 +1834,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return this.itemInfo;
     }
 
-
     public PromoItem[] gift(){
 
         ArrayList<PromoItem> items = new ArrayList<>();
@@ -1889,17 +1899,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Log.d("debug", list.get(i).getName());
                 /////////////////////////////////////////////
 
-                temp.setMainText(list.get(i).getFoodStyle());
+                //list.get(i).getFoodStyle()
+                temp.setMainText(list.get(i).getName());
                 temp.setRestaurantName(list.get(i).getName());
                 temp.setSubText(list.get(i).getOffer());
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());
                 temp.setDistanceTime("to be added");
-                temp.setMainText(list.get(i).getFoodStyle());
-                temp.setRestaurantName(list.get(i).getName());
-                temp.setSubText(list.get(i).getOffer());
-                temp.setLatitude(list.get(i).getY());
-                temp.setLongitude(list.get(i).getX());
+                //temp.setMainText(list.get(i).getFoodStyle());
+                //temp.setRestaurantName(list.get(i).getName());
+                //temp.setSubText(list.get(i).getOffer());
+                //temp.setLatitude(list.get(i).getY());
+                //temp.setLongitude(list.get(i).getX());
 
                 //TODO: points
                 temp.setPoints(list.get(i).getPoints().toString());

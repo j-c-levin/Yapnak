@@ -26,6 +26,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     private Context context;
     private Location location;
     MainActivity main;
+    private String ID;
 
     private static void setListLoaded(boolean loaded){
         listLoaded = loaded;
@@ -42,8 +43,10 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         this.location = location;
         this.main = main;
         this.progressDialog = new ProgressDialog(this.main);
+
     }
 
+    private GPSTrack track;
     @Override
     protected SQLList doInBackground(Void... params) {
         if (sqlEntity == null) {
@@ -55,11 +58,18 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 //            real code to use to get location
 //            SQLEntity x = sqlEntity.getClients(location.getLongitude(), location.getLatitude()).execute();
 //            hard-coded just for debugging purposes because it's where I've stuck in some dummy data
+
         try {
-            return sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.ID).execute();
+
+            //track = new GPSTrack(main);
+            //Location loc = track.getLocation();
+            return sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.getID()).execute();
 
         } catch (IOException e) {
             e.printStackTrace();
+
+        }catch(NullPointerException ex){
+            ex.printStackTrace();
         }
         return null;
     }
@@ -75,8 +85,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
 
     protected void onPostExecute(SQLList result) {
-        Location loc = main.getLocation();
-        if (result != null && loc!=null) {
+        if (result != null && location!=null) {
             Log.d("Debug", "completed: " + result.getList().size());
             main.load(result);
             main.floatButton();
@@ -90,14 +99,11 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             main.load();
             main.floatButton();
             main.swipeRefresh(main);
-
             if(useDialog) {
                 progressDialog.cancel();
             }
             setListLoaded(true);
-
             Toast.makeText(context,"Please Turn Location On",Toast.LENGTH_SHORT).show();
-
             Log.d("Debug", "Failed");
         }
     }

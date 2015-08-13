@@ -22,13 +22,14 @@ public class TutorialFour extends Fragment {
     private View v;
     private Button button;
     private Intent getInfo;
-    private String gName,dName;
+    private String gName,dName,email;
 
 
-    public TutorialFour(String googleName ,String defName){
+    public TutorialFour(String googleName ,String defUserID,String email){
 
         gName = (googleName==null)? "" : googleName;
-        dName = (defName==null) ? "" :defName;
+        dName = (defUserID==null) ? "" :defUserID;
+        this.email =(email==null)? "":  email;
     }
 
     @Nullable
@@ -52,14 +53,10 @@ public class TutorialFour extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 Intent i = new Intent(getActivity(), MainActivity.class);
-
-                Toast.makeText(getActivity().getApplicationContext(),getInfo.getStringExtra("initials"),Toast.LENGTH_SHORT).show();
                 i.putExtra("initials",dName);
                 i.putExtra("accName",gName);
+                i.putExtra("userID",email);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

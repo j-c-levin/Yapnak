@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by vahizan on 11/07/2015.
@@ -107,22 +109,25 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
         */
 
-        Toast.makeText(getApplicationContext(),"HEY",Toast.LENGTH_LONG).show();
+        ContactMain temp = (ContactMain)parent.getItemAtPosition(position);
+
+        Person[] details = getAllContactDetails();
+
+        Toast.makeText(getApplicationContext(),"Here is Contact's Phone Number " + details[0].getPhoneNumber(),Toast.LENGTH_SHORT).show();
+
+
+
 
 
 
     }
 
     public void populateList(){
-
         ListView contactList = (ListView) findViewById(R.id.contactList);
-
         ListAdapter listAdapter = new ContactListAdapter(this,R.layout.contactlist_item,getContactName());
-
-
         contactList.setAdapter(listAdapter);
-
         contactList.setOnItemClickListener(this);
+        Log.d("contactsLength",(getContactName().length)+"");
 
 
        /* adapter = new SimpleCursorAdapter(
@@ -151,54 +156,144 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
 
 
-    public String [] getContactName(){
+    public ContactMain [] getContactName(){
         contentResolver = getContentResolver();
-        //ContactsContract.Contacts.HAS_PHONE_NUMBER + ">=1"
-        c = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts.HAS_PHONE_NUMBER + ">=1", null,null);
+        c = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null,ContactsContract.Contacts.HAS_PHONE_NUMBER,null,null);
+        int count  = c.getCount();
+        ArrayList<ContactMain> contactName = new ArrayList<>();
+        c.moveToFirst();
 
-        displayNameArray = new String[c.getCount()];
+        String displayName = (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)? ContactsContract.Contacts.DISPLAY_NAME: ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
 
-        String correctDisplayName = Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB ? ContactsContract.Contacts.DISPLAY_NAME : ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
+        while(c.moveToNext()){
 
-        int i=0;
-
-        if(!c.moveToFirst()){
-
-            Toast.makeText(getApplicationContext(),"No Contacts - YOU LOSER!",Toast.LENGTH_LONG).show();
-
-            String [] empty = new String[1];
-            empty[0]= "Unavailable";
-
-            return empty;
-        }
-        //c.moveToFirst();
-        while(c.moveToNext()) {
-           String displayName = c.getString(c.getColumnIndex(correctDisplayName));
-
-           displayNameArray[i] = displayName;
-           i++;
+        String name = c.getString(c.getColumnIndexOrThrow(displayName));
+        String id = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+            ContactMain mainC = new ContactMain();
+            mainC.setContactName(name);
+            mainC.setId(id);
+            contactName.add(mainC);
         }
 
+        return contactName.toArray(new ContactMain[contactName.size()]);
 
-        c.close();
-        return displayNameArray;
-
-        //String correctDisplayName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME : ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME_PRIMARY;
-        //String correctFullName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME : ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME;
-        //c = contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.MIMETYPE + "= ? ",selection,ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-        //c = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts.HAS_PHONE_NUMBER + "=1", null, ContactsContract.Contacts.DISPLAY_NAME+" ASC");
     }
 
-    public Person[] getContacts(){
 
-
+    public Person getContactDetails(String ID){
         contentResolver = getContentResolver();
-
-        c= contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-
+        c= contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null,ContactsContract.Contacts._ID + "= "+ID ,null,null);
         //c.moveToFirst();
+        ArrayList<Person> contactList = new ArrayList<>();
 
-        details = new Person[c.getCount()];
+
+        boolean hasNumber;
+        String correctDisplayName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? ContactsContract.Contacts.DISPLAY_NAME : ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
+
+        int i=0;
+        int j=0;
+
+        Person temp = new Person();
+        c.moveToFirst();
+        while(c.moveToNext()){
+
+            String displayName =  c.getString(c.getColumnIndexOrThrow(correctDisplayName));
+            String userid = ID;
+
+
+
+            temp.setId(userid);
+            temp.setDisplayName(displayName);
+
+            String [] phoneNumber;
+            ArrayList<String> phoneNos = new ArrayList<>();
+
+            String [] email;
+            ArrayList<String> emails = new ArrayList<>();
+
+
+            //Query - find PhoneNumber/s of a contact with particular userID
+
+            Cursor phoneCursor;
+
+
+                phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= " + ID ,null,null);
+                phoneCursor.moveToFirst();
+
+                while(phoneCursor.moveToNext()){
+                    String phoneNum = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Log.d("phone",phoneNum);
+                    phoneNos.add(phoneNum);
+                    j++;
+                }
+
+
+                phoneNumber = phoneNos.toArray(new String[phoneCursor.getCount()]);
+                temp.setPhoneNumber(phoneNumber);
+                phoneCursor.close();
+
+
+            //Query - find PhoneNumber/s of a contact with particular userID
+
+
+
+            //Query - find email of a contact with particular userID
+
+            Cursor emailCursor = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= " + ID,new String[]{userid},null);
+            emailCursor.moveToFirst();
+            int emailAd = 0;
+
+            while(emailCursor.moveToNext()){
+
+                String getEmail = c.getString(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DATA));
+                emails.add(getEmail);
+                emailAd++;
+            }
+            email = emails.toArray(new String[emailCursor.getCount()]);
+            emailCursor.close();
+            //Query - find email of a contact with particular userID
+
+
+            //Query - find picture of a contact with particular userID
+
+            Cursor pictureCursor = contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.CONTACT_ID + "= ? AND " + ContactsContract.Data.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'", new String[]{userid},null);
+
+
+            pictureCursor.moveToFirst();
+            while(pictureCursor.moveToNext()){
+
+                long id = Long.parseLong(userid);
+                Uri contact = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
+                Uri photoUri = Uri.withAppendedPath(contact, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+                temp.setPictureURI(photoUri);
+
+            }
+
+            //Query - find picture of a contact with particular userID
+
+            pictureCursor.close();
+
+
+            //Added all QUERY RESULTS TO Person Instance
+            temp.setEmail(email);
+            //contactList.add(temp);
+
+            i++;
+        }
+
+       // details = contactList.toArray(new Person[c.getCount()]);
+
+        c.close();
+        return temp;
+
+    }
+
+
+    public Person[] getAllContactDetails(){
+        contentResolver = getContentResolver();
+        c= contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        //c.moveToFirst();
+        ArrayList<Person> contactList = new ArrayList<>();
 
 
         boolean hasNumber;
@@ -218,22 +313,32 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
             temp.setId(userid);
             temp.setDisplayName(displayName);
 
-            String [] phoneNumber = new String[5];
-            String [] email = new String[5];
+            String [] phoneNumber;
+            ArrayList<String> phoneNos = new ArrayList<>();
+
+            String [] email;
+            ArrayList<String> emails = new ArrayList<>();
 
 
             //Query - find PhoneNumber/s of a contact with particular userID
-                hasNumber = c.getColumnIndexOrThrow(ContactsContract.Contacts.HAS_PHONE_NUMBER)>0;
+            hasNumber = c.getColumnIndexOrThrow(ContactsContract.Contacts.HAS_PHONE_NUMBER)>0;
+            Cursor phoneCursor;
+
             if(hasNumber){
-
-                Cursor phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?",new String[]{userid},null);
+                 phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " +userid,null,null);
                  phoneCursor.moveToFirst();
-                while(phoneCursor.moveToNext()){
 
+                while(phoneCursor.moveToNext()){
                     String phoneNum = phoneCursor.getString(phoneCursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    phoneNumber[j] = phoneNum;
+                    Log.d("phone",phoneNum);
+                    phoneNos.add(phoneNum);
                     j++;
                 }
+
+
+                phoneNumber = phoneNos.toArray(new String[phoneNos.size()]);
+                temp.setPhoneNumber(phoneNumber);
+                phoneCursor.close();
             }
 
             //Query - find PhoneNumber/s of a contact with particular userID
@@ -242,20 +347,17 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
             //Query - find email of a contact with particular userID
 
-            Cursor emailCursor = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= ?" ,new String[]{userid},null);
+            Cursor emailCursor = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?" ,new String[]{userid},null);
 
-                emailCursor.moveToFirst();
-
-                int emailAd = 0;
+            int emailAd = 0;
+            //emailCursor.moveToFirst();
             while(emailCursor.moveToNext()){
 
-                String getEmail = c.getString(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DATA));
-
-                email[emailAd] = getEmail;
-
+                String getEmail = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                emails.add(getEmail);
                 emailAd++;
             }
-
+            email = emails.toArray(new String[emails.size()]);
             emailCursor.close();
             //Query - find email of a contact with particular userID
 
@@ -270,11 +372,8 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
                 long id = Long.parseLong(userid);
                 Uri contact = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-
                 Uri photoUri = Uri.withAppendedPath(contact, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-
                 temp.setPictureURI(photoUri);
-
 
             }
 
@@ -285,11 +384,12 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
             //Added all QUERY RESULTS TO Person Instance
             temp.setEmail(email);
-            temp.setPhoneNumber(phoneNumber);
-            details[i] = temp;
+            contactList.add(temp);
 
             i++;
         }
+
+        details = contactList.toArray(new Person[contactList.size()]);
 
         c.close();
         return details;

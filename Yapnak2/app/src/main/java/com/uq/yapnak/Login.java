@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -32,10 +33,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.uq.yapnak.ErrorDialog;
 import com.uq.yapnak.MainActivity;
 import com.uq.yapnak.R;
 import com.uq.yapnak.SecureDetails;
+import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -60,6 +65,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
     private boolean needToCreateNewFile;
     private String personName;
     Person person;
+    private Activity activity = this;
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
@@ -118,6 +124,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         //arrowTouch();
         buttonAnimate();
 
+
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,12 +147,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                         */
 
 
-                    Intent i = new Intent(Login.this, FragmentSlideActivity.class);
-                    i.putExtra("initials", initials.getText().toString());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    v.getContext().startActivity(i);
+                    new InternalUser(v).execute(initials.getText().toString(), phone.getText().toString());
+
 
 
 
@@ -160,6 +164,46 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         });
 
 
+    }
+
+
+    private class InternalUser extends AsyncTask<String,Integer,String>{
+
+        private View view;
+        public InternalUser(View v){
+
+            this.view = v;
+        }
+        @Override
+        protected String doInBackground(String... params) {
+
+            SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+            builder.setApplicationName("Yapnak");
+            SQLEntityApi sqlEntity = builder.build();
+
+            try{
+                UserEntity e = sqlEntity.insertUser(params[0],params[1]).execute();
+
+                return e.getUserID();
+
+            }catch (IOException e){
+                e.printStackTrace();
+                return null;
+            }
+            //return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Intent i = new Intent(Login.this, FragmentSlideActivity.class);
+            i.putExtra("initials", s);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            view.getContext().startActivity(i);
+
+        }
     }
 
     private ImageView arrow;
@@ -329,24 +373,67 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
 
 
+    private String userID;
+
+    private class GetUserId extends AsyncTask<String,Integer,String>{
+
+
+        private String email;
+
+        @Override
+        protected String doInBackground(String... params) {
+            this.email  = params[0];
+            try{
+                SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                        .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                builder.setApplicationName("Yapnak");
+
+                SQLEntityApi api = builder.build();
+                UserEntity user = api.insertExternalUser(params[0]).execute();
+                //Toast.makeText(getApplicationContext(),"USER ID In external user",Toast.LENGTH_LONG).show();
+                return user.getUserID();
+
+            }catch (IOException e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Intent i = new Intent(activity, FragmentSlideActivity.class);
+            i.putExtra("userID",s);
+            i.putExtra("accName",email);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        }
+    }
+
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("Debug", "User is connected");
         //Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
         mSignInClicked = false;
         //retrieve user details and make whatever authenticated calls are necessary.
-        Intent i = new Intent(this, FragmentSlideActivity.class);
+
 
         //person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         //this.personName = person.getDisplayName();
 
         String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
 
+        new GetUserId().execute(acc);
+
+        /*Intent i = new Intent(this, FragmentSlideActivity.class);
+        i.putExtra("userID",userID);
         i.putExtra("accName",acc);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
+        */
     }
 
     @Override

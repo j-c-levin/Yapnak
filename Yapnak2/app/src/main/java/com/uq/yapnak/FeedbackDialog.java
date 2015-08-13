@@ -40,11 +40,12 @@ public class FeedbackDialog extends AlertDialog {
     private int feedbackNumber;
     private String ID;
 
-    public FeedbackDialog(Context context,Activity activity) {
+    public FeedbackDialog(Context context,Activity activity,String id) {
         super(context);
         this.activity=activity;
         this.context=context;
         d = this;
+        ID = id;
 
         LayoutInflater inflater = this.activity.getLayoutInflater();
 
