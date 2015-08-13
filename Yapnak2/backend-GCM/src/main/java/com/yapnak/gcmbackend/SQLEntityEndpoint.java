@@ -174,7 +174,7 @@ public class SQLEntityEndpoint {
     public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y, @Named("userID") String userID) throws NotFoundException, OAuthRequestException {
 
         Connection connection;
-        double distance = 0.1;
+        double distance = 0.01;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
         SQLEntity sql = new SQLEntity();
         SQLList sqlList = new SQLList();
