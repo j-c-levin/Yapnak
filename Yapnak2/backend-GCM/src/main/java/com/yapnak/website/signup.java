@@ -213,6 +213,7 @@ public class signup extends HttpServlet {
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, email);
                     stmt.setString(2, hashPassword(email));
+                    System.out.println(hashPassword(password));
                     stmt.setString(3, hashPassword(password));
                     stmt.setString(4, name);
                     int success = 2;

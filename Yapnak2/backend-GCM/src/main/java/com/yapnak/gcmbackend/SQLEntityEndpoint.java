@@ -174,7 +174,7 @@ public class SQLEntityEndpoint {
     public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y, @Named("userID") String userID) throws NotFoundException, OAuthRequestException {
 
         Connection connection;
-        double distance = 0.1;
+        double distance = 0.01;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
         SQLEntity sql = new SQLEntity();
         SQLList sqlList = new SQLList();
@@ -466,6 +466,7 @@ public class SQLEntityEndpoint {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     //user already exists with a google sign in
+                    logger.info("found user " + rs.getString("userID"));
                     user.setUserID(rs.getString("userID"));
                 } else {
                     statement = "INSERT INTO user (userID, email) VALUES(?,?)";
@@ -481,7 +482,7 @@ public class SQLEntityEndpoint {
                         logger.warning("Inserting user failed");
                         user.setUserID("Failed");
                     } else {
-                        logger.info("Successfully inserted the user");
+                        logger.info("Successfully inserted the user " + user.getUserID());
                     }
                 }
             } finally {

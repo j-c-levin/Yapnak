@@ -1829,7 +1829,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return this.itemInfo;
     }
 
-
     public PromoItem[] gift(){
 
         ArrayList<PromoItem> items = new ArrayList<>();
