@@ -45,12 +45,13 @@ public class ProfileDialog extends AlertDialog {
     private String ID;
 
 
-    public ProfileDialog(Context context,Activity activity) {
+    public ProfileDialog(Context context,Activity activity,String ID) {
         super(context);
 
         this.activity=activity;
         this.context=context;
         d = this;
+        this.ID = ID;
 
         LayoutInflater inflater = activity.getLayoutInflater();
 
@@ -92,19 +93,31 @@ public class ProfileDialog extends AlertDialog {
             public void onClick(View v) {
                 final String phoneNum = phone.getText().toString();
                 final String[] names = name.getText().toString().split(" ");
-                try{
-                    SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
-                    apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-                    apiB.setApplicationName("Yapnak");
-                    SQLEntityApi api = apiB.build();
-                    api.setUserDetails(names[0],names[1],phoneNum,ID);
 
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
+                new SubmitDetails().execute(names[0],names[1],phoneNum);
+
                 d.dismiss();
             }
         });
+    }
+
+    private class SubmitDetails extends AsyncTask<String,Integer,Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try{
+                SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                apiB.setApplicationName("Yapnak");
+                SQLEntityApi api = apiB.build();
+                api.setUserDetails(params[0],params[1],params[2],ID);
+
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 
 
@@ -128,16 +141,14 @@ public class ProfileDialog extends AlertDialog {
 
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        /*button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 date.show(activity.getFragmentManager(), "datePicker");
                 //datePicker.show();
-
             }
         });
+        */
 
 
 
@@ -189,8 +200,10 @@ public class ProfileDialog extends AlertDialog {
             divider.setBackgroundColor(Color.parseColor("#BF360C"));
         }
 
-        if(ID!=null){
+        try{
             new FillUserInfo().execute();
+        }catch(NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -218,7 +231,7 @@ public class ProfileDialog extends AlertDialog {
         protected void onPostExecute(UserEntity userEntity) {
 
             phone.setText(userEntity.getMobNo());
-            name.setText(userEntity.getFirstName()+" "+userEntity.getLastName());
+            name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
 
         }
     }

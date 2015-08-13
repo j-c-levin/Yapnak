@@ -12,11 +12,11 @@ import java.util.zip.Inflater;
 /**
  * Created by vahizan on 13/07/2015.
  */
-public class ContactListAdapter extends ArrayAdapter<String> {
+public class ContactListAdapter extends ArrayAdapter<ContactMain> {
 
-    String string;
+    ContactMain contacts;
 
-    public ContactListAdapter(Context context, int resource, String[] objects) {
+    public ContactListAdapter(Context context, int resource, ContactMain[] objects) {
         super(context, R.layout.contactlist_item, objects);
 
 
@@ -28,21 +28,31 @@ public class ContactListAdapter extends ArrayAdapter<String> {
 
         if(convertView==null){
 
-            string = getItem(position);
+            contacts = getItem(position);
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.contactlist_item,null);
 
             TextView tv = (TextView) convertView.findViewById(R.id.contactName);
 
-            tv.setText(string);
+            tv.setText(contacts.getContactName());
 
 
         }else{
 
-            string = (String) convertView.getTag();
+            contacts = (ContactMain) convertView.getTag();
         }
 
         return convertView;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return getCount();
     }
 }
