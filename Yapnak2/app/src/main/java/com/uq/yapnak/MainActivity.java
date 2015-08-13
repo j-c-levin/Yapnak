@@ -467,10 +467,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
 
-            final FeedbackDialog feedback = new FeedbackDialog(this,this);
-            feedback.setID(ID);
-
-
+            final FeedbackDialog feedback = new FeedbackDialog(this,this,ID);
 
             /*
             pos = feedback.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
@@ -818,8 +815,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         //Intent intent = new Intent(getApplicationContext(), ContactList.class);
                         //startActivity(intent);
 
+
                         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                         startActivityForResult(intent, PICK_CONTACT);
+                        
 
                         /*
                         Showing the google stock contacts picker

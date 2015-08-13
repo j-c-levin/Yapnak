@@ -93,19 +93,31 @@ public class ProfileDialog extends AlertDialog {
             public void onClick(View v) {
                 final String phoneNum = phone.getText().toString();
                 final String[] names = name.getText().toString().split(" ");
-                try{
-                    SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
-                    apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-                    apiB.setApplicationName("Yapnak");
-                    SQLEntityApi api = apiB.build();
-                    api.setUserDetails(names[0],names[1],phoneNum,ID);
 
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
+                new SubmitDetails().execute(names[0],names[1],phoneNum);
+
                 d.dismiss();
             }
         });
+    }
+
+    private class SubmitDetails extends AsyncTask<String,Integer,Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try{
+                SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                apiB.setApplicationName("Yapnak");
+                SQLEntityApi api = apiB.build();
+                api.setUserDetails(params[0],params[1],params[2],ID);
+
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 
 
