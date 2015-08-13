@@ -804,21 +804,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         recommend.getContactListButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
 
                         //Self implemented contacts list - Go into ContactList if you want to DO SOMETHING Once a contact is selected.
                         //Add code in onItemClick Method in contactList, if you want a list item to do something
-                        //Intent intent = new Intent(getApplicationContext(), ContactList.class);
-                        //startActivity(intent);
+                        Intent intent = new Intent(getApplicationContext(), ContactList.class);
+                        startActivity(intent);
 
 
-                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                        startActivityForResult(intent, PICK_CONTACT);
-                        
 
                         /*
                         Showing the google stock contacts picker
