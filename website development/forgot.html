@@ -1,0 +1,36 @@
+﻿<!doctype html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="utf-8">
+    <title>Yapnak</title>
+
+    <!--angularjs-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <link href="css/index.css" rel="stylesheet">
+    <script src="app.js"></script>
+
+</head>
+<body class="content container">
+
+    <div class="main-container" ng-controller="forgot-controller">
+
+        <div class="input input-group-lg">
+            <input type="text" ng-model="email" class="form-control input-box" placeholder="Type in your email here">
+        </div>
+
+        <div class="submit-button-container">
+            <input class="btn btn-default submit-button" value="Submit" ng-click="submit()" />
+        </div>
+
+        <div>
+            <div ng-show="submitted == true" class="switch-false container">
+                <h3>{{response}}</h3>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
