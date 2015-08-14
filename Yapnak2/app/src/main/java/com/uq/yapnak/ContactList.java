@@ -6,10 +6,12 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -23,6 +25,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -111,13 +115,9 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
         ContactMain temp = (ContactMain)parent.getItemAtPosition(position);
 
-        Person[] details = getAllContactDetails();
+        Person details = getMoreInfo(temp);
 
-        Toast.makeText(getApplicationContext(),"Here is Contact's Phone Number " + details[0].getPhoneNumber(),Toast.LENGTH_SHORT).show();
-
-
-
-
+        Toast.makeText(getApplicationContext(),"Here is Contact's Phone Number " + details.getPhoneNumber()[0],Toast.LENGTH_SHORT).show();
 
 
     }
@@ -154,7 +154,32 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
     private Person[] details;
     private String [] displayNameArray;
 
+    private class MoreInfo extends AsyncTask<ContactMain,Integer, Person>{
 
+        @Override
+        protected Person doInBackground(ContactMain... params) {
+            return getMoreInfo(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Person person) {
+            super.onPostExecute(person);
+        }
+    }
+
+    public Person getMoreInfo(ContactMain c){
+
+        Person p = new Person();
+        String id = c.getId();
+        p.setId(id);
+        p.setDisplayName(c.getContactName());
+        p.setPhoneNumber(getContactPhone(id));
+        p.setEmail(getContactEmail(id));
+        p.setThumbNail(getThumbnailPhoto(id));
+        //p.setDisplayPicture(getActualSizePhoto(id));
+        return p;
+
+    }
 
     public ContactMain [] getContactName(){
         contentResolver = getContentResolver();
@@ -178,124 +203,124 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
         return contactName.toArray(new ContactMain[contactName.size()]);
 
     }
+    private ContentResolver resolver;
+
+    public String[] getContactPhone(String ID){
+        ArrayList<String> phoneNumbers = new ArrayList<>();
+      resolver = getContentResolver();
+
+        Cursor mainCursor = resolver.query(ContactsContract.Contacts.CONTENT_URI,null,ContactsContract.Contacts._ID + " = ?" ,new String[]{ID},null);
+
+        if(mainCursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)>0){
+
+            Cursor phoneNumber = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? ",new String[]{ID},null);
 
 
-    public Person getContactDetails(String ID){
-        contentResolver = getContentResolver();
-        c= contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null,ContactsContract.Contacts._ID + "= "+ID ,null,null);
-        //c.moveToFirst();
-        ArrayList<Person> contactList = new ArrayList<>();
-
-
-        boolean hasNumber;
-        String correctDisplayName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? ContactsContract.Contacts.DISPLAY_NAME : ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
-
-        int i=0;
-        int j=0;
-
-        Person temp = new Person();
-        c.moveToFirst();
-        while(c.moveToNext()){
-
-            String displayName =  c.getString(c.getColumnIndexOrThrow(correctDisplayName));
-            String userid = ID;
-
-
-
-            temp.setId(userid);
-            temp.setDisplayName(displayName);
-
-            String [] phoneNumber;
-            ArrayList<String> phoneNos = new ArrayList<>();
-
-            String [] email;
-            ArrayList<String> emails = new ArrayList<>();
-
-
-            //Query - find PhoneNumber/s of a contact with particular userID
-
-            Cursor phoneCursor;
-
-
-                phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= " + ID ,null,null);
-                phoneCursor.moveToFirst();
-
-                while(phoneCursor.moveToNext()){
-                    String phoneNum = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    Log.d("phone",phoneNum);
-                    phoneNos.add(phoneNum);
-                    j++;
+            int i = 0;
+            try {
+                while (phoneNumber.moveToNext()) {
+                    String phoneNum = phoneNumber.getString(phoneNumber.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Log.d("phoneNumber",phoneNum);
+                    phoneNumbers.add(phoneNum);
+                    i++;
                 }
 
-
-                phoneNumber = phoneNos.toArray(new String[phoneCursor.getCount()]);
-                temp.setPhoneNumber(phoneNumber);
-                phoneCursor.close();
-
-
-            //Query - find PhoneNumber/s of a contact with particular userID
-
-
-
-            //Query - find email of a contact with particular userID
-
-            Cursor emailCursor = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= " + ID,new String[]{userid},null);
-            emailCursor.moveToFirst();
-            int emailAd = 0;
-
-            while(emailCursor.moveToNext()){
-
-                String getEmail = c.getString(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DATA));
-                emails.add(getEmail);
-                emailAd++;
-            }
-            email = emails.toArray(new String[emailCursor.getCount()]);
-            emailCursor.close();
-            //Query - find email of a contact with particular userID
-
-
-            //Query - find picture of a contact with particular userID
-
-            Cursor pictureCursor = contentResolver.query(ContactsContract.Data.CONTENT_URI,null,ContactsContract.Data.CONTACT_ID + "= ? AND " + ContactsContract.Data.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'", new String[]{userid},null);
-
-
-            pictureCursor.moveToFirst();
-            while(pictureCursor.moveToNext()){
-
-                long id = Long.parseLong(userid);
-                Uri contact = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-                Uri photoUri = Uri.withAppendedPath(contact, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-                temp.setPictureURI(photoUri);
-
+            }finally {
+                phoneNumber.close();
             }
 
-            //Query - find picture of a contact with particular userID
-
-            pictureCursor.close();
-
-
-            //Added all QUERY RESULTS TO Person Instance
-            temp.setEmail(email);
-            //contactList.add(temp);
-
-            i++;
         }
 
-       // details = contactList.toArray(new Person[c.getCount()]);
+        return phoneNumbers.toArray(new String[phoneNumbers.size()]);
+    }
 
-        c.close();
-        return temp;
+    public String [] getContactEmail(String ID){
+        resolver = getContentResolver();
+        ArrayList<String> emails = new ArrayList<>();
+
+
+        Cursor mainCursor = resolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ? ", new String[]{ID}, null);
+
+        int i=0;
+        try {
+            if (mainCursor.getCount() > 0) {
+                while (mainCursor.moveToNext()) {
+                    String email = mainCursor.getString(mainCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                    Log.d("email",email);
+                    emails.add(email);
+                    i++;
+                }
+            }
+        }finally {
+            mainCursor.close();
+        }
+
+
+
+        return emails.toArray(new String[emails.size()]);
+
+    }
+
+    public Bitmap getThumbnailPhoto(String ID){
+        resolver = getContentResolver();
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(ID));
+        Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+
+       Cursor thumbCursor = resolver.query(photoUri,new String[]{ContactsContract.Contacts.Photo.PHOTO},null,null,null);
+
+        if(thumbCursor==null){
+            return null;
+        }
+
+        try {
+
+            if(thumbCursor.moveToFirst()){
+
+                byte[] photoData = thumbCursor.getBlob(0);
+
+                ByteArrayInputStream byteStream = new ByteArrayInputStream(photoData);
+                Bitmap map = BitmapFactory.decodeStream(byteStream);
+                return map;
+            }
+
+
+        }finally {
+            thumbCursor.close();
+            return null;
+        }
+
+
+    }
+
+    public Bitmap getActualSizePhoto(String ID){
+        resolver = getContentResolver();
+
+        Uri content = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.parseLong(ID));
+        Uri bigPhoto = Uri.withAppendedPath(content, ContactsContract.Contacts.Photo.DISPLAY_PHOTO);
+
+       try{
+
+           AssetFileDescriptor file = resolver.openAssetFileDescriptor(bigPhoto,"photo");
+
+           InputStream stream = file.createInputStream();
+           Bitmap bitmap = BitmapFactory.decodeStream(stream);
+           return bitmap;
+
+       }catch (IOException e){
+           e.printStackTrace();
+           return null;
+       }
 
     }
 
 
+
+//DOESN'T WORK
     public Person[] getAllContactDetails(){
         contentResolver = getContentResolver();
-        c= contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        c = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         //c.moveToFirst();
         ArrayList<Person> contactList = new ArrayList<>();
-
-
         boolean hasNumber;
         String correctDisplayName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ? ContactsContract.Contacts.DISPLAY_NAME : ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
 
@@ -373,7 +398,7 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
                 long id = Long.parseLong(userid);
                 Uri contact = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
                 Uri photoUri = Uri.withAppendedPath(contact, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-                temp.setPictureURI(photoUri);
+                //temp.setPictureURI(photoUri);
 
             }
 
@@ -419,8 +444,8 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
         private String  id;
         private String [] phoneNumber;
         private String [] email;
-        private String displayPictureURI;
-        private Uri pictureURI;
+        private Bitmap displayPicture;
+        private Bitmap thumbNail;
 
 
 
@@ -456,20 +481,21 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
             this.email = email;
         }
 
-        public String getDisplayPictureURI() {
-            return displayPictureURI;
+
+        public Bitmap getDisplayPicture() {
+            return displayPicture;
         }
 
-        private void setDisplayPictureURI(String displayPictureURI) {
-            this.displayPictureURI = displayPictureURI;
+        public void setDisplayPicture(Bitmap displayPicture) {
+            this.displayPicture = displayPicture;
         }
 
-        public Uri getPictureURI() {
-            return pictureURI;
+        public Bitmap getThumbNail() {
+            return thumbNail;
         }
 
-        private void setPictureURI(Uri pictureURI) {
-            this.pictureURI = pictureURI;
+        public void setThumbNail(Bitmap thumbNail) {
+            this.thumbNail = thumbNail;
         }
     }
 
