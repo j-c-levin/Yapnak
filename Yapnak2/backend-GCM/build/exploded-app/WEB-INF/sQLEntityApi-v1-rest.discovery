@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/emPMyOjgibeQkAZ1-cmnN7mmTDE\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/iDWHWeKTdy15yBbo9JHCgov2o9I\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -437,7 +437,7 @@
    "path": "resetPassword",
    "httpMethod": "POST",
    "parameters": {
-    "email": {
+    "hash": {
      "type": "string",
      "required": true,
      "location": "query"
@@ -449,7 +449,7 @@
     }
    },
    "parameterOrder": [
-    "email",
+    "hash",
     "password"
    ],
    "response": {

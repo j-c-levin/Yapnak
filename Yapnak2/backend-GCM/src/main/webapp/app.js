@@ -42,7 +42,7 @@ angular.module('app', ['ngCookies'])
         })
     };
 
-    result.reset = function (password, email) {
+    result.reset = function (password, hash) {
         var req = {
             method: 'POST',
             url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/resetPassword',
@@ -57,7 +57,7 @@ angular.module('app', ['ngCookies'])
             },
             data: {
                 password: password,
-                email: email
+                hash: hash
             }
         }
         return $http(req).then(function (response) {
@@ -119,28 +119,30 @@ angular.module('app', ['ngCookies'])
 
 .controller('reset-controller', function ($window, $timeout, $scope, webfactory, $cookies) {
     $scope.valid = true;
-    $scope.email = $cookies.get("com.yapnak.email");
+    $scope.hash = $cookies.get("com.yapnak.hash");
 
-    if ($scope.email == undefined) {
+    if ($scope.hash == undefined) {
         $scope.response = "You do not have permission to view this page."
         $scope.valid = false;
     }
 
     $scope.submit = function () {
-        if ($scope.pass == $scope.cPass && $scope.valid == true) {
-            webfactory.reset($scope.pass, $scope.email).then(function (response) {
-                if (response == "True") {
-                    $scope.response = "Password changed.  Log in at yapnak.com/client";
-                } else {
+        if ($scope.valid == true) {
+            if ($scope.pass == $scope.cPass) {
+                webfactory.reset($scope.pass, $scope.hash).then(function (response) {
+                    if (response == "True") {
+                        $scope.response = "Password changed.  Log in at yapnak.com/client";
+                    } else {
+                        $scope.response = "Something went wrong, sorry."
+                    }
+                }, function (error) {
                     $scope.response = "Something went wrong, sorry."
-                }
-            }, function (error) {
-                $scope.response = "Something went wrong, sorry."
-            })
+                })
 
-        } else {
-            console.log($scope.cPass.concat(" ").concat($scope.pass));
-            $scope.response = "Your passwords are not the same."
+            } else {
+                console.log($scope.cPass.concat(" ").concat($scope.pass));
+                $scope.response = "Your passwords are not the same."
+            }
         }
     }
 })

@@ -210,11 +210,10 @@ public class SQLEntityEndpoint {
             name = "resetPassword",
             path = "resetPassword",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public VoidEntity resetPassword(@Named("password") String password, @Named("email") String email) throws ClassNotFoundException, SQLException {
+    public VoidEntity resetPassword(@Named("password") String password, @Named("hash") String hash) throws ClassNotFoundException, SQLException {
         VoidEntity voidEntity = new VoidEntity();
         Connection connection;
-        voidEntity.setStatus("False");
-        voidEntity.setMessage("Something went wrong.");
+
         if (SystemProperty.environment.value() ==
                 SystemProperty.Environment.Value.Production) {
             // Load the class that provides the new "jdbc:google:mysql://" prefix.
@@ -225,22 +224,30 @@ public class SQLEntityEndpoint {
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
         }
-        try {
-            String statement = "UPDATE client SET password = ? WHERE email = ?";
+
+            String statement = "SELECT email FROM forgot WHERE reset = ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
+            stmt.setString(1, hash);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+
+            statement = "UPDATE client SET password = ? WHERE email = ?";
+            stmt = connection.prepareStatement(statement);
             stmt.setString(1, hashPassword(password));
-            stmt.setString(2, email);
+            stmt.setString(2, rs.getString("email"));
             stmt.executeUpdate();
 
-            statement = "DELETE FROM forgot WHERE email = ?";
+            statement = "DELETE FROM forgot WHERE reset = ?";
             stmt = connection.prepareStatement(statement);
-            stmt.setString(1, email);
+            stmt.setString(1, hash);
             stmt.executeUpdate();
+
             voidEntity.setStatus("True");
-        } finally {
+            voidEntity.setMessage("");
+
             connection.close();
             return voidEntity;
-        }
+
 
     }
 

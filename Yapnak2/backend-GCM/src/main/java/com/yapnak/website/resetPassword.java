@@ -37,14 +37,14 @@ public class resetPassword extends HttpServlet {
                     connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
                 }
                 try {
-                    String sql = "SELECT email FROM forgot where reset = ?";
+                    String sql = "SELECT COUNT(*) FROM forgot WHERE reset = ?";
                     PreparedStatement stmt = connection.prepareStatement(sql);
                     stmt.setString(1, hash);
                     ResultSet rs = stmt.executeQuery();
-
-                    if (rs.next()) {
+                    rs.next();
+                    if (rs.getInt(1) > 0) {
                         //reset requested
-                        Cookie part1 = new Cookie("com.yapnak.email", rs.getString("email"));
+                        Cookie part1 = new Cookie("com.yapnak.hash", hash);
                         resp.addCookie(part1);
                         resp.setHeader("Refresh", "0; url=/reset.html");
                     } else {
