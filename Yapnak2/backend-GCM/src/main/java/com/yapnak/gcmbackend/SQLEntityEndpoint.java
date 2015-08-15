@@ -35,6 +35,7 @@ import javax.inject.Named;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -155,6 +156,111 @@ public class SQLEntityEndpoint {
             e.printStackTrace();
         } finally {
             return points;
+        }
+    }
+
+    @ApiMethod(
+            name = "forgotLogin",
+            path = "forgotLogin",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity forgotLogin(@Named("email") String email) throws ClassNotFoundException, SQLException {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        if (SystemProperty.environment.value() ==
+                SystemProperty.Environment.Value.Production) {
+            // Load the class that provides the new "jdbc:google:mysql://" prefix.
+            Class.forName("com.mysql.jdbc.GoogleDriver");
+            connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+        } else {
+            // Local MySQL instance to use during development.
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+        }
+        try {
+            String statement = "SELECT COUNT(email) AS count from client where email = ?";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                voidEntity.setStatus("True");
+                //Gather hashes and send email
+                String reset = hashPassword(String.valueOf(randInt()));
+                String cancel = hashPassword(String.valueOf(randInt()));
+                statement = "REPLACE forgot (email,reset,cancel,time) VALUES (?,?,?,CURDATE())";
+                stmt = connection.prepareStatement(statement);
+                stmt.setString(1, email);
+                stmt.setString(2, reset);
+                stmt.setString(3, cancel);
+                stmt.executeUpdate();
+                String subject = "Yapnak password reset";
+                String message = "Hi,\n\nWe have received a request to reset the password on your Yapnak account.\n\nTo reset, click: www.yapnak.com/resetPassword?response=" + reset + "\n\nThis link will be active for one day.\n\nIf you didn't request this email, click here: www.yapnak.com/cancelReset?response=" + cancel + "\n\nKind regards,\nthe Yapnak team.";
+                sendEmail(email,subject,message);
+            } else {
+                voidEntity.setStatus("False");
+                voidEntity.setMessage("Email not found");
+            }
+        } finally {
+            connection.close();
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "resetPassword",
+            path = "resetPassword",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity resetPassword(@Named("password") String password, @Named("email") String email) throws ClassNotFoundException, SQLException {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        voidEntity.setStatus("False");
+        voidEntity.setMessage("Something went wrong.");
+        if (SystemProperty.environment.value() ==
+                SystemProperty.Environment.Value.Production) {
+            // Load the class that provides the new "jdbc:google:mysql://" prefix.
+            Class.forName("com.mysql.jdbc.GoogleDriver");
+            connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+        } else {
+            // Local MySQL instance to use during development.
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+        }
+        try {
+            String statement = "UPDATE client SET password = ? WHERE email = ?";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            stmt.setString(1, hashPassword(password));
+            stmt.setString(2, email);
+            stmt.executeUpdate();
+
+            statement = "DELETE FROM forgot WHERE email = ?";
+            stmt = connection.prepareStatement(statement);
+            stmt.setString(1, email);
+            stmt.executeUpdate();
+            voidEntity.setStatus("True");
+        } finally {
+            connection.close();
+            return voidEntity;
+        }
+
+    }
+
+    static void sendEmail(String email, String subject, String message) {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        try {
+            javax.mail.Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+            msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(email));
+            msg.setSubject(subject);
+            msg.setText(message);
+            Transport.send(msg);
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -319,7 +425,6 @@ public class SQLEntityEndpoint {
             return alllist;
         }
     }
-
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
