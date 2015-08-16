@@ -1,7 +1,6 @@
 package com.yapnak.gcmbackend;
 
 import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -91,18 +90,19 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT userID, pushKey FROM user where userID = ?";
+//                String statement = "SELECT userID, pushKey FROM user where userID = ?";
+                String statement = "SELECT userID FROM user where userID = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, userID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
-                    logger.info("found user");
+                    logger.info("found user " + rs.getString("userID"));
 
                     //push notification
-                    String message = "You've gained points, nice one.";
+/*                    String message = "You've gained points, nice one.";
                     Sender sender = new Sender(API_KEY);
                     Message msg = new Message.Builder().addData("message", message).build();
-                    Result result = sender.send(msg, rs.getString("pushKey"), 5);
+                    Result result = sender.send(msg, rs.getString("pushKey"), 5);*/
 
                     statement = "SELECT clientID from client where email = ?";
                     stmt = connection.prepareStatement(statement);
@@ -110,6 +110,7 @@ public class SQLEntityEndpoint {
                     rs = stmt.executeQuery();
                     rs.next();
                     points.setClientID(rs.getInt("clientID"));
+                    logger.info("at client: " + points.getClientID() + " " + clientEmail);
                     points.setUserID(userID);
                     statement = "SELECT points FROM points where userID = ? AND clientID = ?";
                     stmt = connection.prepareStatement(statement);
