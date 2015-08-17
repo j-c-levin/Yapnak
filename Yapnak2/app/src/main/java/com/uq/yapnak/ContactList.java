@@ -5,6 +5,7 @@ import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
@@ -92,32 +93,33 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
         populateList();
     }
 
+
+
+
+    private Intent intent;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         /*
         //Do SOMETHING - OPEN UP Contact INFO
-
         Cursor cursor = ((SimpleCursorAdapter)parent.getAdapter()).getCursor();
-
         //GO TO SELECTED LIST ITEM/CONTACT
         cursor.moveToPosition(position);
-
         //get id in position 0
         contactID = cursor.getLong(CONTACT_ID_INDEX);
-
         //get key in position 1
         contactKey = cursor.getString(CONTACT_KEY);
-
         contactURI = ContactsContract.Contacts.getLookupUri(contactID,contactKey);
-
         */
 
         ContactMain temp = (ContactMain)parent.getItemAtPosition(position);
-
         Person details = getMoreInfo(temp);
-
         Toast.makeText(getApplicationContext(),"Here is Contact's Phone Number " + details.getPhoneNumber()[0],Toast.LENGTH_SHORT).show();
+        intent = new Intent();
+        intent.putExtra("phone_num",details.getPhoneNumber()[0]);
+        setResult(123,intent);
+        finish();
+
 
 
     }
@@ -144,9 +146,6 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
 
         getLoaderManager().initLoader(0,null,this);
         */
-
-
-
     }
 
     private ContentResolver contentResolver;
@@ -254,8 +253,6 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
         }finally {
             mainCursor.close();
         }
-
-
 
         return emails.toArray(new String[emails.size()]);
 
@@ -558,6 +555,8 @@ public class ContactList extends Activity implements LoaderManager.LoaderCallbac
         adapter.swapCursor(null);
 
     }
+
+
 
 
 
