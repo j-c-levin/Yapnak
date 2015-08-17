@@ -788,6 +788,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if(requestCode == CONTACTPICK_RESULT){
+
+            if(resultCode==RESULT_OK) {
+                String phoneNum = data.getStringExtra("phone_num");
+                contactButton.setText(phoneNum);
+            }
+
+        }
 
 
 
@@ -795,13 +803,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     //private ListView list;
     private final int PICK_CONTACT = 1;
+    private Button contactButton;
 
+    private final int CONTACTPICK_RESULT= 123;
     AlertDialog posRec;
     public void recommendMealButton(View v) {
 
         RecommendDialog recommend = new RecommendDialog(this,this);
+        contactButton = recommend.getContactListButton();
 
-        recommend.getContactListButton().setOnClickListener(new View.OnClickListener() {
+        contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Handler().post(new Runnable() {
@@ -810,11 +821,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                         //Self implemented contacts list - Go into ContactList if you want to DO SOMETHING Once a contact is selected.
                         //Add code in onItemClick Method in contactList, if you want a list item to do something
-                        Intent intent = new Intent(getApplicationContext(), ContactList.class);
-                        startActivity(intent);
+                       // Intent intent = new Intent(getApplicationContext(), ContactList.class);
+                        //startActivityForResult(intent, CONTACTPICK_RESULT);
 
-
-
+                        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                        startActivityForResult(intent, PICK_CONTACT );
                         /*
                         Showing the google stock contacts picker
                         When contact chosen, DO SOMETHING in "onActivityResult" Method
@@ -824,7 +835,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         */
                     }
                 });
-
             }
         });
 
