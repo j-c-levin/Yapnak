@@ -1,4 +1,4 @@
-angular.module('app', ['ngCookies'])
+angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
 
 .factory('webfactory', ['$http', function ($http) {
     var result = {};
@@ -145,4 +145,8 @@ angular.module('app', ['ngCookies'])
             }
         }
     }
+})
+
+.controller('client-controller', function($scope) {
+
 })
