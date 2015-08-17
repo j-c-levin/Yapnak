@@ -32,6 +32,7 @@ import java.io.IOException;
  * Created by Nand on 23/03/15.
  */
 public class Splash extends Activity {
+    private boolean inPause;
     private static final int NOTIFICATION_ID = 0 ;
     private long timer = 2000;
     private GoogleApiClient mGoogleApiClient;
@@ -74,32 +75,14 @@ public class Splash extends Activity {
 
             isIn=true;
             newHandler.removeCallbacks(runnable);
-
-
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
-            /*Intent i = new Intent(Splash.this, MainActivity.class);
-            i.putExtra("accName", acc);
-            userId = getExternalId(acc);
-            Toast.makeText(getApplicationContext(), "User ID " + userId,Toast.LENGTH_SHORT).show();
-            i.putExtra("userID", userId);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-            */
+            inPause=true;
+            Toast.makeText(getApplicationContext()," ON PAUSE ", Toast.LENGTH_LONG).show();
             //new UserID().execute(acc);
-            //finish();
-
-
-
         }
-
-
-
-
     }
 
+    private boolean firstTime;
 
     @Override
     protected void onResume() {
@@ -138,20 +121,26 @@ public class Splash extends Activity {
                         startActivity(i);
                         finish();
                     } else if (mGoogleApiClient.isConnected()) {
-                       /*
+
                         //Toast.makeText(getApplicationContext(),"Connected in Splash",Toast.LENGTH_SHORT).show();
                         newHandler.removeCallbacks(this);
-                        Intent i = new Intent(Splash.this, MainActivity.class);
-                        String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+
+                        /*Intent i = new Intent(Splash.this, MainActivity.class);
                         i.putExtra("accName", acc);
-                        //Toast.makeText(getApplicationContext(), acc+" IN SPLASH", Toast.LENGTH_LONG).show();
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                         startActivity(i);
-                        finish();
-                      */
+                        */
+
+                      Toast.makeText(getApplicationContext()," ON RESUME ", Toast.LENGTH_LONG).show();
+                      String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                      isIn=true;
+                      firstTime = true;
+                      new UserID().execute(acc);
+
+
                     }
             }
         };
@@ -164,36 +153,16 @@ public class Splash extends Activity {
 
         setContentView(R.layout.splash_activity);
 
+        firstTime = false;
         activity = this;
 
 
         work = new BackgroundWork();
         //work.execute();
         mGoogleApiClient = work.doInBackground();
-        work.execute();
+        //work.execute();
         //mSignInClicked = true;
         mGoogleApiClient.connect();
-    }
-
-    // pushYapnak();
-
-    private void pushYapnak(){
-
-        final ImageView image= (ImageView) findViewById(R.id.yapnak);
-
-
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent i = new Intent(Splash.this, MainLoginActivity.class);
-                startActivity(i);
-
-                activity.finish();
-            }
-        });
-
-
     }
 
     @Override
@@ -213,23 +182,6 @@ public class Splash extends Activity {
 
     private String userId;
 
-    private String getExternalId(String acc){
-        String userName;
-        try{
-            SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-            builder.setApplicationName("Yapnak");
-            SQLEntityApi api = builder.build();
-            UserEntity user = api.insertExternalUser(acc).execute();
-            userName = user.getUserID();
-            return userName;
-
-        }catch (IOException e){
-            e.printStackTrace();
-            Log.d("error","error!!!!1");
-            return null;
-        }
-    }
 
 
      private class UserID extends AsyncTask<String,Integer,String>{
@@ -243,6 +195,7 @@ public class Splash extends Activity {
         protected String doInBackground(String... params) {
 
             accountName = params[0];
+
 
             try{
                 SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
@@ -267,13 +220,29 @@ public class Splash extends Activity {
 
          @Override
          protected void onPostExecute(String s) {
-             Intent i = new Intent(Splash.this, MainActivity.class);
-             i.putExtra("accName", accountName);
-             i.putExtra("userID", s);
-             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-             startActivity(i);
+
+             if(firstTime) {
+                 Intent i = new Intent(Splash.this, FragmentSlideActivity.class);
+                 i.putExtra("accName", accountName);
+                 i.putExtra("userID", s);
+                 i.putExtra("initials","n/A");
+                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                 startActivity(i);
+                 activity.finish();
+             }else{
+
+                 Intent i = new Intent(Splash.this, MainActivity.class);
+                 i.putExtra("accName", accountName);
+                 i.putExtra("userID", s);
+                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                 startActivity(i);
+
+
+             }
          }
      }
 
@@ -324,6 +293,7 @@ public class Splash extends Activity {
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(i);
             */
+            isIn=true;
             new UserID().execute(acc);
 
         }

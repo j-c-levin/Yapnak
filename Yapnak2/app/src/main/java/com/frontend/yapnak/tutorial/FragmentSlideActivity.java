@@ -25,10 +25,13 @@ public class FragmentSlideActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.fragment_viewpager);
-        pager = (ViewPager) findViewById(R.id.viewPager);
-        PagerAdapter adapter = new SlideAdapter(getSupportFragmentManager());
-        pager.setAdapter(adapter);
+        if(savedInstanceState==null) {
+            setContentView(R.layout.fragment_viewpager);
+            pager = (ViewPager) findViewById(R.id.viewPager);
+            PagerAdapter adapter = new SlideAdapter(getSupportFragmentManager());
+            pager.setAdapter(adapter);
+
+        }
 
     }
 
