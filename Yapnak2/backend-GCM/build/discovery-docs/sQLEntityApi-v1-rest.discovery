@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Gmly9bExIaSOjFgQgecMi39qgPE\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/iDWHWeKTdy15yBbo9JHCgov2o9I\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -165,6 +165,18 @@
     }
    }
   },
+  "VoidEntity": {
+   "id": "VoidEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "all": {
    "id": "all",
    "type": "object",
@@ -253,6 +265,27 @@
     "type",
     "userID"
    ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "forgotLogin": {
+   "id": "sQLEntityApi.forgotLogin",
+   "path": "forgotLogin",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
+   },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]
@@ -394,6 +427,33 @@
    ],
    "response": {
     "$ref": "UserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "resetPassword": {
+   "id": "sQLEntityApi.resetPassword",
+   "path": "resetPassword",
+   "httpMethod": "POST",
+   "parameters": {
+    "hash": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "hash",
+    "password"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

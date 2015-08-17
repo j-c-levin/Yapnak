@@ -1,7 +1,6 @@
 package com.yapnak.gcmbackend;
 
 import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -35,6 +34,7 @@ import javax.inject.Named;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -90,18 +90,19 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT userID, pushKey FROM user where userID = ?";
+//                String statement = "SELECT userID, pushKey FROM user where userID = ?";
+                String statement = "SELECT userID FROM user where userID = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, userID);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
-                    logger.info("found user");
+                    logger.info("found user " + rs.getString("userID"));
 
                     //push notification
-                    String message = "You've gained points, nice one.";
+/*                    String message = "You've gained points, nice one.";
                     Sender sender = new Sender(API_KEY);
                     Message msg = new Message.Builder().addData("message", message).build();
-                    Result result = sender.send(msg, rs.getString("pushKey"), 5);
+                    Result result = sender.send(msg, rs.getString("pushKey"), 5);*/
 
                     statement = "SELECT clientID from client where email = ?";
                     stmt = connection.prepareStatement(statement);
@@ -109,6 +110,7 @@ public class SQLEntityEndpoint {
                     rs = stmt.executeQuery();
                     rs.next();
                     points.setClientID(rs.getInt("clientID"));
+                    logger.info("at client: " + points.getClientID() + " " + clientEmail);
                     points.setUserID(userID);
                     statement = "SELECT points FROM points where userID = ? AND clientID = ?";
                     stmt = connection.prepareStatement(statement);
@@ -158,6 +160,118 @@ public class SQLEntityEndpoint {
         }
     }
 
+    @ApiMethod(
+            name = "forgotLogin",
+            path = "forgotLogin",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity forgotLogin(@Named("email") String email) throws ClassNotFoundException, SQLException {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        if (SystemProperty.environment.value() ==
+                SystemProperty.Environment.Value.Production) {
+            // Load the class that provides the new "jdbc:google:mysql://" prefix.
+            Class.forName("com.mysql.jdbc.GoogleDriver");
+            connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+        } else {
+            // Local MySQL instance to use during development.
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+        }
+        try {
+            String statement = "SELECT COUNT(email) AS count from client where email = ?";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            if (rs.getInt(1) > 0) {
+                voidEntity.setStatus("True");
+                //Gather hashes and send email
+                String reset = hashPassword(String.valueOf(randInt()));
+                String cancel = hashPassword(String.valueOf(randInt()));
+                statement = "REPLACE forgot (email,reset,cancel,time) VALUES (?,?,?,CURDATE())";
+                stmt = connection.prepareStatement(statement);
+                stmt.setString(1, email);
+                stmt.setString(2, reset);
+                stmt.setString(3, cancel);
+                stmt.executeUpdate();
+                String subject = "Yapnak password reset";
+                String message = "Hi,\n\nWe have received a request to reset the password on your Yapnak account.\n\nTo reset, click: www.yapnak.com/resetPassword?response=" + reset + "\n\nThis link will be active for one day.\n\nIf you didn't request this email, click here: www.yapnak.com/cancelReset?response=" + cancel + "\n\nKind regards,\nthe Yapnak team.";
+                sendEmail(email,subject,message);
+            } else {
+                voidEntity.setStatus("False");
+                voidEntity.setMessage("Email not found");
+            }
+        } finally {
+            connection.close();
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "resetPassword",
+            path = "resetPassword",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity resetPassword(@Named("password") String password, @Named("hash") String hash) throws ClassNotFoundException, SQLException {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+
+        if (SystemProperty.environment.value() ==
+                SystemProperty.Environment.Value.Production) {
+            // Load the class that provides the new "jdbc:google:mysql://" prefix.
+            Class.forName("com.mysql.jdbc.GoogleDriver");
+            connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+        } else {
+            // Local MySQL instance to use during development.
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+        }
+
+            String statement = "SELECT email FROM forgot WHERE reset = ?";
+            PreparedStatement stmt = connection.prepareStatement(statement);
+            stmt.setString(1, hash);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+
+            statement = "UPDATE client SET password = ? WHERE email = ?";
+            stmt = connection.prepareStatement(statement);
+            stmt.setString(1, hashPassword(password));
+            stmt.setString(2, rs.getString("email"));
+            stmt.executeUpdate();
+
+            statement = "DELETE FROM forgot WHERE reset = ?";
+            stmt = connection.prepareStatement(statement);
+            stmt.setString(1, hash);
+            stmt.executeUpdate();
+
+            voidEntity.setStatus("True");
+            voidEntity.setMessage("");
+
+            connection.close();
+            return voidEntity;
+
+
+    }
+
+    static void sendEmail(String email, String subject, String message) {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        try {
+            javax.mail.Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+            msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(email));
+            msg.setSubject(subject);
+            msg.setText(message);
+            Transport.send(msg);
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Returns the {@link SQLEntity} with the corresponding ID.
@@ -174,7 +288,7 @@ public class SQLEntityEndpoint {
     public SQLList getClients(@Named("longitude") double x, @Named("latitude") double y, @Named("userID") String userID) throws NotFoundException, OAuthRequestException {
 
         Connection connection;
-        double distance = 0.01;
+        double distance = 0.1;
         List<SQLEntity> list = new ArrayList<SQLEntity>();
         SQLEntity sql = new SQLEntity();
         SQLList sqlList = new SQLList();
@@ -319,7 +433,6 @@ public class SQLEntityEndpoint {
             return alllist;
         }
     }
-
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
