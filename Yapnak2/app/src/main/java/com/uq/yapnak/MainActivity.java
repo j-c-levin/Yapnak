@@ -173,7 +173,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             floatButton();
         }
         */
+        this.name = getIntent();
+        ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
 
+        Log.d("main-id",ID);
 
         //navBarToggle();
         //navigationBarContent();
@@ -200,10 +203,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         MenuItem item = menu.findItem(R.id.userNameToolBar);
 
 
-            this.name = getIntent();
+
             personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
 
-            ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
+
 
             String[] names = personName.split("@");
 
@@ -549,7 +552,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void profileDialog(View v){
 
         ///AlertDialog.Builder userItems = new ProfileDialog(this,this);
+
         ProfileDialog userItems = new ProfileDialog(this,this,ID);
+
        //userItems.setID(ID);
 
        /* posProf=userItems.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {

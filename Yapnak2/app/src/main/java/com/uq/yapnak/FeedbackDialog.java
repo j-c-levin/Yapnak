@@ -171,7 +171,7 @@ public class FeedbackDialog extends AlertDialog {
                 apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 apiB.setApplicationName("Yapnak");
                 SQLEntityApi api = apiB.build();
-                api.feedback(feedback.getComment(), feedback.getFeedbackNumber(), feedback.getID());
+                api.feedback(feedback.getComment(), feedback.getFeedbackNumber(), feedback.getID()).execute();
             }catch (IOException e){
                 e.printStackTrace();
             }

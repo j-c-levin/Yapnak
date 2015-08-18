@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.frontend.yapnak.subview.MyDatePickerDialog;
@@ -53,6 +55,7 @@ public class ProfileDialog extends AlertDialog {
         d = this;
         this.ID = ID;
 
+
         LayoutInflater inflater = activity.getLayoutInflater();
 
         View v = inflater.inflate(R.layout.profile_layout,null);
@@ -87,6 +90,7 @@ public class ProfileDialog extends AlertDialog {
     }
 
 
+
     private void submitProfile(){
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +98,11 @@ public class ProfileDialog extends AlertDialog {
                 final String phoneNum = phone.getText().toString();
                 final String[] names = name.getText().toString().split(" ");
 
-                new SubmitDetails().execute(names[0],names[1],phoneNum);
+                if(names.length==1) {
+                    new SubmitDetails().execute(names[0],"",phoneNum);
+                }else{
+                    new SubmitDetails().execute(names[0],names[1],phoneNum);
+                }
 
                 d.dismiss();
             }
@@ -110,6 +118,7 @@ public class ProfileDialog extends AlertDialog {
                 apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 apiB.setApplicationName("Yapnak");
                 SQLEntityApi api = apiB.build();
+                Log.d("submit_id",ID);
                 api.setUserDetails(params[0],params[1],params[2],ID);
 
             }catch(IOException e){
@@ -199,12 +208,8 @@ public class ProfileDialog extends AlertDialog {
         if(divider!=null){
             divider.setBackgroundColor(Color.parseColor("#BF360C"));
         }
-
-        try{
             new FillUserInfo().execute();
-        }catch(NullPointerException e){
-            e.printStackTrace();
-        }
+
     }
 
     private class FillUserInfo extends AsyncTask<Void,Integer,UserEntity>{
@@ -219,6 +224,7 @@ public class ProfileDialog extends AlertDialog {
                 builder.setApplicationName("Yapnak");
 
                 SQLEntityApi sqlEntity = builder.build();
+                Log.d("filluser_id",ID);
                 sqlEntity.getUserDetails(ID);
                 return sqlEntity.getUserDetails(ID).execute();
 
@@ -230,8 +236,10 @@ public class ProfileDialog extends AlertDialog {
         @Override
         protected void onPostExecute(UserEntity userEntity) {
 
-            phone.setText(userEntity.getMobNo());
-            name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+            if(!userEntity.getMobNo().equalsIgnoreCase("_null") && !userEntity.getFirstName().equalsIgnoreCase("_null")){
+                phone.setText(userEntity.getMobNo());
+                name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+            }
 
         }
     }

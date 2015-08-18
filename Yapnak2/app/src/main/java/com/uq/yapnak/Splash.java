@@ -77,7 +77,6 @@ public class Splash extends Activity {
             newHandler.removeCallbacks(runnable);
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
             inPause=true;
-            Toast.makeText(getApplicationContext()," ON PAUSE ", Toast.LENGTH_LONG).show();
             //new UserID().execute(acc);
         }
     }
@@ -133,8 +132,6 @@ public class Splash extends Activity {
 
                         startActivity(i);
                         */
-
-                      Toast.makeText(getApplicationContext()," ON RESUME ", Toast.LENGTH_LONG).show();
                       String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
                       isIn=true;
                       firstTime = true;
