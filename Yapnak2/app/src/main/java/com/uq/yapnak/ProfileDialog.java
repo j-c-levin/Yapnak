@@ -119,7 +119,7 @@ public class ProfileDialog extends AlertDialog {
                 apiB.setApplicationName("Yapnak");
                 SQLEntityApi api = apiB.build();
                 Log.d("submit_id",ID);
-                api.setUserDetails(params[0],params[1],params[2],ID);
+                api.setUserDetails(params[0],params[1],params[2],ID).execute();
 
             }catch(IOException e){
                 e.printStackTrace();
