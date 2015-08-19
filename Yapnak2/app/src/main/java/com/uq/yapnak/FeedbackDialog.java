@@ -116,10 +116,8 @@ public class FeedbackDialog extends AlertDialog {
             public void onClick(View v) {
 
                 String text = comments.getText().toString();
-                //TODO:text must be stored in feedback table in the database
-                Toast.makeText(getContext(), " Thank You For Your Feedback  " , Toast.LENGTH_SHORT).show();
-
                 new SubmitFeedback().execute(ID,text);
+                Toast.makeText(getContext(), " Thank You For Your Feedback  " , Toast.LENGTH_SHORT).show();
 
                 d.dismiss();
             }
@@ -152,30 +150,29 @@ public class FeedbackDialog extends AlertDialog {
         this.ID = ID;
     }
 
-    private class SubmitFeedback extends AsyncTask<String,String,Feedback>{
+    private class SubmitFeedback extends AsyncTask<String,Void,Void>{
 
         @Override
-        protected Feedback doInBackground(String... params) {
+        protected Void doInBackground(String... params) {
             Feedback f = new Feedback();
             f.setID(params[0]);
             f.setComment(params[1]);
             f.setFeedbackNumber(feedbackNumber);
-            return f;
-        }
-
-        @Override
-        protected void onPostExecute(Feedback feedback) {
 
             try {
                 SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
                 apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 apiB.setApplicationName("Yapnak");
                 SQLEntityApi api = apiB.build();
-                api.feedback(feedback.getComment(),feedback.getFeedbackNumber(), feedback.getID()).execute();
+                api.feedback(f.getComment(),f.getFeedbackNumber(), f.getID()).execute();
             }catch (IOException e){
                 e.printStackTrace();
             }
+
+            return null;
         }
+
+
     }
 
 
