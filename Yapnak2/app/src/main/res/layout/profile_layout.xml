@@ -257,7 +257,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="24dp" />
 
-    <!--<Button
+    <Button
         android:id="@+id/dateInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -267,7 +267,7 @@
         android:background="@android:color/transparent"
         android:layout_above="@+id/textView3"
         android:layout_alignLeft="@+id/textView3"
-        android:layout_marginBottom="30dp" />-->
+        android:layout_marginBottom="30dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

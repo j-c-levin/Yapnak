@@ -138,6 +138,7 @@ public class Splash extends Activity {
                       new UserID().execute(acc);
 
 
+
                     }
             }
         };
@@ -237,6 +238,7 @@ public class Splash extends Activity {
                  i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                  i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                  startActivity(i);
+                 activity.finish();
 
 
              }
@@ -292,6 +294,7 @@ public class Splash extends Activity {
             */
             isIn=true;
             new UserID().execute(acc);
+
 
         }
 

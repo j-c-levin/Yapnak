@@ -10,10 +10,12 @@ import android.widget.Toast;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Joshua on 17/05/2015.
@@ -63,7 +65,22 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
             //track = new GPSTrack(main);
             //Location loc = track.getLocation();
-            return sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.getID()).execute();
+
+            SQLList result = sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.getID()).execute();
+
+            ArrayList<SQLEntity> showOffers=new ArrayList<>();
+
+            for(int i=0;i<result.getList().size();i++){
+                if(result.getList().get(i).getShowOffer()==1){
+                    showOffers.add(result.getList().get(i));
+                }
+            }
+
+            SQLList showOffersList = new SQLList();
+            showOffersList.setList(showOffers);
+
+            return showOffersList;
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,6 +99,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             progressDialog.show();
         }
     }
+
 
 
     protected void onPostExecute(SQLList result) {
