@@ -1,4 +1,4 @@
-angular.module('app', ['ngCookies'])
+angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
 
 .factory('webfactory', ['$http', function ($http) {
     var result = {};
@@ -10,14 +10,14 @@ angular.module('app', ['ngCookies'])
         }
 
         return $http.post('https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getUser?userID='.concat(data.userID).concat('&clientEmail=').concat(data.clientEmail)).then(function (response) {
-            return response.data;
+          return response.data;
         }, function (error) {
-            return error;
-        })
+          return error;
+      })
     };
 
     result.forgot = function (email) {
-        var req = {
+      var req = {
             method: 'POST',
             url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/forgotLogin',
             headers: {
@@ -145,4 +145,8 @@ angular.module('app', ['ngCookies'])
             }
         }
     }
+})
+
+.controller('client-controller', function($scope){
+
 })

@@ -11,9 +11,9 @@
   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-cookies.js"></script>
   <script
   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
-  <script src="app.js"></script>
   <script
-  src="lib\angular\ui-bootstrap-custom-0.13.3.js"></script>
+  src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.3.min.js"></script>
+  <script src="app.js"></script>
 
   <!--bootstrap-->
   <link rel="stylesheet"
@@ -26,6 +26,19 @@
 
 <body class="content container" ng-controller="client-controller">
 
+
+  <div class="form-signin center-image">
+    <img src="https://placeholdit.imgix.net/~text?txtsize=9&txt=100%C3%97100&w=100&h=100">
+  </div>
+  <div class="form-signin">
+    <div class ="form-signin">
+      <button class="btn btn-default btn-block">
+        <a href='angular-index.html'>
+          Update image
+        </a>
+      </button>
+    </div>
+  </div>
 
   <div class="form-signin">
     <label
@@ -80,32 +93,11 @@
   </div>
 
 
-<div class="form-signin">
-  <button type="submit" class="btn btn-default btn-block">Update
-    information
-  </button>
-  <hr>
-</div>
-
-
-
-
-<div class="form-signin center-image">
-  <img src="https://placeholdit.imgix.net/~text?txtsize=9&txt=100%C3%97100&w=100&h=100">
-</div>
-<div class="form-signin">
-  <label for="exampleInputFile">Logo</label>
-  <input type="file" name="image" id="image">
-  <p class="help-block">Please keep your image size small and
-    wait a few seconds for it to upload before submitting.
-  </p>
-</div>
-
-<div
-class ="form-signin">
-<button type="submit" class="btn btn-default btn-block">Update
-  image</button>
-</div>
+  <div class="form-signin">
+    <button type="submit" class="btn btn-default btn-block">Update
+      information
+    </button>
+  </div>
 
 </body>
 </html>

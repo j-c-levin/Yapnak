@@ -147,6 +147,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
     }
 })
 
-.controller('client-controller', function($scope) {
+.controller('client-controller', function($scope){
 
 })
