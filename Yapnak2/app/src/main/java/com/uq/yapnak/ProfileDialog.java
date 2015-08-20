@@ -99,7 +99,7 @@ public class ProfileDialog extends AlertDialog {
                 final String[] names = name.getText().toString().split(" ");
 
                 if(names.length==1) {
-                    new SubmitDetails().execute(names[0],"",phoneNum);
+                    new SubmitDetails().execute(names[0]," ",phoneNum);
                 }else{
                     new SubmitDetails().execute(names[0],names[1],phoneNum);
                 }
@@ -118,7 +118,6 @@ public class ProfileDialog extends AlertDialog {
                 apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 apiB.setApplicationName("Yapnak");
                 SQLEntityApi api = apiB.build();
-                Log.d("submit_id",ID);
                 api.setUserDetails(params[0],params[1],params[2],ID).execute();
 
             }catch(IOException e){
@@ -144,20 +143,21 @@ public class ProfileDialog extends AlertDialog {
     private MyDatePickerDialog datePicker;
     public void chooseDate(View v){
 
-       // button = (Button) v.findViewById(R.id.dateInput);
+        button = (Button) v.findViewById(R.id.dateInput);
         final DateDialog date = new DateDialog();
         //datePicker = new MyDatePickerDialog(button,getContext(),activity);
 
 
 
-        /*button.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 date.show(activity.getFragmentManager(), "datePicker");
                 //datePicker.show();
             }
         });
-        */
+
 
 
 
@@ -184,6 +184,7 @@ public class ProfileDialog extends AlertDialog {
             year = calendar.get(Calendar.YEAR);
 
             DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, day, month, year);
+
             return pickerDialog;
        }
 
@@ -224,7 +225,6 @@ public class ProfileDialog extends AlertDialog {
                 builder.setApplicationName("Yapnak");
 
                 SQLEntityApi sqlEntity = builder.build();
-                Log.d("filluser_id",ID);
                 sqlEntity.getUserDetails(ID);
                 return sqlEntity.getUserDetails(ID).execute();
 

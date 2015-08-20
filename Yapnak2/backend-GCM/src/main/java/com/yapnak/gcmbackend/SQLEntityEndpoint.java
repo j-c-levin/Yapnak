@@ -611,7 +611,7 @@ public class SQLEntityEndpoint {
             name = "feedback",
             path = "feedback",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public void feedback(@Named("type") int type, @Named("Message") String message, @Named("userID") String userID) throws UnsupportedEncodingException, MessagingException {
+    public void feedback(@Named("Message") String message,@Named("type") int type, @Named("userID") String userID) throws UnsupportedEncodingException, MessagingException {
 
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
