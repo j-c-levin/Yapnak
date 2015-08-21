@@ -312,8 +312,8 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-//            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID,showOffer FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
-            String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhoto,rating,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+            String statement = "SELECT clientName,clientX,clientY,clientOffer offer,clientFoodStyle,clientPhoto,rating,clientID FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND showOffer = 1";
+//            String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhoto,rating,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
             double t = x - distance;
             stmt.setDouble(1, t);
