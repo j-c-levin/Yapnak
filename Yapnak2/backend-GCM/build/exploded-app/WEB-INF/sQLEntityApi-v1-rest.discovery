@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/R9-NveqqUyBiQ5_bmwkYXOVKpew\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/K1nvJKqGUZWDI3d0AoK4XqJ2zOU\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -484,6 +484,40 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "insertOffer": {
+   "id": "sQLEntityApi.insertOffer",
+   "path": "insertOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "offer": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "text": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "offer",
+    "text"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "insertUser": {
    "id": "sQLEntityApi.insertUser",
    "path": "insertUser",
@@ -574,6 +608,41 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "toggleOffer": {
+   "id": "sQLEntityApi.toggleOffer",
+   "path": "toggleOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "offer": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "value": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "offer",
+    "value"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "updateClientInfo": {
    "id": "sQLEntityApi.updateClientInfo",
    "path": "updateClientInfo",
@@ -626,6 +695,40 @@
    "parameterOrder": [
     "address",
     "email"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updateOffer": {
+   "id": "sQLEntityApi.updateOffer",
+   "path": "updateOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "offer": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "text": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "offer",
+    "text"
    ],
    "response": {
     "$ref": "VoidEntity"

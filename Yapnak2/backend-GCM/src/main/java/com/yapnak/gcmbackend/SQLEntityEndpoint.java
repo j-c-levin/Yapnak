@@ -956,7 +956,7 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhoto, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID AND client.email = ?";
+                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhoto, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID AND client.email = ? AND offers.isActive = 1";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
@@ -1128,6 +1128,206 @@ public class SQLEntityEndpoint {
                 } else {
                     voidEntity.setStatus("False");
                     voidEntity.setMessage("Couldn't update the database, is the email correct?");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "toggleOffer",
+            path = "toggleOffer",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity toggleOffer(@Named("email") String email, @Named("offer") int offer, @Named("value") int value) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String sql;
+                if (offer == 1) {
+                    sql = "SELECT offer1 offerID FROM client WHERE email = ?";
+                } else if (offer == 2) {
+                    sql = "SELECT offer2 offerID FROM client WHERE email = ?";
+                } else {
+                    sql = "SELECT offer3 offerID FROM client WHERE email = ?";
+                }
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sql = "UPDATE offers SET showOffer = ? WHERE offerID = ?";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setInt(1, value);
+                    stmt.setInt(2, rs.getInt("offerID"));
+                    int success = stmt.executeUpdate();
+                    if (success == 1) {
+                        voidEntity.setStatus("True");
+                    } else {
+                        voidEntity.setStatus("False");
+                        voidEntity.setMessage("Failed to update offers table");
+                    }
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Failed to find offerID");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "updateOffer",
+            path = "updateOffer",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity updateOffer(@Named("email") String email, @Named("offer") int offer, @Named("text") String text) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String sql;
+                if (offer == 1) {
+                    sql = "SELECT offer1 offerID FROM client WHERE email = ?";
+                } else if (offer == 2) {
+                    sql = "SELECT offer2 offerID FROM client WHERE email = ?";
+                } else {
+                    sql = "SELECT offer3 offerID FROM client WHERE email = ?";
+                }
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sql = "UPDATE offers SET offerText = ? WHERE offerID = ?";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setString(1, text);
+                    stmt.setInt(2, rs.getInt("offerID"));
+                    int success = stmt.executeUpdate();
+                    if (success == 1) {
+                        voidEntity.setStatus("True");
+                    } else {
+                        voidEntity.setStatus("False");
+                        voidEntity.setMessage("Failed to update offers table");
+                    }
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Failed to find offerID");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "insertOffer",
+            path = "insertOffer",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity insertOffer(@Named("email") String email, @Named("offer") int offer, @Named("text") String text) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String sql;
+                sql = "SELECT clientID FROM client WHERE email = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sql = "INSERT INTO offers (clientID, offerText) VALUES (?,?)";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setInt(1, rs.getInt("clientID"));
+                    stmt.setString(2, text);
+                    int success = stmt.executeUpdate();
+                    if (success == 1) {
+                        //deactivate old offer
+                        if (offer == 1) {
+                            sql = "SELECT offer1 offerID FROM client WHERE email = ?";
+                        } else if (offer == 2) {
+                            sql = "SELECT offer2 offerID FROM client WHERE email = ?";
+                        } else {
+                            sql = "SELECT offer3 offerID FROM client WHERE email = ?";
+                        }
+                        stmt = connection.prepareStatement(sql);
+                        stmt.setString(1, email);
+                        rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            sql = "UPDATE offers SET isActive = 0 WHERE offerID = ?";
+                            stmt = connection.prepareStatement(sql);
+                            stmt.setInt(1, rs.getInt("offerID"));
+                            success = stmt.executeUpdate();
+                            if (success == 1) {
+                                //set new offer in clients tabs
+                                if (offer == 1) {
+                                    sql = "UPDATE client SET offer1 = LAST_INSERT_ID() WHERE email = ?";
+                                } else if (offer == 2) {
+                                    sql = "UPDATE client SET offer2 = LAST_INSERT_ID() WHERE email = ?";
+                                } else {
+                                    sql = "UPDATE client SET offer3 = LAST_INSERT_ID() WHERE email = ?";
+                                }
+                                stmt = connection.prepareStatement(sql);
+                                stmt.setString(1, email);
+                                success = stmt.executeUpdate();
+                                if (success == 1) {
+                                    voidEntity.setStatus("True");
+                                } else {
+                                    voidEntity.setStatus("False");
+                                    voidEntity.setMessage("Failed to update client table after inserting into offers");
+                                }
+                            } else {
+                                voidEntity.setStatus("False");
+                                voidEntity.setMessage("Failed to set old offer inactive");
+                            }
+                        } else {
+                            voidEntity.setStatus("False");
+                            voidEntity.setMessage("Failed to find old offer");
+                        }
+                    } else {
+                        voidEntity.setStatus("False");
+                        voidEntity.setMessage("Failed to insert new offer");
+                    }
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Failed to find clientID");
                 }
             } finally {
                 connection.close();

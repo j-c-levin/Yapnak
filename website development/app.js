@@ -126,6 +126,63 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
     })
   };
 
+  result.toggleOffer = function(email,offer,value) {
+    var req = {
+      method: 'POST',
+      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/toggleOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&value=").concat(value)
+    }
+    return $http(req).then(function(response){
+      if (response.data.status == "True") {
+        console.log("successfully updated offer status");
+        console.log(response);
+      } else {
+        console.log("failed to update offer status");
+        console.log(response);
+      }
+    }, function(error) {
+      console.log("Offer toggle update went wrong somewhere");
+      console.log(error);
+    })
+  };
+
+  result.updateOffer = function(email,offer,text) {
+    var req = {
+      method: 'POST',
+      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
+    }
+    return $http(req).then(function(response){
+      if (response.data.status == "True") {
+        console.log("successfully updated offer text");
+        console.log(response);
+      } else {
+        console.log("failed to update offer text");
+        console.log(response);
+      }
+    }, function(error) {
+      console.log("Offer text update went wrong somewhere");
+      console.log(error);
+    })
+  };
+
+  result.insertOffer = function(email,offer,text) {
+    var req = {
+      method: 'POST',
+      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/insertOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
+    }
+    return $http(req).then(function(response){
+      if (response.data.status == "True") {
+        console.log("successfully updated offer text");
+        console.log(response);
+      } else {
+        console.log("failed to update offer text");
+        console.log(response);
+      }
+    }, function(error) {
+      console.log("Offer text update went wrong somewhere");
+      console.log(error);
+    })
+  };
+
   return result;
 }])
 
@@ -206,10 +263,20 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
 })
 
 .controller('client-controller', function($scope, webfactory, $cookies){
+
   console.log($cookies.get("com.yapnak.email"));
+
   var email = $cookies.get("com.yapnak.email");
+
+  var offer1Changed;
+  var offer2Changed;
+  var offer3Changed;
+  var offer1Active;
+  var offer2Active;
+  var offer3Active;
+
   var details = function() {
-    console.log("called"); webfactory.getInfo(email).then(function(details){
+    webfactory.getInfo(email).then(function(details){
       $scope.name = details.name;
       if (details.showOffer1 == 1) {
         $scope.offer1text = details.offer1;
@@ -227,30 +294,110 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
       $scope.photo = details.photo;
       $scope.location = details.y + " " + details.x;
       $scope.image = details.photo;
+      offer1Changed = $scope.offer1text;
+      offer2Changed = $scope.offer2text;
+      offer3Changed = $scope.offer3text;
+      offer1Active = $scope.offer1;
+      offer2Active = $scope.offer2;
+      offer3Active = $scope.offer3;
     });
   }
   details();
 
   $scope.updateInfo = function() {
-    if ($scope.newName == undefined) {
-
-      $scope.newName = $scope.name;
-    }
-
-    if ($scope.newFoodStyle == undefined) {
-      $scope.newFoodStyle = $scope.foodStyle;
-    }
 
     if ($scope.newLocation !== undefined) {
       webfactory.updateLocation($scope.newLocation,email).then(function(response) {
+        details();
         $scope.newLocation = "";
       });
     }
 
-    webfactory.updateMainText($scope.newName,$scope.newFoodStyle,email).then(function(response) {
-      $scope.newName = "";
-      $scope.newFoodStyle = "";
-    });
-    details();
+    if ($scope.newFoodStyle !== undefined && $scope.newName !== undefined) {
+
+      if ($scope.newName == undefined) {
+        $scope.newName = $scope.name;
+      }
+
+      if ($scope.newFoodStyle == undefined) {
+        $scope.newFoodStyle = $scope.foodStyle;
+      }
+
+      webfactory.updateMainText($scope.newName,$scope.newFoodStyle,email).then(function(response) {
+        details();
+        $scope.newName = "";
+        $scope.newFoodStyle = "";
+      });
+    }
+
+    if ($scope.offer1 !== offer1Active) {
+      console.log("offer 1 toggled");
+      if ($scope.offer1 == false) {
+        webfactory.toggleOffer(email, 1, 0);
+      } else {
+        //check if offer has been placed and then create new offer
+        if ($scope.newOffer1text !== undefined) {
+          webfactory.toggleOffer(email, 1, 1);//use .then
+          webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
+            details();
+            $scope.newOffer1text = "";
+          });
+        }
+      }
+    } else {
+      if ($scope.newOffer1text !== offer1Changed && $scope.newOffer1text !== "" && $scope.newOffer1text !== undefined) {
+        console.log("offer 1 changed");
+        webfactory.updateOffer(email,1,$scope.newOffer1text).then(function(response){
+          details();
+          $scope.newOffer1text = "";
+        })
+      }
+    }
+
+    if ($scope.offer2 !== offer2Active) {
+      if ($scope.offer2 == false) {
+        webfactory.toggleOffer(email, 2, 0);
+      } else {
+        //check if offer has been placed and then create new offer
+        if ($scope.newOffer2text !== undefined) {
+          webfactory.toggleOffer(email, 2, 1);
+          webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
+            details();
+            $scope.newOffer1text = "";
+          });
+        }
+      }
+    } else {
+      if ($scope.newOffer2text !== offer2Changed  && $scope.newOffer2text !== "" && $scope.newOffer2text !== undefined) {
+        webfactory.updateOffer(email,2,$scope.newOffer2text).then(function(response){
+          details();
+          $scope.newOffer2text = "";
+        })
+      }
+    }
+
+    if ($scope.offer3 !== offer3Active) {
+      if ($scope.offer3 == false) {
+        webfactory.toggleOffer(email, 3, 0);
+      } else {
+        //check if offer has been placed and then create new offer
+        if ($scope.newOffer3text !== undefined) {
+          webfactory.toggleOffer(email, 3, 1);
+          webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
+            details();
+            $scope.newOffer1text = "";
+          });
+        }
+      }
+    } else {
+      if ($scope.newOffer3text !== offer3Changed  && $scope.newOffer3text !== "" && $scope.newOffer3text !== undefined) {
+        webfactory.updateOffer(email,3,$scope.newOffer3text).then(function(response){
+          details();
+          $scope.newOffer3text = "";
+        })
+      }
+    }
+
   }
+
 })

@@ -34,6 +34,7 @@
 <body class="content container" ng-controller="client-controller">
   <%  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
+  <a class="form-signin" href="angular-index.html">Go to input page</a>
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
     <div class="form-signin center-image">
       <img ng-src="{{image}}">
@@ -74,9 +75,10 @@
     <hr>
     <div collapse="!offer1">
       <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" placeholder="{{offer1text}}"></textarea>
+      rows="3" ng-model="newOffer1text" placeholder="{{offer1text}}"></textarea>
     </div>
   </div>
+
   <div class="form-signin">
     <label>
       <input type="checkbox" name = "show-offer"
@@ -85,9 +87,10 @@
     <hr>
     <div collapse="!offer2">
       <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="offer2text" placeholder="{{offer2text}}"></textarea>
+      rows="3" ng-model="newOffer2text" placeholder="{{offer2text}}"></textarea>
     </div>
   </div>
+
   <div class="form-signin">
     <label>
       <input type="checkbox" name = "show-offer"
@@ -96,7 +99,7 @@
     <hr>
     <div collapse="!offer3">
       <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="offer3text" placeholder="{{offer3text}}"></textarea>
+      rows="3" ng-model="newOffer3text" placeholder="{{offer3text}}"></textarea>
     </div>
   </div>
 
