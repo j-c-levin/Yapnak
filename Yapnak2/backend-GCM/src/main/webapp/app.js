@@ -85,14 +85,13 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
     },function (error) {
       console.log("failed");
       console.log(error);
-      return null;
     });
   }
 
   result.updateMainText = function(name,type,email) {
     var req = {
       method: 'POST',
-      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientInfo?email='.concat(email).concat("&name=").concat(name).concat("&type=").concat(type)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientInfo?email='.concat(email).concat("&name=").concat(name).concat("&type=").concat(type)
     }
     return $http(req).then(function (response) {
       if (response.data.status == "True") {
@@ -110,7 +109,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
   result.updateLocation = function(address,email) {
     var req = {
       method: 'POST',
-      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(address)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(address)
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
@@ -129,7 +128,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
   result.toggleOffer = function(email,offer,value) {
     var req = {
       method: 'POST',
-      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/toggleOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&value=").concat(value)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/toggleOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&value=").concat(value)
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
@@ -148,7 +147,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
   result.updateOffer = function(email,offer,text) {
     var req = {
       method: 'POST',
-      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
@@ -167,11 +166,11 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
   result.insertOffer = function(email,offer,text) {
     var req = {
       method: 'POST',
-      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/insertOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/insertOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
-        console.log("successfully updated offer text");
+        console.log("successfully inserted new offer");
         console.log(response);
       } else {
         console.log("failed to update offer text");
@@ -278,18 +277,25 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
   var details = function() {
     webfactory.getInfo(email).then(function(details){
       $scope.name = details.name;
+
+      $scope.offer1text = details.offer1;
+
       if (details.showOffer1 == 1) {
-        $scope.offer1text = details.offer1;
         $scope.offer1 = true;
       }
+
+      $scope.offer2text = details.offer2;
+
       if (details.showOffer2 == 1) {
-        $scope.offer2text = details.offer2;
         $scope.offer2 = true;
       }
+
+      $scope.offer3text = details.offer3;
+
       if (details.showOffer3 == 1) {
-        $scope.offer3text = details.offer3;
         $scope.offer3 = true;
       }
+
       $scope.foodStyle = details.foodStyle;
       $scope.photo = details.photo;
       $scope.location = details.y + " " + details.x;
@@ -300,57 +306,62 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
       offer1Active = $scope.offer1;
       offer2Active = $scope.offer2;
       offer3Active = $scope.offer3;
+      $scope.newLocation = "";
+      $scope.newName = "";
+      $scope.newFoodStyle = "";
+      $scope.newOffer1text = "";
+      $scope.newOffer2text = "";
+      $scope.newOffer3text = "";
     });
   }
   details();
 
   $scope.updateInfo = function() {
 
-    if ($scope.newLocation !== undefined) {
+    if ($scope.newLocation !== "") {
       webfactory.updateLocation($scope.newLocation,email).then(function(response) {
         details();
-        $scope.newLocation = "";
       });
     }
 
-    if ($scope.newFoodStyle !== undefined && $scope.newName !== undefined) {
+    if ($scope.newFoodStyle !== "" || $scope.newName !== "") {
 
-      if ($scope.newName == undefined) {
+      if ($scope.newName == "") {
         $scope.newName = $scope.name;
       }
 
-      if ($scope.newFoodStyle == undefined) {
+      if ($scope.newFoodStyle == "") {
         $scope.newFoodStyle = $scope.foodStyle;
       }
 
       webfactory.updateMainText($scope.newName,$scope.newFoodStyle,email).then(function(response) {
         details();
-        $scope.newName = "";
-        $scope.newFoodStyle = "";
+
       });
     }
 
     if ($scope.offer1 !== offer1Active) {
-      console.log("offer 1 toggled");
       if ($scope.offer1 == false) {
         webfactory.toggleOffer(email, 1, 0);
       } else {
         //check if offer has been placed and then create new offer
-        if ($scope.newOffer1text !== undefined) {
-          webfactory.toggleOffer(email, 1, 1);
-          webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
-            details();
-            $scope.newOffer1text = "";
+        if ($scope.newOffer1text !== "") {
+          webfactory.toggleOffer(email, 1, 1).then(function() {
+            webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
+              details();
+
+            });
           });
+        } else {
+          webfactory.toggleOffer(email, 1, 1);
         }
       }
     } else {
-      if ($scope.newOffer1text !== offer1Changed && $scope.newOffer1text !== "" && $scope.newOffer1text !== undefined) {
-        console.log("offer 1 changed");
-        webfactory.updateOffer(email,1,$scope.newOffer1text).then(function(response){
+      if ($scope.newOffer1text !== offer1Changed && $scope.newOffer1text !== "") {
+        webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
           details();
-          $scope.newOffer1text = "";
-        })
+
+        });
       }
     }
 
@@ -359,19 +370,22 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
         webfactory.toggleOffer(email, 2, 0);
       } else {
         //check if offer has been placed and then create new offer
-        if ($scope.newOffer2text !== undefined) {
-          webfactory.toggleOffer(email, 2, 1);
-          webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
-            details();
-            $scope.newOffer1text = "";
+        if ($scope.newOffer2text !== "") {
+          webfactory.toggleOffer(email, 2, 1).then(function() {
+            webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
+              details();
+
+            });
           });
+        } else {
+          webfactory.toggleOffer(email, 2, 1);
         }
       }
     } else {
-      if ($scope.newOffer2text !== offer2Changed  && $scope.newOffer2text !== "" && $scope.newOffer2text !== undefined) {
-        webfactory.updateOffer(email,2,$scope.newOffer2text).then(function(response){
+      if ($scope.newOffer2text !== offer2Changed  && $scope.newOffer2text !== "") {
+        webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
           details();
-          $scope.newOffer2text = "";
+
         })
       }
     }
@@ -381,19 +395,22 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
         webfactory.toggleOffer(email, 3, 0);
       } else {
         //check if offer has been placed and then create new offer
-        if ($scope.newOffer3text !== undefined) {
-          webfactory.toggleOffer(email, 3, 1);
-          webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
-            details();
-            $scope.newOffer1text = "";
+        if ($scope.newOffer3text !== "") {
+          webfactory.toggleOffer(email, 3, 1).then(function() {
+            webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
+              details();
+
+            });
           });
+        } else {
+          webfactory.toggleOffer(email, 3, 1);
         }
       }
     } else {
-      if ($scope.newOffer3text !== offer3Changed  && $scope.newOffer3text !== "" && $scope.newOffer3text !== undefined) {
-        webfactory.updateOffer(email,3,$scope.newOffer3text).then(function(response){
+      if ($scope.newOffer3text !== offer3Changed  && $scope.newOffer3text !== "") {
+        webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
           details();
-          $scope.newOffer3text = "";
+
         })
       }
     }

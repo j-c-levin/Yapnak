@@ -956,7 +956,7 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhoto, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID AND client.email = ? AND offers.isActive = 1";
+                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhoto, client.offer1,client.offer2,client.offer3, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND isActive = 1";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
@@ -988,37 +988,25 @@ public class SQLEntityEndpoint {
                         url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
                     }
                     client.setPhoto(url);
-                    int row = 1;
-                    if (rs.getInt("showOffer") == 1) {
-                        if (!rs.getString("offer").equals("")) {
-                            client.setShowOffer1(1);
+                    do {
+
+                        if (rs.getInt("offerID") == rs.getInt("offer1")) {
+
+                            client.setShowOffer1(rs.getInt("showOffer"));
                             client.setOffer1(rs.getString("offer"));
-                        }
-                    } else {
-                        client.setShowOffer1(0);
-                    }
 
-                    if (rs.next()) {
-                        if (rs.getInt("showOffer") == 1) {
-                            if (!rs.getString("offer").equals("")) {
-                                client.setShowOffer2(1);
-                                client.setOffer2(rs.getString("offer"));
-                            }
-                        }
-                    } else {
-                        client.setShowOffer2(0);
-                    }
+                        } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
 
-                    if (rs.next()) {
-                        if (rs.getInt("showOffer") == 1) {
-                            if (!rs.getString("offer").equals("")) {
-                                client.setShowOffer3(1);
-                                client.setOffer3(rs.getString("offer"));
-                            }
+                            client.setShowOffer2(rs.getInt("showOffer"));
+                            client.setOffer2(rs.getString("offer"));
+
+                        } else {
+                            client.setShowOffer3(rs.getInt("showOffer"));
+                            client.setOffer3(rs.getString("offer"));
                         }
-                    } else {
-                        client.setShowOffer3(0);
-                    }
+
+                    } while (rs.next());
+
                 } else {
                     //client not found
                     client.setStatus("False");
