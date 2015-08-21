@@ -312,7 +312,8 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID,showOffer FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+//            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID,showOffer FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+            String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhoto,rating,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
             double t = x - distance;
             stmt.setDouble(1, t);
@@ -330,12 +331,12 @@ public class SQLEntityEndpoint {
                     sql = new SQLEntity();
                     sql.setId(rs.getInt("clientID"));
                     sql.setName(rs.getString("clientName"));
-                    sql.setOffer(rs.getString("clientOffer"));
+                    sql.setOffer(rs.getString("offer"));
                     sql.setX(rs.getDouble("clientX"));
                     sql.setY(rs.getDouble("clientY"));
                     sql.setRating((rs.getDouble("rating")));
                     sql.setFoodStyle(rs.getString("clientFoodStyle"));
-                    sql.setShowOffer(rs.getInt("showOffer"));
+                    sql.setShowOffer(1);
                     //get photo from blobstore
                     String url;
                     if (!rs.getString("clientPhoto").equals("")) {
