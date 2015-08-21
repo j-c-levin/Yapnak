@@ -42,6 +42,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>photoUpload</servlet-name>
+        <servlet-class>com.yapnak.website.uploadPhoto2</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>photoUpload</servlet-name>
+        <url-pattern>/upload2</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>update</servlet-name>
         <servlet-class>com.yapnak.website.update</servlet-class>
     </servlet>
@@ -98,6 +107,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>client</servlet-name>
         <url-pattern>/client</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>clientPage</servlet-name>#
         <jsp-file>/client.jsp</jsp-file>
@@ -106,6 +116,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>clientPage</servlet-name>
         <url-pattern>/console</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>register</servlet-name>#
         <jsp-file>/signup.jsp</jsp-file>
@@ -113,6 +124,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-mapping>
         <servlet-name>register</servlet-name>
         <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>main</servlet-name>#
+        <jsp-file>/main.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>main</servlet-name>
+        <url-pattern>/main</url-pattern>
     </servlet-mapping>
 
     <static-files>

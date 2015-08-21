@@ -34,19 +34,17 @@
 <body class="content container" ng-controller="client-controller">
   <%  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
-
-
-  <form action="<%= blobstoreService.createUploadUrl("/upload") %>" method="post" enctype="multipart/form-data">
-  <div class="form-signin center-image">
-    <img src="https://placeholdit.imgix.net/~text?txtsize=9&txt=100%C3%97100&w=100&h=100">
-  </div>
+  <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
+    <div class="form-signin center-image">
+      <img ng-src="{{image}}">
+    </div>
     <div class="form-signin">
       <label for="exampleInputFile">Logo</label>
       <input type="file" name="image" id="image">
       <p class="help-block">Please keep your image size small and wait a few seconds for it to upload before submitting.</p>
     </div>
     <div class ="form-signin">
-    <button type="submit" class="btn btn-default">Update image</button>
+      <button type="submit" class="btn btn-default">Update image</button>
     </div>
   </form>
 
@@ -54,18 +52,18 @@
     <label
     for="exampleInputEmail1">Restaurant Name</label>
     <input type="text"
-    class="form-control" name="name" id="name" placeholder="Test">
+    class="form-control" name="name" ng-model="newName" id="name" placeholder="{{name}}">
   </div>
-  <div class="form-signin">  <label for="exampleInputPassword1">Restaurant
-    Type</label>
-    <input type="text" class="form-control" name="type" id="type"
-    placeholder="Food style">
+  <div class="form-signin">
+    <label for="exampleInputPassword1">Restaurant Type</label>
+    <input type="text" class="form-control" ng-model="newFoodStyle" name="type" id="type"
+    placeholder="{{foodStyle}}">
   </div>
   <div class="form-signin">
     <label
     for="exampleInputPassword1">Address</label>
     <input type="text"
-    class="form-control" name="address" id="address" placeholder="Geolocation">
+    class="form-control" ng-model="newLocation" name="address" id="address" placeholder="{{location}}">
   </div>
 
   <div class="form-signin">
@@ -76,7 +74,7 @@
     <hr>
     <div collapse="!offer1">
       <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" placeholder="Offer"></textarea>
+      rows="3" placeholder="{{offer1text}}"></textarea>
     </div>
   </div>
   <div class="form-signin">
@@ -87,7 +85,7 @@
     <hr>
     <div collapse="!offer2">
       <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" placeholder="Offer"></textarea>
+      rows="3" ng-model="offer2text" placeholder="{{offer2text}}"></textarea>
     </div>
   </div>
   <div class="form-signin">
@@ -98,13 +96,13 @@
     <hr>
     <div collapse="!offer3">
       <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" placeholder="Offer"></textarea>
+      rows="3" ng-model="offer3text" placeholder="{{offer3text}}"></textarea>
     </div>
   </div>
 
 
   <div class="form-signin">
-    <button type="submit" class="btn btn-default btn-block">Update
+    <button class="btn btn-default btn-block" ng-click="updateInfo()">Update
       information
     </button>
   </div>

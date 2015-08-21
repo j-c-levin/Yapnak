@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/iDWHWeKTdy15yBbo9JHCgov2o9I\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/R9-NveqqUyBiQ5_bmwkYXOVKpew\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -73,6 +73,64 @@
   }
  },
  "schemas": {
+  "ClientEntity": {
+   "id": "ClientEntity",
+   "type": "object",
+   "properties": {
+    "foodStyle": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "offer1": {
+     "type": "string"
+    },
+    "offer2": {
+     "type": "string"
+    },
+    "offer3": {
+     "type": "string"
+    },
+    "photo": {
+     "type": "string"
+    },
+    "rating": {
+     "type": "number",
+     "format": "double"
+    },
+    "showOffer1": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "showOffer2": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "showOffer3": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "status": {
+     "type": "string"
+    },
+    "x": {
+     "type": "number",
+     "format": "double"
+    },
+    "y": {
+     "type": "number",
+     "format": "double"
+    }
+   }
+  },
   "PointsEntity": {
    "id": "PointsEntity",
    "type": "object",
@@ -301,6 +359,27 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getClientInfo": {
+   "id": "sQLEntityApi.getClientInfo",
+   "path": "getClientInfo",
+   "httpMethod": "GET",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email"
+   ],
+   "response": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getClients": {
    "id": "sQLEntityApi.getClients",
    "path": "getClients",
@@ -491,6 +570,66 @@
     "number",
     "userID"
    ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updateClientInfo": {
+   "id": "sQLEntityApi.updateClientInfo",
+   "path": "updateClientInfo",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "name",
+    "type"
+   ],
+   "response": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updateClientLocation": {
+   "id": "sQLEntityApi.updateClientLocation",
+   "path": "updateClientLocation",
+   "httpMethod": "POST",
+   "parameters": {
+    "address": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "address",
+    "email"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
+   },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

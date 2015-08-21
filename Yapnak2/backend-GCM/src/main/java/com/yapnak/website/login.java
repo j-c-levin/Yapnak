@@ -239,6 +239,7 @@ public class login extends HttpServlet {
                             if (hashPassword(password).equals(rs.getString("password"))) {
                                 out.println("Login success!");
                                 Cookie part1 = new Cookie("com.yapnak.email", email);
+                                part1.setMaxAge(60 * 60 * 24 * 30 * 12);
                                 resp.addCookie(part1);
                                 //Save a user's session in a cookie if they've requested it
                                 if (req.getParameter("save") != null) {
