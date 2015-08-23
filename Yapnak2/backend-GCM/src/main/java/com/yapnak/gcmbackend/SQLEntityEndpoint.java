@@ -312,8 +312,8 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-            String statement = "SELECT clientName,clientX,clientY,clientOffer offer,clientFoodStyle,clientPhoto,rating,clientID FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND showOffer = 1";
-//            String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhoto,rating,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+//            String statement = "SELECT clientName,clientX,clientY,clientOffer offer,clientFoodStyle,clientPhoto,rating,clientID FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND showOffer = 1";
+            String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhoto,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
             double t = x - distance;
             stmt.setDouble(1, t);
@@ -334,7 +334,7 @@ public class SQLEntityEndpoint {
                     sql.setOffer(rs.getString("offer"));
                     sql.setX(rs.getDouble("clientX"));
                     sql.setY(rs.getDouble("clientY"));
-                    sql.setRating((rs.getDouble("rating")));
+                    sql.setRating(1);
                     sql.setFoodStyle(rs.getString("clientFoodStyle"));
                     sql.setShowOffer(1);
                     //get photo from blobstore
@@ -992,16 +992,17 @@ public class SQLEntityEndpoint {
                     do {
 
                         if (rs.getInt("offerID") == rs.getInt("offer1")) {
-
+                            logger.info("found offer 1: " + rs.getString("offer"));
                             client.setShowOffer1(rs.getInt("showOffer"));
                             client.setOffer1(rs.getString("offer"));
 
                         } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
-
+                            logger.info("found offer 2: " + rs.getString("offer"));
                             client.setShowOffer2(rs.getInt("showOffer"));
                             client.setOffer2(rs.getString("offer"));
 
                         } else {
+                            logger.info("found offer 3: " + rs.getString("offer"));
                             client.setShowOffer3(rs.getInt("showOffer"));
                             client.setOffer3(rs.getString("offer"));
                         }

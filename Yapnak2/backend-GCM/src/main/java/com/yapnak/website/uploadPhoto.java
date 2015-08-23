@@ -73,10 +73,10 @@ public class uploadPhoto extends HttpServlet {
                 if (success == 1) {
                     //success
                     out.print("successfully updated");
-                    resp.setHeader("Refresh", "0; url=/client.jsp");
+                    resp.setHeader("Refresh", "0; url=/console");
                 } else {
                     out.print("failed to update ");
-                    resp.setHeader("Refresh", "0; url=/client.jsp");
+                    resp.setHeader("Refresh", "0; url=/console");
                 }
             } finally {
                 connection.close();

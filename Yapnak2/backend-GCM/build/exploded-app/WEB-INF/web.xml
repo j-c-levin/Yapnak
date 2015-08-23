@@ -108,6 +108,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/client</url-pattern>
     </servlet-mapping>
 
+<!--
     <servlet>
         <servlet-name>clientPage</servlet-name>#
         <jsp-file>/client.jsp</jsp-file>
@@ -116,6 +117,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>clientPage</servlet-name>
         <url-pattern>/console</url-pattern>
     </servlet-mapping>
+-->
 
     <servlet>
         <servlet-name>register</servlet-name>#
@@ -132,7 +134,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet>
     <servlet-mapping>
         <servlet-name>main</servlet-name>
-        <url-pattern>/main</url-pattern>
+        <url-pattern>/console</url-pattern>
     </servlet-mapping>
 
     <static-files>

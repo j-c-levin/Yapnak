@@ -94,10 +94,10 @@ public class uploadPhoto2 extends HttpServlet {
                     if (success == 1) {
                         //success
                         out.print("successfully updated");
-                        resp.setHeader("Refresh", "1; url=/main");
+                        resp.setHeader("Refresh", "1; url=/console");
                     } else {
                         out.print("failed to update ");
-                        resp.setHeader("Refresh", "1; url=/main");
+                        resp.setHeader("Refresh", "1; url=/console");
                     }
                 } else {
                     out.print("Couldn't find details, are you sure you've signed in?");

@@ -346,8 +346,8 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
       } else {
         //check if offer has been placed and then create new offer
         if ($scope.newOffer1text !== "") {
-          webfactory.toggleOffer(email, 1, 1).then(function() {
-            webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
+          webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
+            webfactory.toggleOffer(email, 1, 1).then(function() {
               details();
 
             });
@@ -359,8 +359,10 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
     } else {
       if ($scope.newOffer1text !== offer1Changed && $scope.newOffer1text !== "") {
         webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
-          details();
+          webfactory.toggleOffer(email, 1, 1).then(function() {
+            details();
 
+          });
         });
       }
     }
@@ -371,8 +373,8 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
       } else {
         //check if offer has been placed and then create new offer
         if ($scope.newOffer2text !== "") {
-          webfactory.toggleOffer(email, 2, 1).then(function() {
-            webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
+          webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
+            webfactory.toggleOffer(email, 2, 1).then(function() {
               details();
 
             });
@@ -384,8 +386,10 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
     } else {
       if ($scope.newOffer2text !== offer2Changed  && $scope.newOffer2text !== "") {
         webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
-          details();
+          webfactory.toggleOffer(email, 2, 1).then(function() {
+            details();
 
+          });
         })
       }
     }
@@ -396,8 +400,8 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
       } else {
         //check if offer has been placed and then create new offer
         if ($scope.newOffer3text !== "") {
-          webfactory.toggleOffer(email, 3, 1).then(function() {
-            webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
+          webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
+            webfactory.toggleOffer(email, 3, 1).then(function() {
               details();
 
             });
@@ -409,12 +413,12 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate'])
     } else {
       if ($scope.newOffer3text !== offer3Changed  && $scope.newOffer3text !== "") {
         webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
-          details();
+          webfactory.toggleOffer(email, 3, 1).then(function() {
+            details();
 
-        })
+          });
+        });
       }
     }
-
   }
-
 })

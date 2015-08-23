@@ -80,50 +80,9 @@ public class login extends HttpServlet {
             e.printStackTrace();
             return;
         }
-
-        Cookie[] cookies = req.getCookies();
-        //work out which cookie holds what
-        String email = null;
-        String hash = null;
-        for (int i = 0; i < cookies.length; i++) {
-            if (cookies[i].getName().equals("com.yapnak.email")) {
-                out.println("cookies found");
-                email = cookies[i].getValue();
-            } else if (cookies[i].getName().equals("com.yapnak.hash")) {
-                hash = cookies[i].getValue();
-            }
-        }
-        //change to &&?
-        if (email != null || hash != null) {
-            out.println("email: " + email + " hash: " + hash);
-            try {
-                String sql = "SELECT salt,password FROM client WHERE email = ?";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setString(1, email);
-                ResultSet rs = null;
-                rs = stmt.executeQuery();
-                //if the salt exists
-                if (rs.next()) {
-                    String x = email + rs.getString("password") + rs.getString("salt");
-                    if (hash.equals(hashPassword(x))) {
-                        //login
-                        out.println("Login with cookies successful!");
-                        HttpSession session = req.getSession();
-                        session.setAttribute("email", email);
-                        resp.setHeader("Refresh", "0; url=/client.jsp");
-                    } else {
-                        //go through normal authentication
-                    }
-                } else {
-                    //go through normal authentication
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
             try {
                 try {
-                    email = req.getParameter("username");
+                    String email = req.getParameter("username");
                     String password = req.getParameter("password");
                     if (email == "" || password == "") {
                         out.println(
@@ -138,47 +97,11 @@ public class login extends HttpServlet {
                         if (rs.next()) {
                             if (hashPassword(password).equals(rs.getString("password"))) {
                                 out.println("Login success!");
-                                //Save a user's session in a cookie if they've requested it
-                                if (req.getParameter("save") != null) {
-                                    //get unique salt for client
-                                    sql = "SELECT salt FROM client WHERE email = ?";
-                                    stmt = connection.prepareStatement(sql);
-                                    stmt.setString(1, email);
-                                    rs = stmt.executeQuery();
-                                    rs.next();
-                                    out.println(rs.getString("salt"));
-                                    //Check if a salt exists
-                                    if (rs.getString("salt") == null) {
-                                        out.println("No salt exists, creating");
-                                        sql = "UPDATE client SET salt = ? WHERE email = ?";
-                                        stmt = connection.prepareStatement(sql);
-                                        stmt.setString(1, nextSessionId());
-                                        stmt.setString(2, email);
-                                        int success = 2;
-                                        success = stmt.executeUpdate();
-                                        if (success == 1) {
-                                            out.println("salt created");
-                                            sql = "SELECT salt FROM client WHERE email = ?";
-                                            stmt = connection.prepareStatement(sql);
-                                            stmt.setString(1, email);
-                                            rs = null;
-                                            rs = stmt.executeQuery();
-                                            rs.next();
-                                        } else {
-                                            out.println("trouble creating the salt");
-                                        }
-                                    }
-                                    //Use created salt
-                                    Cookie part1 = new Cookie("com.yapnak.email", email);
-                                    String x = email + hashPassword(password) + rs.getString("salt");
-                                    Cookie part2 = new Cookie("com.yapnak.hash", hashPassword(x));
-                                    int time = 60 * 60 * 24 * 7;
-                                    part1.setMaxAge(time);
-                                    part2.setMaxAge(time);
-                                    resp.addCookie(part1);
-                                    resp.addCookie(part2);
-                                    out.println("cookies added");
-                                }
+                                Cookie part1 = new Cookie("com.yapnak.email", email);
+                                int time = 60 * 60 * 24 * 30 * 12;
+                                part1.setMaxAge(time);
+                                resp.addCookie(part1);
+                                out.println("cookies added");
                                 //TODO: Add the client page
                                 HttpSession session = req.getSession();
                                 session.setAttribute("email", email);
@@ -198,7 +121,7 @@ public class login extends HttpServlet {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+
     }
 
     @Override
@@ -282,7 +205,7 @@ public class login extends HttpServlet {
                                 //TODO: Add the client page
                                 HttpSession session = req.getSession();
                                 session.setAttribute("email", email);
-                                resp.setHeader("Refresh", "0; url=/main");
+                                resp.setHeader("Refresh", "0; url=/console");
                             } else {
                                 out.println("Incorrect login.");
                                 resp.setHeader("Refresh", "1; url=/client");
