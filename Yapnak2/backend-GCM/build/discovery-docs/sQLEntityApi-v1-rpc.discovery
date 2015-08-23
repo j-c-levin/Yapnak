@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/K1nvJKqGUZWDI3d0AoK4XqJ2zOU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/qV-bXbwDRIQXuf5BGW8no9NOztg\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -197,6 +197,25 @@
      "items": {
       "$ref": "SQLEntity"
      }
+    }
+   }
+  },
+  "SearchUserEntity": {
+   "id": "SearchUserEntity",
+   "type": "object",
+   "properties": {
+    "isUser": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "format": "int32"
+     }
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
     }
    }
   },
@@ -532,6 +551,25 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "sQLEntityApi.searchUsers": {
+   "id": "sQLEntityApi.searchUsers",
+   "parameters": {
+    "details": {
+     "type": "string",
+     "required": true,
+     "repeated": true
+    }
+   },
+   "parameterOrder": [
+    "details"
+   ],
+   "returns": {
+    "$ref": "SearchUserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "sQLEntityApi.setUserDetails": {
    "id": "sQLEntityApi.setUserDetails",
    "parameters": {
@@ -664,6 +702,45 @@
     "email",
     "offer",
     "text"
+   ],
+   "returns": {
+    "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "sQLEntityApi.userFeedback": {
+   "id": "sQLEntityApi.userFeedback",
+   "parameters": {
+    "isAccepted": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "message": {
+     "type": "string"
+    },
+    "offerID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "rating": {
+     "type": "number",
+     "required": true,
+     "format": "double"
+    },
+    "userID": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "isAccepted",
+    "offerID",
+    "rating",
+    "userID"
    ],
    "returns": {
     "$ref": "VoidEntity"

@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -1323,6 +1324,108 @@ public class SQLEntityEndpoint {
                 connection.close();
                 return voidEntity;
             }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "searchUsers",
+            path = "searchUsers",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SearchUserEntity searchUsers(@Named("details") String[] details) {
+        SearchUserEntity user = new SearchUserEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT COUNT(*) FROM user WHERE email = ? OR mobNO = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                ResultSet rs;
+                List<Integer> isUser = new ArrayList<Integer>();
+                for (int i = 0; i < details.length; i++) {
+                    stmt.setString(1, details[i]);
+                    stmt.setString(2, details[i]);
+                    rs = stmt.executeQuery();
+                    rs.next();
+                    isUser.add(rs.getInt(1));
+                }
+                user.setStatus("True");
+                user.setIsUser(isUser);
+            } finally {
+                connection.close();
+                return user;
+            }
+        } catch (ClassNotFoundException e) {
+            user.setStatus("False");
+            user.setMessage("ClassNotFoundException");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            user.setStatus("False");
+            user.setMessage("SQLException");
+            e.printStackTrace();
+        } finally {
+            return user;
+        }
+    }
+
+    @ApiMethod(
+            name = "userFeedback",
+            path = "userFeedback",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity userFeedback(@Named("rating") double rating, @Named("isAccepted") int isAccepted, @Named("message") @Nullable String message, @Named("userID") String userID, @Named("offerID") int offerID) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        logger.info(message);
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                if (isAccepted == 0) {
+                    Properties props = new Properties();
+                    Session session = Session.getDefaultInstance(props, null);
+                    javax.mail.Message msg = new MimeMessage(session);
+                    try {
+                        msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                        msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                                new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                        msg.setSubject("Negative feedback - client didn't accept code");
+                        msg.setText("From: " + userID + " regarding offerID: " + offerID + " - " + message);
+                        Transport.send(msg);
+                    } finally {
+
+                    }
+                }
+            } finally {
+                voidEntity.setStatus("True");
+                connection.close();
+                return voidEntity;
+            }
+        } catch (ClassNotFoundException e) {
+            voidEntity.setStatus("False");
+            voidEntity.setMessage("ClassNotFoundException");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            voidEntity.setStatus("False");
+            voidEntity.setMessage("SQLException");
+            e.printStackTrace();
         } finally {
             return voidEntity;
         }

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/K1nvJKqGUZWDI3d0AoK4XqJ2zOU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/qV-bXbwDRIQXuf5BGW8no9NOztg\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -199,6 +199,25 @@
      "items": {
       "$ref": "SQLEntity"
      }
+    }
+   }
+  },
+  "SearchUserEntity": {
+   "id": "SearchUserEntity",
+   "type": "object",
+   "properties": {
+    "isUser": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "format": "int32"
+     }
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
     }
    }
   },
@@ -572,6 +591,28 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "searchUsers": {
+   "id": "sQLEntityApi.searchUsers",
+   "path": "searchUsers",
+   "httpMethod": "POST",
+   "parameters": {
+    "details": {
+     "type": "string",
+     "required": true,
+     "repeated": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "details"
+   ],
+   "response": {
+    "$ref": "SearchUserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "setUserDetails": {
    "id": "sQLEntityApi.setUserDetails",
    "path": "setUserDetails",
@@ -729,6 +770,52 @@
     "email",
     "offer",
     "text"
+   ],
+   "response": {
+    "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "userFeedback": {
+   "id": "sQLEntityApi.userFeedback",
+   "path": "userFeedback",
+   "httpMethod": "POST",
+   "parameters": {
+    "isAccepted": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "message": {
+     "type": "string",
+     "location": "query"
+    },
+    "offerID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "rating": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    },
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "isAccepted",
+    "offerID",
+    "rating",
+    "userID"
    ],
    "response": {
     "$ref": "VoidEntity"
