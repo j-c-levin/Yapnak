@@ -69,9 +69,13 @@ import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -344,6 +348,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         */
     }
+
+
+    private String hashing(String hash){
+        StringBuffer buffer = new StringBuffer();
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(hash.getBytes());
+            byte[] digestedBytes = digest.digest();
+
+            for (int i = 0; i < digestedBytes.length; i++) {
+
+                String hex = Integer.toHexString(0xff & digestedBytes[i]);
+                if (hex.length() == 1) {
+                    buffer.append(0);
+                }
+                buffer.append(hex);
+            }
+            return buffer.toString();
+
+        }catch(NoSuchAlgorithmException e){
+            e.printStackTrace();
+            return buffer.toString();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -376,7 +406,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         if(id==R.id.userNameToolBar){
             String url = "http://www.google.co.uk";
-            AlertDialog generator = new QRGenerator(this,this,url);
+            String userid= ID;
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
+            String date = sdf.format(cal.getTime());
+
+            String toHash =userid+date+"YAPNAKRULES";
+
+            String insert ="{ " +
+                             "\"id\" : \""+userid+"\","+
+                            "\"date\" :\""+date+"\","+
+                            "\"hash\" : \""+hashing(toHash)+"\" }";
+
+
+
+            AlertDialog generator = new QRGenerator(this,this,insert);
             generator.show();
         }
 

@@ -110,4 +110,6 @@ public class QRGenerator extends AlertDialog {
         QRCodeReader reader = new QRCodeReader();
         //reader.d;
     }
+
+
 }
