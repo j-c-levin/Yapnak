@@ -1,6 +1,7 @@
 package com.frontend.yapnak.tutorial;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ public class TutorialFour extends Fragment {
     private Button button;
     private Intent getInfo;
     private String gName,dName,email;
+    private Activity a;
 
 
     public TutorialFour(String googleName ,String defUserID,String email){
@@ -30,6 +32,7 @@ public class TutorialFour extends Fragment {
         gName = (googleName==null)? "" : googleName;
         dName = (defUserID==null) ? "" :defUserID;
         this.email =(email==null)? "":  email;
+
     }
 
     @Nullable

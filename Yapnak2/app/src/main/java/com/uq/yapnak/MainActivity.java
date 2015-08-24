@@ -10,6 +10,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -176,7 +177,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         this.name = getIntent();
         ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
 
-        Log.d("main-id",ID);
+       // Log.d("main-id",ID);
 
         //navBarToggle();
         //navigationBarContent();
@@ -204,6 +205,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
 
+
             personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
 
 
@@ -212,13 +214,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             //item.setTitle(names[0]);
             item.setTitle(ID);
-            item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
 
-                    return true;
-                }
-            });
 
     }
 
@@ -297,8 +293,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-
             setUserName(menu);
         return true;
     }
@@ -350,9 +344,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         */
     }
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -380,7 +371,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                finish();
             }
+        }
+        if(id==R.id.userNameToolBar){
+            String url = "http://www.google.co.uk";
+            AlertDialog generator = new QRGenerator(this,this,url);
+            generator.show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -442,7 +439,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void signedOut() {
         Intent i = new Intent(this, Login.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
+        finish();
+
     }
 
     //view the main activitiy - clean up code and make it simpler
@@ -809,12 +811,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //private ListView list;
     private final int PICK_CONTACT = 1;
     private Button contactButton;
+    private String clientID;
 
     private final int CONTACTPICK_RESULT= 123;
     AlertDialog posRec;
     public void recommendMealButton(View v) {
 
         RecommendDialog recommend = new RecommendDialog(this,this);
+        recommend.setUserID(ID);
+        recommend.setClientID(clientID);
         contactButton = recommend.getContactListButton();
 
         contactButton.setOnClickListener(new View.OnClickListener() {

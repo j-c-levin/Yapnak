@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:id="@+id/qrlayout">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.frontend.yapnak.subview.RedEditText
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:id="@+id/urlText"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible"
+        android:layout_weight="0.00" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:id="@+id/qrimage"
+        android:layout_margin="20dp"
+        android:src="@color/lightPeach"
+        android:layout_gravity="center_horizontal" />
+
+
+        <Button
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dismissButton"
+            android:background="@android:color/transparent"
+            android:text="Dismiss"/>
+
+
+
+</LinearLayout>
+
+
+</LinearLayout>

@@ -34,6 +34,10 @@ public class SecureDetails {
     private byte [] userBytes;
 
 
+    public String  encrypt(String content){
+        return null;
+    }
+
     public String [] encrypt(String user, String pass) throws Exception{
 
         salt = generateSalt();

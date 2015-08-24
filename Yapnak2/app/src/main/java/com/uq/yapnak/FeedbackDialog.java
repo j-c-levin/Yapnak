@@ -7,13 +7,20 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +29,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 
 import java.io.IOException;
-
-import javax.xml.transform.Templates;
+import java.util.ArrayList;
 
 /**
  * Created by vahizan on 11/07/2015.
@@ -38,7 +44,12 @@ public class FeedbackDialog extends AlertDialog {
     private Button submit,cancel;
     private AlertDialog d;
     private int feedbackNumber;
+    private EditText autoText;
     private String ID;
+    private ListView listOptions;
+    private View view;
+    private String [] choose;
+    private Spinner spinner;
 
     public FeedbackDialog(Context context,Activity activity,String id) {
         super(context);
@@ -49,7 +60,20 @@ public class FeedbackDialog extends AlertDialog {
 
         LayoutInflater inflater = this.activity.getLayoutInflater();
 
-        View v = inflater.inflate(R.layout.feedback_activity,null);
+        View v = inflater.inflate(R.layout.feedback_activity, null);
+
+        view = v;
+        String[] options ={"General", "RestaurantName1","RestaurantName2", "RestaurantName 3"};
+        choose = options;
+       // autoText = (AutocompleteEditText) v.findViewById(R.id.autoComplete);
+
+
+        spinner = (Spinner) v.findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,options);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+
 
         group=(RadioGroup) v.findViewById(R.id.feedbackRadioGroup);
         submit = (Button) v.findViewById(R.id.submitButton);
@@ -72,11 +96,6 @@ public class FeedbackDialog extends AlertDialog {
         setCustomTitle(title);
 
         feedbackNum();
-
-
-
-
-
     }
 
     @Override
@@ -95,14 +114,10 @@ public class FeedbackDialog extends AlertDialog {
     }
 
     private void cancelClick(){
-
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Toast.makeText(getContext(), " Feedback Wasn't Sent  ", Toast.LENGTH_SHORT).show();
-
                 d.cancel();
             }
         });
@@ -118,7 +133,6 @@ public class FeedbackDialog extends AlertDialog {
                 String text = comments.getText().toString();
                 new SubmitFeedback().execute(ID,text);
                 Toast.makeText(getContext(), " Thank You For Your Feedback  " , Toast.LENGTH_SHORT).show();
-
                 d.dismiss();
             }
         });

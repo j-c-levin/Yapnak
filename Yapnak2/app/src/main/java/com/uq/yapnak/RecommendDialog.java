@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,6 +17,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+
+import java.io.IOException;
+
 /**
  * Created by vahizan on 12/07/2015.
  */
@@ -25,6 +32,7 @@ public class RecommendDialog extends AlertDialog  {
     private Context context;
     private Activity activity;
     private int LAYOUT_ID;
+    private String clientID,userID;
 
     private Button contactListButton,pos,neg;
     private EditText enterId;
@@ -80,11 +88,35 @@ public class RecommendDialog extends AlertDialog  {
             @Override
             public void onClick(View v) {
 
+                new RecommendPerson().execute();
                 d.dismiss();
 
             }
         });
 
+    }
+
+    private class RecommendPerson extends AsyncTask<String,Void,Void>{
+
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            try{
+
+                SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null).
+                        setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                builder.setApplicationName("Yapnak");
+                SQLEntityApi entityApi = builder.build();
+               //RecommendEntity recommend;
+               // entityApi.recommend(recipient_userID,clientID,sender_userID).execute();
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 
     private void setNegative(){
@@ -100,6 +132,13 @@ public class RecommendDialog extends AlertDialog  {
             }
         });
 
+    }
+
+    public void setClientID(String id){
+        clientID=id;
+    }
+    public void setUserID(String id){
+        userID=id;
     }
 
     public int getLayoutId() {

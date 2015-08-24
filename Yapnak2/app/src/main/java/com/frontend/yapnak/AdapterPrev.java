@@ -13,8 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.koushikdutta.ion.Ion;
 import com.uq.yapnak.R;
 
 import org.apache.http.HttpEntity;

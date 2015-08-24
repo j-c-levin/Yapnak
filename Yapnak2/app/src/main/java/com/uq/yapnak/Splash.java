@@ -2,8 +2,11 @@ package com.uq.yapnak;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +17,7 @@ import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 
 import com.frontend.yapnak.tutorial.FragmentSlideActivity;
 import com.google.android.gms.common.ConnectionResult;
@@ -133,13 +137,27 @@ public class Splash extends Activity {
                         startActivity(i);
                         */
                       String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
-                      isIn=true;
+                      //isIn=true;
                       firstTime = true;
-                      new UserID().execute(acc);
+                      onResume=true;
 
+                      ConnectivityManager connect = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                      boolean wifi = connect.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+                      boolean data = connect.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
 
+                      if(!wifi && !data){
+                        noInternet=true;
+                        Intent i = new Intent(Splash.this, Login.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                      }else{
+                          new InternetConnection().execute(acc);
+                      }
+                      Log.d("onResume","on resume");
 
-                    }
+                  }
             }
         };
     }
@@ -161,6 +179,8 @@ public class Splash extends Activity {
         //work.execute();
         //mSignInClicked = true;
         mGoogleApiClient.connect();
+
+
     }
 
     @Override
@@ -179,6 +199,7 @@ public class Splash extends Activity {
     }
 
     private String userId;
+    private boolean onResume;
 
 
 
@@ -210,6 +231,8 @@ public class Splash extends Activity {
                 e.printStackTrace();
                 Log.d("error","error!!!!1");
                 return userName;
+            }catch (NullPointerException n){
+                return userName = "N/a";
             }
 
 
@@ -219,33 +242,116 @@ public class Splash extends Activity {
          @Override
          protected void onPostExecute(String s) {
 
-             if(firstTime) {
-                 Intent i = new Intent(Splash.this, FragmentSlideActivity.class);
-                 i.putExtra("accName", accountName);
+             if(!onResume) {
+                 if (firstTime) {
+                     Intent i = new Intent(Splash.this, FragmentSlideActivity.class);
+                     i.putExtra("accName", accountName);
+                     i.putExtra("userID", s);
+                     i.putExtra("initials", "n/A");
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                     startActivity(i);
+                     activity.finish();
+
+                 } else if (noInternet) {
+                     Intent i = new Intent(Splash.this, Login.class);
+                 /*i.putExtra("accName", accountName);
                  i.putExtra("userID", s);
-                 i.putExtra("initials","n/A");
-                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                 startActivity(i);
-                 activity.finish();
-             }else{
+                 i.putExtra("initials", "n/A");
+                 */
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                     startActivity(i);
+                     activity.finish();
 
-                 Intent i = new Intent(Splash.this, MainActivity.class);
-                 i.putExtra("accName", accountName);
-                 i.putExtra("userID", s);
-                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                 startActivity(i);
-                 activity.finish();
+                 } else {
 
-
+                     Intent i = new Intent(Splash.this, MainActivity.class);
+                     i.putExtra("accName", accountName);
+                     i.putExtra("userID", s);
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                     startActivity(i);
+                     activity.finish();
+                 }
              }
          }
      }
+    private class OnResumeID extends AsyncTask<String,Integer,String>{
+
+        private String userName;
+        private String accountName;
 
 
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            accountName = params[0];
+
+
+            try{
+                SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                        .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                builder.setApplicationName("Yapnak");
+                SQLEntityApi api = builder.build();
+                Log.d("acc",params[0]);
+                UserEntity user = api.insertExternalUser(params[0]).execute();
+                Log.d("userid",user.getUserID());
+                userName = user.getUserID();
+                return userName;
+
+            }catch (IOException e){
+                e.printStackTrace();
+                Log.d("error","error!!!!1");
+                return userName;
+            }catch (NullPointerException n){
+                return userName = "N/a";
+            }
+
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+
+                if (firstTime) {
+                    Intent i = new Intent(Splash.this, FragmentSlideActivity.class);
+                    i.putExtra("accName", accountName);
+                    i.putExtra("userID", s);
+                    i.putExtra("initials", "n/A");
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    activity.finish();
+
+                }
+
+        }
+    }
+
+    private boolean noInternet;
+
+    private class InternetConnection extends AsyncTask<String,Void,Void>{
+        @Override
+        protected Void doInBackground(String... params) {
+
+            if(onResume){
+               new OnResumeID().execute(params[0]);
+           }else{
+               new UserID().execute(params[0]);
+           }
+
+            return null;
+        }
+    }
+
+private boolean inBackground;
     private class BackgroundWork extends AsyncTask<Void,Integer,GoogleApiClient> implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
         private GoogleApiClient mClient;
@@ -282,18 +388,11 @@ public class Splash extends Activity {
             //this.personName = person.getDisplayName();
 
             String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
-           /*userId = getExternalId(acc);
-            //Toast.makeText(getApplicationContext(), "USER ID external user" + userId + " E Mail = " + acc,Toast.LENGTH_LONG).show();
-            i.putExtra("accName", acc);
-            i.putExtra("userID", userId);
-            Log.d("idc",userId);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-            */
             isIn=true;
-            new UserID().execute(acc);
+            firstTime=false;
+            inBackground = true;
+            new InternetConnection().execute(acc);
+
 
 
         }

@@ -15,33 +15,56 @@ android:textColor="#FFF"-->
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1"
+        android:clipChildren="true">
+
+
+            <!--<com.uq.yapnak.FeedbackDialog.AutocompleteEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/autoComplete"
+            android:hint="Subject"
+            />-->
+
+            <TextView
+                android:layout_margin="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subject:"
+                android:textSize="15sp"
+                android:textColor="#000"/>
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+            </Spinner>
 
 
 
-
-    <TextView
+            <TextView
         android:id="@+id/nameLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:text="Please choose an option.."
         android:textColor="#000"
         android:textSize="15sp"
         android:textStyle="normal" />
 
 
-
-
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/radioLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
 
 
 
@@ -86,10 +109,9 @@ android:textColor="#FFF"-->
                 android:layout_weight="0.13" />
         </RadioGroup>
 
-    </LinearLayout>
+        </LinearLayout>
 
-
-    <TextView
+        <TextView
         android:id="@+id/commentLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -144,8 +166,13 @@ android:textColor="#FFF"-->
             android:textColor="#ff535357" />
     </LinearLayout>
 
-
-
+            <!--<ListView
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_marginTop="-430dp"
+                android:id="@+id/selectOption"
+                android:visibility="invisible"
+                android:layout_gravity="center_horizontal" />-->
 
     </LinearLayout>
 

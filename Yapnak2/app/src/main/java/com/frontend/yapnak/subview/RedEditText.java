@@ -37,13 +37,9 @@ public class RedEditText extends EditText{
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
         widthSize = MeasureSpec.getSize(widthMeasureSpec);
         heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
         setMeasuredDimension(widthSize, heightSize);
-
-
     }
 
 
