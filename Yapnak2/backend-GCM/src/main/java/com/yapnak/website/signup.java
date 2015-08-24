@@ -97,6 +97,13 @@ public class signup extends HttpServlet {
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {
+                        sql = "INSERT INTO offers (clientID) VALUES (LAST_INSERT_ID()),(LAST_INSERT_ID()),(LAST_INSERT_ID())";
+                        stmt = connection.prepareStatement(sql);
+                        stmt.executeUpdate();
+                        sql = "UPDATE client set offer1 = LAST_INSERT_ID(), offer2 = LAST_INSERT_ID() + 1, offer3 =  LAST_INSERT_ID() + 2 WHERE email = ?";
+                        stmt = connection.prepareStatement(sql);
+                        stmt.setString(1, rs.getString("email"));
+                        stmt.executeUpdate();
                         out.println(rs.getString("name") + "has been signed up and informed.");
                         //inform of signup
                         Properties props = new Properties();

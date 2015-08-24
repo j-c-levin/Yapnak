@@ -14,8 +14,17 @@ import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.ObjectifyService;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -30,6 +39,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -196,7 +206,7 @@ public class SQLEntityEndpoint {
                 stmt.executeUpdate();
                 String subject = "Yapnak password reset";
                 String message = "Hi,\n\nWe have received a request to reset the password on your Yapnak account.\n\nTo reset, click: www.yapnak.com/resetPassword?response=" + reset + "\n\nThis link will be active for one day.\n\nIf you didn't request this email, click here: www.yapnak.com/cancelReset?response=" + cancel + "\n\nKind regards,\nthe Yapnak team.";
-                sendEmail(email,subject,message);
+                sendEmail(email, subject, message);
             } else {
                 voidEntity.setStatus("False");
                 voidEntity.setMessage("Email not found");
@@ -226,28 +236,28 @@ public class SQLEntityEndpoint {
             connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
         }
 
-            String statement = "SELECT email FROM forgot WHERE reset = ?";
-            PreparedStatement stmt = connection.prepareStatement(statement);
-            stmt.setString(1, hash);
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
+        String statement = "SELECT email FROM forgot WHERE reset = ?";
+        PreparedStatement stmt = connection.prepareStatement(statement);
+        stmt.setString(1, hash);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
 
-            statement = "UPDATE client SET password = ? WHERE email = ?";
-            stmt = connection.prepareStatement(statement);
-            stmt.setString(1, hashPassword(password));
-            stmt.setString(2, rs.getString("email"));
-            stmt.executeUpdate();
+        statement = "UPDATE client SET password = ? WHERE email = ?";
+        stmt = connection.prepareStatement(statement);
+        stmt.setString(1, hashPassword(password));
+        stmt.setString(2, rs.getString("email"));
+        stmt.executeUpdate();
 
-            statement = "DELETE FROM forgot WHERE reset = ?";
-            stmt = connection.prepareStatement(statement);
-            stmt.setString(1, hash);
-            stmt.executeUpdate();
+        statement = "DELETE FROM forgot WHERE reset = ?";
+        stmt = connection.prepareStatement(statement);
+        stmt.setString(1, hash);
+        stmt.executeUpdate();
 
-            voidEntity.setStatus("True");
-            voidEntity.setMessage("");
+        voidEntity.setStatus("True");
+        voidEntity.setMessage("");
 
-            connection.close();
-            return voidEntity;
+        connection.close();
+        return voidEntity;
 
 
     }
@@ -303,7 +313,8 @@ public class SQLEntityEndpoint {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-            String statement = "SELECT clientName,clientX,clientY,clientOffer,clientFoodStyle,clientPhoto,rating,clientID,showOffer FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+//            String statement = "SELECT clientName,clientX,clientY,clientOffer offer,clientFoodStyle,clientPhoto,rating,clientID FROM client WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND showOffer = 1";
+            String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhoto,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
             PreparedStatement stmt = connection.prepareStatement(statement);
             double t = x - distance;
             stmt.setDouble(1, t);
@@ -321,12 +332,12 @@ public class SQLEntityEndpoint {
                     sql = new SQLEntity();
                     sql.setId(rs.getInt("clientID"));
                     sql.setName(rs.getString("clientName"));
-                    sql.setOffer(rs.getString("clientOffer"));
+                    sql.setOffer(rs.getString("offer"));
                     sql.setX(rs.getDouble("clientX"));
                     sql.setY(rs.getDouble("clientY"));
-                    sql.setRating((rs.getDouble("rating")));
+                    sql.setRating(1);
                     sql.setFoodStyle(rs.getString("clientFoodStyle"));
-                    sql.setShowOffer(rs.getInt("showOffer"));
+                    sql.setShowOffer(1);
                     //get photo from blobstore
                     String url;
                     if (!rs.getString("clientPhoto").equals("")) {
@@ -358,8 +369,9 @@ public class SQLEntityEndpoint {
                 }
             } else {
                 sql = new SQLEntity();
-                sql.setOffer("No clients found nearby :(");
-                sql.setName("Know any decent places?  Tell them to sign up!");
+                sql.setOffer("Know anyone you'd like to see on here?");
+                sql.setName("No clients found nearby :(");
+                sql.setShowOffer(1);
                 list.add(sql);
             }
 
@@ -611,7 +623,7 @@ public class SQLEntityEndpoint {
             name = "feedback",
             path = "feedback",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public void feedback(@Named("Message") String message,@Named("type") int type, @Named("userID") String userID) throws UnsupportedEncodingException, MessagingException {
+    public void feedback(@Named("Message") String message, @Named("type") int type, @Named("userID") String userID) throws UnsupportedEncodingException, MessagingException {
 
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -924,6 +936,498 @@ public class SQLEntityEndpoint {
             }
         } finally {
             return recommendation;
+        }
+    }
+
+    @ApiMethod(
+            name = "getClientInfo",
+            path = "getClientInfo",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public ClientEntity getClientInfo(@Named("email") String email) {
+        ClientEntity client = new ClientEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhoto, client.offer1,client.offer2,client.offer3, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND isActive = 1";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    //client found
+                    client.setStatus("True");
+                    client.setId(rs.getInt("clientID"));
+                    client.setName(rs.getString("clientName"));
+                    client.setX(rs.getDouble("clientX"));
+                    client.setY(rs.getDouble("clientY"));
+                    client.setFoodStyle(rs.getString("clientFoodStyle"));
+                    String url;
+                    if (SystemProperty.environment.value() ==
+                            SystemProperty.Environment.Value.Production) {
+                        if (!rs.getString("clientPhoto").equals("")) {
+                            if (SystemProperty.environment.value() ==
+                                    SystemProperty.Environment.Value.Production) {
+                                ImagesService services = ImagesServiceFactory.getImagesService();
+                                ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
+                                url = services.getServingUrl(serve);
+                                url = url + "=s100";
+                            } else {
+                                url = rs.getString("clientPhoto");
+                            }
+                        } else {
+                            url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        }
+                    } else {
+                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                    }
+                    client.setPhoto(url);
+                    do {
+
+                        if (rs.getInt("offerID") == rs.getInt("offer1")) {
+                            logger.info("found offer 1: " + rs.getString("offer"));
+                            client.setShowOffer1(rs.getInt("showOffer"));
+                            client.setOffer1(rs.getString("offer"));
+
+                        } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
+                            logger.info("found offer 2: " + rs.getString("offer"));
+                            client.setShowOffer2(rs.getInt("showOffer"));
+                            client.setOffer2(rs.getString("offer"));
+
+                        } else {
+                            logger.info("found offer 3: " + rs.getString("offer"));
+                            client.setShowOffer3(rs.getInt("showOffer"));
+                            client.setOffer3(rs.getString("offer"));
+                        }
+
+                    } while (rs.next());
+
+                } else {
+                    //client not found
+                    client.setStatus("False");
+                    client.setMessage("No client found with that email");
+                }
+            } finally {
+                connection.close();
+                return client;
+            }
+        } finally {
+            return client;
+        }
+
+    }
+
+    @ApiMethod(
+            name = "updateClientInfo",
+            path = "updateClientInfo",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public ClientEntity updateClientInfo(@Named("name") String clientName, @Named("type") String clientType, @Named("email") String email) {
+        ClientEntity client = new ClientEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "UPDATE client set clientName = ?, clientFoodStyle = ? where email = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, clientName);
+                stmt.setString(2, clientType);
+                stmt.setString(3, email);
+                int success = stmt.executeUpdate();
+                if (success == 1) {
+                    client.setStatus("True");
+                } else {
+                    client.setMessage("False");
+                    client.setMessage("Failed to update the database");
+                }
+            } finally {
+                connection.close();
+                return client;
+            }
+        } finally {
+            return client;
+        }
+    }
+
+    @ApiMethod(
+            name = "updateClientLocation",
+            path = "updateClientLocation",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity updateClientLocation(@Named("address") String address, @Named("email") String email) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String recv = "";
+                String recvbuff = "";
+                address = address.replaceAll(" ", "+");
+                //need to check first char is valid and not a space
+                URL jsonpage = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyDBM6kltuQ1mF_X9XYCseXR9x95uc9fyv4");
+                URLConnection urlcon = jsonpage.openConnection();
+                BufferedReader buffread = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
+
+                while ((recv = buffread.readLine()) != null)
+                    recvbuff += recv;
+                buffread.close();
+                JSONParser x = new JSONParser();
+                JSONObject j = null;
+                try {
+                    j = (JSONObject) x.parse(recvbuff);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                JSONArray array = (JSONArray) j.get("results");
+                JSONObject details = (JSONObject) array.get(0);
+                details = (JSONObject) details.get("geometry");
+                details = (JSONObject) details.get("location");
+                double Y = (double) details.get("lat");
+                double X = (double) details.get("lng");
+                String sql = "UPDATE client SET clientX = ?, clientY = ? WHERE email = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setDouble(1, X);
+                stmt.setDouble(2, Y);
+                stmt.setString(3, email);
+                int success = stmt.executeUpdate();
+                if (success == 1) {
+                    voidEntity.setStatus("True");
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Couldn't update the database, is the email correct?");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "toggleOffer",
+            path = "toggleOffer",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity toggleOffer(@Named("email") String email, @Named("offer") int offer, @Named("value") int value) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String sql;
+                if (offer == 1) {
+                    sql = "SELECT offer1 offerID FROM client WHERE email = ?";
+                } else if (offer == 2) {
+                    sql = "SELECT offer2 offerID FROM client WHERE email = ?";
+                } else {
+                    sql = "SELECT offer3 offerID FROM client WHERE email = ?";
+                }
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sql = "UPDATE offers SET showOffer = ? WHERE offerID = ?";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setInt(1, value);
+                    stmt.setInt(2, rs.getInt("offerID"));
+                    int success = stmt.executeUpdate();
+                    if (success == 1) {
+                        voidEntity.setStatus("True");
+                    } else {
+                        voidEntity.setStatus("False");
+                        voidEntity.setMessage("Failed to update offers table");
+                    }
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Failed to find offerID");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "updateOffer",
+            path = "updateOffer",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity updateOffer(@Named("email") String email, @Named("offer") int offer, @Named("text") String text) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String sql;
+                if (offer == 1) {
+                    sql = "SELECT offer1 offerID FROM client WHERE email = ?";
+                } else if (offer == 2) {
+                    sql = "SELECT offer2 offerID FROM client WHERE email = ?";
+                } else {
+                    sql = "SELECT offer3 offerID FROM client WHERE email = ?";
+                }
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sql = "UPDATE offers SET offerText = ? WHERE offerID = ?";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setString(1, text);
+                    stmt.setInt(2, rs.getInt("offerID"));
+                    int success = stmt.executeUpdate();
+                    if (success == 1) {
+                        voidEntity.setStatus("True");
+                    } else {
+                        voidEntity.setStatus("False");
+                        voidEntity.setMessage("Failed to update offers table");
+                    }
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Failed to find offerID");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "insertOffer",
+            path = "insertOffer",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity insertOffer(@Named("email") String email, @Named("offer") int offer, @Named("text") String text) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String sql;
+                sql = "SELECT clientID FROM client WHERE email = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    sql = "INSERT INTO offers (clientID, offerText) VALUES (?,?)";
+                    stmt = connection.prepareStatement(sql);
+                    stmt.setInt(1, rs.getInt("clientID"));
+                    stmt.setString(2, text);
+                    int success = stmt.executeUpdate();
+                    if (success == 1) {
+                        //deactivate old offer
+                        if (offer == 1) {
+                            sql = "SELECT offer1 offerID FROM client WHERE email = ?";
+                        } else if (offer == 2) {
+                            sql = "SELECT offer2 offerID FROM client WHERE email = ?";
+                        } else {
+                            sql = "SELECT offer3 offerID FROM client WHERE email = ?";
+                        }
+                        stmt = connection.prepareStatement(sql);
+                        stmt.setString(1, email);
+                        rs = stmt.executeQuery();
+                        if (rs.next()) {
+                            sql = "UPDATE offers SET isActive = 0 WHERE offerID = ?";
+                            stmt = connection.prepareStatement(sql);
+                            stmt.setInt(1, rs.getInt("offerID"));
+                            success = stmt.executeUpdate();
+                            if (success == 1) {
+                                //set new offer in clients tabs
+                                if (offer == 1) {
+                                    sql = "UPDATE client SET offer1 = LAST_INSERT_ID() WHERE email = ?";
+                                } else if (offer == 2) {
+                                    sql = "UPDATE client SET offer2 = LAST_INSERT_ID() WHERE email = ?";
+                                } else {
+                                    sql = "UPDATE client SET offer3 = LAST_INSERT_ID() WHERE email = ?";
+                                }
+                                stmt = connection.prepareStatement(sql);
+                                stmt.setString(1, email);
+                                success = stmt.executeUpdate();
+                                if (success == 1) {
+                                    voidEntity.setStatus("True");
+                                } else {
+                                    voidEntity.setStatus("False");
+                                    voidEntity.setMessage("Failed to update client table after inserting into offers");
+                                }
+                            } else {
+                                voidEntity.setStatus("False");
+                                voidEntity.setMessage("Failed to set old offer inactive");
+                            }
+                        } else {
+                            voidEntity.setStatus("False");
+                            voidEntity.setMessage("Failed to find old offer");
+                        }
+                    } else {
+                        voidEntity.setStatus("False");
+                        voidEntity.setMessage("Failed to insert new offer");
+                    }
+                } else {
+                    voidEntity.setStatus("False");
+                    voidEntity.setMessage("Failed to find clientID");
+                }
+            } finally {
+                connection.close();
+                return voidEntity;
+            }
+        } finally {
+            return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "searchUsers",
+            path = "searchUsers",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SearchUserEntity searchUsers(@Named("details") String[] details) {
+        SearchUserEntity user = new SearchUserEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT COUNT(*) FROM user WHERE email = ? OR mobNO = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                ResultSet rs;
+                List<Integer> isUser = new ArrayList<Integer>();
+                for (int i = 0; i < details.length; i++) {
+                    stmt.setString(1, details[i]);
+                    stmt.setString(2, details[i]);
+                    rs = stmt.executeQuery();
+                    rs.next();
+                    isUser.add(rs.getInt(1));
+                }
+                user.setStatus("True");
+                user.setIsUser(isUser);
+            } finally {
+                connection.close();
+                return user;
+            }
+        } catch (ClassNotFoundException e) {
+            user.setStatus("False");
+            user.setMessage("ClassNotFoundException");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            user.setStatus("False");
+            user.setMessage("SQLException");
+            e.printStackTrace();
+        } finally {
+            return user;
+        }
+    }
+
+    @ApiMethod(
+            name = "userFeedback",
+            path = "userFeedback",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public VoidEntity userFeedback(@Named("rating") double rating, @Named("isAccepted") int isAccepted, @Named("message") @Nullable String message, @Named("userID") String userID, @Named("offerID") int offerID) {
+        VoidEntity voidEntity = new VoidEntity();
+        Connection connection;
+        logger.info(message);
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                if (isAccepted == 0) {
+                    Properties props = new Properties();
+                    Session session = Session.getDefaultInstance(props, null);
+                    javax.mail.Message msg = new MimeMessage(session);
+                    try {
+                        msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                        msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                                new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+                        msg.setSubject("Negative feedback - client didn't accept code");
+                        msg.setText("From: " + userID + " regarding offerID: " + offerID + " - " + message);
+                        Transport.send(msg);
+                    } finally {
+
+                    }
+                }
+            } finally {
+                voidEntity.setStatus("True");
+                connection.close();
+                return voidEntity;
+            }
+        } catch (ClassNotFoundException e) {
+            voidEntity.setStatus("False");
+            voidEntity.setMessage("ClassNotFoundException");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            voidEntity.setStatus("False");
+            voidEntity.setMessage("SQLException");
+            e.printStackTrace();
+        } finally {
+            return voidEntity;
         }
     }
 }
