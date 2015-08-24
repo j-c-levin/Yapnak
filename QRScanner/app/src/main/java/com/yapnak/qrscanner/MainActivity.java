@@ -1,13 +1,17 @@
 package com.yapnak.qrscanner;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
 
+    private static final int RESULT = 123;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,5 +38,29 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //OnClick
+    public void scanQR(View v){
+        Intent camera = new Intent("com.google.zxing.client.android.SCAN");
+        camera.putExtra("SCAN_MODE","QR_CODE_MODE");
+        startActivityForResult(camera,RESULT);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == RESULT){
+
+                String d = data.getStringExtra("SCAN_RESULT");
+                String JSON = data.getStringExtra("SCAN_RESULT_FORMAT");
+
+                Toast.makeText(this,"DATA "+ d +" FORMAT: "+ JSON,Toast.LENGTH_LONG).show();
+
+            }
+        }
     }
 }
