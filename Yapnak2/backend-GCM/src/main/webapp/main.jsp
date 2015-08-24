@@ -94,7 +94,7 @@
   <div class="form-signin">
     <label>
       <input type="checkbox" name = "show-offer"
-      value="show-offer" ng-model="offer3" ng-click="showOffer()"> Offer three
+      value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
     </label>
     <hr>
     <div collapse="!offer3">
