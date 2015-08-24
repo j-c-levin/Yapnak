@@ -128,33 +128,12 @@ public class Splash extends Activity {
                         //Toast.makeText(getApplicationContext(),"Connected in Splash",Toast.LENGTH_SHORT).show();
                         newHandler.removeCallbacks(this);
 
-                        /*Intent i = new Intent(Splash.this, MainActivity.class);
-                        i.putExtra("accName", acc);
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                        startActivity(i);
-                        */
                       String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
                       //isIn=true;
                       firstTime = true;
                       onResume=true;
+                      new InternetConnection().execute(acc);
 
-                      ConnectivityManager connect = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                      boolean wifi = connect.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-                      boolean data = connect.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-
-                      if(!wifi && !data){
-                        noInternet=true;
-                        Intent i = new Intent(Splash.this, Login.class);
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(i);
-                      }else{
-                          new InternetConnection().execute(acc);
-                      }
                       Log.d("onResume","on resume");
 
                   }
@@ -201,14 +180,10 @@ public class Splash extends Activity {
     private String userId;
     private boolean onResume;
 
-
-
-     private class UserID extends AsyncTask<String,Integer,String>{
+    private class UserID extends AsyncTask<String,Integer,String>{
 
          private String userName;
          private String accountName;
-
-
 
         @Override
         protected String doInBackground(String... params) {
@@ -242,24 +217,8 @@ public class Splash extends Activity {
          @Override
          protected void onPostExecute(String s) {
 
-             if(!onResume) {
-                 if (firstTime) {
-                     Intent i = new Intent(Splash.this, FragmentSlideActivity.class);
-                     i.putExtra("accName", accountName);
-                     i.putExtra("userID", s);
-                     i.putExtra("initials", "n/A");
-                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                     startActivity(i);
-                     activity.finish();
-
-                 } else if (noInternet) {
+                if (noInternet) {
                      Intent i = new Intent(Splash.this, Login.class);
-                 /*i.putExtra("accName", accountName);
-                 i.putExtra("userID", s);
-                 i.putExtra("initials", "n/A");
-                 */
                      i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                      i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -278,7 +237,7 @@ public class Splash extends Activity {
                      activity.finish();
                  }
              }
-         }
+
      }
     private class OnResumeID extends AsyncTask<String,Integer,String>{
 
@@ -319,7 +278,7 @@ public class Splash extends Activity {
         @Override
         protected void onPostExecute(String s) {
 
-                if (firstTime) {
+                if (firstTime && !noInternet) {
                     Intent i = new Intent(Splash.this, FragmentSlideActivity.class);
                     i.putExtra("accName", accountName);
                     i.putExtra("userID", s);
@@ -341,7 +300,22 @@ public class Splash extends Activity {
         @Override
         protected Void doInBackground(String... params) {
 
-            if(onResume){
+            ConnectivityManager connect = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            boolean wifi = connect.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+            boolean data = connect.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+            Log.d("wifi", String.valueOf(wifi));
+            Log.d("data",String.valueOf(data));
+            if(!wifi && !data){
+                noInternet = true;
+                onResume = false;
+                Intent i = new Intent(Splash.this, Login.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }
+           else if(onResume){
                new OnResumeID().execute(params[0]);
            }else{
                new UserID().execute(params[0]);
@@ -391,6 +365,8 @@ private boolean inBackground;
             isIn=true;
             firstTime=false;
             inBackground = true;
+            onResume=false;
+            Log.d("background","In Background Work");
             new InternetConnection().execute(acc);
 
 

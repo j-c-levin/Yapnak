@@ -401,13 +401,25 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
         @Override
         protected void onPostExecute(String s) {
-            Intent i = new Intent(activity, FragmentSlideActivity.class);
-            i.putExtra("userID",s);
-            i.putExtra("accName",email);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
+            if(!s.equalsIgnoreCase("")) {
+                Intent i = new Intent(activity, FragmentSlideActivity.class);
+                i.putExtra("userID", s);
+                i.putExtra("accName", email);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }else{
+
+                Intent i = new Intent(activity, Login.class);
+                i.putExtra("userID", s);
+                i.putExtra("accName", email);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+
+            }
         }
     }
 
@@ -423,17 +435,9 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         //this.personName = person.getDisplayName();
 
         String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+        //new GetUserId().execute(acc);
 
-        new GetUserId().execute(acc);
 
-        /*Intent i = new Intent(this, FragmentSlideActivity.class);
-        i.putExtra("userID",userID);
-        i.putExtra("accName",acc);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-        */
     }
 
     @Override
