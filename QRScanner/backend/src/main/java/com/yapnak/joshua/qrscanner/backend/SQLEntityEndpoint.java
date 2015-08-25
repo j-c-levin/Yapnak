@@ -67,7 +67,6 @@ import javax.mail.internet.MimeMessage;
         scopes = {Constants.EMAIL_SCOPE},
         clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID},
         audiences = {Constants.ANDROID_AUDIENCE})
-
 public class SQLEntityEndpoint {
 
     private static final Logger logger = Logger.getLogger(SQLEntityEndpoint.class.getName());
@@ -1428,6 +1427,101 @@ public class SQLEntityEndpoint {
             e.printStackTrace();
         } finally {
             return voidEntity;
+        }
+    }
+
+    @ApiMethod(
+            name = "clientLogin",
+            path = "clientLogin",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public ClientEntity clientLogin(@Named("email") String email, @Named("password") String password) {
+        ClientEntity client = new ClientEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT COUNT(*) FROM client WHERE email = ? AND password = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, email);
+                stmt.setString(2, password);
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    //client login
+                    statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhoto, client.offer1,client.offer2,client.offer3, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND isActive = 1";
+                    stmt = connection.prepareStatement(statement);
+                    stmt.setString(1, email);
+                    rs = stmt.executeQuery();
+                    rs.next();
+                    client.setStatus("True");
+                    client.setId(rs.getInt("clientID"));
+                    client.setName(rs.getString("clientName"));
+                    client.setX(rs.getDouble("clientX"));
+                    client.setY(rs.getDouble("clientY"));
+                    client.setFoodStyle(rs.getString("clientFoodStyle"));
+                    String url;
+                    if (SystemProperty.environment.value() ==
+                            SystemProperty.Environment.Value.Production) {
+                        if (!rs.getString("clientPhoto").equals("")) {
+                            if (SystemProperty.environment.value() ==
+                                    SystemProperty.Environment.Value.Production) {
+                                ImagesService services = ImagesServiceFactory.getImagesService();
+                                ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
+                                url = services.getServingUrl(serve);
+                                url = url + "=s100";
+                            } else {
+                                url = rs.getString("clientPhoto");
+                            }
+                        } else {
+                            url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        }
+                    } else {
+                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                    }
+                    client.setPhoto(url);
+                    do {
+
+                        if (rs.getInt("offerID") == rs.getInt("offer1")) {
+                            logger.info("found offer 1: " + rs.getString("offer"));
+                            client.setShowOffer1(rs.getInt("showOffer"));
+                            client.setOffer1(rs.getString("offer"));
+
+                        } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
+                            logger.info("found offer 2: " + rs.getString("offer"));
+                            client.setShowOffer2(rs.getInt("showOffer"));
+                            client.setOffer2(rs.getString("offer"));
+
+                        } else {
+                            logger.info("found offer 3: " + rs.getString("offer"));
+                            client.setShowOffer3(rs.getInt("showOffer"));
+                            client.setOffer3(rs.getString("offer"));
+                        }
+
+                    } while (rs.next());
+                } else {
+                    //login failed
+                    client.setStatus("False");
+                    client.setMessage("Client login details incorrect");
+                }
+            } finally {
+                connection.close();
+                return client;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            return client;
         }
     }
 }

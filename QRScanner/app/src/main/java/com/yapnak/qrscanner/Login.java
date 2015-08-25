@@ -6,9 +6,13 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,14 +21,15 @@ import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.auth.clientlogin.ClientLogin;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 
 import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.SQLEntityApi;
 import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.model.ClientEntity;
-import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.model.SQLEntity;
 
 
 /**
@@ -35,7 +40,19 @@ public class Login extends Activity {
     private EditText clientEmail;
     private EditText clientPass;
     private int errorID = -1;
+    private final Activity a = this;
     private float originalUserY;
+
+    private boolean exit = false;
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (exit) {
+            finish();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +60,9 @@ public class Login extends Activity {
 
         setContentView(R.layout.login);
 
+
         clientB = (Button) findViewById(R.id.clientLoginButton);
-
-
-
+        helper = new DBHelper("LOGIN",this);
 
     }
 
@@ -62,7 +78,7 @@ public class Login extends Activity {
         //Right now I'm going to set default values to help client enter onto their main screen
 
 
-        if(clientEmail.getText().toString().equalsIgnoreCase("") && clientPass.getText().toString().equalsIgnoreCase("")) {
+        /*if(clientEmail.getText().toString().equalsIgnoreCase("") && clientPass.getText().toString().equalsIgnoreCase("")) {
             //Start Main Client Activity
             Intent mainClientPage = new Intent(this,MainActivity.class);
             mainClientPage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -73,25 +89,83 @@ public class Login extends Activity {
         }else{
             //ErrorDialog dialog = new ErrorDialog();
             //dialog.show(getFragmentManager(),"LoginError");
-        }
+        }*/
+        login();
 
     }
 
     private void login(){
-        SQLEntityApi.Builder sqlb = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-        sqlb.setApplicationName("Yapnak");
-        SQLEntityApi entity = sqlb.build();
+        new Authenticate().execute();
+    }
 
-        String passEncrypt = hashPass(clientPass.getText().toString());
-        String email = clientEmail.getText().toString();
 
-        try{
-            //compare email and pass against DB
-            ClientEntity client = entity.getClientInfo(clientEmail.getText().toString()).execute();
+    private final String TABLE_NAME = "LOGINFO";
+    private DBHelper helper;
 
-        }catch (Exception e){
-            Toast.makeText(getApplicationContext(),"Not valid email/password",Toast.LENGTH_SHORT).show();
+
+
+    private class Authenticate extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            SQLEntityApi.Builder sqlb = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+            sqlb.setApplicationName("Yapnak");
+            SQLEntityApi entity = sqlb.build();
+
+            String passEncrypt = hashPass(clientPass.getText().toString());
+            String email = clientEmail.getText().toString();
+
+            try {
+                ClientEntity login = entity.clientLogin(email, passEncrypt).execute();
+                Log.d("login", login.getStatus());
+                if (login.getStatus().equalsIgnoreCase("True")) {
+
+                    new LocalDBInput().execute(email);
+
+                    Intent i = new Intent(a, MainActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                    a.finish();
+
+                }else{
+                    Log.d("fail", "Not valid email/password");
+                }
+            }catch(IOException e){
+                e.printStackTrace();
+
+            }
+
+
+            return null;
+        }
+    }
+
+    private class LocalDBInput extends AsyncTask<String,Void,Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+
+                helper.open();
+
+                if(helper.clientExists(params[0])){
+                    helper.updateValues(params[0]);
+                }else{
+                    helper.insertValues(params[0]);
+                }
+                helper.close();
+
+
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+
+
+
+            return null;
         }
     }
 

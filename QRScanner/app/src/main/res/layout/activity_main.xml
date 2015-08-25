@@ -29,7 +29,6 @@
             android:layout_height="100dp"
             android:text="Scan QR Code!"
             android:id="@+id/button"
-            android:onClick="scanQR"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
     </ScrollView>

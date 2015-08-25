@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.frontend.yapnak.subview.RedEditText;
 import com.google.zxing.BarcodeFormat;
@@ -64,7 +66,15 @@ public class QRGenerator extends AlertDialog {
         });
 
         QR.setImageBitmap(encode(content, 300, 300));
-        setTitle("QR Code");
+        final TextView title = new TextView(getContext());
+        title.setText("QR Code");
+        title.setTextSize(25);
+        title.setPadding(20, 40, 0, 40);
+        //title.setBackgroundColor(Color.parseColor("#FFAB91"));
+        title.setTextColor(Color.parseColor("#BF360C"));
+        title.setGravity(Gravity.LEFT);
+
+        setCustomTitle(title);
         setView(v);
     }
 
