@@ -1,6 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:weightSum="1">
+
+    <!-- android:background="@drawable/login_background"
+     android:textColor="#FFF"
+     android:textColorHint="#FFF"-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="496dp"
+            android:layout_weight="5.30">
+
+            <ImageButton
+                android:background="@drawable/yapnakmonster"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/imageButton" />
+
+            <EditText
+                android:id="@+id/clientEmailEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.4"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textColor="#000"
+                android:textColorHint="#000"
+                android:hint="Restaurant Client Email"
+                android:inputType="textEmailAddress"
+                android:layout_below="@+id/imageButton"
+                android:layout_alignParentLeft="true" />
+
+
+            <EditText
+                android:id="@+id/clientPassEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="38dp"
+                android:alpha="0.4"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:inputType="textPassword"
+                android:hint="Password"
+                android:textColor="#000"
+                android:textColorHint="#000"
+                android:layout_below="@+id/clientEmailEdit"
+                android:layout_alignParentLeft="true" />
+
+
+
+            <Button
+                android:id="@+id/clientLoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.4"
+                android:layout_marginTop="38dp"
+                android:text="Login"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:onClick="clientLogin"
+                android:layout_below="@+id/clientPassEdit"
+                android:layout_alignParentLeft="true" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </LinearLayout>
+

@@ -1,9 +1,11 @@
-package com.uq.yapnak;
-import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
+package com.yapnak.qrscanner;
 
+
+
+
+import android.util.Base64;
 import java.security.AlgorithmParameters;
 import java.security.SecureRandom;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -13,6 +15,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+
 /**
  * Created by vahizan on 29/06/2015.
  */
@@ -20,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class SecureDetails {
 
+    /*
     private String salt ;
     private static int pswrdIterate = 65536;
     private static int KEY_SIZE = 256;
@@ -27,11 +31,13 @@ public class SecureDetails {
     private byte [] userBytes;
 
 
-    public String  encrypt(String content){
+
+
+    public String encrypt(String content){
         return null;
     }
 
-    public String [] encrypt(String user, String pass) throws Exception{
+    public String[] encrypt(String user, String pass) throws Exception {
 
         salt = generateSalt();
         byte[] bytes = salt.getBytes("UTF-8");
@@ -49,7 +55,7 @@ public class SecureDetails {
 
 
         SecretKey secretKey = keyFactory.generateSecret(spec);
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(),"AES");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(), "AES");
 
         //ENCRYPT Password
 
@@ -60,6 +66,7 @@ public class SecureDetails {
         byte[] encryptedText = cipher.doFinal(pass.getBytes("UTF-8"));
 
         String encryptedPass = new Base64().encodeAsString(encryptedText);
+
 
 
 
@@ -90,7 +97,7 @@ public class SecureDetails {
 
         String encryptedUser = new Base64().encodeAsString(encryptedUserBytes);
 
-        String [] encryptedUserPass = new String [2];
+        String[] encryptedUserPass = new String[2];
         encryptedUserPass[0] = encryptedUser;
         encryptedUserPass[1] = encryptedPass;
 
@@ -99,7 +106,7 @@ public class SecureDetails {
 
   }
 
-    public String [] decrypt(String user,String pass) throws Exception{
+    public String[] decrypt(String user,String pass) throws Exception {
 
         byte [] saltB = salt.getBytes();
         byte [] encryptedText = new Base64().decodeBase64(pass);
@@ -172,7 +179,7 @@ public class SecureDetails {
 
         String userDecryptedText = new String(decryptedUser);
 
-        String []  userPass = new String[2];
+        String[]  userPass = new String[2];
 
         userPass[0] = passDecryptText;
         userPass[2] = userDecryptedText;
@@ -191,5 +198,6 @@ public class SecureDetails {
         return string;
     }
 
+    */
     
 }
