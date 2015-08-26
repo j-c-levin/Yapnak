@@ -135,7 +135,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
                 }
                 */
             try{
-                URL url = new URL(urls[0]);
                 Bitmap b= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
                 return b;
             }catch (Exception e){

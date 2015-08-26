@@ -236,10 +236,15 @@ public class ProfileDialog extends AlertDialog {
         @Override
         protected void onPostExecute(UserEntity userEntity) {
 
-            if(!userEntity.getMobNo().equalsIgnoreCase("_null") && !userEntity.getFirstName().equalsIgnoreCase("_null")){
-                phone.setText(userEntity.getMobNo());
-                name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
-            }
+          try{
+              if (!userEntity.getMobNo().equalsIgnoreCase("_null") && !userEntity.getFirstName().equalsIgnoreCase("_null")) {
+                  phone.setText(userEntity.getMobNo());
+                  name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+              }
+          }catch (NullPointerException e){
+              e.printStackTrace();
+          }
+
 
         }
     }

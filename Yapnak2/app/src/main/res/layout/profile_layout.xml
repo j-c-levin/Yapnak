@@ -6,11 +6,15 @@
     <!--android:textColor="#FFF"
     android:background="#FFAB91"
     -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 <ScrollView
     android:layout_width="match_parent"
-    android:layout_height="400dp"
-    android:id="@+id/scrollView">
+    android:layout_height="match_parent"
+    android:id="@+id/scrollView"
+    android:layout_above="@+id/linearLayout3">
 
 
 
@@ -19,10 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-
         <EditText
             android:id="@+id/nameEdit"
-
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
             android:paddingLeft="10dp"
@@ -30,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:hint="Enter Name"
             android:drawablePadding="20dp"
             android:drawableLeft="@drawable/avatar_white_small"
@@ -42,7 +44,7 @@
             android:textSize="15sp"
             android:textColorHint="#000"
             android:layout_marginLeft="20dp"
-            android:layout_ab="@+id/phoneNumberEditText" />
+             />
 
         <EditText
             android:background="@color/transparentRed"
@@ -69,15 +71,18 @@
         <RadioGroup
             android:background="@color/transparentRed"
             android:id="@+id/genderGroupButtons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="170dp"
+            android:layout_height="50dp"
+            android:gravity="center"
             android:orientation="horizontal"
             android:layout_below="@+id/phoneNumberEditText"
             android:layout_toRightOf="@+id/dateInput"
-            android:layout_marginBottom="115dp">
+            android:layout_marginBottom="115dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="10dp">
 
             <RadioButton
-                android:layout_margin="10dp"
+                android:layout_margin="1dp"
                 android:button="@drawable/red_radio"
                 android:id="@+id/male"
                 android:layout_height="30dp"
@@ -86,7 +91,7 @@
                 />
 
             <RadioButton
-                android:layout_margin="10dp"
+                android:layout_margin="1dp"
                 android:id="@+id/female"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
@@ -107,11 +112,11 @@
 
         <Button
             android:id="@+id/dateInput"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="Date Of Birth"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginRight="5dp"
             android:textSize="15sp"
             android:textColor="#000"
@@ -160,22 +165,22 @@
         -->
 
 
-       <!-- <com.frontend.yapnak.subview.RedEditText
-            android:id="@+id/emailEdit"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="30dp"
-            android:hint="Enter Email"
-            android:background="@android:color/transparent"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:gravity="top"
-            android:imeOptions="actionNext"
-            android:textSize="15sp"
-            android:textColorHint="#000"
-            android:layout_marginLeft="20dp"
-            android:layout_below="@+id/nameEdit" />-->
+        <!-- <com.frontend.yapnak.subview.RedEditText
+             android:id="@+id/emailEdit"
+             android:layout_width="match_parent"
+             android:layout_height="30dp"
+             android:layout_marginRight="20dp"
+             android:layout_marginTop="30dp"
+             android:hint="Enter Email"
+             android:background="@android:color/transparent"
+             android:maxLines="1"
+             android:singleLine="true"
+             android:gravity="top"
+             android:imeOptions="actionNext"
+             android:textSize="15sp"
+             android:textColorHint="#000"
+             android:layout_marginLeft="20dp"
+             android:layout_below="@+id/nameEdit" />-->
 
 
         <!--FEEDBACK MENU
@@ -298,33 +303,29 @@
             </LinearLayout>
             -->
 
-    <!--
-        </LinearLayout>
+        <!--
+            </LinearLayout>
 
 
 
-      -->
+          -->
 
 
 
         <!--FEEDBACK MENU-->
 
 
-
     </RelativeLayout>
 
+     </ScrollView>
 
-
-
-
-
-</ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/linearLayout3"
-        android:layout_below="@+id/scrollView"
+        android:gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true">
 
         <Button
@@ -341,7 +342,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="OK"
+            android:text="SAVE"
             android:id="@+id/submitProfile"
             />
 
@@ -349,5 +350,6 @@
 
     </LinearLayout>
 
+    </RelativeLayout>
 
 </RelativeLayout>

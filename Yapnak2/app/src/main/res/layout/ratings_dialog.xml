@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="400dp"
     android:weightSum="1">
 
     <!--
@@ -16,6 +16,11 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.07" />
         -->
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
 
     <RatingBar
         android:layout_width="wrap_content"
@@ -33,7 +38,19 @@
         android:gravity="center"
         android:id="@+id/ratingNumber"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.07" />
+        android:layout_weight="0.00" />
+
+    <com.frontend.yapnak.subview.RedEditText
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textColor="#000"
+        android:textColorHint="#000"
+        android:textSize="15sp"
+        android:id="@+id/ratingComment"
+        android:gravity="center"
+        android:background="@android:color/transparent"
+        android:hint="Leave a Comment"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,6 +77,8 @@
             android:background="@android:color/transparent"
             android:textColor="#ff535357" />
     </LinearLayout>
+
+</LinearLayout>
 
 
 
