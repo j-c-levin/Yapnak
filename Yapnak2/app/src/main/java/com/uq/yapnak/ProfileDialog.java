@@ -65,7 +65,7 @@ public class ProfileDialog extends AlertDialog {
         cancel = (Button) v.findViewById(R.id.cancelProfile);
         phone = (EditText) v.findViewById(R.id.phoneNumberEditText);
         name = (EditText) v.findViewById(R.id.nameEdit);
-       // email = (EditText)v.findViewById(R.id.emailEdit);
+        email = (EditText)v.findViewById(R.id.emailEdit);
 
 
 

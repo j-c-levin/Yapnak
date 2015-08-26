@@ -1389,6 +1389,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private  float scaleListY;
 
 
+
     private class ScrollBackgroundTask extends AsyncTask<ListView,String,ListView>{
 
 
@@ -1406,7 +1407,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private SubActionButton buttonAbout;
     private SubActionButton buttonFeedback;
-    //private SubActionButton buttonManual;
+    private SubActionButton buttonGet;
     private SubActionButton buttonGift;
     private SubActionButton buttonProfile;
 
@@ -1426,8 +1427,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ImageView iconFeedback = new ImageView(this);
         iconFeedback.setImageResource(R.drawable.shareicon);
 
-        //ImageView iconManual = new ImageView(this);
-        //iconManual.setImageResource(R.drawable.manualicon);
+        ImageView iconGet = new ImageView(this);
+        iconGet.setImageResource(R.drawable.manualicon);
 
         ImageView iconGift = new ImageView(this);
         iconGift.setImageResource(R.drawable.gift);
@@ -1440,13 +1441,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         buttonAbout = itemBuilder.setContentView(iconAbout).build();
         buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
-        //buttonManual = itemBuilder.setContentView(iconManual).build();
+        buttonGet = itemBuilder.setContentView(iconGet).build();
         buttonGift = itemBuilder.setContentView(iconGift).build();
         buttonProfile = itemBuilder.setContentView(iconProfile).build();
 
         buttonAbout.setTag(TAG_ABOUT);
         buttonFeedback.setTag(TAG_FEEDBACK);
-        //buttonManual.setTag(TAG_MANUAL);
+        buttonGet.setTag(TAG_MANUAL);
         buttonGift.setTag(TAG_GIFT);
         buttonProfile.setTag(TAG_PROFILE);
 
@@ -1461,6 +1462,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addSubActionView(buttonFeedback)
                 .addSubActionView(buttonGift)
                 .addSubActionView(buttonProfile)
+                .addSubActionView(buttonGet)
                 .attachTo(actionButton)
                 .build();
 
