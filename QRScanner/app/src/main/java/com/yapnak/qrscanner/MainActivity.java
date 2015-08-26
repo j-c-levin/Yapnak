@@ -3,7 +3,9 @@ package com.yapnak.qrscanner;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +21,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         scanQR();
+        setContentView(R.layout.activity_main);
+
     }
     private boolean exit = false;
     @Override
@@ -60,13 +63,18 @@ public class MainActivity extends Activity {
             //Intent camera = new Intent("com.google.zxing.client.android.SCAN");
             //camera.putExtra("SCAN_MODE", "QR_CODE_MODE");
             //startActivityForResult(camera, RESULT);
-            IntentIntegrator integrator = new IntentIntegrator(this);
-            integrator.setCameraId(0)
-                    .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
-                    .setOrientationLocked(false)
-                    .setPrompt("Scan QR Code")
-                    .setBeepEnabled(false)
-                    .initiateScan();
+            intent().initiateScan();
+    }
+
+    private IntentIntegrator intent(){
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCameraId(0)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+                .setCaptureActivity(oCaptureActivity.class)
+                .setOrientationLocked(false)
+                .setPrompt("Scan QR Code")
+                .setBeepEnabled(false);
+        return integrator;
     }
 
     @Override
@@ -87,9 +95,25 @@ public class MainActivity extends Activity {
             if(result!=null){
                 String d = result.getContents();
                 String JSON = result.getFormatName();
-                Toast.makeText(this,"DATA "+ d +" FORMAT: "+ JSON,Toast.LENGTH_LONG).show();
-                scanQR();
+                Toast.makeText(this, "DATA " + d + " FORMAT: " + JSON, Toast.LENGTH_SHORT).show();
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        intent().initiateScan();
+                    }
+                }, 1000);
+
             }
+        }
+    }
+
+    private class Scanner extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            scanQR();
+            return null;
         }
     }
 }

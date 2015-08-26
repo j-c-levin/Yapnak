@@ -156,8 +156,6 @@ public class FeedbackDialog extends AlertDialog {
                 }
             }
         });
-
-
     }
 
     public void setID(String ID) {
@@ -172,7 +170,6 @@ public class FeedbackDialog extends AlertDialog {
             f.setID(params[0]);
             f.setComment(params[1]);
             f.setFeedbackNumber(feedbackNumber);
-
             try {
                 SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
                 apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
@@ -182,7 +179,6 @@ public class FeedbackDialog extends AlertDialog {
             }catch (IOException e){
                 e.printStackTrace();
             }
-
             return null;
         }
 
