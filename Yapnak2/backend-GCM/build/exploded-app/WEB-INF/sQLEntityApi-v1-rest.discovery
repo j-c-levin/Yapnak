@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/qV-bXbwDRIQXuf5BGW8no9NOztg\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/FGX4GyUTDN8GII1-pENRKwtsnrc\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -312,9 +312,59 @@
      }
     }
    }
+  },
+  "qrEntity": {
+   "id": "qrEntity",
+   "type": "object",
+   "properties": {
+    "clientID": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "message": {
+     "type": "string"
+    },
+    "points": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "status": {
+     "type": "string"
+    },
+    "userID": {
+     "type": "string"
+    }
+   }
   }
  },
  "methods": {
+  "clientLogin": {
+   "id": "sQLEntityApi.clientLogin",
+   "path": "clientLogin",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "password"
+   ],
+   "response": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "feedback": {
    "id": "sQLEntityApi.feedback",
    "path": "feedback",
@@ -559,6 +609,46 @@
    ],
    "response": {
     "$ref": "UserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "qrSubmit": {
+   "id": "sQLEntityApi.qrSubmit",
+   "path": "qrSubmit",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "datetime": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "hash": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "userID": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientID",
+    "datetime",
+    "hash",
+    "userID"
+   ],
+   "response": {
+    "$ref": "qrEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

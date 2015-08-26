@@ -9,6 +9,7 @@ import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ImagesServiceFailureException;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.api.utils.SystemProperty;
@@ -329,6 +330,7 @@ public class SQLEntityEndpoint {
             if (rs.next()) {
                 rs.beforeFirst();
                 while (rs.next()) {
+                    logger.info("Retrieving client: " + rs.getString("clientName"));
                     sql = new SQLEntity();
                     sql.setId(rs.getInt("clientID"));
                     sql.setName(rs.getString("clientName"));
@@ -343,14 +345,25 @@ public class SQLEntityEndpoint {
                     if (!rs.getString("clientPhoto").equals("")) {
                         if (SystemProperty.environment.value() ==
                                 SystemProperty.Environment.Value.Production) {
+                            logger.info("photo: " + rs.getString("clientPhoto"));
                             ImagesService services = ImagesServiceFactory.getImagesService();
                             ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-                            url = services.getServingUrl(serve);
-                            url = url + "=s100";
+                            try {
+                                url = services.getServingUrl(serve);
+                                url = url + "=s100";
+                                logger.info("got Photo: " + url);
+                            } catch (IllegalArgumentException e) {
+                                url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                                e.printStackTrace();
+                            } catch (ImagesServiceFailureException e1) {
+                                url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                                e1.printStackTrace();
+                            }
                         } else {
                             url = rs.getString("clientPhoto");
                         }
                     } else {
+                        logger.info("No photo for client");
                         url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
                     }
                     sql.setPhoto(url);
@@ -374,7 +387,6 @@ public class SQLEntityEndpoint {
                 sql.setShowOffer(1);
                 list.add(sql);
             }
-
             connection.close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -1524,5 +1536,17 @@ public class SQLEntityEndpoint {
         } finally {
             return client;
         }
+    }
+
+    @ApiMethod(
+            name = "qrSubmit",
+            path = "qrSubmit",
+            httpMethod = ApiMethod.HttpMethod.POST)
+
+    public qrEntity qrSubmit(@Named("userID") String userID, @Named("clientID") int clientID, @Named("datetime") String date, @Named("hash") String hash) {
+        qrEntity qr = new qrEntity();
+
+        qr.setStatus("True");
+        return qr;
     }
 }

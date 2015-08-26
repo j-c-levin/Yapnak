@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/qV-bXbwDRIQXuf5BGW8no9NOztg\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/FGX4GyUTDN8GII1-pENRKwtsnrc\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -310,9 +310,55 @@
      }
     }
    }
+  },
+  "qrEntity": {
+   "id": "qrEntity",
+   "type": "object",
+   "properties": {
+    "clientID": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "message": {
+     "type": "string"
+    },
+    "points": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "status": {
+     "type": "string"
+    },
+    "userID": {
+     "type": "string"
+    }
+   }
   }
  },
  "methods": {
+  "sQLEntityApi.clientLogin": {
+   "id": "sQLEntityApi.clientLogin",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true
+    },
+    "password": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "password"
+   ],
+   "returns": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "sQLEntityApi.feedback": {
    "id": "sQLEntityApi.feedback",
    "parameters": {
@@ -523,6 +569,40 @@
    ],
    "returns": {
     "$ref": "UserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "sQLEntityApi.qrSubmit": {
+   "id": "sQLEntityApi.qrSubmit",
+   "parameters": {
+    "clientID": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "datetime": {
+     "type": "string",
+     "required": true
+    },
+    "hash": {
+     "type": "string",
+     "required": true
+    },
+    "userID": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "clientID",
+    "datetime",
+    "hash",
+    "userID"
+   ],
+   "returns": {
+    "$ref": "qrEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
