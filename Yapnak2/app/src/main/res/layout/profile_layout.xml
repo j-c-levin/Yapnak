@@ -33,7 +33,7 @@
             android:layout_marginTop="20dp"
             android:hint="Enter Name"
             android:drawablePadding="20dp"
-            android:drawableLeft="@drawable/avatarWhite_small"
+            android:drawableLeft="@drawable/avatar_white_small"
             android:background="@color/transparentRed"
             android:maxLines="1"
             android:singleLine="true"
@@ -132,7 +132,7 @@
             android:textSize="15sp"
             android:textColorHint="#000"
             android:layout_marginTop="20dp"
-            android:drawableLeft="@drawable/envelopeWhite_small"
+            android:drawableLeft="@drawable/envelope_white_small"
             android:layout_below="@id/dateInput"
             android:hint="Enter E-Mail Address"/>
 
@@ -149,7 +149,7 @@
             android:textSize="15sp"
             android:textColorHint="#000"
             android:layout_marginTop="20dp"
-            android:drawableLeft="@drawable/padlockWhite_small"
+            android:drawableLeft="@drawable/padlock_white_small"
             android:layout_below="@id/emailEdit"
             android:hint="Password"/>
 
