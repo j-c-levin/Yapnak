@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_marginBottom="5dp"
         android:padding="5dp"
-        android:background="@drawable/curved_card"
+        android:background="@drawable/curved_card_item"
         android:weightSum="1"
         >
 
@@ -49,10 +49,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp"
-                android:singleLine="true"
+                android:singleLine="false"
                 android:text="sample1"
                 android:textColor="#ff707070"
                 android:textSize="20sp"
+                android:scrollHorizontally="false"
+                android:maxLines="2"
                 android:textStyle="bold" />
 
             <com.pkmmte.view.CircularImageView
@@ -74,8 +76,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp"
-                android:layout_marginTop="25dp"
-
+                android:layout_marginTop="28dp"
+                android:textSize="13sp"
                 android:text="sample text here"
                 android:textColor="#ff707070" />
 
@@ -135,48 +137,60 @@
               android:layout_alignBottom="@+id/extendTextLayout">
 
 
-                <Button
-                    android:id="@+id/recommendMeal"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginRight="56dp"
+              <Button
+                  android:id="@+id/recommendMeal"
+                  android:layout_width="35dp"
+                  android:layout_height="35dp"
+                  android:background="@drawable/custom_recommend"
+                  android:onClick="recommendMealButton"
+                  android:textSize="12sp"
+                  android:textStyle="bold"
+                  android:layout_marginLeft="50dp"
+                  android:layout_alignParentTop="true"
+                  android:layout_toRightOf="@+id/takeMeThere" />
 
-                    android:onClick="recommendMealButton"
-                    android:background="@drawable/custom_recommend"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@+id/takeMeThere" />
+              <Button
+                  android:id="@+id/takeMeThere"
+                  android:layout_width="35dp"
+                  android:layout_height="35dp"
+                  android:onClick="takeMeThereButton"
+                  android:background="@drawable/custom_takemethere"
+                  android:textSize="12sp"
+                  android:textStyle="bold"
+                  android:layout_marginLeft="39dp"
+                  android:layout_alignParentTop="true"
+                  android:layout_alignParentLeft="true" />
 
-                <Button
-                    android:id="@+id/takeMeThere"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:onClick="takeMeThereButton"
-                    android:background="@drawable/custom_takemethere"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_centerHorizontal="true" />
+              <Button
+                  android:id="@+id/feedbackButton"
+                  android:layout_width="35dp"
+                  android:layout_height="35dp"
+                  android:layout_marginLeft="30dp"
+                  android:onClick="feedbackButton"
+                  android:background="@drawable/custom_rate"
+                  android:textSize="12sp"
+                  android:textStyle="bold"
+                  android:layout_alignParentTop="true"
+                  android:layout_toRightOf="@+id/recommendMeal" />
 
-                <Button
-                    android:id="@+id/feedbackButton"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginLeft="38dp"
-                    android:onClick="feedbackButton"
-                    android:background="@drawable/custom_rate"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/takeMeThere" />
-
-
+              <Button
+                  android:id="@+id/getDealButton"
+                  android:layout_width="35dp"
+                  android:layout_height="35dp"
+                  android:layout_marginLeft="20dp"
+                  android:background="@drawable/custom_rewards"
+                  android:textSize="12sp"
+                  android:onClick="getDeal"
+                  android:textStyle="bold"
+                  android:layout_alignParentTop="true"
+                  android:layout_toRightOf="@+id/feedbackButton" />
 
 
 
-            </RelativeLayout>
+
+
+
+          </RelativeLayout>
           <RelativeLayout
                 android:id="@+id/extendTextLayout"
                 android:layout_width="match_parent"
@@ -191,10 +205,9 @@
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:text="Recommend"
-                    android:layout_marginLeft="10dp"
                     android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@+id/takeMeThereText"
-                    android:layout_marginRight="20dp" />
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/takeMeThereText" />
 
                 <TextView
                     android:id="@+id/takeMeThereText"
@@ -203,7 +216,9 @@
                     android:textSize="12sp"
                     android:text="Take Me There"
                     android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="10dp"/>
 
                 <TextView
                     android:id="@+id/rateText"
@@ -211,10 +226,18 @@
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:text="Rate"
-                    android:layout_marginLeft="29dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/takeMeThereText" />
+                    android:layout_toRightOf="@+id/recommendText" />
 
+                <TextView
+                    android:id="@+id/rewardsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="Get Deal"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@id/rateText"/>
 
             </RelativeLayout>
 

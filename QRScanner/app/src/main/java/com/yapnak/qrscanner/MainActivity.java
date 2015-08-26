@@ -1,12 +1,18 @@
 package com.yapnak.qrscanner;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 
 public class MainActivity extends Activity {
@@ -15,7 +21,18 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        scanQR();
         setContentView(R.layout.activity_main);
+
+    }
+    private boolean exit = false;
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (exit) {
+            finish();
+        }
     }
 
     @Override
@@ -41,11 +58,23 @@ public class MainActivity extends Activity {
     }
 
     //OnClick
-    public void scanQR(View v){
-        Intent camera = new Intent("com.google.zxing.client.android.SCAN");
-        camera.putExtra("SCAN_MODE","QR_CODE_MODE");
-        startActivityForResult(camera,RESULT);
+    public void scanQR(){
 
+            //Intent camera = new Intent("com.google.zxing.client.android.SCAN");
+            //camera.putExtra("SCAN_MODE", "QR_CODE_MODE");
+            //startActivityForResult(camera, RESULT);
+            intent().initiateScan();
+    }
+
+    private IntentIntegrator intent(){
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setCameraId(0)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+                .setCaptureActivity(oCaptureActivity.class)
+                .setOrientationLocked(false)
+                .setPrompt("Scan QR Code")
+                .setBeepEnabled(false);
+        return integrator;
     }
 
     @Override
@@ -53,7 +82,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == Activity.RESULT_OK){
-            if(requestCode == RESULT){
+            /*if(requestCode == RESULT){
 
                 String d = data.getStringExtra("SCAN_RESULT");
                 String JSON = data.getStringExtra("SCAN_RESULT_FORMAT");
@@ -61,6 +90,30 @@ public class MainActivity extends Activity {
                 Toast.makeText(this,"DATA "+ d +" FORMAT: "+ JSON,Toast.LENGTH_LONG).show();
 
             }
+            */
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+            if(result!=null){
+                String d = result.getContents();
+                String JSON = result.getFormatName();
+                Toast.makeText(this, "DATA " + d + " FORMAT: " + JSON, Toast.LENGTH_SHORT).show();
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        intent().initiateScan();
+                    }
+                }, 1000);
+
+            }
+        }
+    }
+
+    private class Scanner extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            scanQR();
+            return null;
         }
     }
 }

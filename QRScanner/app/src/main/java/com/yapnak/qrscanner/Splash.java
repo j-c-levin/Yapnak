@@ -18,14 +18,17 @@ public class Splash extends Activity {
         Handler handler = new Handler();
         a = this;
 
+        setContentView(R.layout.splash);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                 Intent i = new Intent(a,MainActivity.class);
+
+                 Intent i = new Intent(a,Login.class);
                  i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                  i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                  i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                  startActivity(i);
+                 a.finish();
             }
         };
 

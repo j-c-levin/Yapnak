@@ -82,4 +82,5 @@
     <color name="darkRed">#BF360C</color>
     <color name="peach">#FFAB91</color>
     <color name="lightPeach">#FFCCBC</color>
+    <color name="transparentRed">#32EF5350</color>
 </resources>

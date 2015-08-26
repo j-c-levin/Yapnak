@@ -65,7 +65,7 @@ public class ProfileDialog extends AlertDialog {
         cancel = (Button) v.findViewById(R.id.cancelProfile);
         phone = (EditText) v.findViewById(R.id.phoneNumberEditText);
         name = (EditText) v.findViewById(R.id.nameEdit);
-       // email = (EditText)v.findViewById(R.id.emailEdit);
+        email = (EditText)v.findViewById(R.id.emailEdit);
 
 
 
@@ -236,10 +236,15 @@ public class ProfileDialog extends AlertDialog {
         @Override
         protected void onPostExecute(UserEntity userEntity) {
 
-            if(!userEntity.getMobNo().equalsIgnoreCase("_null") && !userEntity.getFirstName().equalsIgnoreCase("_null")){
-                phone.setText(userEntity.getMobNo());
-                name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
-            }
+          try{
+              if (!userEntity.getMobNo().equalsIgnoreCase("_null") && !userEntity.getFirstName().equalsIgnoreCase("_null")) {
+                  phone.setText(userEntity.getMobNo());
+                  name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+              }
+          }catch (NullPointerException e){
+              e.printStackTrace();
+          }
+
 
         }
     }

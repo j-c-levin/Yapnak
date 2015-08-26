@@ -93,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private final int RESULT= 1;
     private static String TAG_ABOUT = "About";
     private static String TAG_SHARE = "Share";
-    private static String TAG_MANUAL = "Manual";
+    private static String TAG_REWARD = "Rewards";
     private static String TAG_FEEDBACK ="Feddback";
     private static String TAG_GIFT = "Gifts";
     private static String TAG_PROFILE ="Profile";
@@ -575,15 +575,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             feedback.show();
 
 
-        } else if (v.getTag().equals(TAG_MANUAL)) {
-            howToUseYapnak();
-            Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
-        } else if (v.getTag().equals(TAG_GIFT)) {
+        } else if (v.getTag().equals(TAG_REWARD)) {
+
+           // howToUseYapnak();
+            //Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
+
             userItems();
+
+
+        } else if (v.getTag().equals(TAG_GIFT)) {
+            //userItems();
         }else if(v.getTag().equals(TAG_PROFILE)){
             //SHOW PROFILE
-
-
             profileDialog(v);
 
         }
@@ -1171,6 +1174,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
+    //item2 OnClick method for getDealButton
+
+    public void getDeal(View v){
+        String url = "http://www.google.co.uk";
+        String userid= ID;
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
+        String date = sdf.format(cal.getTime());
+
+        String toHash =userid+date+"YAPNAKRULES";
+
+        String insert ="{ " +
+                "\"id\" : \""+userid+"\","+
+                "\"date\" :\""+date+"\","+
+                "\"hash\" : \""+hashing(toHash)+"\" }";
+
+
+
+        AlertDialog generator = new QRGenerator(this,this,insert);
+        generator.setTitle("GET DEAL");
+        generator.show();
+    }
+
 
     public void feedbackButton(View v) {
         Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
@@ -1389,6 +1415,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private  float scaleListY;
 
 
+
     private class ScrollBackgroundTask extends AsyncTask<ListView,String,ListView>{
 
 
@@ -1406,7 +1433,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private SubActionButton buttonAbout;
     private SubActionButton buttonFeedback;
-    //private SubActionButton buttonManual;
+    private SubActionButton buttonReward;
     private SubActionButton buttonGift;
     private SubActionButton buttonProfile;
 
@@ -1426,41 +1453,41 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ImageView iconFeedback = new ImageView(this);
         iconFeedback.setImageResource(R.drawable.shareicon);
 
-        //ImageView iconManual = new ImageView(this);
-        //iconManual.setImageResource(R.drawable.manualicon);
+        ImageView iconReward = new ImageView(this);
+        iconReward.setImageResource(R.drawable.trophy);
 
-        ImageView iconGift = new ImageView(this);
-        iconGift.setImageResource(R.drawable.gift);
+        //ImageView iconGift = new ImageView(this);
+        //iconGift.setImageResource(R.drawable.gift);
 
         ImageView iconProfile = new ImageView(this);
-        iconProfile.setImageResource(R.drawable.yapnak_colorsmall);
+        iconProfile.setImageResource(R.drawable.avatar_white);
 
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
 
         buttonAbout = itemBuilder.setContentView(iconAbout).build();
         buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
-        //buttonManual = itemBuilder.setContentView(iconManual).build();
-        buttonGift = itemBuilder.setContentView(iconGift).build();
+        buttonReward = itemBuilder.setContentView(iconReward).build();
+        //buttonGift = itemBuilder.setContentView(iconGift).build();
         buttonProfile = itemBuilder.setContentView(iconProfile).build();
 
         buttonAbout.setTag(TAG_ABOUT);
         buttonFeedback.setTag(TAG_FEEDBACK);
-        //buttonManual.setTag(TAG_MANUAL);
-        buttonGift.setTag(TAG_GIFT);
+        buttonReward.setTag(TAG_REWARD);
+        //buttonGift.setTag(TAG_GIFT);
         buttonProfile.setTag(TAG_PROFILE);
 
         buttonAbout.setOnClickListener(this);
         buttonFeedback.setOnClickListener(this);
-        //buttonManual.setOnClickListener(this);
-        buttonGift.setOnClickListener(this);
+        buttonReward.setOnClickListener(this);
+        //buttonGift.setOnClickListener(this);
         buttonProfile.setOnClickListener(this);
 
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(buttonAbout)
-                .addSubActionView(buttonFeedback)
-                .addSubActionView(buttonGift)
+                .addSubActionView(buttonFeedback)//.addSubActionView(buttonGift)
                 .addSubActionView(buttonProfile)
+                .addSubActionView(buttonReward)
                 .attachTo(actionButton)
                 .build();
 
@@ -1480,7 +1507,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 buttonAbout.setVisibility(View.INVISIBLE);
                 buttonFeedback.setVisibility(View.INVISIBLE);
                 //buttonManual.setVisibility(View.VISIBLE);
-                buttonGift.setVisibility(View.INVISIBLE);
+                buttonReward.setVisibility(View.INVISIBLE);
                 buttonProfile.setVisibility(View.INVISIBLE);
           }
 
@@ -1490,7 +1517,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",0.0f,1.0f);
                 ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",0.0f,1.0f);
                 //ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",0.0f,1.0f);
-                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",0.0f,1.0f);
+                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward,"alpha",0.0f,1.0f);
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(animator,about,share,manual,gift);
                 s.playTogether(animator, about, share, gift);
@@ -1505,7 +1532,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buttonAbout.setVisibility(View.VISIBLE);
         buttonFeedback.setVisibility(View.VISIBLE);
         //buttonManual.setVisibility(View.VISIBLE);
-        buttonGift.setVisibility(View.VISIBLE);
+        buttonReward.setVisibility(View.VISIBLE);
 
 
     }
@@ -1523,7 +1550,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 actionButton.setAlpha(y);
                 buttonAbout.setAlpha(y);
                 buttonFeedback.setAlpha(y);
-                buttonGift.setAlpha(y);
+                buttonReward.setAlpha(y);
                 buttonProfile.setAlpha(y);
 
             }
@@ -1549,7 +1576,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",1.0f,0.0f);
                 ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",1.0f,0.0f);
-                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonGift,"alpha",1.0f,0.0f);
+                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward,"alpha",1.0f,0.0f);
                 ObjectAnimator profile = ObjectAnimator.ofFloat(buttonProfile,"alpha",1.0f,0.0f);
 
                 AnimatorSet s = new AnimatorSet();
@@ -1566,7 +1593,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         actionButton.setVisibility(View.GONE);
         buttonAbout.setVisibility(View.GONE);
         buttonFeedback.setVisibility(View.GONE);
-        buttonGift.setVisibility(View.GONE);
+        buttonReward.setVisibility(View.GONE);
         buttonProfile.setVisibility(View.GONE);
     }
 
@@ -1630,12 +1657,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                 actionButton.setAlpha(1.0f);
                                 buttonAbout.setAlpha(1.0f);
                                 buttonFeedback.setAlpha(1.0f);
-                                buttonGift.setAlpha(1.0f);
+                                buttonReward.setAlpha(1.0f);
                                 buttonProfile.setAlpha(1.0f);
                                 actionButton.setVisibility(View.VISIBLE);
                                 buttonAbout.setVisibility(View.VISIBLE);
                                 buttonFeedback.setVisibility(View.VISIBLE);
-                                buttonGift.setVisibility(View.VISIBLE);
+                                buttonReward.setVisibility(View.VISIBLE);
                                 buttonProfile.setVisibility(View.VISIBLE);
                             }
                         }, 300);
@@ -1648,7 +1675,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                 actionButton.setVisibility(View.INVISIBLE);
                                 buttonAbout.setVisibility(View.INVISIBLE);
                                 buttonFeedback.setVisibility(View.INVISIBLE);
-                                buttonGift.setVisibility(View.INVISIBLE);
+                                buttonReward.setVisibility(View.INVISIBLE);
                                 buttonProfile.setVisibility(View.INVISIBLE);
                             }
                         }, 310);
@@ -1657,12 +1684,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     actionButton.setAlpha(1.0f);
                     buttonAbout.setAlpha(1.0f);
                     buttonFeedback.setAlpha(1.0f);
-                    buttonGift.setAlpha(1.0f);
+                    buttonReward.setAlpha(1.0f);
                     buttonProfile.setAlpha(1.0f);
                     actionButton.setVisibility(View.VISIBLE);
                     buttonAbout.setVisibility(View.VISIBLE);
                     buttonFeedback.setVisibility(View.VISIBLE);
-                    buttonGift.setVisibility(View.VISIBLE);
+                    buttonReward.setVisibility(View.VISIBLE);
                     buttonProfile.setVisibility(View.VISIBLE);
                 }
                 currentPosition = firstItemPosition;
@@ -1959,17 +1986,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 /////////////////////////////////////////////
 
                 //list.get(i).getFoodStyle()
-                temp.setMainText(list.get(i).getName());
-                temp.setRestaurantName(list.get(i).getName());
-                temp.setSubText(list.get(i).getOffer());
+                //temp.setMainText(list.get(i).getName());
+                //temp.setRestaurantName(list.get(i).getName());
+                //temp.setSubText(list.get(i).getOffer());
+                temp.setMainText(list.get(i).getOffer());
+                temp.setRestaurantName(list.get(i).getOffer());
+                temp.setSubText(list.get(i).getName());
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());
                 temp.setDistanceTime("to be added");
-                //temp.setMainText(list.get(i).getFoodStyle());
-                //temp.setRestaurantName(list.get(i).getName());
-                //temp.setSubText(list.get(i).getOffer());
-                //temp.setLatitude(list.get(i).getY());
-                //temp.setLongitude(list.get(i).getX());
+
 
                 //TODO: points
                 temp.setPoints(list.get(i).getPoints().toString());
