@@ -10,7 +10,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,6 +20,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
@@ -137,12 +137,89 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private String personName;
     private SQLList clientList;
     private String ID;
+    private SQLList list;
+
 
     public String getID(){
         return this.ID;
     }
     public void setID(String id){
         this.ID = id;
+    }
+    public void setList(SQLList list){
+        this.list= list;
+    }
+    public SQLList getList(){
+        return list;
+    }
+
+
+    private static class SavedList implements Parcelable{
+
+        private SQLList list;
+
+        public SavedList(SQLList list){
+            this.setList(list);
+        }
+
+        protected SavedList(Parcel in) {
+           ClassLoader cl = ClassLoader.getSystemClassLoader();
+           in.readValue(cl);
+        }
+
+        public static final Creator<SavedList> CREATOR = new Creator<SavedList>() {
+            @Override
+            public SavedList createFromParcel(Parcel in) {
+                return new SavedList(in);
+            }
+
+            @Override
+            public SavedList[] newArray(int size) {
+                return new SavedList[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+
+            dest.writeValue(getList());
+
+        }
+
+        public SQLList getList() {
+            return list;
+        }
+
+        public void setList(SQLList list) {
+            this.list = list;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("saved",new SavedList(getList()));
+        super.onSaveInstanceState(outState);
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+       SavedList list= savedInstanceState.getParcelable("saved");
+
+
+        SQLConnectAsyncTask.restore=true;
+        this.setList(list.getList());
+        new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
+
+
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -189,9 +266,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-
-
-    private boolean exit = false;
+   /* private boolean exit = false;
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -200,6 +275,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             finish();
         }
     }
+    */
 
     private final String LOG_INFO="log";
 
@@ -2160,6 +2236,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
     }
+
 
 
 

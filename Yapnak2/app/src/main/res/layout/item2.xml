@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="40dp"
                 android:scrollHorizontally="false"
                 android:singleLine="false"
                 android:textSize="13sp"
@@ -265,14 +265,7 @@
 
         -->
 
-
-
-
-
-
-
-
-        </RelativeLayout>
+    </RelativeLayout>
 
 
 </LinearLayout>

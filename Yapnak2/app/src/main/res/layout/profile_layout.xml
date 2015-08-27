@@ -23,7 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-        <EditText
+        <com.frontend.yapnak.subview.RedEditText
+            android:background="@android:color/transparent"
             android:id="@+id/nameEdit"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
@@ -36,7 +37,6 @@
             android:hint="Enter Name"
             android:drawablePadding="20dp"
             android:drawableLeft="@drawable/avatar_white_small"
-            android:background="@color/transparentRed"
             android:maxLines="1"
             android:singleLine="true"
             android:gravity="top"
@@ -46,8 +46,8 @@
             android:layout_marginLeft="20dp"
              />
 
-        <EditText
-            android:background="@color/transparentRed"
+        <com.frontend.yapnak.subview.RedEditText
+            android:background="@android:color/transparent"
             android:layout_marginBottom="40dp"
             android:id="@+id/phoneNumberEditText"
             android:layout_width="match_parent"
@@ -69,7 +69,6 @@
 
 
         <RadioGroup
-            android:background="@color/transparentRed"
             android:id="@+id/genderGroupButtons"
             android:layout_width="170dp"
             android:layout_height="50dp"
@@ -111,6 +110,7 @@
             android:layout_alignLeft="@+id/genderGroupButtons" />
 
         <Button
+            android:background="@android:color/transparent"
             android:id="@+id/dateInput"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
@@ -120,14 +120,15 @@
             android:layout_marginRight="5dp"
             android:textSize="15sp"
             android:textColor="#000"
-            android:background="@color/transparentRed"
             android:layout_below="@+id/textView3"
             android:layout_alignParentLeft="true" />
 
-        <EditText
+        <com.frontend.yapnak.subview.RedEditText
+            android:background="@android:color/transparent"
             android:id="@+id/emailEdit"
+            android:maxLines="1"
+            android:singleLine="true"
             android:layout_width="match_parent"
-            android:background="@color/transparentRed"
             android:layout_height="50dp"
             android:padding="10dp"
             android:drawablePadding="20dp"
@@ -135,18 +136,22 @@
             android:layout_marginRight="20dp"
             android:gravity="top"
             android:textSize="15sp"
+            android:imeOptions="actionNext"
             android:textColorHint="#000"
             android:layout_marginTop="20dp"
             android:drawableLeft="@drawable/envelope_white_small"
             android:layout_below="@id/dateInput"
             android:hint="Enter E-Mail Address"/>
 
-        <EditText
+        <com.frontend.yapnak.subview.RedEditText
+            android:background="@android:color/transparent"
             android:id="@+id/passwordEdit"
+            android:maxLines="1"
+            android:singleLine="true"
             android:layout_width="match_parent"
-            android:background="@color/transparentRed"
             android:layout_height="50dp"
             android:padding="10dp"
+            android:imeOptions="actionNext"
             android:drawablePadding="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -156,6 +161,7 @@
             android:layout_marginTop="20dp"
             android:drawableLeft="@drawable/padlock_white_small"
             android:layout_below="@id/emailEdit"
+
             android:hint="Password"/>
 
 
@@ -329,7 +335,7 @@
         android:layout_alignParentLeft="true">
 
         <Button
-            android:background="@color/transparentRed"
+            android:background="@android:color/transparent"
             android:layout_marginLeft="100dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -338,7 +344,7 @@
             android:id="@+id/cancelProfile"/>
 
         <Button
-            android:background="@color/transparentRed"
+            android:background="@android:color/transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

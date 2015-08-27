@@ -23,7 +23,8 @@ import java.util.ArrayList;
 public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     private static SQLEntityApi sqlEntity;
-     static boolean useDialog;
+    static boolean useDialog;
+    static boolean restore;
     private static boolean listLoaded=false;
     private Context context;
     private Location location;
@@ -96,6 +97,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         //super.onPreExecute();
         if(useDialog) {
             progressDialog.setMessage("Please Wait For List To Load...");
+            progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.show();
         }
     }
@@ -107,22 +109,37 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             Log.d("Debug", "completed: " + result.getList().size());
             main.load(result);
             main.floatButton();
+            main.setList(result);
             main.swipeRefresh(main);
 
-            if(useDialog) {
+            if (useDialog) {
                 progressDialog.cancel();
             }
             setListLoaded(true);
-        } else {
-            main.load();
+
+        }else if(restore){
+
+            main.load(main.getList());
             main.floatButton();
             main.swipeRefresh(main);
             if(useDialog) {
                 progressDialog.cancel();
             }
             setListLoaded(true);
-            Toast.makeText(context,"Please Turn Location On",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"Session Restored!",Toast.LENGTH_SHORT).show();
+
+        } else {
+            main.load();
+            main.setList(result);;
+            main.floatButton();
+            main.swipeRefresh(main);
+            if(useDialog) {
+                progressDialog.cancel();
+            }
+            setListLoaded(true);
+            Toast.makeText(context,"Please Turn Location/Internet On",Toast.LENGTH_SHORT).show();
             Log.d("Debug", "Failed");
         }
     }
+
 }
