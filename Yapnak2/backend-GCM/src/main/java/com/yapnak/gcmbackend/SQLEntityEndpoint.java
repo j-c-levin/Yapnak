@@ -355,9 +355,11 @@ public class SQLEntityEndpoint {
                             } catch (IllegalArgumentException e) {
                                 url = "http://yapnak.com/images/yapnakmonster.png";
                                 e.printStackTrace();
+                                logger.warning("IllegalArgumentException: " + e);
                             } catch (ImagesServiceFailureException e1) {
                                 url = "http://yapnak.com/images/yapnakmonster.png";
                                 e1.printStackTrace();
+                                logger.warning("ImagesServiceFailureException: " + e1);
                             }
                         } else {
                             url = rs.getString("clientPhoto");
@@ -976,6 +978,7 @@ public class SQLEntityEndpoint {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     //client found
+                    logger.info("retrieving client data: " + rs.getString("clientName"));
                     client.setStatus("True");
                     client.setId(rs.getInt("clientID"));
                     client.setName(rs.getString("clientName"));
@@ -990,10 +993,21 @@ public class SQLEntityEndpoint {
                                     SystemProperty.Environment.Value.Production) {
                                 ImagesService services = ImagesServiceFactory.getImagesService();
                                 ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-                                url = services.getServingUrl(serve);
-                                url = url + "=s100";
+                                try {
+                                    url = services.getServingUrl(serve);
+                                    url = url + "=s100";
+                                    logger.info("got Photo: " + url);
+                                } catch (IllegalArgumentException e) {
+                                    url = "http://yapnak.com/images/yapnakmonster.png";
+                                    e.printStackTrace();
+                                    logger.warning("IllegalArgumentException: " + e);
+                                } catch (ImagesServiceFailureException e1) {
+                                    url = "http://yapnak.com/images/yapnakmonster.png";
+                                    e1.printStackTrace();
+                                    logger.warning("ImagesServiceFailureException: " + e1);
+                                }
                             } else {
-                                url = rs.getString("clientPhoto");
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                             }
                         } else {
                             url = "http://yapnak.com/images/yapnakmonster.png";
