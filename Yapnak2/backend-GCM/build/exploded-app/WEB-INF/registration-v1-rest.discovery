@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/fggqKx95Crh4QaN5h-LrIkaRVTQ\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Btut6zB7WxqVDgM1aEvzB5dnBv0\"",
  "discoveryVersion": "v1",
  "id": "registration:v1",
  "name": "registration",

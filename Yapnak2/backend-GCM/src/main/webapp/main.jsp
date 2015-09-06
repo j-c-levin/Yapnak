@@ -21,7 +21,7 @@
   <script
   src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.3.min.js"></script>
   <script src="app.js"></script>
-
+  <script src="modules/factories.js"></script>
   <!--bootstrap-->
   <link rel="stylesheet"
   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -34,7 +34,11 @@
 <body class="content container" ng-controller="client-controller">
   <%  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
-  <a class="form-signin" href="angular-index.html">Go to input page</a>
+  <!--<a class="form-signin" href="redeem.html">Go to input page</a> -->
+
+  <!-- TODO:Switch in production! -->
+   <a class="form-signin" href="/redeem">Go to input page</a>
+
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
     <div class="form-signin center-image">
       <img ng-src="{{image}}">

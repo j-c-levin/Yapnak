@@ -96,7 +96,7 @@ public class login extends HttpServlet {
                         rs = stmt.executeQuery();
                         if (rs.next()) {
                             if (hashPassword(password).equals(rs.getString("password"))) {
-                                out.println("Login success!");
+                                out.println("Login success! (get)");
                                 Cookie part1 = new Cookie("com.yapnak.email", email);
                                 int time = 60 * 60 * 24 * 30 * 12;
                                 part1.setMaxAge(time);
