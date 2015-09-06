@@ -353,10 +353,10 @@ public class SQLEntityEndpoint {
                                 url = url + "=s100";
                                 logger.info("got Photo: " + url);
                             } catch (IllegalArgumentException e) {
-                                url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                                 e.printStackTrace();
                             } catch (ImagesServiceFailureException e1) {
-                                url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                                 e1.printStackTrace();
                             }
                         } else {
@@ -364,7 +364,7 @@ public class SQLEntityEndpoint {
                         }
                     } else {
                         logger.info("No photo for client");
-                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        url = "http://yapnak.com/images/yapnakmonster.png";
                     }
                     sql.setPhoto(url);
                     statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
@@ -996,10 +996,10 @@ public class SQLEntityEndpoint {
                                 url = rs.getString("clientPhoto");
                             }
                         } else {
-                            url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                            url = "http://yapnak.com/images/yapnakmonster.png";
                         }
                     } else {
-                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        url = "http://yapnak.com/images/yapnakmonster.png";
                     }
                     client.setPhoto(url);
                     do {
@@ -1495,10 +1495,10 @@ public class SQLEntityEndpoint {
                                 url = rs.getString("clientPhoto");
                             }
                         } else {
-                            url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                            url = "http://yapnak.com/images/yapnakmonster.png";
                         }
                     } else {
-                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        url = "http://yapnak.com/images/yapnakmonster.png";
                     }
                     client.setPhoto(url);
                     do {

@@ -42,7 +42,7 @@
 
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
     <div class="form-signin center-image">
-      <img ng-src="{{image}}">
+      <img height="100" ng-src="{{image}}">
     </div>
     <div class="form-signin">
       <label for="exampleInputFile">Logo</label>

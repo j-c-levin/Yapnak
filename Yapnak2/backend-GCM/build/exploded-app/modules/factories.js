@@ -71,7 +71,8 @@ angular.module('app.factories', [])
   result.getInfo = function(email) {
     var req = {
       method: 'GET',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getClientInfo?email='.concat(email)
+//      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getClientInfo?email='.concat(email)
+      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/getClientInfo?email='.concat(email)
     }
     return $http(req).then(function (response) {
       if (response.data.status == "True") {
