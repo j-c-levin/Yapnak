@@ -129,6 +129,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>redeem</servlet-name>#
+        <jsp-file>/redeem.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>redeem</servlet-name>
+        <url-pattern>/redeem</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
         <servlet-name>main</servlet-name>#
         <jsp-file>/main.jsp</jsp-file>
     </servlet>

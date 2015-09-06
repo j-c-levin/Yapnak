@@ -353,18 +353,20 @@ public class SQLEntityEndpoint {
                                 url = url + "=s100";
                                 logger.info("got Photo: " + url);
                             } catch (IllegalArgumentException e) {
-                                url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                                 e.printStackTrace();
+                                logger.warning("IllegalArgumentException: " + e);
                             } catch (ImagesServiceFailureException e1) {
-                                url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                                 e1.printStackTrace();
+                                logger.warning("ImagesServiceFailureException: " + e1);
                             }
                         } else {
                             url = rs.getString("clientPhoto");
                         }
                     } else {
                         logger.info("No photo for client");
-                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        url = "http://yapnak.com/images/yapnakmonster.png";
                     }
                     sql.setPhoto(url);
                     statement = "SELECT points FROM points WHERE clientID = ? and userID = ?";
@@ -821,7 +823,7 @@ public class SQLEntityEndpoint {
                     rs = stmt.executeQuery();
                     if (rs.next()) {
                         //user is also ready referred
-                        recommendation.setSuccess(0);
+                        recommendation.setResult(0);
                     } else {
                         //user hasn't been recommended, check the row exists
                         statement = "SELECT points FROM points where clientID = ? and userID = ?";
@@ -837,7 +839,7 @@ public class SQLEntityEndpoint {
                             stmt.setInt(2, clientID);
                             stmt.setString(3, userID);
                             stmt.executeUpdate();
-                            recommendation.setSuccess(1);
+                            recommendation.setResult(1);
                             //post update
                             statement = "SELECT clientName from client where clientID = ?";
                             stmt = connection.prepareStatement(statement);
@@ -857,7 +859,7 @@ public class SQLEntityEndpoint {
                             stmt.setInt(2, clientID);
                             stmt.setString(3, r_userID);
                             stmt.executeUpdate();
-                            recommendation.setSuccess(1);
+                            recommendation.setResult(1);
                             //post update
                             statement = "SELECT clientName from client where clientID = ?";
                             stmt = connection.prepareStatement(statement);
@@ -887,7 +889,7 @@ public class SQLEntityEndpoint {
                         rs = stmt.executeQuery();
                         if (rs.next()) {
                             //user is also ready referred
-                            recommendation.setSuccess(0);
+                            recommendation.setResult(0);
                         } else {
                             //user hasn't been recommended, check the row exists
                             statement = "SELECT points FROM points where clientID = ? and userID = ?";
@@ -903,7 +905,7 @@ public class SQLEntityEndpoint {
                                 stmt.setInt(2, clientID);
                                 stmt.setString(3, userID);
                                 stmt.executeUpdate();
-                                recommendation.setSuccess(1);
+                                recommendation.setResult(1);
                                 //post update
                                 statement = "SELECT clientName from client where clientID = ?";
                                 stmt = connection.prepareStatement(statement);
@@ -923,7 +925,7 @@ public class SQLEntityEndpoint {
                                 stmt.setInt(2, clientID);
                                 stmt.setString(3, r_userID);
                                 stmt.executeUpdate();
-                                recommendation.setSuccess(1);
+                                recommendation.setResult(1);
                                 //post update
                                 statement = "SELECT clientName from client where clientID = ?";
                                 stmt = connection.prepareStatement(statement);
@@ -939,7 +941,7 @@ public class SQLEntityEndpoint {
                         }
                     } else {
                         //user isn't in system, send a text
-                        recommendation.setSuccess(2);
+                        recommendation.setResult(2);
                     }
                 }
             } finally {
@@ -976,6 +978,7 @@ public class SQLEntityEndpoint {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     //client found
+                    logger.info("retrieving client data: " + rs.getString("clientName"));
                     client.setStatus("True");
                     client.setId(rs.getInt("clientID"));
                     client.setName(rs.getString("clientName"));
@@ -990,16 +993,27 @@ public class SQLEntityEndpoint {
                                     SystemProperty.Environment.Value.Production) {
                                 ImagesService services = ImagesServiceFactory.getImagesService();
                                 ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-                                url = services.getServingUrl(serve);
-                                url = url + "=s100";
+                                try {
+                                    url = services.getServingUrl(serve);
+                                    url = url + "=s100";
+                                    logger.info("got Photo: " + url);
+                                } catch (IllegalArgumentException e) {
+                                    url = "http://yapnak.com/images/yapnakmonster.png";
+                                    e.printStackTrace();
+                                    logger.warning("IllegalArgumentException: " + e);
+                                } catch (ImagesServiceFailureException e1) {
+                                    url = "http://yapnak.com/images/yapnakmonster.png";
+                                    e1.printStackTrace();
+                                    logger.warning("ImagesServiceFailureException: " + e1);
+                                }
                             } else {
-                                url = rs.getString("clientPhoto");
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                             }
                         } else {
-                            url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                            url = "http://yapnak.com/images/yapnakmonster.png";
                         }
                     } else {
-                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        url = "http://yapnak.com/images/yapnakmonster.png";
                     }
                     client.setPhoto(url);
                     do {
@@ -1038,10 +1052,10 @@ public class SQLEntityEndpoint {
     }
 
     @ApiMethod(
-            name = "updateClientInfo",
-            path = "updateClientInfo",
+            name = "updateClientType",
+            path = "updateClientType",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public ClientEntity updateClientInfo(@Named("name") String clientName, @Named("type") String clientType, @Named("email") String email) {
+    public ClientEntity updateClientType(@Named("type") String clientType, @Named("email") String email) {
         ClientEntity client = new ClientEntity();
         Connection connection;
         try {
@@ -1056,17 +1070,59 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "UPDATE client set clientName = ?, clientFoodStyle = ? where email = ?";
+                String statement = "UPDATE client set clientFoodStyle = ? where email = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
-                stmt.setString(1, clientName);
-                stmt.setString(2, clientType);
-                stmt.setString(3, email);
+                stmt.setString(1, clientType);
+                stmt.setString(2, email);
                 int success = stmt.executeUpdate();
                 if (success == 1) {
                     client.setStatus("True");
+                    logger.info("successfully updated " + email + " food type to " + clientType);
                 } else {
                     client.setMessage("False");
-                    client.setMessage("Failed to update the database");
+                    client.setMessage("Failed to update food type");
+                    logger.info("failed to update " + email + " food type to " + clientType);
+                }
+            } finally {
+                connection.close();
+                return client;
+            }
+        } finally {
+            return client;
+        }
+    }
+
+    @ApiMethod(
+            name = "updateClientName",
+            path = "updateClientName",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public ClientEntity updateClientName(@Named("name") String clientName, @Named("email") String email) {
+        ClientEntity client = new ClientEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "UPDATE client set clientName = ? where email = ?";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, clientName);
+                stmt.setString(2, email);
+                int success = stmt.executeUpdate();
+                if (success == 1) {
+                    client.setStatus("True");
+                    logger.info("successfully update client name to " + clientName);
+                } else {
+                    client.setMessage("False");
+                    client.setMessage("Failed to update client name");
+                    logger.info("Failed to update client name to " + clientName);
                 }
             } finally {
                 connection.close();
@@ -1489,16 +1545,27 @@ public class SQLEntityEndpoint {
                                     SystemProperty.Environment.Value.Production) {
                                 ImagesService services = ImagesServiceFactory.getImagesService();
                                 ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto")));    // Blobkey of the image uploaded to BlobStore.
-                                url = services.getServingUrl(serve);
-                                url = url + "=s100";
+                                try {
+                                    url = services.getServingUrl(serve);
+                                    url = url + "=s100";
+                                    logger.info("got Photo: " + url);
+                                } catch (IllegalArgumentException e) {
+                                    url = "http://yapnak.com/images/yapnakmonster.png";
+                                    e.printStackTrace();
+                                    logger.warning("IllegalArgumentException: " + e);
+                                } catch (ImagesServiceFailureException e1) {
+                                    url = "http://yapnak.com/images/yapnakmonster.png";
+                                    e1.printStackTrace();
+                                    logger.warning("ImagesServiceFailureException: " + e1);
+                                }
                             } else {
-                                url = rs.getString("clientPhoto");
+                                url = "http://yapnak.com/images/yapnakmonster.png";
                             }
                         } else {
-                            url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                            url = "http://yapnak.com/images/yapnakmonster.png";
                         }
                     } else {
-                        url = "http://pcsclite.alioth.debian.org/ccid/img/no_image.png";
+                        url = "http://yapnak.com/images/yapnakmonster.png";
                     }
                     client.setPhoto(url);
                     do {
@@ -1545,7 +1612,6 @@ public class SQLEntityEndpoint {
 
     public qrEntity qrSubmit(@Named("userID") String userID, @Named("clientID") int clientID, @Named("datetime") String date, @Named("hash") String hash) {
         qrEntity qr = new qrEntity();
-
         qr.setStatus("True");
         return qr;
     }

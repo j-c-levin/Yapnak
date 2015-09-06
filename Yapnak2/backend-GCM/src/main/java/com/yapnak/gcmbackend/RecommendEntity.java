@@ -9,14 +9,33 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public class RecommendEntity {
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Id
-    long success;
+    String status;
+    String message;
 
-    public long getSuccess() {
-        return success;
+    public long getResult() {
+        return result;
     }
 
-    public void setSuccess(long success) {
-        this.success = success;
+    public void setResult(long result) {
+        this.result = result;
     }
+
+    long result;
 }
