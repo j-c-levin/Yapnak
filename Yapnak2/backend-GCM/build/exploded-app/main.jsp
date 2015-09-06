@@ -34,10 +34,11 @@
 <body class="content container" ng-controller="client-controller">
   <%  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
-  <!--<a class="form-signin" href="redeem.html">Go to input page</a> -->
+  <!-- <a class="form-signin" href="redeem.html">Go to input page</a>  -->
 
   <!-- TODO:Switch in production! -->
-   <a class="form-signin" href="/redeem">Go to input page</a>
+
+    <a class="form-signin" href="/redeem">Go to input page</a>
 
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
     <div class="form-signin center-image">
@@ -78,8 +79,10 @@
     </label>
     <hr>
     <div collapse="!offer1">
-      <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="newOffer1text" placeholder="{{offer1text}}"></textarea>
+      <!-- <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
+      rows="3" ng-model="newOffer1text" placeholder="{{offer1text}}"></textarea> -->
+      <input type="text"
+      class="form-control" maxlength="160" ng-model="newOffer1text" name="deal" id="deal" placeholder="{{offer1text}}">
     </div>
   </div>
 
@@ -90,8 +93,10 @@
     </label>
     <hr>
     <div collapse="!offer2">
-      <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="newOffer2text" placeholder="{{offer2text}}"></textarea>
+      <!-- <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
+      rows="3" ng-model="newOffer2text" placeholder="{{offer2text}}"></textarea> -->
+      <input type="text"
+      class="form-control" maxlength="160" ng-model="newOffer2text" name="deal" id="deal" placeholder="{{offer2text}}">
     </div>
   </div>
 
@@ -102,8 +107,10 @@
     </label>
     <hr>
     <div collapse="!offer3">
-      <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="newOffer3text" placeholder="{{offer3text}}"></textarea>
+      <!-- <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
+      rows="3" ng-model="newOffer3text" placeholder="{{offer3text}}"></textarea> -->
+      <input type="text"
+      class="form-control" maxlength="160" ng-model="newOffer3text" name="deal" id="deal" placeholder="{{offer3text}}">
     </div>
   </div>
 
