@@ -823,7 +823,7 @@ public class SQLEntityEndpoint {
                     rs = stmt.executeQuery();
                     if (rs.next()) {
                         //user is also ready referred
-                        recommendation.setSuccess(0);
+                        recommendation.setResult(0);
                     } else {
                         //user hasn't been recommended, check the row exists
                         statement = "SELECT points FROM points where clientID = ? and userID = ?";
@@ -839,7 +839,7 @@ public class SQLEntityEndpoint {
                             stmt.setInt(2, clientID);
                             stmt.setString(3, userID);
                             stmt.executeUpdate();
-                            recommendation.setSuccess(1);
+                            recommendation.setResult(1);
                             //post update
                             statement = "SELECT clientName from client where clientID = ?";
                             stmt = connection.prepareStatement(statement);
@@ -859,7 +859,7 @@ public class SQLEntityEndpoint {
                             stmt.setInt(2, clientID);
                             stmt.setString(3, r_userID);
                             stmt.executeUpdate();
-                            recommendation.setSuccess(1);
+                            recommendation.setResult(1);
                             //post update
                             statement = "SELECT clientName from client where clientID = ?";
                             stmt = connection.prepareStatement(statement);
@@ -889,7 +889,7 @@ public class SQLEntityEndpoint {
                         rs = stmt.executeQuery();
                         if (rs.next()) {
                             //user is also ready referred
-                            recommendation.setSuccess(0);
+                            recommendation.setResult(0);
                         } else {
                             //user hasn't been recommended, check the row exists
                             statement = "SELECT points FROM points where clientID = ? and userID = ?";
@@ -905,7 +905,7 @@ public class SQLEntityEndpoint {
                                 stmt.setInt(2, clientID);
                                 stmt.setString(3, userID);
                                 stmt.executeUpdate();
-                                recommendation.setSuccess(1);
+                                recommendation.setResult(1);
                                 //post update
                                 statement = "SELECT clientName from client where clientID = ?";
                                 stmt = connection.prepareStatement(statement);
@@ -925,7 +925,7 @@ public class SQLEntityEndpoint {
                                 stmt.setInt(2, clientID);
                                 stmt.setString(3, r_userID);
                                 stmt.executeUpdate();
-                                recommendation.setSuccess(1);
+                                recommendation.setResult(1);
                                 //post update
                                 statement = "SELECT clientName from client where clientID = ?";
                                 stmt = connection.prepareStatement(statement);
@@ -941,7 +941,7 @@ public class SQLEntityEndpoint {
                         }
                     } else {
                         //user isn't in system, send a text
-                        recommendation.setSuccess(2);
+                        recommendation.setResult(2);
                     }
                 }
             } finally {
