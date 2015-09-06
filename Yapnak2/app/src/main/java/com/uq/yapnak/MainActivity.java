@@ -13,9 +13,15 @@ import android.app.FragmentManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,15 +35,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -54,21 +63,25 @@ import com.frontend.yapnak.promotion.PromoItem;
 import com.frontend.yapnak.promotion.PromotionAdapter;
 import com.frontend.yapnak.promotion.PromotionDialog;
 import com.frontend.yapnak.rate.RatingBuilder;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.plus.People;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -78,21 +91,23 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-       ResultCallback<People.LoadPeopleResult> {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
     private static final int NOTIFICATION_ID = 0;
 
+    //GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ResultCallback<People.LoadPeopleResult>
+   // private GoogleApiClient mGoogleApiClient;
 
-    private GoogleApiClient mGoogleApiClient;
     private Parcelable state;
     private SQLEntity sql;
-
+    private SharedPreferences keep;
+    private SharedPreferences remember;
     RecyclerView recyclerView;
     private static String USER_NAME;
     private static String PASS;
     private final int RESULT= 1;
+    private final int SEARCH_RESULT = 123;
     private static String TAG_ABOUT = "About";
-    private static String TAG_SHARE = "Share";
+    private static String TAG_SETTINGS = "Settings";
     private static String TAG_REWARD = "Rewards";
     private static String TAG_FEEDBACK ="Feddback";
     private static String TAG_GIFT = "Gifts";
@@ -138,6 +153,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private SQLList clientList;
     private String ID;
     private SQLList list;
+    private ContactDetails details;
 
 
     public String getID(){
@@ -152,7 +168,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public SQLList getList(){
         return list;
     }
-
 
     private static class SavedList implements Parcelable{
 
@@ -229,19 +244,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         new GcmRegistrationAsyncTask(this).execute();
 
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+       /* mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
                 .addScope(new Scope("profile"))
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .addScope(Plus.SCOPE_PLUS_PROFILE).build();
+        */
+
+        GPSTrack track = new GPSTrack(MainActivity.this);
+        loc = track.getLocation();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setContentView(R.layout.activity_main1);
 
         locationCheck = getLocation();
-       // if(locationCheck!=null) {
+        //if(locationCheck!=null) {
 
              SQLConnectAsyncTask.useDialog = true;
              new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
@@ -257,6 +276,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         */
         this.name = getIntent();
         ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
+
+        details = new ContactDetails();
+        details.setUserID(name.getStringExtra("userID"));
+        details.setEmailAd(name.getStringExtra("email"));
+        details.setPassword(name.getStringExtra("password"));
+        details.setPhoneNum(name.getStringExtra("phone"));
+
+        keep = getSharedPreferences("KeepMe",Context.MODE_PRIVATE);
+        remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+
 
        // Log.d("main-id",ID);
 
@@ -281,26 +310,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     public void setUserName(Menu menu){
-        MenuItem item = menu.findItem(R.id.userNameToolBar);
+        //MenuItem item = menu.findItem(R.id.userNameToolBar);
 
 
 
 
-            personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
-
-
-
-            String[] names = personName.split("@");
-
+            //personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
+            // String[] names = personName.split("@");
             //item.setTitle(names[0]);
-            item.setTitle(ID);
+            //item.setTitle(ID);
 
 
     }
 
 
     private Location locationCheck;
-    @Override
+
+    /*@Override
     public void onConnected(Bundle connectionHint) {
         Log.d("debug", "onConnected");
         //Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
@@ -339,8 +365,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         else {
             Log.d("debug", "failed");
         }
-    }
 
+    }
+    */
+
+    /*
     @Override
     public void onConnectionSuspended(int i) {
         Log.d("Location", "onConnectionSuspended");
@@ -350,81 +379,151 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d("Location", "onConnectionFailed");
     }
+    */
 
     @Override
     protected void onResume() {
         Log.d("Location", "resuming googleAPI connection");
         super.onResume();
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         Log.d("Location", "pausing googleAPI connection");
 
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
+       // if (mGoogleApiClient.isConnected()) {
+         //   mGoogleApiClient.disconnect();
+        //}
 
         super.onPause();
     }
 
+    private MainActivity activity = this;
+    private String queryMain;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-            setUserName(menu);
+        getMenuInflater().inflate(R.menu.main_with_search, menu);
+            //setUserName(menu);
+
+        SearchManager sManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView view = (SearchView) menu.findItem(R.id.search).getActionView();
+        view.setSearchableInfo(
+                sManager.getSearchableInfo(new ComponentName(getApplicationContext(), SearchMain.class)));
+
+        view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                queryMain = query;
+                Log.d("querySub", query);
+                new SearchLocation().execute(queryMain);
+                InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if(!input.isAcceptingText()){
+                    view.clearFocus();
+                    input.hideSoftInputFromInputMethod(view.getWindowToken(),0);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("queryChange", newText);
+                return true;
+            }
+        });
         return true;
     }
 
-    public class Feedback extends ActionBarActivity {
+    private Location getLoc(String address){
+        String trim = address.trim();
+        String finalAddress = trim.replaceAll(",","");
+        String newAddress = finalAddress.replaceAll("\\s+", "");
 
-        /*
-        //@Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            final View view = inflater.inflate(R.layout.feedback_activity, null);
+        Log.d("address",newAddress);
 
-            /
-            cancelButton = (Button) view.findViewById(R.id.cancelButton);
-            cancelButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    load();
-                    //load(sql);
-
-                }
-            });
+        String url = "https://maps.google.com/maps/api/geocode/json?address="+newAddress+"&sensor=false";
 
 
-            submitButton = (Button) view.findViewById(R.id.submitButton);
-            submitButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        HttpGet get = new HttpGet(url);
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        Location loc = new Location("");
+        StringBuilder builder = new StringBuilder();
+        try{
+
+            response = client.execute(get);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
 
 
+            int data;
+            while((data=stream.read())!=-1){
+                builder.append((char)data);
+            }
+            stream.close();
 
-                    EditText feedback = (EditText) v.findViewById(R.id.commentField);
+        }catch (ClientProtocolException cpe){
 
-                    String text = feedback.getText().toString();
-                    //TODO:text must be stored in feedback table in the database
+        }catch (IOException io){
 
-                    Toast.makeText(getApplicationContext(), "Thank You For Your Feedback", Toast.LENGTH_SHORT).show();
-
-                    load();
-                    //load(sql);
-
-
-
-                }
-            });
-
-
-            return view;
         }
 
-        */
+
+        double lat=0.0;
+        double lng=0.0;
+        JSONObject object;
+
+        try {
+            object = new JSONObject(builder.toString());
+            lat = ((JSONArray) object.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+            lng = ((JSONArray)object.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+
+            loc.setLatitude(lat);
+            loc.setLongitude(lng);
+
+            return loc;
+
+        }catch(JSONException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
+    private class SearchLocation extends AsyncTask<String,String,Location>{
+        @Override
+        protected Location doInBackground(String... params) {
+            String loc = params[0];
+            Location location = getLoc(loc);
+            return location;
+        }
+
+        @Override
+        protected void onPostExecute(Location location) {
+            super.onPostExecute(location);
+
+            if(location!=null){
+                Log.d("location","Latitude: "+String.valueOf(location.getLatitude())+ " Longitude: " +String.valueOf(location.getLongitude()));
+                setLocation(location);
+                new SQLConnectAsyncTask(getApplicationContext(),location,activity).execute();
+            }else{
+                Toast.makeText(getApplicationContext(),"The Restaurant/Location You Queried Is Not Available",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+    private boolean connection(){
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+        LocationManager loc = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        boolean network = loc.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        boolean gps = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        return (wifi||lte)&&(network||gps);
+    }
 
     private String hashing(String hash){
         StringBuffer buffer = new StringBuffer();
@@ -450,6 +549,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -459,7 +559,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_sign_out) {
-            if (mGoogleApiClient.isConnected()) {
+           /* if (mGoogleApiClient.isConnected()) {
                 // Prior to disconnecting, run clearDefaultAccount().
                 Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
                 Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient)
@@ -470,17 +570,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                 signedOut();
                             }
                         });
+                */
 
-            }else{
+
                 Intent intent = new Intent(MainActivity.this,Login.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
-            }
+
         }
-        if(id==R.id.userNameToolBar){
+        /*if(id==R.id.userNameToolBar){
             String url = "http://www.google.co.uk";
             String userid= ID;
             Calendar cal = Calendar.getInstance();
@@ -498,6 +599,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             AlertDialog generator = new QRGenerator(this,this,insert);
             generator.show();
+        }*/
+        if(id==R.id.search){
+
+            Intent i = new Intent(this, SearchMain.class);
+            startActivityForResult(i,SEARCH_RESULT);
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -586,14 +693,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getTag().equals(TAG_ABOUT)) {
-
             aboutYapnak();
             Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
-
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
-
-            final FeedbackDialog feedback = new FeedbackDialog(this,this,ID);
-
+            if(connection()) {
+                final FeedbackDialog feedback = new FeedbackDialog(this, this, ID);
+                feedback.show();
+            }
             /*
             pos = feedback.setPositiveButton("SUBMIT", new DialogInterface.OnClickListener() {
                 @Override
@@ -645,28 +751,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
             });
             */
-
-
-
-            feedback.show();
-
-
         } else if (v.getTag().equals(TAG_REWARD)) {
-
-           // howToUseYapnak();
+            // howToUseYapnak();
             //Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
-
             userItems();
-
-
         } else if (v.getTag().equals(TAG_GIFT)) {
             //userItems();
         }else if(v.getTag().equals(TAG_PROFILE)){
             //SHOW PROFILE
             profileDialog(v);
-
+        }else if(v.getTag().equals(TAG_SETTINGS)){
+            SettingsDialog dialog = new SettingsDialog(this,details,remember,keep);
+            dialog.show();
         }
-
     }
 
 
@@ -940,12 +1037,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     AlertDialog posRec;
     public void recommendMealButton(View v) {
 
-        RecommendDialog recommend = new RecommendDialog(this,this);
-        recommend.setUserID(ID);
-        recommend.setClientID(clientID);
-        contactButton = recommend.getContactListButton();
+        //RecommendDialog recommend = new RecommendDialog(this,this);
+        //recommend.setUserID(ID);
+        //recommend.setClientID(clientID);
+        //contactButton = recommend.getContactListButton();
+        //recommend.show();
 
-        contactButton.setOnClickListener(new View.OnClickListener() {
+        if (connection()){
+            Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, PICK_CONTACT);
+        }
+        /*contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Handler().post(new Runnable() {
@@ -959,17 +1061,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                         startActivityForResult(intent, PICK_CONTACT );
-                        /*
+
+
+                        //Comment Out
                         Showing the google stock contacts picker
                         When contact chosen, DO SOMETHING in "onActivityResult" Method
 
                         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
                         startActivityForResult(intent, PICK_CONTACT );
-                        */
+                        //COmment OUT
+
                     }
                 });
             }
         });
+        */
 
         /*
 
@@ -1117,65 +1223,64 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         userItems.show();
         */
 
-        recommend.show();
+
 
 
     }
 
     public void setDirections(View v){
+            double longitude = 0;
+            double latitude = 0;
+            if (tracker.canGetLoc()) {
 
-        double longitude=0;
-        double latitude=0;
-        if(tracker.canGetLoc()){
+                longitude = tracker.getLongitude();
+                latitude = tracker.getLatitude();
+            }
 
-            longitude = tracker.getLongitude();
-            latitude = tracker.getLatitude();
-        }
+            Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
+            Intent maps = new Intent(this, MapActivity.class);
+            maps.putExtra("init", initials);
+            maps.putExtra("accName", personName);
+            final int result = 1;
 
+            ItemPrev itemAtSelectedPosition = getItemPrev();
 
-        Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
-        Intent maps = new Intent(this, MapActivity.class);
-        maps.putExtra("init",initials);
-        maps.putExtra("accName",personName);
-        final int result = 1;
+            maps.putExtra("userLongitude", longitude);
+            maps.putExtra("userLatitude", latitude);
 
-        ItemPrev itemAtSelectedPosition = getItemPrev();
+            if (itemAtSelectedPosition != null) {
+                maps.putExtra("resLongitude", itemAtSelectedPosition.getLongitude());
+                maps.putExtra("resLatitude", itemAtSelectedPosition.getLatitude());
+            }
 
-        maps.putExtra("userLongitude",longitude);
-        maps.putExtra("userLatitude",latitude);
-
-        if(itemAtSelectedPosition!=null) {
-            maps.putExtra("resLongitude", itemAtSelectedPosition.getLongitude());
-            maps.putExtra("resLatitude", itemAtSelectedPosition.getLatitude());
-        }
-
-        startActivity(maps);
+            startActivity(maps);
 
     }
 
     public void takeMeThereButton(View v) {
 
-        tracker = new GPSTrack(MainActivity.this);
+        if(connection()) {
+            tracker = new GPSTrack(MainActivity.this);
 
 
+            if ((getItemPrev() != null)) {
 
-        if((getItemPrev()!=null)){
+                try {
+                    setTakeMeThereView(v);
+                    GetDirections directions = new GetDirections();
+                    directions.doInBackground(tracker);
+                    directions.execute();
 
-            try {
-                setTakeMeThereView(v);
-                GetDirections directions = new GetDirections();
-                directions.doInBackground(tracker);
-                directions.execute();
+                } catch (Exception e) {
+                    Toast.makeText(this, "There was an error in retrieving the selected restaurant/deal's location - Please enter location manually", Toast.LENGTH_LONG).show();
+                    setDirections(v);
+                }
 
-            }catch(Exception e){
-                Toast.makeText(this,"There was an error in retrieving the selected restaurant/deal's location - Please enter location manually",Toast.LENGTH_LONG).show();
+            } else {
                 setDirections(v);
             }
 
-        }else{
-            setDirections(v);
         }
-
 
 
     }
@@ -1253,24 +1358,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //item2 OnClick method for getDealButton
 
     public void getDeal(View v){
-        String url = "http://www.google.co.uk";
-        String userid= ID;
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
-        String date = sdf.format(cal.getTime());
+        if(connection()) {
+            String url = "http://www.google.co.uk";
+            String userid = ID;
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
+            String date = sdf.format(cal.getTime());
 
-        String toHash =userid+date+"YAPNAKRULES";
+            String toHash = userid + date + "YAPNAKRULES";
 
-        String insert ="{ " +
-                "\"id\" : \""+userid+"\","+
-                "\"date\" :\""+date+"\","+
-                "\"hash\" : \""+hashing(toHash)+"\" }";
+            String insert = "{ " +
+                    "\"id\" : \"" + userid + "\"," +
+                    "\"date\" :\"" + date + "\"," +
+                    "\"hash\" : \"" + hashing(toHash) + "\" }";
 
 
-
-        AlertDialog generator = new QRGenerator(this,this,insert);
-        generator.setTitle("GET DEAL");
-        generator.show();
+            AlertDialog generator = new QRGenerator(this, this, insert);
+            generator.setTitle("GET DEAL");
+            generator.show();
+        }
     }
 
 
@@ -1280,8 +1386,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //rate.show(getFragmentManager(),"rating");
         //AlertDialog.Builder ratings = new RatingBuilder(this,this);
 
-        RatingBuilder ratings = new RatingBuilder(this,this);
-
+        if(connection()) {
+            RatingBuilder ratings = new RatingBuilder(this, this);
+            ratings.show();
+        }
         /*
         ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
@@ -1303,7 +1411,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ratings.setTitle("Rate Deal");
         */
 
-        ratings.show();
+
     }
 
     public void setLongPress(boolean lp) {
@@ -1435,12 +1543,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //commented out because we have code to actually grab information from the database.
     public void load() {
         setContentView(R.layout.activity_main1);
-        ListAdapter dealList = new AdapterPrev(this, R.id.item2, dealList());
+        dealList = new AdapterPrev(this, R.id.item2, dealList());
         ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
         scaleListY = promoList.getY();
         deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setTextFilterEnabled(true);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
         deals.setOnItemLongClickListener(new OnLongTouchListener());
@@ -1452,10 +1561,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private AdapterPrev dealList;
     public void load(SQLList sql) {
-
-        //recyclerView.setAdapter(new Adapter(sql));
         setContentView(R.layout.activity_main1);
         dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+
         ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
@@ -1463,6 +1571,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         scaleListY = promoList.getY();
 
         deals = (ListView) findViewById(R.id.listviewMain);
+        deals.setTextFilterEnabled(true);
         deals.setAdapter(dealList);
         deals.setOnItemClickListener(new ItemInfoListener());
         deals.setOnItemLongClickListener(new OnLongTouchListener());
@@ -1507,15 +1616,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+
     private SubActionButton buttonAbout;
     private SubActionButton buttonFeedback;
     private SubActionButton buttonReward;
-    private SubActionButton buttonGift;
+    private SubActionButton buttonSettings;
     private SubActionButton buttonProfile;
 
     public void floatButton() {
         ImageView image = new ImageView(this);
-        image.setImageResource(R.drawable.ic_new_float);
+        image.setImageResource(R.drawable.more);
 
         actionButton = new FloatingActionButton.Builder(this)
                 .setContentView(image)
@@ -1532,48 +1642,53 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ImageView iconReward = new ImageView(this);
         iconReward.setImageResource(R.drawable.trophy);
 
-        //ImageView iconGift = new ImageView(this);
-        //iconGift.setImageResource(R.drawable.gift);
+        ImageView iconSettings = new ImageView(this);
+        iconSettings.setImageResource(R.drawable.settings);
 
         ImageView iconProfile = new ImageView(this);
         iconProfile.setImageResource(R.drawable.avatar_white);
 
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_grey));
+        itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_green));
+
+        int subActionSize = 75;
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(subActionSize,subActionSize);
+        itemBuilder.setLayoutParams(layoutParams);
+
 
         buttonAbout = itemBuilder.setContentView(iconAbout).build();
-        buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
+        //buttonFeedback = itemBuilder.setContentView(iconFeedback).build();
         buttonReward = itemBuilder.setContentView(iconReward).build();
-        //buttonGift = itemBuilder.setContentView(iconGift).build();
+        buttonSettings = itemBuilder.setContentView(iconSettings).build();
         buttonProfile = itemBuilder.setContentView(iconProfile).build();
 
         buttonAbout.setTag(TAG_ABOUT);
-        buttonFeedback.setTag(TAG_FEEDBACK);
+        //buttonFeedback.setTag(TAG_FEEDBACK);
         buttonReward.setTag(TAG_REWARD);
-        //buttonGift.setTag(TAG_GIFT);
+        buttonSettings.setTag(TAG_SETTINGS);
         buttonProfile.setTag(TAG_PROFILE);
 
         buttonAbout.setOnClickListener(this);
-        buttonFeedback.setOnClickListener(this);
+        //buttonFeedback.setOnClickListener(this);
         buttonReward.setOnClickListener(this);
-        //buttonGift.setOnClickListener(this);
+        buttonSettings.setOnClickListener(this);
         buttonProfile.setOnClickListener(this);
+
+
 
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(buttonAbout)
-                .addSubActionView(buttonFeedback)//.addSubActionView(buttonGift)
+                 .addSubActionView(buttonSettings)//.addSubActionView(buttonGift)
                 .addSubActionView(buttonProfile)
                 .addSubActionView(buttonReward)
                 .attachTo(actionButton)
                 .build();
 
 
+
     }
 
     private void showFloating(){
-
-
-
         Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
 
             @Override
@@ -1581,22 +1696,22 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 actionButton.setVisibility(View.INVISIBLE);
                 buttonAbout.setVisibility(View.INVISIBLE);
-                buttonFeedback.setVisibility(View.INVISIBLE);
-                //buttonManual.setVisibility(View.VISIBLE);
+                //buttonFeedback.setVisibility(View.INVISIBLE);
+                buttonSettings.setVisibility(View.INVISIBLE);
                 buttonReward.setVisibility(View.INVISIBLE);
                 buttonProfile.setVisibility(View.INVISIBLE);
-          }
+            }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton,"alpha",0.0f,1.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",0.0f,1.0f);
-                ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",0.0f,1.0f);
-                //ObjectAnimator manual = ObjectAnimator.ofFloat(buttonManual,"alpha",0.0f,1.0f);
+                //ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",0.0f,1.0f);
+                ObjectAnimator settings = ObjectAnimator.ofFloat(buttonSettings,"alpha",0.0f,1.0f);
                 ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward,"alpha",0.0f,1.0f);
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(animator,about,share,manual,gift);
-                s.playTogether(animator, about, share, gift);
+                s.playTogether(animator, about,settings, gift);
                 s.setDuration(200).start();
 
             }
@@ -1606,8 +1721,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         actionButton.animate().setListener(listener).start();
         actionButton.setVisibility(View.VISIBLE);
         buttonAbout.setVisibility(View.VISIBLE);
-        buttonFeedback.setVisibility(View.VISIBLE);
-        //buttonManual.setVisibility(View.VISIBLE);
+        //buttonFeedback.setVisibility(View.VISIBLE);
+        buttonSettings.setVisibility(View.VISIBLE);
         buttonReward.setVisibility(View.VISIBLE);
 
 
@@ -1616,8 +1731,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Animator buttonAnimator(float start, float end){
 
         ValueAnimator animator = ValueAnimator.ofFloat(start, end);
-
-
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -1625,7 +1738,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 float y = (Float) animation.getAnimatedValue();
                 actionButton.setAlpha(y);
                 buttonAbout.setAlpha(y);
-                buttonFeedback.setAlpha(y);
+                buttonSettings.setAlpha(y);
                 buttonReward.setAlpha(y);
                 buttonProfile.setAlpha(y);
 
@@ -1651,13 +1764,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
                 ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",1.0f,0.0f);
-                ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",1.0f,0.0f);
+                ObjectAnimator settings = ObjectAnimator.ofFloat(buttonSettings,"alpha",1.0f,0.0f);
                 ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward,"alpha",1.0f,0.0f);
                 ObjectAnimator profile = ObjectAnimator.ofFloat(buttonProfile,"alpha",1.0f,0.0f);
 
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(alpha, about, share, manual, gift);
-                s.playTogether(alpha, about, share, gift,profile);
+                s.playTogether(alpha, about, gift,settings,profile);
 
                 s.setDuration(200).start();
 
@@ -1668,7 +1781,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         actionButton.setVisibility(View.GONE);
         buttonAbout.setVisibility(View.GONE);
-        buttonFeedback.setVisibility(View.GONE);
+        buttonSettings.setVisibility(View.GONE);
         buttonReward.setVisibility(View.GONE);
         buttonProfile.setVisibility(View.GONE);
     }
@@ -1732,12 +1845,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             public void run() {
                                 actionButton.setAlpha(1.0f);
                                 buttonAbout.setAlpha(1.0f);
-                                buttonFeedback.setAlpha(1.0f);
+                                buttonSettings.setAlpha(1.0f);
                                 buttonReward.setAlpha(1.0f);
                                 buttonProfile.setAlpha(1.0f);
                                 actionButton.setVisibility(View.VISIBLE);
                                 buttonAbout.setVisibility(View.VISIBLE);
-                                buttonFeedback.setVisibility(View.VISIBLE);
+                                buttonSettings.setVisibility(View.VISIBLE);
                                 buttonReward.setVisibility(View.VISIBLE);
                                 buttonProfile.setVisibility(View.VISIBLE);
                             }
@@ -1750,7 +1863,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             public void run() {
                                 actionButton.setVisibility(View.INVISIBLE);
                                 buttonAbout.setVisibility(View.INVISIBLE);
-                                buttonFeedback.setVisibility(View.INVISIBLE);
+                                buttonSettings.setVisibility(View.INVISIBLE);
                                 buttonReward.setVisibility(View.INVISIBLE);
                                 buttonProfile.setVisibility(View.INVISIBLE);
                             }
@@ -1759,12 +1872,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }else{
                     actionButton.setAlpha(1.0f);
                     buttonAbout.setAlpha(1.0f);
-                    buttonFeedback.setAlpha(1.0f);
+                    buttonSettings.setAlpha(1.0f);
                     buttonReward.setAlpha(1.0f);
                     buttonProfile.setAlpha(1.0f);
                     actionButton.setVisibility(View.VISIBLE);
                     buttonAbout.setVisibility(View.VISIBLE);
-                    buttonFeedback.setVisibility(View.VISIBLE);
+                    buttonSettings.setVisibility(View.VISIBLE);
                     buttonReward.setVisibility(View.VISIBLE);
                     buttonProfile.setVisibility(View.VISIBLE);
                 }
@@ -2190,9 +2303,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    private Location loc;
     public Location getLocation(){
-        GPSTrack track = new GPSTrack(MainActivity.this);
-        return track.getLocation();
+        return loc;
+    }
+    public void setLocation(Location loc){
+        this.loc = loc;
     }
     private boolean isLocationOn(){
         GPSTrack t = new GPSTrack(MainActivity.this);

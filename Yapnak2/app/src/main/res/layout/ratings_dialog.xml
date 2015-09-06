@@ -28,6 +28,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:id="@+id/rateDeal"
+        android:stepSize="1"
         style="@style/yapnakRatingBar"
         android:layout_gravity="center_horizontal" />
 
@@ -52,31 +53,38 @@
         android:background="@android:color/transparent"
         android:hint="Leave a Comment"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/cancelRating"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Cancel"
-            android:background="@android:color/transparent"
-            android:layout_marginRight="20dp"
-            android:textColor="#ff535357" />
 
-        <Button
-            android:id="@+id/submitRating"
-            android:layout_width="150dp"
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Submit"
-            android:background="@android:color/transparent"
-            android:textColor="#ff535357" />
-    </LinearLayout>
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/cancelRating"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="CLOSE"
+                android:layout_marginLeft="10dp"
+                android:background="@android:color/transparent"
+                android:layout_marginRight="20dp"
+                android:textColor="#ff535357" />
+
+            <Button
+                android:id="@+id/submitRating"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="OK"
+                android:background="@android:color/transparent"
+                android:textColor="#ff535357" />
+        </LinearLayout>
 
 </LinearLayout>
 

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,7 @@ import java.net.URL;
  * Created by vahizan on 16/04/2015.
  */
 
-public class AdapterPrev extends ArrayAdapter<ItemPrev> {
+public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
     private View view;
     private ItemPrev deal;

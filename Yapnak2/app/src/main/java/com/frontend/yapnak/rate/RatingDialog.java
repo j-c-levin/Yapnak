@@ -31,17 +31,14 @@ public class RatingDialog extends DialogFragment {
 
         rating = (RatingBar) dialogView.findViewById(R.id.rateDeal);
 
+
         rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
 
                 setRating(rating);
-
                 TextView text = (TextView) dialogView.findViewById(R.id.ratingNumber);
                 text.setText(String.valueOf(rating));
-
-
-
 
             }
         });
@@ -54,8 +51,6 @@ public class RatingDialog extends DialogFragment {
 
                //Store ratingNumber in sql database and average results to get general Rating.
                //Need to pass the ID of the card selected from MainActivity, add rating against the corresponding cardID
-
-
                 RatingDialog.this.getDialog().dismiss();
 
             }

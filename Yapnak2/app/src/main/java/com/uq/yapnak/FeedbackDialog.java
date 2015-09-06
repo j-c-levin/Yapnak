@@ -68,10 +68,10 @@ public class FeedbackDialog extends AlertDialog {
        // autoText = (AutocompleteEditText) v.findViewById(R.id.autoComplete);
 
 
-        spinner = (Spinner) v.findViewById(R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,options);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        //spinner = (Spinner) v.findViewById(R.id.spinner);
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,options);
+       // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       // spinner.setAdapter(adapter);
 
 
 

@@ -33,11 +33,12 @@ public class MoreInfo extends ActionBarActivity {
 
     private void result(){
 
-        Intent i = new Intent();
+        /*Intent i = new Intent();
         i.putExtra("accName", name);
         i.putExtra("success","Swipe Left");
         i.putExtra("swipeleft", R.drawable.swipeleft);
         setResult(1, i);
+        */
     }
 
     private void setTitleClickable(){
@@ -77,11 +78,11 @@ public class MoreInfo extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem item = menu.findItem(R.id.userNameToolBar);
+        //MenuItem item = menu.findItem(R.id.userNameToolBar);
 
         try {
 
-            getInfo = getIntent();
+           /* getInfo = getIntent();
             name = getInfo.getStringExtra("accName");
 
 
@@ -89,11 +90,11 @@ public class MoreInfo extends ActionBarActivity {
 
             this.name = splitter[0];
 
-            item.setTitle(splitter[0]);
+            item.setTitle(splitter[0]);*/
 
         }catch(NullPointerException e){
 
-            item.setTitle("User");
+           // item.setTitle("User");
         }
 
         return true;

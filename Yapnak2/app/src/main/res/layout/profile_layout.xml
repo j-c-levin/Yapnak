@@ -68,7 +68,7 @@
             android:layout_centerHorizontal="true" />
 
 
-        <RadioGroup
+       <!--<RadioGroup
             android:id="@+id/genderGroupButtons"
             android:layout_width="170dp"
             android:layout_height="50dp"
@@ -99,28 +99,41 @@
                 />
 
         </RadioGroup>
-
-        <TextView
-            android:layout_width="wrap_content"
+        -->
+        <Button
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#000"
             android:text="Gender"
-            android:textSize="15sp"
-            android:id="@+id/textView3"
-            android:layout_above="@+id/genderGroupButtons"
-            android:layout_alignLeft="@+id/genderGroupButtons" />
+            android:drawableLeft="@drawable/gender_small"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@color/transparentRed"
+            android:id="@+id/genderGroupButtons"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="horizontal"
+            android:layout_below="@+id/phoneNumberEditText"
+            android:layout_centerHorizontal="true" />
+
 
         <Button
-            android:background="@android:color/transparent"
             android:id="@+id/dateInput"
-            android:layout_width="100dp"
+            android:textColor="#000"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:background="@color/transparentRed"
+            android:drawableLeft="@drawable/birthday_filled_small"
             android:hint="Date Of Birth"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:textSize="15sp"
-            android:textColor="#000"
-            android:layout_below="@+id/textView3"
+            android:layout_below="@+id/genderGroupButtons"
             android:layout_alignParentLeft="true" />
 
         <com.frontend.yapnak.subview.RedEditText
@@ -146,6 +159,7 @@
         <com.frontend.yapnak.subview.RedEditText
             android:background="@android:color/transparent"
             android:id="@+id/passwordEdit"
+            android:inputType="textPassword"
             android:maxLines="1"
             android:singleLine="true"
             android:layout_width="match_parent"
@@ -161,7 +175,6 @@
             android:layout_marginTop="20dp"
             android:drawableLeft="@drawable/padlock_white_small"
             android:layout_below="@id/emailEdit"
-
             android:hint="Password"/>
 
 
@@ -326,35 +339,35 @@
      </ScrollView>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/linearLayout3"
-        android:gravity="bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true">
-
-        <Button
-            android:background="@android:color/transparent"
-            android:layout_marginLeft="100dp"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:text="CANCEL"
-            android:id="@+id/cancelProfile"/>
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:orientation="horizontal">
 
-        <Button
-            android:background="@android:color/transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="SAVE"
-            android:id="@+id/submitProfile"
-            />
+            <Button
+                android:id="@+id/cancelProfile"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="CLOSE"
+                android:layout_marginLeft="10dp"
+                android:background="@android:color/transparent"
+                android:layout_marginRight="20dp"
+                android:textColor="#ff535357" />
 
-
-
-    </LinearLayout>
+            <Button
+                android:id="@+id/submitProfile"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="OK"
+                android:background="@android:color/transparent"
+                android:textColor="#ff535357" />
+        </LinearLayout>
 
     </RelativeLayout>
 

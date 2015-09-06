@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:id="@+id/item2"
+    android:background="#320000"
     android:descendantFocusability="blocksDescendants">
 
     <!--android:onClick="extendInfo"
@@ -21,15 +22,17 @@
         android:layout_width="match_parent"
         android:layout_marginBottom="5dp"
         android:padding="5dp"
-        android:background="@drawable/curved_card_item"
+        android:background="@drawable/curved_tutorial"
         android:weightSum="1"
         >
 
-            <!--android:background="@color/bright_foreground_inverse_material_light"-->
+        <!--android:background="@color/bright_foreground_inverse_material_light"-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/tempId">
+
+
 
 
             <ImageView
@@ -41,7 +44,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_alignRight="@+id/subtitle" />
 
-
             <TextView
                 android:id="@+id/title"
                 style="@style/Base.TextAppearance.AppCompat.Headline"
@@ -51,7 +53,7 @@
                 android:singleLine="false"
                 android:text="sample1"
                 android:textColor="#ff707070"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:scrollHorizontally="false"
                 android:maxLines="3"
                 android:textStyle="bold" />
@@ -91,7 +93,6 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="73dp"
                 android:text="Loyalty Points:"
-                android:visibility="invisible"
                 android:textColor="#9E9E9E"
                 android:textStyle="normal" />
 
@@ -103,7 +104,6 @@
                 android:layout_marginTop="73dp"
                 android:layout_toRightOf="@id/loyalty"
                 android:text="10"
-                android:visibility="invisible"
                 android:textColor="#9E9E9E"
                 android:textStyle="normal" />
 
@@ -114,7 +114,7 @@
                 android:layout_marginLeft="220dp"
                 android:background="@drawable/locationicon_red"
                 android:layout_alignTop="@+id/loyaltyPoints"
-                 />
+                />
 
             <TextView
                 android:id="@+id/distance"
@@ -131,71 +131,71 @@
 
 
 
-          <RelativeLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
                 android:layout_marginTop="100dp"
                 android:orientation="horizontal"
                 android:visibility="gone"
                 android:id="@+id/extendIconLayout"
-              android:layout_alignBottom="@+id/extendTextLayout">
+                android:layout_alignBottom="@+id/extendTextLayout">
 
 
-              <Button
-                  android:id="@+id/recommendMeal"
-                  android:layout_width="40dp"
-                  android:layout_height="40dp"
-                  android:background="@drawable/custom_recommend"
-                  android:onClick="recommendMealButton"
-                  android:textSize="12sp"
-                  android:textStyle="bold"
-                  android:layout_marginLeft="46dp"
-                  android:layout_alignParentTop="true"
-                  android:layout_toRightOf="@+id/takeMeThere" />
+                <Button
+                    android:id="@+id/recommendMeal"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/custom_recommend"
+                    android:onClick="recommendMealButton"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/takeMeThere" />
 
-              <Button
-                  android:id="@+id/takeMeThere"
-                  android:layout_width="40dp"
-                  android:layout_height="40dp"
-                  android:onClick="takeMeThereButton"
-                  android:background="@drawable/custom_takemethere"
-                  android:textSize="12sp"
-                  android:textStyle="bold"
-                  android:layout_marginLeft="29dp"
-                  android:layout_alignParentTop="true"
-                  android:layout_alignParentLeft="true" />
+                <Button
+                    android:id="@+id/takeMeThere"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:onClick="takeMeThereButton"
+                    android:background="@drawable/custom_takemethere"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="39dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true" />
 
-              <Button
-                  android:id="@+id/feedbackButton"
-                  android:layout_width="40dp"
-                  android:layout_height="40dp"
-                  android:layout_marginLeft="30dp"
-                  android:onClick="feedbackButton"
-                  android:background="@drawable/custom_rate"
-                  android:textSize="12sp"
-                  android:textStyle="bold"
-                  android:layout_alignParentTop="true"
-                  android:layout_toRightOf="@+id/recommendMeal" />
+                <Button
+                    android:id="@+id/feedbackButton"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="30dp"
+                    android:onClick="feedbackButton"
+                    android:background="@drawable/custom_rate"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/recommendMeal" />
 
-              <Button
-                  android:id="@+id/getDealButton"
-                  android:layout_width="40dp"
-                  android:layout_height="40dp"
-                  android:layout_marginLeft="26dp"
-                  android:background="@drawable/custom_rewards"
-                  android:textSize="12sp"
-                  android:onClick="getDeal"
-                  android:textStyle="bold"
-                  android:layout_alignParentTop="true"
-                  android:layout_toRightOf="@+id/feedbackButton" />
-
-
-
+                <Button
+                    android:id="@+id/getDealButton"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/custom_rewards"
+                    android:textSize="12sp"
+                    android:onClick="getDeal"
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/feedbackButton" />
 
 
 
-          </RelativeLayout>
-          <RelativeLayout
+
+
+
+            </RelativeLayout>
+            <RelativeLayout
                 android:id="@+id/extendTextLayout"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
@@ -221,7 +221,7 @@
                     android:text="Take Me There"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="7dp"
+                    android:layout_marginLeft="15dp"
                     android:layout_marginRight="10dp"/>
 
                 <TextView
@@ -230,7 +230,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:text="Rate"
-                    android:layout_marginLeft="28dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/recommendText" />
 
@@ -240,7 +240,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:text="Get Deal"
-                    android:layout_marginLeft="28dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_toRightOf="@id/rateText"/>
 
             </RelativeLayout>
@@ -251,22 +251,39 @@
 
         </RelativeLayout>
 
-         <!--
-         <fragment
-            android:name="com.example.nand.abc.ExtensionFragment"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:id="@+id/itemExtension"
+        <!--
+        <fragment
+           android:name="com.example.nand.abc.ExtensionFragment"
+           android:layout_width="match_parent"
+           android:layout_height="100dp"
+           android:id="@+id/itemExtension"
 
 
-             >
+            >
 
 
-         </fragment>
+        </fragment>
 
-        -->
+       -->
 
     </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/linepoint_small"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Click to Expand"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp" />
 
 
 </LinearLayout>
