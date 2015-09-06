@@ -1545,7 +1545,6 @@ public class SQLEntityEndpoint {
 
     public qrEntity qrSubmit(@Named("userID") String userID, @Named("clientID") int clientID, @Named("datetime") String date, @Named("hash") String hash) {
         qrEntity qr = new qrEntity();
-
         qr.setStatus("True");
         return qr;
     }
