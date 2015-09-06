@@ -4,10 +4,12 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 /**
- * Created by Joshua on 11/08/2015.
+ * Created by Joshua on 06/09/2015.
  */
 @Entity
-public class RecommendEntity {
+public class DeauthenticateEntity {
+    @Id
+    String status;
 
     public String getStatus() {
         return status;
@@ -25,17 +27,5 @@ public class RecommendEntity {
         this.message = message;
     }
 
-    @Id
-    String status;
     String message;
-
-    public long getResult() {
-        return result;
-    }
-
-    public void setResult(long result) {
-        this.result = result;
-    }
-
-    long result;
 }

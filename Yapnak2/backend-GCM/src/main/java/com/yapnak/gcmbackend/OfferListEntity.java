@@ -3,11 +3,26 @@ package com.yapnak.gcmbackend;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+import java.util.List;
+
 /**
- * Created by Joshua on 11/08/2015.
+ * Created by Joshua on 06/09/2015.
  */
 @Entity
-public class RecommendEntity {
+public class OfferListEntity {
+    @Id
+    String status;
+    String message;
+
+    public List<OfferEntity> getOfferList() {
+        return offerList;
+    }
+
+    public void setOfferList(List<OfferEntity> offerList) {
+        this.offerList = offerList;
+    }
+
+    List<OfferEntity> offerList;
 
     public String getStatus() {
         return status;
@@ -25,17 +40,5 @@ public class RecommendEntity {
         this.message = message;
     }
 
-    @Id
-    String status;
-    String message;
 
-    public long getResult() {
-        return result;
-    }
-
-    public void setResult(long result) {
-        this.result = result;
-    }
-
-    long result;
 }
