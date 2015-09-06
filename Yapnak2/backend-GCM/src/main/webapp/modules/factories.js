@@ -91,6 +91,44 @@ angular.module('app.factories', [])
     });
   }
 
+  result.updateName = function(name,email) {
+        var req = {
+          method: 'POST',
+          url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(name)
+//          url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientName?email='.concat(email).concat("&name=").concat(name)
+        }
+        return $http(req).then(function (response) {
+          if (response.data.status == "True") {
+            console.log("Successfully updated Name");
+          } else {
+            console.log("Failed");
+            console.log(response);
+          }
+        },function (error) {
+          console.log("failed");
+          console.log(error);
+        });
+    }
+
+  result.updateType = function(type,email) {
+    var req = {
+      method: 'POST',
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(type)
+//      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/updateClientType?email='.concat(email).concat("&type=").concat(type)
+    }
+    return $http(req).then(function (response) {
+      if (response.data.status == "True") {
+        console.log("Successfully updated Type");
+      } else {
+        console.log("Failed");
+        console.log(response);
+      }
+    },function (error) {
+      console.log("failed");
+      console.log(error);
+    });
+  };
+
   result.updateMainText = function(name,type,email) {
     var req = {
       method: 'POST',

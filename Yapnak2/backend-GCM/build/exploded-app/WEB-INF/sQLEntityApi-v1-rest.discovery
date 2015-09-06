@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/mXhV7UULZXlbtkb2quLaueueFYo\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ZMMDRzV2_AXgjaHHx7d_6FMp-1M\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -770,39 +770,6 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "updateClientInfo": {
-   "id": "sQLEntityApi.updateClientInfo",
-   "path": "updateClientInfo",
-   "httpMethod": "POST",
-   "parameters": {
-    "email": {
-     "type": "string",
-     "required": true,
-     "location": "query"
-    },
-    "name": {
-     "type": "string",
-     "required": true,
-     "location": "query"
-    },
-    "type": {
-     "type": "string",
-     "required": true,
-     "location": "query"
-    }
-   },
-   "parameterOrder": [
-    "email",
-    "name",
-    "type"
-   ],
-   "response": {
-    "$ref": "ClientEntity"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
   "updateClientLocation": {
    "id": "sQLEntityApi.updateClientLocation",
    "path": "updateClientLocation",
@@ -825,6 +792,60 @@
    ],
    "response": {
     "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updateClientName": {
+   "id": "sQLEntityApi.updateClientName",
+   "path": "updateClientName",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "name": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "name"
+   ],
+   "response": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updateClientType": {
+   "id": "sQLEntityApi.updateClientType",
+   "path": "updateClientType",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "type": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "type"
+   ],
+   "response": {
+    "$ref": "ClientEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

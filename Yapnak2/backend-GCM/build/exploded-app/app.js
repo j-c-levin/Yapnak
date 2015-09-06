@@ -155,19 +155,15 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         });
       }
 
-      if ($scope.newFoodStyle !== "" || $scope.newName !== "") {
+      if ($scope.newFoodStyle !== "") {
+      webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
+                details();
+              });
+      }
 
-        if ($scope.newName == "") {
-          $scope.newName = $scope.name;
-        }
-
-        if ($scope.newFoodStyle == "") {
-          $scope.newFoodStyle = $scope.foodStyle;
-        }
-
-        webfactory.updateMainText($scope.newName,$scope.newFoodStyle,email).then(function(response) {
+      if ($scope.newName !== "") {
+        webfactory.updateName($scope.newName,email).then(function(response) {
           details();
-
         });
       }
 

@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/mXhV7UULZXlbtkb2quLaueueFYo\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ZMMDRzV2_AXgjaHHx7d_6FMp-1M\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -706,34 +706,6 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
-  "sQLEntityApi.updateClientInfo": {
-   "id": "sQLEntityApi.updateClientInfo",
-   "parameters": {
-    "email": {
-     "type": "string",
-     "required": true
-    },
-    "name": {
-     "type": "string",
-     "required": true
-    },
-    "type": {
-     "type": "string",
-     "required": true
-    }
-   },
-   "parameterOrder": [
-    "email",
-    "name",
-    "type"
-   ],
-   "returns": {
-    "$ref": "ClientEntity"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
   "sQLEntityApi.updateClientLocation": {
    "id": "sQLEntityApi.updateClientLocation",
    "parameters": {
@@ -752,6 +724,52 @@
    ],
    "returns": {
     "$ref": "VoidEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "sQLEntityApi.updateClientName": {
+   "id": "sQLEntityApi.updateClientName",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true
+    },
+    "name": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "name"
+   ],
+   "returns": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "sQLEntityApi.updateClientType": {
+   "id": "sQLEntityApi.updateClientType",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true
+    },
+    "type": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "type"
+   ],
+   "returns": {
+    "$ref": "ClientEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

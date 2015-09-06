@@ -143,113 +143,109 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   }
 
 
-    details();
+  details();
 
-    $scope.toLogin
+  $scope.toLogin
 
-    $scope.updateInfo = function() {
+  $scope.updateInfo = function() {
 
-      if ($scope.newLocation !== "") {
-        webfactory.updateLocation($scope.newLocation,email).then(function(response) {
-          details();
-        });
-      }
+    if ($scope.newLocation !== "") {
+      webfactory.updateLocation($scope.newLocation,email).then(function(response) {
+        details();
+      });
+    }
 
-      if ($scope.newFoodStyle !== "" || $scope.newName !== "") {
+    if ($scope.newFoodStyle !== "") {
+      webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
+        details();
+      });
+    }
 
-        if ($scope.newName == "") {
-          $scope.newName = $scope.name;
-        }
+    if ($scope.newName !== "") {
+      webfactory.updateName($scope.newName,email).then(function(response) {
+        details();
+      });
+    }
 
-        if ($scope.newFoodStyle == "") {
-          $scope.newFoodStyle = $scope.foodStyle;
-        }
-
-        webfactory.updateMainText($scope.newName,$scope.newFoodStyle,email).then(function(response) {
-          details();
-
-        });
-      }
-
-      if ($scope.offer1 !== offer1Active) {
-        if ($scope.offer1 == false) {
-          webfactory.toggleOffer(email, 1, 0);
-        } else {
-          //check if offer has been placed and then create new offer
-          if ($scope.newOffer1text !== "") {
-            webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
-              webfactory.toggleOffer(email, 1, 1).then(function() {
-                details();
-
-              });
-            });
-          } else {
-            webfactory.toggleOffer(email, 1, 1);
-          }
-        }
+    if ($scope.offer1 !== offer1Active) {
+      if ($scope.offer1 == false) {
+        webfactory.toggleOffer(email, 1, 0);
       } else {
-        if ($scope.newOffer1text !== offer1Changed && $scope.newOffer1text !== "") {
+        //check if offer has been placed and then create new offer
+        if ($scope.newOffer1text !== "") {
           webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
             webfactory.toggleOffer(email, 1, 1).then(function() {
               details();
 
             });
           });
+        } else {
+          webfactory.toggleOffer(email, 1, 1);
         }
       }
+    } else {
+      if ($scope.newOffer1text !== offer1Changed && $scope.newOffer1text !== "") {
+        webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response){
+          webfactory.toggleOffer(email, 1, 1).then(function() {
+            details();
 
-      if ($scope.offer2 !== offer2Active) {
-        if ($scope.offer2 == false) {
-          webfactory.toggleOffer(email, 2, 0);
-        } else {
-          //check if offer has been placed and then create new offer
-          if ($scope.newOffer2text !== "") {
-            webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
-              webfactory.toggleOffer(email, 2, 1).then(function() {
-                details();
+          });
+        });
+      }
+    }
 
-              });
-            });
-          } else {
-            webfactory.toggleOffer(email, 2, 1);
-          }
-        }
+    if ($scope.offer2 !== offer2Active) {
+      if ($scope.offer2 == false) {
+        webfactory.toggleOffer(email, 2, 0);
       } else {
-        if ($scope.newOffer2text !== offer2Changed  && $scope.newOffer2text !== "") {
+        //check if offer has been placed and then create new offer
+        if ($scope.newOffer2text !== "") {
           webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
             webfactory.toggleOffer(email, 2, 1).then(function() {
               details();
 
             });
-          })
+          });
+        } else {
+          webfactory.toggleOffer(email, 2, 1);
         }
       }
+    } else {
+      if ($scope.newOffer2text !== offer2Changed  && $scope.newOffer2text !== "") {
+        webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response){
+          webfactory.toggleOffer(email, 2, 1).then(function() {
+            details();
 
-      if ($scope.offer3 !== offer3Active) {
-        if ($scope.offer3 == false) {
-          webfactory.toggleOffer(email, 3, 0);
-        } else {
-          //check if offer has been placed and then create new offer
-          if ($scope.newOffer3text !== "") {
-            webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
-              webfactory.toggleOffer(email, 3, 1).then(function() {
-                details();
+          });
+        })
+      }
+    }
 
-              });
-            });
-          } else {
-            webfactory.toggleOffer(email, 3, 1);
-          }
-        }
+    if ($scope.offer3 !== offer3Active) {
+      if ($scope.offer3 == false) {
+        webfactory.toggleOffer(email, 3, 0);
       } else {
-        if ($scope.newOffer3text !== offer3Changed  && $scope.newOffer3text !== "") {
+        //check if offer has been placed and then create new offer
+        if ($scope.newOffer3text !== "") {
           webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
             webfactory.toggleOffer(email, 3, 1).then(function() {
               details();
 
             });
           });
+        } else {
+          webfactory.toggleOffer(email, 3, 1);
         }
       }
+    } else {
+      if ($scope.newOffer3text !== offer3Changed  && $scope.newOffer3text !== "") {
+        webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response){
+          webfactory.toggleOffer(email, 3, 1).then(function() {
+            details();
+
+          });
+        });
+      }
     }
-  })
+  }
+})
