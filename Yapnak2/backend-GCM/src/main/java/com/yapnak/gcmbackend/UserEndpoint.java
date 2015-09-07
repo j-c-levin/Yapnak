@@ -11,19 +11,18 @@ import javax.annotation.Nullable;
 import javax.inject.Named;
 
 /**
- * Created by Joshua on 06/09/2015.
+ * An endpoint class we are exposing
  */
 @Api(
         name = "userEndpointApi",
         version = "v1",
+        resource = "userEndpoint",
         namespace = @ApiNamespace(
                 ownerDomain = "gcmbackend.yapnak.com",
                 ownerName = "gcmbackend.yapnak.com",
                 packagePath = ""
-        ),
-        scopes = {Constants.EMAIL_SCOPE},
-        clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID, com.google.api.server.spi.Constant.API_EXPLORER_CLIENT_ID},
-        audiences = {Constants.ANDROID_AUDIENCE})
+        )
+)
 public class UserEndpoint {
     private static final Logger logger = Logger.getLogger(UserEndpoint.class.getName());
 
@@ -51,7 +50,7 @@ public class UserEndpoint {
             name = "registerUser",
             path = "registerUser",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public RegisterUserEntity registerUser(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("dateOfBirth")@Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName) {
+    public RegisterUserEntity registerUser(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName) {
         RegisterUserEntity response = new RegisterUserEntity();
         response.setStatus("True");
         return response;
@@ -61,7 +60,7 @@ public class UserEndpoint {
             name = "getUserDetails",
             path = "getUserDetails",
             httpMethod = ApiMethod.HttpMethod.GET)
-    public UserDetailsEntity getUserDetails(@Named("userId")@Nullable String userId,@Named("email")@Nullable String email,@Named("mobNo")@Nullable String mobNo) {
+    public UserDetailsEntity getUserDetails(@Named("userId") @Nullable String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo) {
         UserDetailsEntity response = new UserDetailsEntity();
         response.setStatus("True");
         return response;
@@ -71,7 +70,7 @@ public class UserEndpoint {
             name = "setUserDetails",
             path = "setUserDetails",
             httpMethod = ApiMethod.HttpMethod.POST)
-         public SetUserDetailsEntity setUserDetails(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("dateOfBirth")@Nullable Date dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName) {
+    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("dateOfBirth") @Nullable Date dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName) {
         SetUserDetailsEntity response = new SetUserDetailsEntity();
         response.setStatus("True");
         return response;
@@ -81,7 +80,7 @@ public class UserEndpoint {
             name = "getClients",
             path = "getClients",
             httpMethod = ApiMethod.HttpMethod.GET)
-         public OfferListEntity getClients(@Named("longitude") double longitude, @Named("latitude") double latitude, @Named("userId") String userId) {
+    public OfferListEntity getClients(@Named("longitude") double longitude, @Named("latitude") double latitude, @Named("userId") String userId) {
         OfferListEntity response = new OfferListEntity();
         OfferEntity offer;
         response.setStatus("True");
@@ -103,12 +102,10 @@ public class UserEndpoint {
             name = "recommend",
             path = "recommend",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public RecommendEntity recommend(@Named("userId") String userId, @Named("clientId") int clientId, @Named("rating") int rating, @Named("comment") @Nullable String comment) {
+    public RecommendEntity recommend(@Named("userId") String userId, @Named("otherUserId") String otherUserId, @Named("clientId") int clientId) {
         RecommendEntity response = new RecommendEntity();
         response.setStatus("True");
         response.setResult(1);
         return response;
     }
-
-
 }
