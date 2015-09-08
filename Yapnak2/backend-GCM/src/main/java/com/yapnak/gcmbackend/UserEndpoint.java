@@ -119,7 +119,7 @@ public class UserEndpoint {
                 String query = "SELECT clientPhoto, clientID from client";
                 PreparedStatement statement = connection.prepareStatement(query);
                 ResultSet rs = statement.executeQuery();
-                query = "REPLACE client (clientPhotoUrl) VALUE (?) where clientID = ?";
+                query = "UPDATE client SET clientPhotoUrl = ? WHERE clientID = ?";
                 statement = connection.prepareStatement(query);
                 while (rs.next()) {
                     logger.info("found " + rs.getString("clientID"));
@@ -131,9 +131,11 @@ public class UserEndpoint {
                         url = url + "=s100";
                     } catch (IllegalArgumentException e) {
                         url = "http://yapnak.com/images/yapnakmonster.png";
+                        logger.warning("IllegalArgumentException " + e);
                         e.printStackTrace();
                     } catch (ImagesServiceFailureException e1) {
                         url = "http://yapnak.com/images/yapnakmonster.png";
+                        logger.warning("ImagesServiceFailureException " + e1);
                         e1.printStackTrace();
                     }
                     statement.setString(1, url);
