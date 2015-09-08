@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/NfDGeag6UwRttgqog_nVkeRTO-4\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/CKc0tyoyWBGo4XAAZGn3YAbgy_Y\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -668,6 +668,17 @@
    },
    "response": {
     "$ref": "SetUserDetailsEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updatePhotoUrl": {
+   "id": "userEndpointApi.updatePhotoUrl",
+   "path": "updatePhotoUrl",
+   "httpMethod": "POST",
+   "response": {
+    "$ref": "OfferEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
