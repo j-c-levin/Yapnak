@@ -223,5 +223,15 @@ angular.module('app.factories', [])
     })
   };
 
+  result.getLocations = function(val) {
+    return $http.get('https://maps.googleapis.com/maps/api/geocode/json', {
+      params: {
+        address: val,
+        sensor: false
+      }
+    }).then(function(response){
+      return response;
+    });
+  };
   return result;
 }])

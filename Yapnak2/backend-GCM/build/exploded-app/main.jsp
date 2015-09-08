@@ -34,11 +34,11 @@
 <body class="content container" ng-controller="client-controller">
   <%  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
-  <!-- <a class="form-signin" href="redeem.html">Go to input page</a>  -->
+  <!-- <a class="form-signin" href="redeem.html">Go to input page</a> -->
 
   <!-- TODO:Switch in production! -->
 
-    <a class="form-signin" href="/redeem">Go to input page</a>
+     <a class="form-signin" href="/redeem">Go to input page</a>
 
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
     <div class="form-signin center-image">
@@ -68,8 +68,15 @@
   <div class="form-signin">
     <label
     for="exampleInputPassword1">Address</label>
-    <input type="text"
-    class="form-control" ng-model="newLocation" name="address" id="address" placeholder="{{location}}">
+    <!-- <input type="text"
+    class="form-control" ng-model="newLocation" name="address" id="address" placeholder="{{location}}"> -->
+
+    <input type="text" ng-model="newLocation" placeholder="{{location}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
+    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+    <div ng-show="noResults">
+      <i class="glyphicon glyphicon-remove"></i> No Results Found
+    </div>
+
   </div>
 
   <div class="form-signin">

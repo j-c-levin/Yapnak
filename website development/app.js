@@ -142,10 +142,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     })
   }
 
-
   details();
-
-  $scope.toLogin
 
   $scope.updateInfo = function() {
 
@@ -248,4 +245,14 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       }
     }
   }
+
+  $scope.getLocation = function(val) {
+   return webfactory.getLocations(val).then(function(response) {
+      return response.data.results.map(function(item){
+        console.log(item.formatted_address);
+        return item.formatted_address;
+      });
+    })
+  };
+
 })
