@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/f6Jn-LJ1txvljv2VjPc8C4oydJ8\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/NfDGeag6UwRttgqog_nVkeRTO-4\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -82,11 +82,26 @@
     },
     "status": {
      "type": "string"
+    },
+    "userId": {
+     "type": "string"
     }
    }
   },
   "DeauthenticateEntity": {
    "id": "DeauthenticateEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "FavouriteOfferEntity": {
+   "id": "FavouriteOfferEntity",
    "type": "object",
    "properties": {
     "message": {
@@ -113,12 +128,18 @@
    "id": "OfferEntity",
    "type": "object",
    "properties": {
-    "foodStyle": {
-     "type": "string"
-    },
-    "id": {
+    "clientId": {
      "type": "string",
      "format": "int64"
+    },
+    "clientName": {
+     "type": "string"
+    },
+    "clientPhoto": {
+     "type": "string"
+    },
+    "foodStyle": {
+     "type": "string"
     },
     "latitude": {
      "type": "number",
@@ -128,25 +149,15 @@
      "type": "number",
      "format": "double"
     },
-    "loyaltyPoints": {
-     "type": "integer",
-     "format": "int32"
-    },
     "message": {
      "type": "string"
     },
-    "name": {
-     "type": "string"
+    "offerId": {
+     "type": "string",
+     "format": "int64"
     },
-    "offer": {
+    "offerText": {
      "type": "string"
-    },
-    "photo": {
-     "type": "string"
-    },
-    "rating": {
-     "type": "number",
-     "format": "double"
     },
     "status": {
      "type": "string"
@@ -157,6 +168,9 @@
    "id": "OfferListEntity",
    "type": "object",
    "properties": {
+    "foundOffers": {
+     "type": "boolean"
+    },
     "message": {
      "type": "string"
     },
@@ -199,6 +213,25 @@
     }
    }
   },
+  "SearchUserEntity": {
+   "id": "SearchUserEntity",
+   "type": "object",
+   "properties": {
+    "isUser": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "format": "int32"
+     }
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "SetUserDetailsEntity": {
    "id": "SetUserDetailsEntity",
    "type": "object",
@@ -228,6 +261,10 @@
     "lastName": {
      "type": "string"
     },
+    "loyaltyPoints": {
+     "type": "string",
+     "format": "int64"
+    },
     "message": {
      "type": "string"
     },
@@ -238,8 +275,22 @@
      "type": "string"
     },
     "userId": {
-     "type": "string",
-     "format": "int64"
+     "type": "string"
+    },
+    "userImage": {
+     "type": "string"
+    }
+   }
+  },
+  "UserImageEntity": {
+   "id": "UserImageEntity",
+   "type": "object",
+   "properties": {
+    "imageString": {
+     "type": "string"
+    },
+    "imageUrl": {
+     "type": "string"
     }
    }
   }
@@ -254,7 +305,7 @@
      "type": "string",
      "location": "query"
     },
-    "mobileNo": {
+    "mobNo": {
      "type": "string",
      "location": "query"
     },
@@ -295,6 +346,34 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "favouriteOffer": {
+   "id": "userEndpointApi.favouriteOffer",
+   "path": "favouriteOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "offerId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "FavouriteOfferEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "feedback": {
    "id": "userEndpointApi.feedback",
    "path": "feedback",
@@ -308,6 +387,17 @@
     },
     "comment": {
      "type": "string",
+     "location": "query"
+    },
+    "isAccepted": {
+     "type": "boolean",
+     "required": true,
+     "location": "query"
+    },
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
      "location": "query"
     },
     "rating": {
@@ -324,6 +414,8 @@
    },
    "parameterOrder": [
     "clientId",
+    "isAccepted",
+    "offerId",
     "rating",
     "userId"
    ],
@@ -350,17 +442,11 @@
      "required": true,
      "format": "double",
      "location": "query"
-    },
-    "userId": {
-     "type": "string",
-     "required": true,
-     "location": "query"
     }
    },
    "parameterOrder": [
     "latitude",
-    "longitude",
-    "userId"
+    "longitude"
    ],
    "response": {
     "$ref": "OfferListEntity"
@@ -405,9 +491,12 @@
      "format": "int32",
      "location": "query"
     },
+    "otherMobNo": {
+     "type": "string",
+     "location": "query"
+    },
     "otherUserId": {
      "type": "string",
-     "required": true,
      "location": "query"
     },
     "userId": {
@@ -418,7 +507,6 @@
    },
    "parameterOrder": [
     "clientId",
-    "otherUserId",
     "userId"
    ],
    "response": {
@@ -433,10 +521,6 @@
    "path": "registerUser",
    "httpMethod": "POST",
    "parameters": {
-    "dateOfBirth": {
-     "type": "string",
-     "location": "query"
-    },
     "email": {
      "type": "string",
      "location": "query"
@@ -469,6 +553,77 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "removeFavouriteOffer": {
+   "id": "userEndpointApi.removeFavouriteOffer",
+   "path": "removeFavouriteOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "offerId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "FavouriteOfferEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "searchClients": {
+   "id": "userEndpointApi.searchClients",
+   "path": "searchClients",
+   "httpMethod": "GET",
+   "parameters": {
+    "searchString": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "searchString"
+   ],
+   "response": {
+    "$ref": "OfferListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "searchUsers": {
+   "id": "userEndpointApi.searchUsers",
+   "path": "searchUsers",
+   "httpMethod": "POST",
+   "parameters": {
+    "details": {
+     "type": "string",
+     "required": true,
+     "repeated": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "details"
+   ],
+   "response": {
+    "$ref": "SearchUserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "setUserDetails": {
    "id": "userEndpointApi.setUserDetails",
    "path": "setUserDetails",
@@ -476,7 +631,6 @@
    "parameters": {
     "dateOfBirth": {
      "type": "string",
-     "format": "date-time",
      "location": "query"
     },
     "email": {
@@ -497,7 +651,6 @@
     },
     "password": {
      "type": "string",
-     "required": true,
      "location": "query"
     },
     "userId": {
@@ -507,9 +660,12 @@
     }
    },
    "parameterOrder": [
-    "password",
     "userId"
    ],
+   "request": {
+    "$ref": "UserImageEntity",
+    "parameterName": "resource"
+   },
    "response": {
     "$ref": "SetUserDetailsEntity"
    },

@@ -10,6 +10,7 @@ import com.googlecode.objectify.annotation.Id;
 public class FeedbackEntity {
     @Id
     String status;
+    String message;
 
     public String getStatus() {
         return status;
@@ -26,6 +27,4 @@ public class FeedbackEntity {
     public void setMessage(String message) {
         this.message = message;
     }
-
-    String message;
 }

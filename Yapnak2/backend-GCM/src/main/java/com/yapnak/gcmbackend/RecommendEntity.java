@@ -9,6 +9,11 @@ import com.googlecode.objectify.annotation.Id;
 @Entity
 public class RecommendEntity {
 
+    @Id
+    String status;
+    String message;
+    long result;
+
     public String getStatus() {
         return status;
     }
@@ -25,10 +30,6 @@ public class RecommendEntity {
         this.message = message;
     }
 
-    @Id
-    String status;
-    String message;
-
     public long getResult() {
         return result;
     }
@@ -36,6 +37,4 @@ public class RecommendEntity {
     public void setResult(long result) {
         this.result = result;
     }
-
-    long result;
 }

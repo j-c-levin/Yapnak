@@ -7,24 +7,55 @@ import com.googlecode.objectify.annotation.Id;
  */
 public class OfferEntity {
     @Id
+    long offerId;
+    long clientId;
     String status;
     String message;
-    long id;
     double latitude;
     double longitude;
     String foodStyle;
-    String name;
-    String offer;
-    String photo;
-    double rating;
-    int loyaltyPoints;
+    String clientName;
+    String offerText;
+    String clientPhoto;
 
-    public long getId() {
-        return id;
+    public String getOfferText() {
+        return offerText;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setOfferText(String offerText) {
+        this.offerText = offerText;
+    }
+
+    public long getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(long offerId) {
+        this.offerId = offerId;
+    }
+
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public String getClientPhoto() {
+        return clientPhoto;
+    }
+
+    public void setClientPhoto(String clientPhoto) {
+        this.clientPhoto = clientPhoto;
     }
 
     public double getLatitude() {
@@ -49,46 +80,6 @@ public class OfferEntity {
 
     public void setFoodStyle(String foodStyle) {
         this.foodStyle = foodStyle;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getOffer() {
-        return offer;
-    }
-
-    public void setOffer(String offer) {
-        this.offer = offer;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-    public int getLoyaltyPoints() {
-        return loyaltyPoints;
-    }
-
-    public void setLoyaltyPoints(int loyaltyPoints) {
-        this.loyaltyPoints = loyaltyPoints;
     }
 
     public String getStatus() {

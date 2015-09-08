@@ -551,11 +551,9 @@ public class SQLEntityEndpoint {
                     String userID = "";
                     userID = email.substring(0, 4) + randInt();
                     user.setUserID(userID);
-                    //Generate password
-                    String newPassword = hashPassword(email);
                     stmt.setString(1, userID);
                     stmt.setString(2, email);
-                    stmt.setString(3, newPassword);
+                    stmt.setString(3, hashPassword(password));
                     success = stmt.executeUpdate();
                     if (success == -1) {
                         logger.warning("Inserting user failed");

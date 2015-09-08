@@ -13,6 +13,16 @@ public class OfferListEntity {
     @Id
     String status;
     String message;
+    boolean foundOffers;
+    List<OfferEntity> offerList;
+
+    public boolean isFoundOffers() {
+        return foundOffers;
+    }
+
+    public void setFoundOffers(boolean foundOffers) {
+        this.foundOffers = foundOffers;
+    }
 
     public List<OfferEntity> getOfferList() {
         return offerList;
@@ -21,8 +31,6 @@ public class OfferListEntity {
     public void setOfferList(List<OfferEntity> offerList) {
         this.offerList = offerList;
     }
-
-    List<OfferEntity> offerList;
 
     public String getStatus() {
         return status;
