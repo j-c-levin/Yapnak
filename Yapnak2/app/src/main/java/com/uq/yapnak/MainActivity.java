@@ -968,8 +968,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         }
 
+    }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = tutorial.edit();
+
+        edit.putInt("tutorial3",4);
+        edit.putInt("count", 1);
+        edit.apply();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = tutorial.edit();
+        edit.putInt("tutorial3",4);
+        edit.putInt("count",1);
+        edit.apply();
     }
 
     //private ListView list;
@@ -1614,11 +1635,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 int count = tutorial.getInt("count", -1);
                 int tutorial2 = tutorial.getInt("tutorial2",-1);
-                int tutorial3 = tutorial.getInt("tutorial3",-1);
+                int tutorial3 = tutorial.getInt("tutorial3", -1);
 
                 SharedPreferences.Editor editor = tutorial.edit();
                 editor.putInt("count", count);
-                editor.putInt("tutorial2",tutorial2);
+                editor.putInt("tutorial2", tutorial2);
                 editor.putInt("tutorial3",tutorial3).apply();
             }
             return true;
@@ -2276,7 +2297,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private int initialHeight;
-    public void extend(boolean tutorial){
+    public void extend(){
 
         extendIcon.setVisibility(View.VISIBLE);
         extendText.setVisibility(View.VISIBLE);
@@ -2286,21 +2307,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         extendHeight.measure(widthSpec,heightSpec);
         initialHeight=extendHeight.getHeight();
 
-        if(!tutorial) {
+
             ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(), (extendHeight.getMeasuredHeight() - 5));
             valueAnimator.start();
-        }else{
-            //Do EXTRA ANIMATION FOR TUTORIAL ITEMS
-            ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(), (extendHeight.getMeasuredHeight() - 5));
-            valueAnimator.start();
-        }
+
 
 
     }
-    public void collapse(boolean tutorial){
+    public void collapse(){
         int finalHeight = extendHeight.getHeight();
         ValueAnimator animator = slideAnimator(finalHeight,initialHeight);
-        if(!tutorial) {
+
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -2331,38 +2348,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 }
             });
-        }else{
-            animator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
 
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-
-                    extendIcon.setVisibility(View.GONE);
-                    extendText.setVisibility(View.GONE);
-
-                /*
-                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
-                extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
-                */
-
-
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            });
-        }
         animator.start();
     }
 
@@ -2472,7 +2458,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
 
 
-                extend(tutorial);
+                extend();
             } else {
                 //SHOW SECOND TUTORIAL
                 //Animate tutorial2 which replaces the first tutorial
@@ -2499,13 +2485,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     tutorial2.animate().setListener(animation).start();
 
                 }
-                collapse(tutorial);
+                collapse();
             }
         }else{
             if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
-                extend(tutorial);
+                extend();
             } else {
-                collapse(tutorial);
+                collapse();
             }
         }
 

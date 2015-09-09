@@ -198,6 +198,11 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     }
 
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishActivity(111);
+    }
 
     protected void getLatLong(String address, boolean setDest){
         String uri = "https://maps.google.com/maps/api/geocode/json?address=" +
