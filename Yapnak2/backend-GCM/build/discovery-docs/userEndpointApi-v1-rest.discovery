@@ -1,0 +1,688 @@
+{
+ "kind": "discovery#restDescription",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/CKc0tyoyWBGo4XAAZGn3YAbgy_Y\"",
+ "discoveryVersion": "v1",
+ "id": "userEndpointApi:v1",
+ "name": "userEndpointApi",
+ "version": "v1",
+ "description": "This is an API",
+ "ownerDomain": "gcmbackend.yapnak.com",
+ "ownerName": "gcmbackend.yapnak.com",
+ "icons": {
+  "x16": "http://www.google.com/images/icons/product/search-16.gif",
+  "x32": "http://www.google.com/images/icons/product/search-32.gif"
+ },
+ "protocol": "rest",
+ "baseUrl": "https://yapnak-app.appspot.com/_ah/api/userEndpointApi/v1/",
+ "basePath": "/_ah/api/userEndpointApi/v1/",
+ "rootUrl": "https://yapnak-app.appspot.com/_ah/api/",
+ "servicePath": "userEndpointApi/v1/",
+ "batchPath": "batch",
+ "parameters": {
+  "alt": {
+   "type": "string",
+   "description": "Data format for the response.",
+   "default": "json",
+   "enum": [
+    "json"
+   ],
+   "enumDescriptions": [
+    "Responses with Content-Type of application/json"
+   ],
+   "location": "query"
+  },
+  "fields": {
+   "type": "string",
+   "description": "Selector specifying which fields to include in a partial response.",
+   "location": "query"
+  },
+  "key": {
+   "type": "string",
+   "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+   "location": "query"
+  },
+  "oauth_token": {
+   "type": "string",
+   "description": "OAuth 2.0 token for the current user.",
+   "location": "query"
+  },
+  "prettyPrint": {
+   "type": "boolean",
+   "description": "Returns response with indentations and line breaks.",
+   "default": "true",
+   "location": "query"
+  },
+  "quotaUser": {
+   "type": "string",
+   "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters. Overrides userIp if both are provided.",
+   "location": "query"
+  },
+  "userIp": {
+   "type": "string",
+   "description": "IP address of the site where the request originates. Use this if you want to enforce per-user limits.",
+   "location": "query"
+  }
+ },
+ "auth": {
+  "oauth2": {
+   "scopes": {
+    "https://www.googleapis.com/auth/userinfo.email": {
+     "description": "View your email address"
+    }
+   }
+  }
+ },
+ "schemas": {
+  "AuthenticateEntity": {
+   "id": "AuthenticateEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    },
+    "userId": {
+     "type": "string"
+    }
+   }
+  },
+  "DeauthenticateEntity": {
+   "id": "DeauthenticateEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "FavouriteOfferEntity": {
+   "id": "FavouriteOfferEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "FeedbackEntity": {
+   "id": "FeedbackEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "OfferEntity": {
+   "id": "OfferEntity",
+   "type": "object",
+   "properties": {
+    "clientId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "clientName": {
+     "type": "string"
+    },
+    "clientPhoto": {
+     "type": "string"
+    },
+    "foodStyle": {
+     "type": "string"
+    },
+    "latitude": {
+     "type": "number",
+     "format": "double"
+    },
+    "longitude": {
+     "type": "number",
+     "format": "double"
+    },
+    "message": {
+     "type": "string"
+    },
+    "offerId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "offerText": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "OfferListEntity": {
+   "id": "OfferListEntity",
+   "type": "object",
+   "properties": {
+    "foundOffers": {
+     "type": "boolean"
+    },
+    "message": {
+     "type": "string"
+    },
+    "offerList": {
+     "type": "array",
+     "items": {
+      "$ref": "OfferEntity"
+     }
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "RecommendEntity": {
+   "id": "RecommendEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "result": {
+     "type": "string",
+     "format": "int64"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "RegisterUserEntity": {
+   "id": "RegisterUserEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "SearchUserEntity": {
+   "id": "SearchUserEntity",
+   "type": "object",
+   "properties": {
+    "isUser": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "format": "int32"
+     }
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "SetUserDetailsEntity": {
+   "id": "SetUserDetailsEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "UserDetailsEntity": {
+   "id": "UserDetailsEntity",
+   "type": "object",
+   "properties": {
+    "dateOfBirth": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "email": {
+     "type": "string"
+    },
+    "firstName": {
+     "type": "string"
+    },
+    "lastName": {
+     "type": "string"
+    },
+    "loyaltyPoints": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "mobNo": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    },
+    "userId": {
+     "type": "string"
+    },
+    "userImage": {
+     "type": "string"
+    }
+   }
+  },
+  "UserImageEntity": {
+   "id": "UserImageEntity",
+   "type": "object",
+   "properties": {
+    "imageString": {
+     "type": "string"
+    },
+    "imageUrl": {
+     "type": "string"
+    }
+   }
+  }
+ },
+ "methods": {
+  "authenticateUser": {
+   "id": "userEndpointApi.authenticateUser",
+   "path": "authenticateUser",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "location": "query"
+    },
+    "mobNo": {
+     "type": "string",
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "password"
+   ],
+   "response": {
+    "$ref": "AuthenticateEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "deauthenticateUser": {
+   "id": "userEndpointApi.deauthenticateUser",
+   "path": "deauthenticateUser",
+   "httpMethod": "GET",
+   "parameters": {
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "userId"
+   ],
+   "response": {
+    "$ref": "DeauthenticateEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "favouriteOffer": {
+   "id": "userEndpointApi.favouriteOffer",
+   "path": "favouriteOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "offerId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "FavouriteOfferEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "feedback": {
+   "id": "userEndpointApi.feedback",
+   "path": "feedback",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "comment": {
+     "type": "string",
+     "location": "query"
+    },
+    "isAccepted": {
+     "type": "boolean",
+     "required": true,
+     "location": "query"
+    },
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "rating": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "isAccepted",
+    "offerId",
+    "rating",
+    "userId"
+   ],
+   "response": {
+    "$ref": "FeedbackEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getClients": {
+   "id": "userEndpointApi.getClients",
+   "path": "getClients",
+   "httpMethod": "GET",
+   "parameters": {
+    "latitude": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    },
+    "longitude": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "latitude",
+    "longitude"
+   ],
+   "response": {
+    "$ref": "OfferListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getUserDetails": {
+   "id": "userEndpointApi.getUserDetails",
+   "path": "getUserDetails",
+   "httpMethod": "GET",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "location": "query"
+    },
+    "mobNo": {
+     "type": "string",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "location": "query"
+    }
+   },
+   "response": {
+    "$ref": "UserDetailsEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "recommend": {
+   "id": "userEndpointApi.recommend",
+   "path": "recommend",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "otherMobNo": {
+     "type": "string",
+     "location": "query"
+    },
+    "otherUserId": {
+     "type": "string",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "RecommendEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "registerUser": {
+   "id": "userEndpointApi.registerUser",
+   "path": "registerUser",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "location": "query"
+    },
+    "firstName": {
+     "type": "string",
+     "location": "query"
+    },
+    "lastName": {
+     "type": "string",
+     "location": "query"
+    },
+    "mobNo": {
+     "type": "string",
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "password"
+   ],
+   "response": {
+    "$ref": "RegisterUserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "removeFavouriteOffer": {
+   "id": "userEndpointApi.removeFavouriteOffer",
+   "path": "removeFavouriteOffer",
+   "httpMethod": "POST",
+   "parameters": {
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "offerId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "FavouriteOfferEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "searchClients": {
+   "id": "userEndpointApi.searchClients",
+   "path": "searchClients",
+   "httpMethod": "GET",
+   "parameters": {
+    "searchString": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "searchString"
+   ],
+   "response": {
+    "$ref": "OfferListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "searchUsers": {
+   "id": "userEndpointApi.searchUsers",
+   "path": "searchUsers",
+   "httpMethod": "POST",
+   "parameters": {
+    "details": {
+     "type": "string",
+     "required": true,
+     "repeated": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "details"
+   ],
+   "response": {
+    "$ref": "SearchUserEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "setUserDetails": {
+   "id": "userEndpointApi.setUserDetails",
+   "path": "setUserDetails",
+   "httpMethod": "POST",
+   "parameters": {
+    "dateOfBirth": {
+     "type": "string",
+     "location": "query"
+    },
+    "email": {
+     "type": "string",
+     "location": "query"
+    },
+    "firstName": {
+     "type": "string",
+     "location": "query"
+    },
+    "lastName": {
+     "type": "string",
+     "location": "query"
+    },
+    "mobNo": {
+     "type": "string",
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "userId"
+   ],
+   "request": {
+    "$ref": "UserImageEntity",
+    "parameterName": "resource"
+   },
+   "response": {
+    "$ref": "SetUserDetailsEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "updatePhotoUrl": {
+   "id": "userEndpointApi.updatePhotoUrl",
+   "path": "updatePhotoUrl",
+   "httpMethod": "POST",
+   "response": {
+    "$ref": "OfferEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  }
+ }
+}

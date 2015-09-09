@@ -3,6 +3,10 @@ package com.yapnak.website;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ImagesServiceFailureException;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 
 import java.io.IOException;
@@ -85,10 +89,23 @@ public class uploadPhoto2 extends HttpServlet {
                         }
                         logo = blobKeys.get(0).getKeyString();
                     }
-                    sql = "UPDATE client SET clientPhoto = ? WHERE email = ?";
+                    ImagesService services = ImagesServiceFactory.getImagesService();
+                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(logo));
+                    try {
+                        url = services.getServingUrl(serve);
+                        url = url + "=s100";
+                    } catch (IllegalArgumentException e) {
+                        url = "http://yapnak.com/images/yapnakmonster.png";
+                        e.printStackTrace();
+                    } catch (ImagesServiceFailureException e1) {
+                        url = "http://yapnak.com/images/yapnakmonster.png";
+                        e1.printStackTrace();
+                    }
+                    sql = "UPDATE client SET clientPhoto = ?, clientPhotoUrl = ? WHERE email = ?";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, logo);
-                    stmt.setString(2, (String) session.getAttribute("email"));
+                    stmt.setString(2, url);
+                    stmt.setString(3, (String) session.getAttribute("email"));
                     int success = 2;
                     success = stmt.executeUpdate();
                     if (success == 1) {

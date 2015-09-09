@@ -71,14 +71,37 @@ angular.module('app.factories', [])
   result.getInfo = function(email) {
     var req = {
       method: 'GET',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/getClientInfo?email='.concat(email)
-      //      url: 'http://localhost:8080/_ah/api/sQLEntityApi/v1/getClientInfo?email='.concat(email)
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getClientInfo?email='.concat(email)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getClientInfo?email='.concat(email)
     }
     return $http(req).then(function (response) {
       if (response.data.status == "True") {
         console.log("Got information");
         console.log(response.data);
         return response.data;
+      } else {
+        console.log("Failed");
+        console.log(response);
+        return response;
+      }
+    },function (error) {
+      console.log("failed");
+      console.log(error);
+      return error;
+    });
+  }
+
+  result.getOffers = function(clientId) {
+    var req = {
+      method: 'GET',
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
+    }
+    return $http(req).then(function (response) {
+      if (response.data.status == "True") {
+        console.log("Got offers list");
+        console.log(response.data);
+        return response.data.offerList;
       } else {
         console.log("Failed");
         console.log(response);
@@ -204,6 +227,26 @@ angular.module('app.factories', [])
     })
   };
 
+  result.replaceOffer = function(email,currentOffer,newOffer,position) {
+    var req = {
+      method: 'POST',
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/replaceActiveOffer?email='.concat(email).concat('&currentOfferId=').concat(currentOffer).concat('&newOfferId=').concat(newOffer).concat('&offerPosition=').concat(position)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/replaceActiveOffer?email='.concat(email).concat('&currentOfferId=').concat(currentOffer).concat('&newOfferId=').concat(newOffer).concat('&offerPosition=').concat(position)
+    }
+    return $http(req).then(function(response){
+      if (response.data.status == "True") {
+        console.log("successfully replaced offer");
+        console.log(response);
+      } else {
+        console.log("failed to replace offer");
+        console.log(response);
+      }
+    }, function(error) {
+      console.log("offer replacement went wrong somewhere");
+      console.log(error);
+    })
+  };
+
   result.insertOffer = function(email,offer,text) {
     var req = {
       method: 'POST',
@@ -223,5 +266,15 @@ angular.module('app.factories', [])
     })
   };
 
+  result.getLocations = function(val) {
+    return $http.get('https://maps.googleapis.com/maps/api/geocode/json', {
+      params: {
+        address: val,
+        sensor: false
+      }
+    }).then(function(response){
+      return response;
+    });
+  };
   return result;
 }])

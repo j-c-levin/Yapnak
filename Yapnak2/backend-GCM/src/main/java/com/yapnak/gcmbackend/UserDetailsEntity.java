@@ -13,12 +13,36 @@ public class UserDetailsEntity {
     @Id
     String status;
     String message;
+    String userId;
+    String email;
+    String mobNo;
+    Date dateOfBirth;
+    String firstName;
+    String lastName;
+    long loyaltyPoints;
+    String userImage;
 
-    public long getUserId() {
+    public String getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
+    }
+
+    public long getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(long loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
+    }
+
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -77,12 +101,4 @@ public class UserDetailsEntity {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    long userId;
-    String email;
-    String mobNo;
-    //String password?
-    Date dateOfBirth;
-    String firstName;
-    String lastName;
 }
