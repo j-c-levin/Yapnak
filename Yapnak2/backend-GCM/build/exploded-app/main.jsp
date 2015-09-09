@@ -34,11 +34,11 @@
 <body class="content container" ng-controller="client-controller">
   <%  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();%>
 
-  <!-- <a class="form-signin" href="redeem.html">Go to input page</a> -->
+  <a class="form-signin" href="redeem.html">Go to input page</a>
 
   <!-- TODO:Switch in production! -->
 
-     <a class="form-signin" href="/redeem">Go to input page</a>
+  <!-- <a class="form-signin" href="/redeem">Go to input page</a> -->
 
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
     <div class="form-signin center-image">
@@ -55,23 +55,24 @@
   </form>
 
   <div class="form-signin">
+
     <label
     for="exampleInputEmail1">Restaurant Name</label>
     <input type="text"
     class="form-control" name="name" ng-model="newName" id="name" placeholder="{{name}}">
   </div>
+
   <div class="form-signin">
     <label for="exampleInputPassword1">Restaurant Type</label>
     <input type="text" class="form-control" ng-model="newFoodStyle" name="type" id="type"
     placeholder="{{foodStyle}}">
   </div>
+
   <div class="form-signin">
     <label
     for="exampleInputPassword1">Address</label>
-    <!-- <input type="text"
-    class="form-control" ng-model="newLocation" name="address" id="address" placeholder="{{location}}"> -->
 
-    <input type="text" ng-model="newLocation" placeholder="{{location}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
+    <input type="text" ng-model="newLocation" placeholder="{{location}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" typeahead-min-length="5" class="form-control">
     <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
     <div ng-show="noResults">
       <i class="glyphicon glyphicon-remove"></i> No Results Found
@@ -80,44 +81,55 @@
   </div>
 
   <div class="form-signin">
+
     <label>
       <input type="checkbox" name = "show-offer"
       value="show-offer" ng-model="offer1" ng-click="showOffer()"> Offer one
     </label>
+
     <hr>
     <div collapse="!offer1">
-      <!-- <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="newOffer1text" placeholder="{{offer1text}}"></textarea> -->
-      <input type="text"
-      class="form-control" maxlength="160" ng-model="newOffer1text" name="deal" id="deal" placeholder="{{offer1text}}">
+
+      <select class="form-control" ng-model="offer1text" ng-options="offer.offerText for offer in offers1"></select>
+
+      <input ng-show="offer1text.offerId == 0" type="text"
+      class="form-control" maxlength="160" ng-model="newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
+
     </div>
   </div>
 
   <div class="form-signin">
+
     <label>
       <input type="checkbox" name = "show-offer"
       value="show-offer" ng-model="offer2" ng-click="showOffer()"> Offer two
     </label>
+
     <hr>
     <div collapse="!offer2">
-      <!-- <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="newOffer2text" placeholder="{{offer2text}}"></textarea> -->
-      <input type="text"
-      class="form-control" maxlength="160" ng-model="newOffer2text" name="deal" id="deal" placeholder="{{offer2text}}">
+
+      <select class="form-control" ng-model="offer2text" ng-options="offer.offerText for offer in offers2"></select>
+
+      <input ng-show="offer2text.offerId == 0" type="text"
+      class="form-control" maxlength="160" ng-model="newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
     </div>
   </div>
 
   <div class="form-signin">
+
     <label>
       <input type="checkbox" name = "show-offer"
       value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
     </label>
+
     <hr>
     <div collapse="!offer3">
-      <!-- <textarea maxlength="250" class="form-control well well-lg" name="deal" id = "deal"
-      rows="3" ng-model="newOffer3text" placeholder="{{offer3text}}"></textarea> -->
-      <input type="text"
-      class="form-control" maxlength="160" ng-model="newOffer3text" name="deal" id="deal" placeholder="{{offer3text}}">
+
+      <select class="form-control" ng-model="offer3text" ng-options="offer.offerText for offer in offers3"></select>
+
+      <input ng-show="offer3text.offerId == 0" type="text"
+      class="form-control" maxlength="160" ng-model="newOffer3text" name="deal" id="deal" placeholder="Type a new offer in here">
+
     </div>
   </div>
 

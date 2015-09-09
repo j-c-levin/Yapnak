@@ -24,6 +24,33 @@ public class ClientEntity {
     int showOffer3;
     String status;
     String message;
+    int offer1Id;
+    int offer2Id;
+    int offer3Id;
+
+    public int getOffer2Id() {
+        return offer2Id;
+    }
+
+    public void setOffer2Id(int offer2Id) {
+        this.offer2Id = offer2Id;
+    }
+
+    public int getOffer1Id() {
+        return offer1Id;
+    }
+
+    public void setOffer1Id(int offer1Id) {
+        this.offer1Id = offer1Id;
+    }
+
+    public int getOffer3Id() {
+        return offer3Id;
+    }
+
+    public void setOffer3Id(int offer3Id) {
+        this.offer3Id = offer3Id;
+    }
 
     public String getMessage() {
         return message;

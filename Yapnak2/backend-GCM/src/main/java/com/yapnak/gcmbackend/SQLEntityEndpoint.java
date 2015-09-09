@@ -1046,7 +1046,6 @@ public class SQLEntityEndpoint {
         } finally {
             return client;
         }
-
     }
 
     @ApiMethod(

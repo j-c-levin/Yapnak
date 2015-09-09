@@ -93,7 +93,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
             <param-name>services</param-name>
             <param-value>com.yapnak.gcmbackend.RegistrationEndpoint,
                 com.yapnak.gcmbackend.MessagingEndpoint,
-                com.yapnak.gcmbackend.SQLEntityEndpoint, com.yapnak.gcmbackend.UserEndpoint</param-value>
+                com.yapnak.gcmbackend.SQLEntityEndpoint, com.yapnak.gcmbackend.UserEndpoint,
+                com.yapnak.gcmbackend.ClientEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
