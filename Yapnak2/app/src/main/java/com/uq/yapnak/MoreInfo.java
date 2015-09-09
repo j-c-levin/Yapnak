@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,11 +34,30 @@ public class MoreInfo extends ActionBarActivity {
 
     private void result(){
 
-        Intent i = new Intent();
-        i.putExtra("accName", name);
-        i.putExtra("success","Swipe Left");
-        i.putExtra("swipeleft", R.drawable.swipeleft);
-        setResult(1, i);
+
+        getInfo = getIntent();
+        try {
+           int value =  getInfo.getIntExtra("fragment",-1);
+            Log.d("fragment",String.valueOf(value));
+            if(value ==1){
+                Intent i = new Intent();
+                //i.putExtra("accName", name);
+                i.putExtra("success","Swipe Left");
+                //i.putExtra("swipeleft", R.drawable.swipeleft);
+                setResult(1001, i);
+
+            }else{
+                Intent i = new Intent();
+                //i.putExtra("accName", name);
+                i.putExtra("success","Swipe Left");
+                //i.putExtra("swipeleft", R.drawable.swipeleft);
+                setResult(1, i);
+
+            }
+        }catch (NullPointerException e){
+              e.printStackTrace();
+        }
+
     }
 
     private void setTitleClickable(){
@@ -77,11 +97,11 @@ public class MoreInfo extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem item = menu.findItem(R.id.userNameToolBar);
+        //MenuItem item = menu.findItem(R.id.userNameToolBar);
 
         try {
 
-            getInfo = getIntent();
+           /* getInfo = getIntent();
             name = getInfo.getStringExtra("accName");
 
 
@@ -89,11 +109,11 @@ public class MoreInfo extends ActionBarActivity {
 
             this.name = splitter[0];
 
-            item.setTitle(splitter[0]);
+            item.setTitle(splitter[0]);*/
 
         }catch(NullPointerException e){
 
-            item.setTitle("User");
+           // item.setTitle("User");
         }
 
         return true;

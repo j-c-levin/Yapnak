@@ -1,16 +1,27 @@
 package com.frontend.yapnak;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.uq.yapnak.R;
@@ -31,10 +42,12 @@ import java.net.URL;
  * Created by vahizan on 16/04/2015.
  */
 
-public class AdapterPrev extends ArrayAdapter<ItemPrev> {
+public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
     private View view;
     private ItemPrev deal;
+    private ImageView tutorial1;
+    private SharedPreferences tutorial;
 
     private final String FILE_NAME = "yapnak_details";
 
@@ -82,6 +95,41 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> {
             points.setText(deal.getPoints());
             hotDeal.setImageResource(deal.getHotDeal());
             restaurantLogo.setImageResource(deal.getLogo());
+
+             if(deal.isTutorial()){
+                 tutorial = deal.getPreferences();
+                 RelativeLayout extendHeight = (RelativeLayout) view.findViewById(R.id.extendHeight);
+                 RelativeLayout extendIcon = (RelativeLayout) view.findViewById(R.id.extendIconLayout);
+                 RelativeLayout extendText = (RelativeLayout) view.findViewById(R.id.extendTextLayout);
+                 tutorial1 = (ImageView) view.findViewById(R.id.tutorial1);
+
+                 if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
+                     int value = tutorial.getInt("count",-1);
+                     Log.d("extendValue",String.valueOf(value));
+                     if(value==0){
+                         Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
+                             @Override
+                             public void onAnimationStart(Animator animation) {
+                                 tutorial1.setAlpha(0.0f);
+                                 tutorial1.setVisibility(View.VISIBLE);
+
+                             }
+
+                             @Override
+                             public void onAnimationEnd(Animator animation) {
+                                // super.onAnimationEnd(animation);
+
+                                 ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial1,"alpha",0.0f,1.0f);
+                                 alpha.setDuration(200).start();
+                             }
+                         };
+                         tutorial1.animate().setListener(animation).start();
+
+                     }
+
+                 }
+
+             }
 
             //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
              /*Ion.with(restaurantLogo)

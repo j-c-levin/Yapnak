@@ -33,9 +33,8 @@ public class RecommendDialog extends AlertDialog  {
     private Activity activity;
     private int LAYOUT_ID;
     private String clientID,userID;
-
     private Button contactListButton,pos,neg;
-    private EditText enterId;
+
 
 
 
@@ -48,13 +47,13 @@ public class RecommendDialog extends AlertDialog  {
 
         View v = inflater.inflate(R.layout.recommend_dialog,null);
 
-        enterId = (EditText) v.findViewById(R.id.editTextID);
+        //enterId = (EditText) v.findViewById(R.id.editTextID);
         contactListButton = (Button) v.findViewById(R.id.ChooseYapnakContact);
         pos = (Button) v.findViewById(R.id.ok);
         neg = (Button) v.findViewById(R.id.cancel);
 
         setContactListButton(contactListButton);
-        setEditID(enterId);
+        //setEditID(enterId);
 
         setLayoutId(R.id.recommendLayout);
 
@@ -147,13 +146,6 @@ public class RecommendDialog extends AlertDialog  {
 
     public void setLayoutId(int layoutId) {
         LAYOUT_ID = layoutId;
-    }
-
-    public EditText getEditID(){
-        return this.enterId;
-    }
-    private void setEditID(EditText text){
-        this.enterId = text;
     }
 
     public Button getContactListButton(){

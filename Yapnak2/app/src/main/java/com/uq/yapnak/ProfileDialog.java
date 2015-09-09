@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,15 +17,12 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.frontend.yapnak.subview.MyDatePickerDialog;
-import com.frontend.yapnak.subview.RedEditText;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
-import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 
 import java.io.IOException;
@@ -42,9 +38,12 @@ public class ProfileDialog extends AlertDialog {
     private Context context;
     private  Button button,submit,cancel;
     private Color color;
-    private EditText name,phone,email;
+    private EditText name,phone,email,password;
     private AlertDialog d;
     private String ID;
+    private Button gender;
+    private GenderDialog genderDialog;
+
 
 
     public ProfileDialog(Context context,Activity activity,String ID) {
@@ -66,9 +65,18 @@ public class ProfileDialog extends AlertDialog {
         phone = (EditText) v.findViewById(R.id.phoneNumberEditText);
         name = (EditText) v.findViewById(R.id.nameEdit);
         email = (EditText)v.findViewById(R.id.emailEdit);
+        password = (EditText)v.findViewById(R.id.passwordEdit);
+        gender = (Button) v.findViewById(R.id.genderGroupButtons);
 
 
-
+        genderDialog = new GenderDialog(context,activity);
+        gender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                genderDialog.setMainButton(gender);
+                genderDialog.show();
+            }
+        });
 
         TextView title = new TextView(this.getContext());
         title.setText("Profile");
@@ -83,9 +91,6 @@ public class ProfileDialog extends AlertDialog {
         cancelProfile();
 
         chooseDate(v);
-
-
-
 
     }
 
@@ -108,6 +113,7 @@ public class ProfileDialog extends AlertDialog {
             }
         });
     }
+
 
     private class SubmitDetails extends AsyncTask<String,Integer,Void>{
 

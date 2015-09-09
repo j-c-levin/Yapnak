@@ -16,23 +16,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:id = "@+id/relLayout"
-
-    >
-
-
-   <!-- <view
+    android:id = "@+id/relLayout">
+   <!--<view
         class="android.support.v7.widget.RecyclerView"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-
-        android:background="#BDBDBD"/>
-   -->
+        android:background="#BDBDBD"/>-->
 
     <ListView
             android:id="@+id/listViewPromotions"
@@ -52,16 +45,16 @@
         >
 
         <ListView
-        android:id="@+id/listviewMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/listViewPromotions"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="#EEEEEE"
-        android:divider="#00000000"
+            android:id="@+id/listviewMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/listViewPromotions"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="#EEEEEE"
+            android:divider="#00000000"
 
-    />
+        />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -71,6 +64,14 @@
 
 
 </RelativeLayout>
+
+    <FrameLayout
+        android:visibility="visible"
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
 
 

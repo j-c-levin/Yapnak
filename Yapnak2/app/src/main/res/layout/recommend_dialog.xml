@@ -10,12 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Enter Your Friends' Yapnak ID"
+        android:text="Select Your Friends' Yapnak ID"
         android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:id="@+id/enterYapnakID" />
 
-    <com.frontend.yapnak.subview.RedEditText
+    <!--<com.frontend.yapnak.subview.RedEditText
         android:layout_height="40dp"
         android:layout_width="match_parent"
         android:layout_marginLeft="20dp"
@@ -26,55 +27,56 @@
         android:hint="EG:NS-6438"
         android:layout_margin="20dp"
         android:id="@+id/editTextID"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal" />-->
 
-    <TextView
+    <!--<TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"
-
         android:text="OR"
         android:ems="10"
-
         android:id="@+id/editText"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal" />-->
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Phonebook"
+        android:text="Contacts"
+        android:layout_marginTop="10dp"
         android:background="@android:color/transparent"
         android:id="@+id/ChooseYapnakContact"
         android:layout_gravity="center_horizontal" />
 
     <LinearLayout
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="50dp"
+        android:id="@+id/buttons"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="right">
-
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/cancel"
-            android:text="CANCEL"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="CLOSE"
+            android:layout_marginLeft="10dp"
             android:background="@android:color/transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            />
+            android:layout_marginRight="20dp"
+            android:textColor="#ff535357" />
 
         <Button
             android:id="@+id/ok"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="OK"
             android:background="@android:color/transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-        />
-
-
-
-
+            android:textColor="#ff535357" />
     </LinearLayout>
+
 </LinearLayout>

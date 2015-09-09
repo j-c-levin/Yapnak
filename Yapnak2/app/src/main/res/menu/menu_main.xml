@@ -29,11 +29,11 @@
      />
      -->
 
-    <item
+    <!--<item
         android:id="@+id/userNameToolBar"
         android:title="@string/na"
         app:showAsAction="ifRoom"
-    />
+    />-->
 
 
 

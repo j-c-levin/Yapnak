@@ -35,7 +35,21 @@
             android:id="@+id/imageButton" />
 
         <com.frontend.yapnak.subview.MyEditText
-            android:id="@+id/initialsEdit"
+            android:id="@+id/phoneNumberEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:alpha="0.4"
+            android:textColor="#000"
+            android:textColorHint="#000"
+            android:hint="Phone Number"
+            android:inputType="phone"
+            android:layout_alignParentLeft="true" />
+
+        <com.frontend.yapnak.subview.MyEditText
+            android:id="@+id/emailEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="220dp"
@@ -44,44 +58,43 @@
             android:alpha="0.4"
             android:textColor="#000"
             android:textColorHint="#000"
-            android:hint="E-Mail"
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
             android:layout_alignParentLeft="true" />
 
         <com.frontend.yapnak.subview.MyEditText
             android:textColor="#000"
             android:textColorHint="#000"
-            android:id="@+id/phoneNumberEdit"
+            android:id="@+id/passwordEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/initialsEdit"
-            android:layout_marginTop="20dp"
+            android:layout_below="@id/phoneNumberEdit"
+            android:layout_marginTop="80dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
-            android:hint="Password"
-            android:inputType="textPassword"
+            android:hint="Password "
+            android:inputType="textPassword" />
 
-             />
-
-        <com.frontend.yapnak.subview.MyEditText
+       <!-- <com.frontend.yapnak.subview.MyEditText
             android:textColor="#000"
             android:textColorHint="#000"
             android:id="@+id/promoBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneNumberEdit"
+            android:layout_below="@id/emailEdit"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:hint="Promo Code  (Optional)"
-            />
+            /-->
 
         <TextView
             android:id="@+id/loginText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneNumberEdit"
+            android:layout_below="@id/emailEdit"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="100dp"
             android:layout_marginLeft="20dp"
@@ -93,7 +106,7 @@
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneNumberEdit"
+            android:layout_below="@id/emailEdit"
             android:layout_marginTop="85dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -101,13 +114,13 @@
 
 
 
-        <com.google.android.gms.common.SignInButton
+        <!--<com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageButton"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"/>-->
 
         <LinearLayout
             android:orientation="vertical"
@@ -117,7 +130,7 @@
             android:layout_alignParentRight="true">
 
 
-            <ImageView
+            <!--<ImageView
                 android:id="@+id/arrowDownUser"
                 android:layout_width="70dp"
                 android:layout_height="50dp"
@@ -135,6 +148,7 @@
                 android:layout_marginRight="5dp"
                 android:textColor="#FFF"
                 android:background="#FF8A80"/>
+                -->
 
 
 

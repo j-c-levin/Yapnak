@@ -245,6 +245,87 @@
 
   <!--Once Stage Success DO THIS-->
 
+
+
+    <!--ONCE STAGE SUCCESS DO THE ABOVE-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/toggleTutorial"
+        android:layout_below="@id/extendHeight">
+
+
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:id="@+id/confirm"
+            android:visibility="invisible"
+            android:src="@drawable/swipeconfirm"
+            android:layout_centerHorizontal="true"/>
+
+
+
+        <ImageView
+            android:layout_width="39dp"
+            android:layout_height="40dp"
+            android:src="@drawable/linepoint_small"
+            android:id="@+id/lineImg"
+            android:layout_marginLeft="33dp"
+
+            android:layout_alignLeft="@+id/confirm"
+            android:layout_marginBottom="10dp" />
+
+        <ImageView
+            android:layout_width="39dp"
+            android:layout_height="40dp"
+            android:src="@drawable/linepoint_small"
+            android:id="@+id/lineImg2"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <ImageView
+            android:layout_width="39dp"
+            android:layout_height="40dp"
+            android:src="@drawable/linepoint_small"
+            android:id="@+id/lineImg3"
+            android:layout_gravity="center_horizontal"
+            android:layout_toRightOf="@+id/lineImg2"
+            android:layout_marginLeft="51dp" />
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Click to recommend this deal to a friend"
+            android:id="@+id/textRecommend"
+            android:layout_below="@+id/lineImg2"
+            android:layout_alignLeft="@+id/confirm" />
+
+        <TextView
+            android:layout_width="70dp"
+            android:layout_height="100dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Click to get directions to the restaurant providing this deal"
+            android:id="@+id/textView4"
+            android:layout_below="@+id/lineImg2"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Click to rate this deal"
+            android:id="@+id/textView5"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/lineImg3"
+            android:layout_alignLeft="@+id/lineImg3" />
+
+
+    </RelativeLayout>
+
+
     <ImageView
         android:layout_width="200dp"
         android:layout_height="150dp"
@@ -268,10 +349,6 @@
         android:layout_marginLeft="150dp"
         android:layout_gravity="center_horizontal"
         android:layout_below="@id/swipeleft"/>
-
-    <!--ONCE STAGE SUCCESS DO THE ABOVE-->
-
-
 
     <LinearLayout
 
@@ -318,81 +395,7 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/toggleTutorial"
-        android:layout_below="@id/extendHeight">
 
-
-        <ImageView
-            android:layout_width="300dp"
-            android:layout_height="200dp"
-            android:id="@+id/confirm"
-            android:visibility="invisible"
-            android:src="@drawable/swipeconfirm"
-            android:layout_centerHorizontal="true"/>
-
-
-
-    <ImageView
-        android:layout_width="39dp"
-        android:layout_height="40dp"
-        android:src="@drawable/linepoint_small"
-        android:id="@+id/lineImg"
-        android:layout_marginLeft="33dp"
-
-        android:layout_alignLeft="@+id/confirm"
-        android:layout_marginBottom="10dp" />
-
-    <ImageView
-        android:layout_width="39dp"
-        android:layout_height="40dp"
-        android:src="@drawable/linepoint_small"
-        android:id="@+id/lineImg2"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <ImageView
-        android:layout_width="39dp"
-        android:layout_height="40dp"
-        android:src="@drawable/linepoint_small"
-        android:id="@+id/lineImg3"
-        android:layout_gravity="center_horizontal"
-        android:layout_toRightOf="@+id/lineImg2"
-        android:layout_marginLeft="51dp" />
-
-    <TextView
-        android:layout_width="80dp"
-        android:layout_height="50dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Click to recommend this deal to a friend"
-        android:id="@+id/textRecommend"
-        android:layout_below="@+id/lineImg2"
-        android:layout_alignLeft="@+id/confirm" />
-
-    <TextView
-        android:layout_width="70dp"
-        android:layout_height="100dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Click to get directions to the restaurant providing this deal"
-        android:id="@+id/textView4"
-        android:layout_below="@+id/lineImg2"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:layout_width="80dp"
-        android:layout_height="50dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Click to rate this deal"
-        android:id="@+id/textView5"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@+id/lineImg3"
-        android:layout_alignLeft="@+id/lineImg3" />
-
-
-    </RelativeLayout>
 
 </RelativeLayout>
 

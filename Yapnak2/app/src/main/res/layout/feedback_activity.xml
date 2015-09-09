@@ -2,7 +2,7 @@
 
 <!--android:background="#FF7043"
 android:textColor="#FFF"-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,6 +12,7 @@ android:textColor="#FFF"-->
     android:paddingTop="10dp">
 
     <ScrollView
+        android:layout_above="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -22,32 +23,7 @@ android:textColor="#FFF"-->
         android:weightSum="1"
         android:clipChildren="true">
 
-
-            <!--<com.uq.yapnak.FeedbackDialog.AutocompleteEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/autoComplete"
-            android:hint="Subject"
-            />-->
-
-            <TextView
-                android:layout_margin="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Subject:"
-                android:textSize="15sp"
-                android:textColor="#000"/>
-            <Spinner
-                android:id="@+id/spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                >
-
-            </Spinner>
-
-
-
-            <TextView
+        <TextView
         android:id="@+id/nameLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,9 +42,7 @@ android:textColor="#FFF"-->
         android:orientation="horizontal">
 
 
-
-
-        <RadioGroup
+            <RadioGroup
             android:id="@+id/feedbackRadioGroup"
             android:layout_width="200dp"
             android:layout_height="170dp"
@@ -81,6 +55,7 @@ android:textColor="#FFF"-->
             <RadioButton
                 android:id="@+id/radioHappy"
                 android:layout_margin="10dp"
+                android:paddingLeft="10dp"
                 android:drawablePadding="5dp"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
@@ -90,6 +65,7 @@ android:textColor="#FFF"-->
             <RadioButton
                 android:id="@+id/radioUnhappy"
                 android:layout_margin="10dp"
+                android:paddingLeft="10dp"
                 android:drawablePadding="5dp"
                 android:layout_width="100dp"
                 android:layout_height="30dp"
@@ -100,6 +76,7 @@ android:textColor="#FFF"-->
             <RadioButton
                 android:layout_margin="10dp"
                 android:drawablePadding="5dp"
+                android:paddingLeft="10dp"
                 android:button="@drawable/red_radio"
                 android:id="@+id/radioStoreCode"
                 android:layout_width="match_parent"
@@ -123,7 +100,7 @@ android:textColor="#FFF"-->
         android:textSize="15sp"
         android:textStyle="bold" />
 
-    <com.frontend.yapnak.subview.RedEditText
+    <EditText
         android:id="@+id/commentField"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -140,31 +117,7 @@ android:textColor="#FFF"-->
         android:textSize="13dp" />
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Cancel"
-            android:background="@android:color/transparent"
-            android:layout_marginRight="20dp"
-            android:textColor="#ff535357" />
-
-        <Button
-            android:id="@+id/submitButton"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Submit"
-            android:background="@android:color/transparent"
-            android:textColor="#ff535357" />
-    </LinearLayout>
 
             <!--<ListView
                 android:layout_width="match_parent"
@@ -178,6 +131,36 @@ android:textColor="#FFF"-->
 
     </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="CLOSE"
+            android:layout_marginLeft="10dp"
+            android:background="@android:color/transparent"
+            android:layout_marginRight="20dp"
+            android:textColor="#ff535357" />
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="OK"
+            android:background="@android:color/transparent"
+            android:textColor="#ff535357" />
+    </LinearLayout>
 
 
-</LinearLayout>
+
+</RelativeLayout>

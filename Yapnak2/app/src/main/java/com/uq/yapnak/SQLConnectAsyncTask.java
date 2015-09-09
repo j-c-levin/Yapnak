@@ -2,8 +2,10 @@ package com.uq.yapnak;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,7 +14,6 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
-import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +25,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     private static SQLEntityApi sqlEntity;
     static boolean useDialog;
+
     static boolean restore;
+    static boolean loaded;
     private static boolean listLoaded=false;
     private Context context;
     private Location location;
@@ -48,6 +51,8 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         this.progressDialog = new ProgressDialog(this.main);
 
     }
+
+
 
     private GPSTrack track;
     @Override
@@ -98,7 +103,14 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         if(useDialog) {
             progressDialog.setMessage("Please Wait For List To Load...");
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
+            progressDialog.setCancelable(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.show();
+                }
+            });
+
         }
     }
 
@@ -114,6 +126,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
             if (useDialog) {
                 progressDialog.cancel();
+                loaded=true;
             }
             setListLoaded(true);
 
@@ -124,8 +137,10 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             main.swipeRefresh(main);
             if(useDialog) {
                 progressDialog.cancel();
+                loaded=true;
             }
             setListLoaded(true);
+
             Toast.makeText(context,"Session Restored!",Toast.LENGTH_SHORT).show();
 
         } else {
@@ -135,8 +150,10 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             main.swipeRefresh(main);
             if(useDialog) {
                 progressDialog.cancel();
+                loaded=true;
             }
             setListLoaded(true);
+
             Toast.makeText(context,"Please Turn Location/Internet On",Toast.LENGTH_SHORT).show();
             Log.d("Debug", "Failed");
         }

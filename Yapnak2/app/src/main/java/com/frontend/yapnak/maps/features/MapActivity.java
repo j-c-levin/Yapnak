@@ -57,11 +57,11 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent i = getIntent();
-        getSupportActionBar().setSubtitle(i.getStringExtra("init"));
+        //Intent i = getIntent();
+        //getSupportActionBar().setSubtitle(i.getStringExtra("init"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        name = i.getStringExtra("accName");
+        //name = i.getStringExtra("accName");
 
         tracker = new GPSTrack(MapActivity.this);
 
@@ -110,6 +110,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
     public void getDirections(View view) {
         String  startAddr = startAddressText.getText().toString();
+        startAddr.replace(" ","+");
 
         if(tracker.canGetLoc()) {
             String loc =tracker.getLatitude()+","+tracker.getLongitude();
@@ -117,6 +118,7 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
         }
 
        String endAddr = endAddressText.getText().toString() ;
+        endAddr.replace(" ","+");
 
         if(startAddr.equalsIgnoreCase("")||endAddr.equalsIgnoreCase("")){
 
@@ -290,13 +292,13 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
         getMenuInflater().inflate(R.menu.menu_main,menu);
 
-        MenuItem item = menu.findItem(R.id.userNameToolBar);
+        //MenuItem item = menu.findItem(R.id.userNameToolBar);
 
-        String [] splitter = name.split("@");
+        //String [] splitter = name.split("@");
 
-        this.name=splitter[0];
+        //this.name=splitter[0];
 
-        item.setTitle(splitter[0]);
+        //item.setTitle(splitter[0]);
 
 
         return true;

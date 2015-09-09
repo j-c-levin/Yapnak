@@ -7,10 +7,13 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,14 +56,16 @@ import java.io.OutputStreamWriter;
 
 
 
-public class Login extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
+public class Login extends Activity{ //implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
 
     private final String FILE_NAME = "yapnak_details";
-    private EditText initials;
+    private EditText email;
     private EditText phone;
+    private String emailAd,phoneNum;
     private Button loginButton;
-    private EditText promo;
+    private EditText password;
     private MenuItem itemMen;
+    private boolean resume;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
     private String personName;
@@ -84,6 +89,30 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+    private boolean wifi,lte;
+
+    /*private Handler startHandle = new Handler();
+    private void stopOnCreate(){
+        startHandle.removeCallbacks(googleButtonClick);
+    }
+    private void startOnCreate(){
+        connecting.run();
+    }
+    private Runnable connecting = new Runnable() {
+        @Override
+        public void run() {
+            if(mGoogleApiClient.isConnecting()){
+                Toast.makeText(getApplicationContext(), "Connecting... ", Toast.LENGTH_SHORT).show();
+                startHandle.postDelayed(this, 1000);
+            }else{
+                if(!isInternetOn()) {
+                    Toast.makeText(getApplicationContext(), "Please Enable Your 3g/Wifi ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+    */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +120,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         setContentView(R.layout.login_activity);
 
         //Template google signin code.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+       /* mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
@@ -102,43 +131,64 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
         SignInButton gSignInButton = (SignInButton) findViewById(R.id.sign_in_button);
         //Button gSignInButton = (Button) findViewById(R.id.sign_in_button);
         gSignInButton.setSize(SignInButton.SIZE_WIDE);
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
+        findViewById(R.id.sign_in_button).setOnClickListener(this);*/
 
 
-        initials = (EditText) findViewById(R.id.initialsEdit);
+        email = (EditText) findViewById(R.id.emailEdit);
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
-        promo = (EditText) findViewById(R.id.promoBox);
+        password = (EditText) findViewById(R.id.passwordEdit);
+
+       final SharedPreferences remember = (SharedPreferences) getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+        final SecureDetails details = new SecureDetails();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if(remember!=null) {
+                    Log.d("remember",String.valueOf(remember.getBoolean("on",false)));
+                    if (remember.getBoolean("on",false)) {
+                        email.setText(remember.getString("email", ""));
+                        phone.setText(remember.getString("phone", ""));
+                        String decryptPass = "";
+                        try {
+                            decryptPass = details.decrypt(remember.getString("password", ""));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        password.setText(decryptPass);
+                    }
+                }
+            }
+        });
+
 
         Color c = new Color();
 
-        promo.getBackground().setColorFilter(c.parseColor("#FF5722"), PorterDuff.Mode.SRC_IN);
-
-
-        arrow = (ImageView) findViewById(R.id.arrowDownUser);
-        userB = (Button) findViewById(R.id.userButton);
-
-        originalUserY = userB.getY();
+        //promo.getBackground().setColorFilter(c.parseColor("#FF5722"), PorterDuff.Mode.SRC_IN);
+        //arrow = (ImageView) findViewById(R.id.arrowDownUser);
+        //userB = (Button) findViewById(R.id.userButton);
+        //originalUserY = userB.getY();
 
         loginButton = (Button) findViewById(R.id.loginButton);
         fragmentManager = getFragmentManager();
         //arrowTouch();
-        buttonAnimate();
+        //buttonAnimate();
 
-
+        Handler h = new Handler();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 try {
-                    String[] details = {initials.getText().toString() + phone.getText().toString().substring(7), phone.getText().toString(), promo.getText().toString()};
+                    String[] details = {email.getText().toString(),phone.getText().toString().substring(7), password.getText().toString()}; //,promo.getText().toString()};
                     //new UserLoginAsyncTask(getApplicationContext(), details).execute();
                     //note: the details argument has been removed and probably won't be re-added.
                     //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
 
 
                     /* Intent i = new Intent(Login.this, MainActivity.class);
-                     i.putExtra("initials", initials.getText().toString());
+                     i.putExtra("email", email.getText().toString());
                      i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                      i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -147,7 +197,10 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                         */
 
 
-                    new InternalUser(v).execute(initials.getText().toString(), phone.getText().toString());
+                    Log.d("password",password.getText().toString());
+                    emailAd = email.getText().toString();
+                    phoneNum = phone.getText().toString();
+                    new InternalUser(v).execute(email.getText().toString(), password.getText().toString());
 
 
 
@@ -159,10 +212,15 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                     error.show(fragmentManager, "error");
 
 
+                } catch (NullPointerException ex){
+                    ErrorDialog error = new ErrorDialog();
+
+                    error.show(fragmentManager, "error");
                 }
             }
         });
 
+//        startOnCreate();
 
     }
 
@@ -170,6 +228,8 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
     private class InternalUser extends AsyncTask<String,Integer,String>{
 
         private View view;
+        private String pass;
+        private SecureDetails secure;
         public InternalUser(View v){
 
             this.view = v;
@@ -183,25 +243,37 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             SQLEntityApi sqlEntity = builder.build();
 
             try{
+               // UserEntity e = sqlEntity.insertUser(params[0],params[1]).execute();
+                pass = secure.encrypt(params[1]);
                 UserEntity e = sqlEntity.insertUser(params[0],params[1]).execute();
-
+                //Log.d("username",e.getUserID());
                 return e.getUserID();
 
-            }catch (IOException e){
+            }catch (Exception e){
                 e.printStackTrace();
-                return null;
+                return "n/A";
             }
             //return null;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            Intent i = new Intent(Login.this, FragmentSlideActivity.class);
-            i.putExtra("initials", s);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            view.getContext().startActivity(i);
+            if(s!=null){
+                Intent i = new Intent(Login.this, MainActivity.class);
+                Log.d("usernameid",s);
+                i.putExtra("userID", s);
+                i.putExtra("password", pass);
+                i.putExtra("email",emailAd);
+                i.putExtra("phone",phoneNum);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                view.getContext().startActivity(i);
+            }else{
+                ErrorDialog dialog = new ErrorDialog();
+                dialog.show(fragmentManager,"error");
+            }
+
 
         }
     }
@@ -265,7 +337,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             @Override
             public void onClick(View v) {
 
-                if(userB.getVisibility()!=View.VISIBLE){
+                if (userB.getVisibility() != View.VISIBLE) {
                     arrowAppear().setDuration(400).start();
                     userB.setVisibility(View.VISIBLE);
 
@@ -277,7 +349,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                         }
                     });
 
-                }else{
+                } else {
                     arrowGone().setDuration(400).start();
 
                     new Handler().postDelayed(new Runnable() {
@@ -371,7 +443,13 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
     }
 
+    private boolean isInternetOn(){
+        ConnectivityManager manager =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        wifi= manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        lte =manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
 
+        return wifi||lte;
+    }
 
     private String userID;
 
@@ -401,28 +479,69 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
         @Override
         protected void onPostExecute(String s) {
-            if(!s.equalsIgnoreCase("")) {
-                Intent i = new Intent(activity, FragmentSlideActivity.class);
-                i.putExtra("userID", s);
-                i.putExtra("accName", email);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
+
+            setAccName(s);
+            ConnectivityManager manager =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+            wifi= manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+            lte =manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+            /*if(wifi || lte) {
+
+                if (!s.equalsIgnoreCase("")) {
+                    Intent i = new Intent(activity, FragmentSlideActivity.class);
+                    i.putExtra("userID", s);
+                    i.putExtra("accName", email);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                }
             }else{
 
-                Intent i = new Intent(activity, Login.class);
-                i.putExtra("userID", s);
-                i.putExtra("accName", email);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-
             }
+            */
+            //handler.post(runnable);
+            repeat();
+
         }
+
+        private String accName;
+        private void setAccName(String a){
+            accName=a;
+        }
+        private String getAccName(){
+            return this.accName;
+        }
+        private Handler handler=new Handler();
+        private void repeat(){
+            runnable.run();
+        }
+        private void stop(){
+            handler.removeCallbacks(runnable);
+        }
+        private Runnable runnable=new Runnable() {
+            @Override
+            public void run() {
+                if(wifi||lte){
+                    if(mGoogleApiClient.isConnected()) {
+                        Intent i = new Intent(activity, FragmentSlideActivity.class);
+                        i.putExtra("userID", getAccName());
+                        i.putExtra("accName", email);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        stop();
+                        startActivity(i);
+                    }else if(mGoogleApiClient.isConnecting()){
+                        Toast.makeText(getApplicationContext(),"Connecting",Toast.LENGTH_SHORT).show();
+                        handler.postDelayed(this,2000);
+                    }
+                }
+            }
+        };
     }
 
+/*
     @Override
     public void onConnected(Bundle connectionHint) {
         Log.d("Debug", "User is connected");
@@ -433,10 +552,13 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
         //person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         //this.personName = person.getDisplayName();
+        if(isInternetOn()) {
+            stopSignInClick();
+            stopOnCreate();
+            String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
+            new GetUserId().execute(acc);
 
-        String acc = Plus.AccountApi.getAccountName(mGoogleApiClient);
-        //new GetUserId().execute(acc);
-
+        }
 
     }
 
@@ -447,11 +569,36 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
 
     public void onClick(View view) {
         if (view.getId() == R.id.sign_in_button && !mGoogleApiClient.isConnecting()) {
-            mSignInClicked = true;
-            mGoogleApiClient.connect();
+
+            if(isInternetOn()) {
+                mSignInClicked = true;
+                mGoogleApiClient.connect();
+            }else{
+                Toast.makeText(getApplicationContext(),"Please Enable Your 3g/Wifi",Toast.LENGTH_SHORT).show();
+            }
 
         }
+
     }
+
+    private Handler handle = new Handler();
+    private void stopSignInClick(){
+        handle.removeCallbacks(googleButtonClick);
+    }
+    private void startButtonClick(){
+        googleButtonClick.run();
+    }
+    private Runnable googleButtonClick = new Runnable() {
+        @Override
+        public void run() {
+            if(mGoogleApiClient.isConnecting()){
+                Toast.makeText(getApplicationContext(), "Connecting... ", Toast.LENGTH_SHORT).show();
+                handle.postDelayed(this, 2000);
+            }else{
+                Toast.makeText(getApplicationContext(), "Please Enable Your 3g/Wifi ", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
@@ -471,23 +618,64 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
             }
         }
     }
+    */
 
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+       // mGoogleApiClient.connect();
+
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+                if(remember!=null) {
+
+                    if (remember.getBoolean("on",false)) {
+                        phone.setText(remember.getString("phone", ""));
+                        email.setText(remember.getString("email", ""));
+                        SecureDetails details = new SecureDetails();
+                        String decryptedPass = null;
+
+                        try {
+                            decryptedPass = details.decrypt(remember.getString("password", "-1"));
+                        } catch (Exception e) {
+
+                        }
+                        password.setText(decryptedPass);
+
+                    }
+                }
+            }
+        });
+
+
+
+
 
     }
+
+
 
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        //mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+       // if(mSignInClicked) {
+         //   startButtonClick();
+        //}
     }
 
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        if (requestCode == RC_SIGN_IN) {
+        /*if (requestCode == RC_SIGN_IN) {
             if (responseCode != RESULT_OK) {
                 mSignInClicked = false;
             }
@@ -498,6 +686,7 @@ public class Login extends Activity implements GoogleApiClient.ConnectionCallbac
                 mGoogleApiClient.reconnect();
             }
         }
+        */
     }
 
     private boolean checkUserPass(){

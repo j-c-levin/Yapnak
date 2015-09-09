@@ -27,8 +27,76 @@ public class SecureDetails {
     private byte [] userBytes;
 
 
-    public String  encrypt(String content){
-        return null;
+    public String encrypt(String content)throws Exception{
+        salt = generateSalt();
+        byte[] bytes = salt.getBytes("UTF-8");
+
+        //get key for content
+
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        PBEKeySpec spec = new PBEKeySpec(
+
+                content.toCharArray(),
+                bytes,
+                pswrdIterate,
+                KEY_SIZE
+        );
+
+
+        SecretKey secretKey = keyFactory.generateSecret(spec);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getEncoded(),"AES");
+
+        //ENCRYPT content
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE,secretKeySpec);
+        AlgorithmParameters params = cipher.getParameters();
+        mBytes = params.getParameterSpec(IvParameterSpec.class).getIV();
+        byte[] encryptedText = cipher.doFinal(content.getBytes("UTF-8"));
+
+        String encryptedPass = new Base64().encodeAsString(encryptedText);
+        return encryptedPass;
+    }
+
+    public String decrypt(String content) throws Exception{
+
+        byte [] saltB = salt.getBytes();
+        byte [] encryptedText = new Base64().decodeBase64(content);
+
+
+
+        //getPassKey
+        SecretKeyFactory secretKeyFactory  = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        PBEKeySpec passSpec = new PBEKeySpec(
+
+                content.toCharArray(),
+                saltB,
+                pswrdIterate,
+                KEY_SIZE
+        );
+
+        SecretKey secretKey = secretKeyFactory.generateSecret(passSpec);
+        SecretKeySpec secretPass = new SecretKeySpec(secretKey.getEncoded(),"AES");
+
+        //Decryption of Pass
+
+        Cipher passCipher = Cipher.getInstance("AES/CBS/PKCS5Padding");
+
+        byte [] decryptedBytes = null;
+
+        try{
+            decryptedBytes = passCipher.doFinal(encryptedText);
+
+        }catch(IllegalBlockSizeException block){
+            block.printStackTrace();
+
+        }catch(BadPaddingException pad){
+            pad.printStackTrace();
+        }
+
+        String passDecryptText = new String(decryptedBytes);
+        return passDecryptText;
+
     }
 
     public String [] encrypt(String user, String pass) throws Exception{
@@ -182,7 +250,7 @@ public class SecureDetails {
 
     }
 
-    public String generateSalt(){
+    private String generateSalt(){
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[20];
         random.nextBytes(bytes);

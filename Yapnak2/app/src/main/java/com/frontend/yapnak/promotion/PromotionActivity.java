@@ -26,8 +26,8 @@ public class PromotionActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.promo_layout);
-        getInfo = getIntent();
-        name = getInfo.getStringExtra("accName");
+        //getInfo = getIntent();
+        //name = getInfo.getStringExtra("accName");
 
         setTitle("Promotional Items");
 
@@ -87,13 +87,13 @@ public class PromotionActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main,menu);
 
 
-        MenuItem item = menu.findItem(R.id.userNameToolBar);
+        //MenuItem item = menu.findItem(R.id.userNameToolBar);
 
-        String [] splitter = name.split("@");
+        //String [] splitter = name.split("@");
 
-        this.name=splitter[0];
+        //this.name=splitter[0];
 
-        item.setTitle(splitter[0]);
+        //item.setTitle(splitter[0]);
 
         return true;
 
