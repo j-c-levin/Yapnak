@@ -81,6 +81,12 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   }
 })
 
+.controller('modal-controller', function($scope, $modal, $modalInstance) {
+  $scope.closeModal= function() {
+    $modalInstance.dismiss('cancel');
+  }
+})
+
 .controller('client-controller', function($scope, webfactory, $cookies, $modal){
 
   console.log($cookies.get("com.yapnak.email"));
@@ -95,11 +101,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   var offer3Active;
 
   $scope.offers = [];
-  $scope.data = {};
-
-  $scope.closeModal = function() {
-    $modal.$close("true");
-  }
 
   var details = function() {
     webfactory.getInfo(email).then(function(details){
@@ -166,11 +167,12 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     })
   }
 
-  if (email !== undefined || email !== null || email !== "") {
+  if (email !== undefined) {
     details();
   } else {
     $modal.open({
       animation: true,
+    controller: 'modal-controller',
       templateUrl: 'modules/templates/account-not-found-modal.html'
     });
   }
@@ -179,6 +181,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     if($scope.offer3text.offerId == $scope.offer2text.offerId || $scope.offer3text.offerId == $scope.offer1text.offerId || $scope.offer1text.offerId == $scope.offer2text.offerId) {
       $scope.data.modal = $modal.open({
         animation: true,
+        controller: 'modal-controller',
         templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
     } else {
