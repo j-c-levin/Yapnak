@@ -1,6 +1,10 @@
 package com.frontend.yapnak;
 
+import android.content.SharedPreferences;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.uq.yapnak.R;
@@ -11,7 +15,7 @@ import com.uq.yapnak.R;
 
 public class ItemPrev {
 
-    
+    private SharedPreferences preferences;
     private int logo;
     private String points;
     private String location;
@@ -24,7 +28,21 @@ public class ItemPrev {
     private String restaurantName;
     private String fetchImageURL;
     private int hotDeal;
-
+    private ImageView tButton1;
+    private ImageView tButton2;
+    private ImageView tButton3;
+    private ImageView tButton4;
+    private ImageView tText1;
+    private ImageView tText2;
+    private ImageView tText3;
+    private ImageView tText4;
+    private boolean isTutorial;
+    private LinearLayout buttonContainer;
+    private LinearLayout textContainer;
+    private RelativeLayout extendHeight;
+    private RelativeLayout extendIcon;
+    private RelativeLayout extendText;
+    private ImageView tutorial1;
 
 
 
@@ -123,4 +141,24 @@ public class ItemPrev {
     public void setHotDeal(int hotDeal) {
         this.hotDeal = hotDeal;
     }
+
+
+
+    public boolean isTutorial() {
+        return isTutorial;
+    }
+
+    public void setIsTutorial(boolean isTutorial) {
+        this.isTutorial = isTutorial;
+    }
+
+    public SharedPreferences getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(SharedPreferences preferences) {
+        this.preferences = preferences;
+    }
+
+
 }

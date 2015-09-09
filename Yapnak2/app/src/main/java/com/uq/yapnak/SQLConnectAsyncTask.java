@@ -2,6 +2,7 @@ package com.uq.yapnak;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -24,7 +25,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     private static SQLEntityApi sqlEntity;
     static boolean useDialog;
+
     static boolean restore;
+    static boolean loaded;
     private static boolean listLoaded=false;
     private Context context;
     private Location location;
@@ -48,6 +51,8 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         this.progressDialog = new ProgressDialog(this.main);
 
     }
+
+
 
     private GPSTrack track;
     @Override
@@ -121,10 +126,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
             if (useDialog) {
                 progressDialog.cancel();
+                loaded=true;
             }
             setListLoaded(true);
-
-
 
         }else if(restore){
 
@@ -133,8 +137,10 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             main.swipeRefresh(main);
             if(useDialog) {
                 progressDialog.cancel();
+                loaded=true;
             }
             setListLoaded(true);
+
             Toast.makeText(context,"Session Restored!",Toast.LENGTH_SHORT).show();
 
         } else {
@@ -144,8 +150,10 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
             main.swipeRefresh(main);
             if(useDialog) {
                 progressDialog.cancel();
+                loaded=true;
             }
             setListLoaded(true);
+
             Toast.makeText(context,"Please Turn Location/Internet On",Toast.LENGTH_SHORT).show();
             Log.d("Debug", "Failed");
         }

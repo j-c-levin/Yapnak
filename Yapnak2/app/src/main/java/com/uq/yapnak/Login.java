@@ -138,14 +138,35 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         password = (EditText) findViewById(R.id.passwordEdit);
 
+       final SharedPreferences remember = (SharedPreferences) getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+        final SecureDetails details = new SecureDetails();
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if(remember!=null) {
+                    Log.d("remember",String.valueOf(remember.getBoolean("on",false)));
+                    if (remember.getBoolean("on",false)) {
+                        email.setText(remember.getString("email", ""));
+                        phone.setText(remember.getString("phone", ""));
+                        String decryptPass = "";
+                        try {
+                            decryptPass = details.decrypt(remember.getString("password", ""));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        password.setText(decryptPass);
+                    }
+                }
+            }
+        });
+
+
         Color c = new Color();
 
         //promo.getBackground().setColorFilter(c.parseColor("#FF5722"), PorterDuff.Mode.SRC_IN);
-
-
         //arrow = (ImageView) findViewById(R.id.arrowDownUser);
         //userB = (Button) findViewById(R.id.userButton);
-
         //originalUserY = userB.getY();
 
         loginButton = (Button) findViewById(R.id.loginButton);

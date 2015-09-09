@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -73,7 +74,7 @@ public class SettingsDialog extends AlertDialog {
                         editor.apply();
                     }
                 }else{
-                    keep.edit().clear();
+                    keep.edit().clear().apply();
                     keep.edit().putBoolean("on", isChecked).apply();
                 }
             }
@@ -83,8 +84,8 @@ public class SettingsDialog extends AlertDialog {
         rememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    if(remember.getString("phone","-1").equalsIgnoreCase("-1")) {
+                if (isChecked) {
+                    if (remember.getString("phone", "-1").equalsIgnoreCase("-1")) {
                         SharedPreferences.Editor editor = remember.edit();
                         editor.putString("userID", details.getUserID());
                         editor.putString("password", details.getPassword());
@@ -92,10 +93,12 @@ public class SettingsDialog extends AlertDialog {
                         editor.putString("phone", details.getPhoneNum());
                         editor.putBoolean("on", isChecked);
                         editor.apply();
+                        Log.d("setttingOn",String.valueOf(remember.getBoolean("on",false)));
                     }
-                }else{
-                    remember.edit().clear();
-                    remember.edit().putBoolean("on",isChecked).apply();
+                } else {
+                    remember.edit().clear().apply();
+                    remember.edit().putBoolean("on", isChecked).apply();
+                    Log.d("setttingOn", String.valueOf(remember.getBoolean("on", false)));
                 }
             }
         });

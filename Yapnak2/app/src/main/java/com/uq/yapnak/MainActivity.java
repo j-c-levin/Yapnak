@@ -4,12 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -48,6 +50,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -64,6 +67,8 @@ import com.frontend.yapnak.promotion.PromotionAdapter;
 import com.frontend.yapnak.promotion.PromotionDialog;
 import com.frontend.yapnak.rate.RatingBuilder;
 import com.google.android.gms.maps.model.LatLng;
+import com.native_tutorial.TutorialFragOne;
+import com.native_tutorial.TutorialFragThree;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
@@ -96,7 +101,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     //GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ResultCallback<People.LoadPeopleResult>
    // private GoogleApiClient mGoogleApiClient;
-
+    public static final int FRAGMENT_RESULT = 1001;
     private Parcelable state;
     private SQLEntity sql;
     private SharedPreferences keep;
@@ -268,12 +273,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                  //dealList.notifyDataSetChanged();
              }
 
-        /*}else {
-            load();
-            Toast.makeText(getApplicationContext(), "Turn Location On", Toast.LENGTH_SHORT).show();
-            floatButton();
-        }
-        */
+
         this.name = getIntent();
         ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
 
@@ -283,14 +283,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
 
-        keep = getSharedPreferences("KeepMe",Context.MODE_PRIVATE);
-        remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+        keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
+        remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
+
 
 
        // Log.d("main-id",ID);
 
         //navBarToggle();
         //navigationBarContent();
+
+
 
     }
 
@@ -323,6 +326,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
+    public void tutorial(){
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
+
+    }
 
     private Location locationCheck;
 
@@ -505,6 +514,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             if(location!=null){
                 Log.d("location","Latitude: "+String.valueOf(location.getLatitude())+ " Longitude: " +String.valueOf(location.getLongitude()));
                 setLocation(location);
+                SQLConnectAsyncTask.useDialog=true;
                 new SQLConnectAsyncTask(getApplicationContext(),location,activity).execute();
             }else{
                 Toast.makeText(getApplicationContext(),"The Restaurant/Location You Queried Is Not Available",Toast.LENGTH_SHORT).show();
@@ -518,11 +528,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
         boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
 
+
+
+        return (wifi||lte);
+    }
+
+    private boolean gpsCheck(){
         LocationManager loc = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         boolean network = loc.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         boolean gps = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        return (wifi||lte)&&(network||gps);
+        return gps||network;
     }
 
     private String hashing(String hash){
@@ -696,7 +711,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             aboutYapnak();
             Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
-            if(connection()) {
+            if(connection() &&(deals.getCount()>1)) {
                 final FeedbackDialog feedback = new FeedbackDialog(this, this, ID);
                 feedback.show();
             }
@@ -878,7 +893,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         */
 
         //AlertDialog dialog = userItems.create();
+
         userItems.show();
+
+
     }
 
     private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -912,105 +930,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-
-    private ValueAnimator slideAnimator(int start,int end){
-        ValueAnimator animator = ValueAnimator.ofInt(start, end);
-
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                //Update The Height of the card
-
-                int value = (Integer) animation.getAnimatedValue();
-                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
-                layoutParams.height = value;
-                extendHeight.setLayoutParams(layoutParams);
-            }
-        });
-
-        return animator;
-    }
-
-    private int initialHeight;
-    public void extend(){
-
-        extendIcon.setVisibility(View.VISIBLE);
-        extendText.setVisibility(View.VISIBLE);
-
-        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-
-        extendHeight.measure(widthSpec,heightSpec);
-
-        initialHeight=extendHeight.getHeight();
-        ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(),(extendHeight.getMeasuredHeight()-5));
-        valueAnimator.start();
-
-
-    }
-
-    public void collapse(){
-        int finalHeight = extendHeight.getHeight();
-
-        ValueAnimator animator = slideAnimator(finalHeight,initialHeight);
-
-        animator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-                extendIcon.setVisibility(View.GONE);
-                extendText.setVisibility(View.GONE);
-
-                /*
-                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
-                extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
-                */
-
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-
-        animator.start();
-
-    }
-
-    public void extendInfo(View v) {
-        //Extend info: Rate,like and Take Me There
-        extendHeight= (RelativeLayout) v.findViewById(R.id.extendHeight);
-        extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
-        extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
-
-
-
-        if(extendText.getVisibility()==View.GONE && extendIcon.getVisibility() == View.GONE ){
-
-            extend();
-
-
-        }else{
-
-            collapse();
-        }
-
-
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -1022,6 +941,31 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 contactButton.setText(phoneNum);
             }
 
+        }else if(requestCode == FRAGMENT_RESULT){
+
+                FragmentTransaction t = getFragmentManager().beginTransaction();
+                t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
+                t.commit();
+
+        }
+        if(isTutorialOn()){
+            if(requestCode == 111){
+                int value = this.tutorial.getInt("tutorial2",-1);
+                if(value==0){
+                    animateButton(tButton1,textButton1,false);
+                    animateButton(tButton2,textButton2,true);
+                    this.tutorial.edit().putInt("tutorial2", 1).apply();
+                }
+
+            } if(requestCode == PICK_CONTACT){
+                int value = this.tutorial.getInt("tutorial2",-1);
+                if(value==1){
+                    animateButton(tButton2,textButton2,false);
+                    animateButton(tButton3,textButton3,true);
+                    this.tutorial.edit().putInt("tutorial2", 2).apply();
+                }
+
+            }
         }
 
 
@@ -1043,8 +987,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //contactButton = recommend.getContactListButton();
         //recommend.show();
 
-        if (connection()){
+        if (connection() &&(deals.getCount()>1) ){
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+            int value = this.tutorial.getInt("tutorial2",-1);
+
         startActivityForResult(intent, PICK_CONTACT);
         }
         /*contactButton.setOnClickListener(new View.OnClickListener() {
@@ -1253,13 +1199,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 maps.putExtra("resLatitude", itemAtSelectedPosition.getLatitude());
             }
 
-            startActivity(maps);
+        startActivityForResult(maps,111);
 
     }
 
     public void takeMeThereButton(View v) {
 
-        if(connection()) {
+        if(connection() &&(deals.getCount()>1)) { //&& gpsCheck()
             tracker = new GPSTrack(MainActivity.this);
 
 
@@ -1279,6 +1225,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             } else {
                 setDirections(v);
             }
+
 
         }
 
@@ -1344,7 +1291,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
 
-                startActivity(mapIntent);
+                startActivityForResult(mapIntent,111);
 
             }catch(NullPointerException e){
 
@@ -1358,7 +1305,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //item2 OnClick method for getDealButton
 
     public void getDeal(View v){
-        if(connection()) {
+        if(connection()&&(deals.getCount()>1)) {
             String url = "http://www.google.co.uk";
             String userid = ID;
             Calendar cal = Calendar.getInstance();
@@ -1375,7 +1322,33 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             AlertDialog generator = new QRGenerator(this, this, insert);
             generator.setTitle("GET DEAL");
+            int value = this.tutorial.getInt("tutorial2",-1);
+            if(value==3){
+                animateButton(tButton4,textButton4,false);
+                Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer, "alpha", 1.0f, 0.5f, 0.0f);
+                        ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer, "alpha", 1.0f, 0.5f, 0.0f);
+                        AnimatorSet s = new AnimatorSet();
+                        s.setDuration(200);
+                        s.playTogether(alphaButton, alphaText);
+                        s.start();
+                    }
+                };
+                buttonContainer.animate().setListener(containerAnimation).start();
+                buttonContainer.setVisibility(View.GONE);
+                textContainer.setVisibility(View.GONE);
+
+                this.tutorial.edit().putInt("tutorial2",4).apply();
+            }
+            Log.d("value",String.valueOf(value));
             generator.show();
+
         }
     }
 
@@ -1386,8 +1359,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //rate.show(getFragmentManager(),"rating");
         //AlertDialog.Builder ratings = new RatingBuilder(this,this);
 
-        if(connection()) {
+        if(connection() && (deals.getCount()>1)) {
             RatingBuilder ratings = new RatingBuilder(this, this);
+
+            int value = this.tutorial.getInt("tutorial2",-1);
+            if(value==2){
+                animateButton(tButton3,textButton3,false);
+                animateButton(tButton4,textButton4,true);
+                this.tutorial.edit().putInt("tutorial2",3).apply();
+            }
+            Log.d("value",String.valueOf(value));
             ratings.show();
         }
         /*
@@ -1553,8 +1534,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
         deals.setOnItemLongClickListener(new OnLongTouchListener());
-        deals.setOnItemClickListener(new ItemInfoListener());
+        deals.setOnItemClickListener(new ItemInfoListener(true));
         deals.setOnScrollListener(new ScrollListener());
+
+
     }
 
 
@@ -1573,8 +1556,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals = (ListView) findViewById(R.id.listviewMain);
         deals.setTextFilterEnabled(true);
         deals.setAdapter(dealList);
-        deals.setOnItemClickListener(new ItemInfoListener());
+        deals.setOnItemClickListener(new ItemInfoListener(false));
         deals.setOnItemLongClickListener(new OnLongTouchListener());
+        deals.setOnScrollListener(new ScrollListener());
+
+
+
+
+
         /*if(deals.getAdapter().getCount()<=5){
             actionButton.setAlpha(1.0f);
             buttonAbout.setAlpha(1.0f);
@@ -1588,7 +1577,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             buttonProfile.setVisibility(View.VISIBLE);
         }
         */
-        deals.setOnScrollListener(new ScrollListener());
+
+
+
+
 
         deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
@@ -1599,7 +1591,35 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private int currentPosition;
     private  float scaleListY;
 
+    private SharedPreferences tutorial;
 
+    public boolean isTutorialOn(){
+        tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+
+        if (tutorial.getInt("count",-1)==1 && tutorial.getInt("tutorial2",-1)==4) {
+            return false;
+        } else {
+            if(tutorial.getInt("tutorial2", -1)==-1){
+                SharedPreferences.Editor editor = tutorial.edit();
+                editor.putBoolean("firstTime", true);
+                editor.putInt("count", 0);
+                editor.putInt("tutorial2",0);
+                editor.putInt("tutorial3",0).apply();
+            }else{
+
+
+                int count = tutorial.getInt("count", -1);
+                int tutorial2 = tutorial.getInt("tutorial2",-1);
+                int tutorial3 = tutorial.getInt("tutorial3",-1);
+
+                SharedPreferences.Editor editor = tutorial.edit();
+                editor.putInt("count", count);
+                editor.putInt("tutorial2",tutorial2);
+                editor.putInt("tutorial3",tutorial3).apply();
+            }
+            return true;
+        }
+    }
 
     private class ScrollBackgroundTask extends AsyncTask<ListView,String,ListView>{
 
@@ -2016,6 +2036,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private class ItemInfoListener implements AdapterView.OnItemClickListener{
+        private boolean inLoad;
+        public ItemInfoListener(boolean bool){
+            this.inLoad = bool;
+        }
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -2023,12 +2047,34 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             itemTemp = (ItemPrev)parent.getItemAtPosition(position);
             //setItemPrev(itemTemp);
-            GetItemPrev threadGetItem =  new GetItemPrev();
-            threadGetItem.doInBackground(itemTemp);
+            if(position!=0) {
+                GetItemPrev threadGetItem = new GetItemPrev();
+                threadGetItem.doInBackground(itemTemp);
+                ExtendInfoInBackGround extend = new ExtendInfoInBackGround(false);
+                extend.doInBackground(view);
 
+            }else{
 
-            ExtendInfoInBackGround extend = new ExtendInfoInBackGround();
-            extend.doInBackground(view);
+                if(inLoad) {
+                    GetItemPrev threadGetItem = new GetItemPrev();
+                    threadGetItem.doInBackground(itemTemp);
+                    ExtendInfoInBackGround extend = new ExtendInfoInBackGround(false);
+                    extend.doInBackground(view);
+                }else{
+                    if(isTutorialOn()) {
+                        GetItemPrev threadGetItem = new GetItemPrev();
+                        threadGetItem.doInBackground(itemTemp);
+                        ExtendInfoInBackGround extend = new ExtendInfoInBackGround(true);
+                        extend.doInBackground(view);
+                    }else{
+                        GetItemPrev threadGetItem = new GetItemPrev();
+                        threadGetItem.doInBackground(itemTemp);
+                        ExtendInfoInBackGround extend = new ExtendInfoInBackGround(false);
+                        extend.doInBackground(view);
+                    }
+                }
+
+            }
 
 
 
@@ -2088,14 +2134,335 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
+    RelativeLayout extendTutHeight;
+    RelativeLayout extendTutIcon;
+    RelativeLayout extendTutText;
+    LinearLayout buttonContainer;
+    LinearLayout textContainer;
+    ImageView tButton1;
+    ImageView tButton2;
+    ImageView tButton3;
+    ImageView tButton4;
+    ImageView textButton1;
+    ImageView textButton2;
+    ImageView textButton3;
+    ImageView textButton4;
+    ImageView tutorial1;
+
+    private void animateButton(final ImageView button,final ImageView text, boolean show){
+        if(show){
+            Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    button.setVisibility(View.VISIBLE);
+                    button.setAlpha(0.0f);
+                    text.setVisibility(View.VISIBLE);
+                    text.setAlpha(0.0f);
+                }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(button,"alpha",0.0f,0.5f,1.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(text,"alpha",0.0f,0.5f,1.0f);
+                    AnimatorSet s = new AnimatorSet();
+                    s.setDuration(300);
+                    s.playTogether(alphaButton,alphaText);
+                    s.start();
+                }
+            };
+            button.animate().setListener(containerAnimation).start();
+        }else{
+            Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(button,"alpha",1.0f,0.5f,0.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(text,"alpha",1.0f,0.5f,0.0f);
+                    AnimatorSet s = new AnimatorSet();
+                    s.setDuration(300);
+                    s.playTogether(alphaButton,alphaText);
+                    s.start();
+                }
+            };
+            button.animate().setListener(containerAnimation).start();
+            button.setVisibility(View.GONE);
+            text.setVisibility(View.GONE);
+        }
+    }
+    private int value2;
+    private void tutorial2(){
+
+
+        if (extendText.getVisibility() != View.VISIBLE && extendIcon.getVisibility() != View.VISIBLE) {
+            Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    buttonContainer.setVisibility(View.VISIBLE);
+                    buttonContainer.setAlpha(0.0f);
+                    textContainer.setVisibility(View.VISIBLE);
+                    textContainer.setAlpha(0.0f);
+                }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer,"alpha",0.0f,0.5f,1.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer,"alpha",0.0f,0.5f,1.0f);
+                    AnimatorSet s = new AnimatorSet();
+                    s.setDuration(300);
+                    s.playTogether(alphaButton,alphaText);
+                    s.start();
+                }
+            };
+            buttonContainer.animate().setListener(containerAnimation).start();
+
+
+            int value = this.tutorial.getInt("tutorial2",-1);
+            switch (value) {
+                case 0:
+                    animateButton(tButton1, textButton1, true);
+                    break;
+            }
+
+        } else {
+
+            int value = this.tutorial.getInt("tutorial2",-1);
+            switch (value) {
+                case 0:
+                    animateButton(tButton1, textButton1, false);
+                    break;
+            }
+
+            Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer, "alpha", 1.0f, 0.5f, 0.0f);
+                        ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer, "alpha", 1.0f, 0.5f, 0.0f);
+                        AnimatorSet s = new AnimatorSet();
+                        s.setDuration(300);
+                        s.playTogether(alphaButton, alphaText);
+                        s.start();
+                    }
+                };
+                buttonContainer.animate().setListener(containerAnimation).start();
+                buttonContainer.setVisibility(View.GONE);
+                textContainer.setVisibility(View.GONE);
+            }
+    }
+
+    private ValueAnimator slideAnimator(int start,int end){
+        ValueAnimator animator = ValueAnimator.ofInt(start, end);
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //Update The Height of the card
+
+                int value = (Integer) animation.getAnimatedValue();
+                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
+                layoutParams.height = value;
+                extendHeight.setLayoutParams(layoutParams);
+            }
+        });
+        return animator;
+    }
+
+    private int initialHeight;
+    public void extend(boolean tutorial){
+
+        extendIcon.setVisibility(View.VISIBLE);
+        extendText.setVisibility(View.VISIBLE);
+
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        extendHeight.measure(widthSpec,heightSpec);
+        initialHeight=extendHeight.getHeight();
+
+        if(!tutorial) {
+            ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(), (extendHeight.getMeasuredHeight() - 5));
+            valueAnimator.start();
+        }else{
+            //Do EXTRA ANIMATION FOR TUTORIAL ITEMS
+            ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(), (extendHeight.getMeasuredHeight() - 5));
+            valueAnimator.start();
+        }
+
+
+    }
+    public void collapse(boolean tutorial){
+        int finalHeight = extendHeight.getHeight();
+        ValueAnimator animator = slideAnimator(finalHeight,initialHeight);
+        if(!tutorial) {
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                    extendIcon.setVisibility(View.GONE);
+                    extendText.setVisibility(View.GONE);
+
+                /*
+                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
+                extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
+                */
+
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }else{
+            animator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+
+                    extendIcon.setVisibility(View.GONE);
+                    extendText.setVisibility(View.GONE);
+
+                /*
+                ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
+                extendHeight.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,extendHeight.getHeight()/2));
+                */
+
+
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
+        animator.start();
+    }
+
+    public void extendInfo(View v, final boolean tutorial) {
+        //Extend info: Rate,like and Take Me There
+        extendHeight= (RelativeLayout) v.findViewById(R.id.extendHeight);
+        extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
+        extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
+        tutorial1 = (ImageView) v.findViewById(R.id.tutorial1);
+        buttonContainer = (LinearLayout) v.findViewById(R.id.buttonTutorialContainer);
+        textContainer = (LinearLayout) v.findViewById(R.id.buttonTextContainer);
+        tButton1 = (ImageView) v.findViewById(R.id.buttonTutorial1);
+        tButton2 = (ImageView) v.findViewById(R.id.buttonTutorial2);
+        tButton3 = (ImageView) v.findViewById(R.id.buttonTutorial3);
+        tButton4 = (ImageView) v.findViewById(R.id.buttonTutorial4);
+        textButton1 = (ImageView) v.findViewById(R.id.buttonTutorialText1);
+        textButton2 = (ImageView) v.findViewById(R.id.buttonTutorialText2);
+        textButton3 = (ImageView) v.findViewById(R.id.buttonTutorialText3);
+        textButton4 = (ImageView) v.findViewById(R.id.buttonTutorialText4);
+
+        if(tutorial) {
+            int value = this.tutorial.getInt("count",-1);
+
+            if(value==1){
+                tutorial2();
+            }
+
+            if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
+                Log.d("collapseValue",String.valueOf(value));
+                if(value==0){
+                    Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            tutorial1.setVisibility(View.VISIBLE);
+                            tutorial1.setAlpha(1.0f);
+                        }
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            // super.onAnimationEnd(animation);
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial1,"alpha",1.0f,0.0f);
+                            alpha.setDuration(200).start();
+                        }
+                    };
+                    tutorial1.animate().setListener(animation).start();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tutorial1.setAlpha(0.0f);
+                            tutorial1.setVisibility(View.GONE);
+                        }
+                    }, 400);
+                    this.tutorial.edit().putInt("count",1).apply();
+                }
+
+                extend(tutorial);
+            } else {
+                collapse(tutorial);
+            }
+        }else{
+            if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
+                extend(tutorial);
+            } else {
+                collapse(tutorial);
+            }
+        }
+
+
+    }
+
+
+
+    private Handler animationC = new Handler();
+
+    private Runnable checkAnimationUpdate = new Runnable() {
+        @Override
+        public void run() {
+             updateValue();
+             animationC.postDelayed(this,1000);
+        }
+    };
+
+    private void stopUpdate(){
+        animationC.removeCallbacks(checkAnimationUpdate);
+    }
+
+    private void runUpdate(){
+        checkAnimationUpdate.run();
+    }
+    private void updateValue(){
+        value2 = this.tutorial.getInt("tutorial2",-1);
+
+    }
     private class ExtendInfoInBackGround extends  AsyncTask<View,String,View>{
+
+        private boolean tutorial;
+        public ExtendInfoInBackGround(boolean b){
+            this.tutorial = b;
+        }
 
         @Override
         protected View doInBackground(View... params) {
 
             View v = params[0];
-
-            extendInfo(v);
+            extendInfo(v,tutorial);
 
             return null;
         }
@@ -2163,7 +2530,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             for (int i = 0; i < list.size(); i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
-
+                if(i==0){
+                    SharedPreferences tutorial= getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+                    temp.setIsTutorial(true);
+                    temp.setPreferences(tutorial);
+                }else{
+                    temp.setIsTutorial(false);
+                    temp.setPreferences(null);
+                }
                 temp.setDistanceTime("To be added");
                 //TODO: add photo download from google storage
 
@@ -2184,6 +2558,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setLatitude(list.get(i).getY());
                 temp.setLongitude(list.get(i).getX());
                 temp.setDistanceTime("to be added");
+
 
 
                 //TODO: points
