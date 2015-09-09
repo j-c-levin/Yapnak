@@ -93,12 +93,12 @@ public class SettingsDialog extends AlertDialog {
                         editor.putString("phone", details.getPhoneNum());
                         editor.putBoolean("on", isChecked);
                         editor.apply();
-                        Log.d("setttingOn",String.valueOf(remember.getBoolean("on",false)));
+                        Log.d("settingOn",String.valueOf(remember.getBoolean("on",false)));
                     }
                 } else {
                     remember.edit().clear().apply();
                     remember.edit().putBoolean("on", isChecked).apply();
-                    Log.d("setttingOn", String.valueOf(remember.getBoolean("on", false)));
+                    Log.d("settingOn", String.valueOf(remember.getBoolean("on", false)));
                 }
             }
         });

@@ -1307,7 +1307,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void getDeal(View v){
         if(connection()&&(deals.getCount()>1)) {
             String url = "http://www.google.co.uk";
-            String userid = ID;
+            Intent userID = getIntent();
+            String userid = userID.getStringExtra("userID");
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
             String date = sdf.format(cal.getTime());
@@ -1322,7 +1323,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             AlertDialog generator = new QRGenerator(this, this, insert);
             generator.setTitle("GET DEAL");
-            int value = this.tutorial.getInt("tutorial2",-1);
+            int value = 0;
+            if(isTutorialOn()) {
+                value = this.tutorial.getInt("tutorial2", -1);
+            }
             if(value==3){
                 animateButton(tButton4,textButton4,false);
                 Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
@@ -1362,7 +1366,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if(connection() && (deals.getCount()>1)) {
             RatingBuilder ratings = new RatingBuilder(this, this);
 
-            int value = this.tutorial.getInt("tutorial2",-1);
+            int value =0;
+            if(isTutorialOn()){
+                value= this.tutorial.getInt("tutorial2",-1);
+            }
+
             if(value==2){
                 animateButton(tButton3,textButton3,false);
                 animateButton(tButton4,textButton4,true);
@@ -1375,12 +1383,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-                //TODO:Submit Ratings to DB
-                dialog.dismiss();
+               //TODO:Submit Ratings to DB
+               dialog.dismiss();
             }
         });
-
         ratings.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -1391,8 +1397,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         ratings.setTitle("Rate Deal");
         */
-
-
     }
 
     public void setLongPress(boolean lp) {
@@ -2147,7 +2151,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     ImageView textButton2;
     ImageView textButton3;
     ImageView textButton4;
-    ImageView tutorial1;
+    ImageView tutorial1,tutorial2;
 
     private void animateButton(final ImageView button,final ImageView text, boolean show){
         if(show){
@@ -2195,7 +2199,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void tutorial2(){
 
 
-        if (extendText.getVisibility() != View.VISIBLE && extendIcon.getVisibility() != View.VISIBLE) {
+        if (extendText.getVisibility() != View.GONE && extendIcon.getVisibility() != View.GONE) {
             Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -2368,6 +2372,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
         extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
         tutorial1 = (ImageView) v.findViewById(R.id.tutorial1);
+        tutorial2 = (ImageView) v.findViewById(R.id.tutorial2);
         buttonContainer = (LinearLayout) v.findViewById(R.id.buttonTutorialContainer);
         textContainer = (LinearLayout) v.findViewById(R.id.buttonTextContainer);
         tButton1 = (ImageView) v.findViewById(R.id.buttonTutorial1);
@@ -2382,8 +2387,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if(tutorial) {
             int value = this.tutorial.getInt("count",-1);
 
-            if(value==1){
-                tutorial2();
+            if(this.tutorial.getInt("tutorial3",-1)==1){
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tutorial2();
+                    }
+                }, 400);
+
             }
 
             if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
@@ -2394,6 +2405,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         public void onAnimationStart(Animator animation) {
                             tutorial1.setVisibility(View.VISIBLE);
                             tutorial1.setAlpha(1.0f);
+
                         }
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -2403,6 +2415,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         }
                     };
                     tutorial1.animate().setListener(animation).start();
+
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -2410,11 +2423,82 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             tutorial1.setVisibility(View.GONE);
                         }
                     }, 400);
-                    this.tutorial.edit().putInt("count",1).apply();
+                    this.tutorial.edit().putInt("count", 1).apply();
                 }
+
+                if(this.tutorial.getInt("tutorial3",-1)==0 && value == 1) {
+                    //int tutValue = this.tutorial.getInt("tutorial3", -1);
+                    //Log.d("tutorial3Value", String.valueOf(tutValue));
+                    Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            buttonContainer.setVisibility(View.VISIBLE);
+                            buttonContainer.setAlpha(0.0f);
+                            textContainer.setVisibility(View.VISIBLE);
+                            textContainer.setAlpha(0.0f);
+                            tutorial2.setVisibility(View.VISIBLE);
+                            tutorial2.setAlpha(1.0f);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            // super.onAnimationEnd(animation);
+                            ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer,"alpha",0.0f,0.5f,1.0f);
+                            ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer,"alpha",0.0f,0.5f,1.0f);
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial2,"alpha",1.0f,0.0f);
+                            AnimatorSet s = new AnimatorSet();
+                            s.setDuration(300);
+                            s.playTogether(alphaButton,alpha,alphaText);
+                            s.start();
+
+                        }
+                    };
+
+                    tutorial2.animate().setListener(animation).start();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tutorial2.setVisibility(View.GONE);
+                            //tutorial2();
+                        }
+                    }, 210);
+                    int val = this.tutorial.getInt("tutorial2",-1);
+                    switch (val) {
+                        case 0:
+                            animateButton(tButton1, textButton1, true);
+                            break;
+                    }
+                    this.tutorial.edit().putInt("tutorial3", 1).apply();
+                }
+
 
                 extend(tutorial);
             } else {
+                //SHOW SECOND TUTORIAL
+                //Animate tutorial2 which replaces the first tutorial
+                int tutValue = this.tutorial.getInt("tutorial3", -1);
+                int newValue = this.tutorial.getInt("count",-1);
+                Log.d("tutorial3Value", String.valueOf(tutValue) + " NEW COUNT VALUE IS: " + String.valueOf(newValue));
+                if(newValue==1 && tutValue==0){
+                    Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+                            tutorial2.setAlpha(0.0f);
+                            tutorial2.setVisibility(View.VISIBLE);
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            // super.onAnimationEnd(animation);
+
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial2, "alpha", 0.0f, 1.0f);
+                            alpha.setDuration(200).start();
+                        }
+                    };
+                    tutorial2.animate().setListener(animation).start();
+
+                }
                 collapse(tutorial);
             }
         }else{
@@ -2531,8 +2615,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
                 if(i==0){
-                    SharedPreferences tutorial= getSharedPreferences("tutorial",Context.MODE_PRIVATE);
                     temp.setIsTutorial(true);
+                    SharedPreferences tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
                     temp.setPreferences(tutorial);
                 }else{
                     temp.setIsTutorial(false);
