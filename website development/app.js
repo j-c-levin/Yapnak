@@ -94,9 +94,12 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   var offer2Active;
   var offer3Active;
 
-  $scope.offers1 = [];
-  $scope.offers2 = [];
-  $scope.offers3 = [];
+  $scope.offers = [];
+  $scope.data = {};
+
+  $scope.closeModal = function() {
+    $modal.$close("true");
+  }
 
   var details = function() {
     webfactory.getInfo(email).then(function(details){
@@ -124,40 +127,20 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         }
 
         webfactory.getOffers($scope.clientId).then(function(response) {
-          $scope.offers1 = response;
-          $scope.offers2 = response;
-          $scope.offers3 = response;
-          $scope.offers1.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
-          $scope.offers2.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
-          $scope.offers3.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
-          var splice1;
-          var splice2;
-          var splice3;
-          for (var i = 0; i < $scope.offers1.length; i++) {
-            if (details.offer1Id == $scope.offers1[i].offerId) {
-              console.log("found 1 at " + i);
-              $scope.offer1text = $scope.offers1[i];
-              offer1Changed = $scope.offers1[i];
-              splice1 = i;
-            } else if (details.offer2Id == $scope.offers2[i].offerId) {
-              console.log("found 2 at " + i);
-              $scope.offer2text = $scope.offers2[i];
-              offer2Changed = $scope.offers2[i];
-              splice2 = i;
-            } else if (details.offer3Id == $scope.offers3[i].offerId) {
-              console.log("found 3 at " + i);
-              $scope.offer3text = $scope.offers3[i];
-              offer3Changed = $scope.offers3[i];
-              splice3 = i;
+          $scope.offers = response;
+          $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
+          for (var i = 0; i < $scope.offers.length; i++) {
+            if (details.offer1Id == $scope.offers[i].offerId) {
+              $scope.offer1text = $scope.offers[i];
+              offer1Changed = $scope.offers[i];
+            } else if (details.offer2Id == $scope.offers[i].offerId) {
+              $scope.offer2text = $scope.offers[i];
+              offer2Changed = $scope.offers[i];
+            } else if (details.offer3Id == $scope.offers[i].offerId) {
+              $scope.offer3text = $scope.offers[i];
+              offer3Changed = $scope.offers[i];
             }
           }
-          $scope.offers1.splice(splice2,1);
-          $scope.offers1.splice(splice3 - 1,1);
-          $scope.offers2.splice(splice1,1);
-          $scope.offers2.splice(splice3 - 1,1);
-          $scope.offers3.splice(splice1,1);
-          $scope.offers3.splice(splice2 - 1,1);
-          console.log($scope.offers1)
         });
 
         $scope.foodStyle = details.foodStyle;
@@ -183,127 +166,139 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     })
   }
 
-  details();
+  if (email !== undefined || email !== null || email !== "") {
+    details();
+  } else {
+    $modal.open({
+      animation: true,
+      templateUrl: 'modules/templates/account-not-found-modal.html'
+    });
+  }
 
   $scope.updateInfo = function() {
-
-    if ($scope.newLocation !== "") {
-      webfactory.updateLocation($scope.newLocation,email).then(function(response) {
-        details();
+    if($scope.offer3text.offerId == $scope.offer2text.offerId || $scope.offer3text.offerId == $scope.offer1text.offerId || $scope.offer1text.offerId == $scope.offer2text.offerId) {
+      $scope.data.modal = $modal.open({
+        animation: true,
+        templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
-    }
-
-    if ($scope.newFoodStyle !== "") {
-      webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
-        details();
-      });
-    }
-
-    if ($scope.newName !== "") {
-      webfactory.updateName($scope.newName,email).then(function(response) {
-        details();
-      });
-    }
-
-    //Check if offer 1 active state has changed
-    if ($scope.offer1 !== offer1Active) {
-      if ($scope.offer1 == false) {
-        //Toggle off
-        webfactory.toggleOffer(email, 1, 0).then(function(){
+    } else {
+      if ($scope.newLocation !== "") {
+        webfactory.updateLocation($scope.newLocation,email).then(function(response) {
           details();
         });
-      } else {
-        //Toggle on
-        webfactory.toggleOffer(email, 1, 1).then(function(){
-          details();
-        });;
       }
-    }
 
-    //Check if offer 1 offer has changed
-    if ($scope.offer1text.offerId !== offer1Changed.offerId) {
-      //Check if a new offer is being submitted
-      if ($scope.offer1text.offerId == 0) {
-        webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response) {
-          webfactory.toggleOffer(email, 1, 1).then(function() {
+      if ($scope.newFoodStyle !== "") {
+        webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
+          details();
+        });
+      }
+
+      if ($scope.newName !== "") {
+        webfactory.updateName($scope.newName,email).then(function(response) {
+          details();
+        });
+      }
+
+      //Check if offer 1 active state has changed
+      if ($scope.offer1 !== offer1Active) {
+        if ($scope.offer1 == false) {
+          //Toggle off
+          webfactory.toggleOffer(email, 1, 0).then(function(){
             details();
           });
-        });
+        } else {
+          //Toggle on
+          webfactory.toggleOffer(email, 1, 1).then(function(){
+            details();
+          });;
+        }
       }
-      //Replace the current offer with the old offer
-      else {
-        webfactory.replaceOffer(email,offer1Changed.offerId,$scope.offer1text.offerId,1).then(function() {
-          details();
-        });
-      }
-    }
 
-    //Check if offer 2 active state has changed
-    if ($scope.offer2 !== offer2Active) {
-      if ($scope.offer2 == false) {
-        //Toggle off
-        webfactory.toggleOffer(email, 2, 0).then(function(){
-          details();
-        });
-      } else {
-        //Toggle on
-        webfactory.toggleOffer(email, 2, 1).then(function(){
-          details();
-        });;
-      }
-    }
-
-    //Check if offer 2 offer has changed
-    if ($scope.offer2text.offerId !== offer2Changed.offerId) {
-      //Check if a new offer is being submitted
-      if ($scope.offer2text.offerId == 0) {
-        webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response) {
-          webfactory.toggleOffer(email, 2, 1).then(function() {
+      //Check if offer 1 offer has changed
+      if ($scope.offer1text.offerId !== offer1Changed.offerId) {
+        //Check if a new offer is being submitted
+        if ($scope.offer1text.offerId == 0) {
+          webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response) {
+            webfactory.toggleOffer(email, 1, 1).then(function() {
+              details();
+            });
+          });
+        }
+        //Replace the current offer with the old offer
+        else {
+          webfactory.replaceOffer(email,offer1Changed.offerId,$scope.offer1text.offerId,1).then(function() {
             details();
           });
-        });
+        }
       }
-      //Replace the current offer with the old offer
-      else {
-        webfactory.replaceOffer(email,offer2Changed.offerId,$scope.offer2text.offerId,2).then(function() {
-          details();
-        });
-      }
-    }
 
-    //Check if offer 3 active state has changed
-    if ($scope.offer3 !== offer3Active) {
-      if ($scope.offer3 == false) {
-        //Toggle off
-        webfactory.toggleOffer(email, 3, 0).then(function(){
-          details();
-        });
-      } else {
-        //Toggle on
-        webfactory.toggleOffer(email, 3, 1).then(function(){
-          details();
-        });;
-      }
-    }
-
-    //Check if offer 3 offer has changed
-    if ($scope.offer3text.offerId !== offer3Changed.offerId) {
-      //Check if a new offer is being submitted
-      if ($scope.offer3text.offerId == 0) {
-        webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response) {
-          webfactory.toggleOffer(email, 3, 1).then(function() {
+      //Check if offer 2 active state has changed
+      if ($scope.offer2 !== offer2Active) {
+        if ($scope.offer2 == false) {
+          //Toggle off
+          webfactory.toggleOffer(email, 2, 0).then(function(){
             details();
           });
-        });
+        } else {
+          //Toggle on
+          webfactory.toggleOffer(email, 2, 1).then(function(){
+            details();
+          });;
+        }
       }
-      //Replace the current offer with the old offer
-      else {
-        webfactory.replaceOffer(email,offer3Changed.offerId,$scope.offer3text.offerId,3).then(function() {
-          details();
-        });
+
+      //Check if offer 2 offer has changed
+      if ($scope.offer2text.offerId !== offer2Changed.offerId) {
+        //Check if a new offer is being submitted
+        if ($scope.offer2text.offerId == 0) {
+          webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response) {
+            webfactory.toggleOffer(email, 2, 1).then(function() {
+              details();
+            });
+          });
+        }
+        //Replace the current offer with the old offer
+        else {
+          webfactory.replaceOffer(email,offer2Changed.offerId,$scope.offer2text.offerId,2).then(function() {
+            details();
+          });
+        }
+      }
+
+      //Check if offer 3 active state has changed
+      if ($scope.offer3 !== offer3Active) {
+        if ($scope.offer3 == false) {
+          //Toggle off
+          webfactory.toggleOffer(email, 3, 0).then(function(){
+            details();
+          });
+        } else {
+          //Toggle on
+          webfactory.toggleOffer(email, 3, 1).then(function(){
+            details();
+          });;
+        }
+      }
+
+      //Check if offer 3 offer has changed
+      if ($scope.offer3text.offerId !== offer3Changed.offerId) {
+        //Check if a new offer is being submitted
+        if ($scope.offer3text.offerId == 0) {
+          webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response) {
+            webfactory.toggleOffer(email, 3, 1).then(function() {
+              details();
+            });
+          });
+        }
+        //Replace the current offer with the old offer
+        else {
+          webfactory.replaceOffer(email,offer3Changed.offerId,$scope.offer3text.offerId,3).then(function() {
+            details();
+          });
+        }
       }
     }
-
   }
 
   $scope.getLocation = function(val) {
