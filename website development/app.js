@@ -139,6 +139,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
         webfactory.getOffers($scope.clientId).then(function(response) {
           $scope.offers = response;
+          $scope.offers.splice(i,3);
           $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
           for (var i = 0; i < $scope.offers.length; i++) {
             if (details.offer1Id == $scope.offers[i].offerId) {
