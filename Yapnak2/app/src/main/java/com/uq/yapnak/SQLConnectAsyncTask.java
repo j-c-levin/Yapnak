@@ -2,7 +2,6 @@ package com.uq.yapnak;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -14,6 +13,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
+import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,7 +71,6 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
             //track = new GPSTrack(main);
             //Location loc = track.getLocation();
-
             SQLList result = sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.getID()).execute();
 
             ArrayList<SQLEntity> showOffers=new ArrayList<>();

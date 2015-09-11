@@ -9,6 +9,7 @@
 <html lang="en" ng-app="app">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yapnak</title>
 
   <!--angularjs-->
@@ -93,7 +94,7 @@
       <select class="form-control" ng-model="offer1text" ng-options="offer.offerText for offer in offers"></select>
 
       <input ng-show="offer1text.offerId == 0" type="text"
-      class="form-control" maxlength="160" ng-model="newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
+      class="form-control" maxlength="40" ng-model="newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
 
     </div>
   </div>
@@ -111,7 +112,7 @@
       <select class="form-control" ng-model="offer2text" ng-options="offer.offerText for offer in offers"></select>
 
       <input ng-show="offer2text.offerId == 0" type="text"
-      class="form-control" maxlength="160" ng-model="newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
+      class="form-control" maxlength="40" ng-model="newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
     </div>
   </div>
 
@@ -128,7 +129,7 @@
       <select class="form-control" ng-model="offer3text" ng-options="offer.offerText for offer in offers"></select>
 
       <input ng-show="offer3text.offerId == 0" type="text"
-      class="form-control" maxlength="160" ng-model="newOffer3text" name="deal" id="deal" placeholder="Type a new offer in here">
+      class="form-control" maxlength="40" ng-model="newOffer3text" name="deal" id="deal" placeholder="Type a new offer in here">
 
     </div>
   </div>
