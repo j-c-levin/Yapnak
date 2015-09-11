@@ -46,7 +46,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
     private View view;
     private ItemPrev deal;
-    private ImageView tutorial1;
+    private ImageView tutorial1,tutorial2;
     private SharedPreferences tutorial;
 
     private final String FILE_NAME = "yapnak_details";
@@ -102,10 +102,12 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
                  RelativeLayout extendIcon = (RelativeLayout) view.findViewById(R.id.extendIconLayout);
                  RelativeLayout extendText = (RelativeLayout) view.findViewById(R.id.extendTextLayout);
                  tutorial1 = (ImageView) view.findViewById(R.id.tutorial1);
+                 tutorial2 = (ImageView) view.findViewById(R.id.tutorial2);
+
 
                  if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
-                     int value = tutorial.getInt("count",-1);
-                     Log.d("extendValue",String.valueOf(value));
+                     int value = tutorial.getInt("count",0);
+                     Log.d("tutorialValue",String.valueOf(value));
                      if(value==0){
                          Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
                              @Override
@@ -126,7 +128,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
                          tutorial1.animate().setListener(animation).start();
 
                      }
-
                  }
 
              }

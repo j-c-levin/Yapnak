@@ -298,6 +298,13 @@
         android:id="@+id/tutorial1"
         android:src="@drawable/tutorial1"
         android:layout_gravity="center_horizontal" />
+    <ImageView
+        android:visibility="gone"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
+        android:id="@+id/tutorial2"
+        android:src="@drawable/tutorial2"
+        android:layout_gravity="center_horizontal" />
 
     <LinearLayout
         android:visibility="gone"

@@ -44,6 +44,10 @@ import com.uq.yapnak.R;
 import com.uq.yapnak.SecureDetails;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
+import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.UserEndpoint;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -65,6 +69,7 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
     private Button loginButton;
     private EditText password;
     private MenuItem itemMen;
+    private ErrorDialog error;
     private boolean resume;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
@@ -133,7 +138,7 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
         gSignInButton.setSize(SignInButton.SIZE_WIDE);
         findViewById(R.id.sign_in_button).setOnClickListener(this);*/
 
-
+        error= new ErrorDialog();
         email = (EditText) findViewById(R.id.emailEdit);
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         password = (EditText) findViewById(R.id.passwordEdit);
@@ -200,21 +205,14 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
                     Log.d("password",password.getText().toString());
                     emailAd = email.getText().toString();
                     phoneNum = phone.getText().toString();
-                    new InternalUser(v).execute(email.getText().toString(), password.getText().toString());
+                    new InternalUser(v).execute(email.getText().toString(), password.getText().toString(),phone.getText().toString());
 
 
 
 
                 } catch (StringIndexOutOfBoundsException e) {
-
-                    ErrorDialog error = new ErrorDialog();
-
                     error.show(fragmentManager, "error");
-
-
                 } catch (NullPointerException ex){
-                    ErrorDialog error = new ErrorDialog();
-
                     error.show(fragmentManager, "error");
                 }
             }
@@ -237,30 +235,51 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
         @Override
         protected String doInBackground(String... params) {
 
-            SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+            /*SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                     .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
             builder.setApplicationName("Yapnak");
             SQLEntityApi sqlEntity = builder.build();
+            */
+
+
+             UserEndpointApi.Builder builder = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+             builder.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+             builder.setApplicationName("Yapnak");
+             UserEndpointApi userEndpoint = builder.build();
+
 
             try{
-               // UserEntity e = sqlEntity.insertUser(params[0],params[1]).execute();
+                secure = new SecureDetails();
                 pass = secure.encrypt(params[1]);
-                UserEntity e = sqlEntity.insertUser(params[0],params[1]).execute();
-                //Log.d("username",e.getUserID());
-                return e.getUserID();
+            }catch(Exception ex){
 
-            }catch (Exception e){
-                e.printStackTrace();
-                return "n/A";
             }
-            //return null;
+
+            try{
+
+                if(params[1]!=null) {
+                    AuthenticateEntity e = userEndpoint.authenticateUser(params[1]).execute();
+                    Log.d("loginResult", e.getMessage());
+                    if(Boolean.parseBoolean(e.getStatus())) {
+                        return e.getUserId();
+                    }else{
+                        return null;
+                    }
+                }else{
+                    return null;
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+                return null;
+            }
+
         }
 
         @Override
         protected void onPostExecute(String s) {
             if(s!=null){
-                Intent i = new Intent(Login.this, MainActivity.class);
                 Log.d("usernameid",s);
+                Intent i = new Intent(Login.this, MainActivity.class);
                 i.putExtra("userID", s);
                 i.putExtra("password", pass);
                 i.putExtra("email",emailAd);

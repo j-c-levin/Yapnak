@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.frontend.yapnak.subview.MyProgressDialog;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
@@ -42,13 +43,13 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         return listLoaded;
     }
 
-    private ProgressDialog progressDialog;
+    private MyProgressDialog progressDialog;
 
     SQLConnectAsyncTask(Context context, Location location, MainActivity main) {
         this.context = context;
         this.location = location;
         this.main = main;
-        this.progressDialog = new ProgressDialog(this.main);
+        this.progressDialog = new MyProgressDialog(this.main);
 
     }
 
@@ -100,7 +101,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     protected void onPreExecute() {
         //super.onPreExecute();
         if(useDialog) {
-            progressDialog.setMessage("Please Wait For List To Load...");
+            //progressDialog.setMsg("Please Wait For List To Load...");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
             new Handler().post(new Runnable() {

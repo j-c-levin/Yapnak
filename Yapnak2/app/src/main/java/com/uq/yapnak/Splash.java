@@ -31,6 +31,8 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
+import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 
 import java.io.IOException;
 
@@ -192,7 +194,9 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
 
         mSignInClicked = true;
         mGoogleApiClient.connect();*/
-
+        Log.d("onStart","Doing work");
+        startStoredPref();
+        Log.d("onStart", "Finished work");
 
 
 
@@ -233,19 +237,22 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         @Override
         protected Void doInBackground(String... params) {
 
-            SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+            /*SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                     .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
             builder.setApplicationName("Yapnak");
             SQLEntityApi sqlEntity = builder.build();
+            */
+
+            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
 
             try{
 
-                UserEntity e = sqlEntity.getUserDetails(preferences.getString("userID", "-1")).execute();
+                AuthenticateEntity e = api.authenticateUser(preferences.getString("pass", "-1")).execute();
                 //execute();
-                if(preferences!=null) {
-                    if (e.getUserID().equalsIgnoreCase(preferences.getString("userID", "-1"))) {
+                if(preferences!=null && Boolean.parseBoolean(e.getStatus())) {
+                    if (e.getUserId().equalsIgnoreCase(preferences.getString("userID", "-1"))) {
                         Intent i = new Intent(Splash.this, MainActivity.class);
-                        i.putExtra("userID", e.getUserID());
+                        i.putExtra("userID", e.getUserId());
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

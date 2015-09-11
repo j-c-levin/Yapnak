@@ -33,7 +33,7 @@ public class TutorialFragThree extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.tutorial_fragment_2,container,false);
-        a.extend(false);
+        a.extend();
         layout = (RelativeLayout) v.findViewById(R.id.extendHeight);
         text = (TextView) v.findViewById(R.id.infoText);
         text.setText("Click to Expand, in Order to View More Options");
