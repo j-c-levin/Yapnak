@@ -14,7 +14,7 @@ import android.widget.Toast;
  */
 public class Feedback  {
    private String comment;
-    private String ID;
+    private String ID,clientID;
    private int feedbackNumber;
 
     public String getComment() {
@@ -31,6 +31,14 @@ public class Feedback  {
 
     public void setID(String ID) {
         this.ID = ID;
+    }
+
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String ID) {
+        this.clientID = ID;
     }
 
     public int getFeedbackNumber() {
