@@ -81,7 +81,13 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   }
 })
 
-.controller('client-controller', function($scope, webfactory, $cookies, $modal){
+.controller('modal-controller', function($scope, $modal, $modalInstance) {
+  $scope.closeModal= function() {
+    $modalInstance.dismiss('cancel');
+  }
+})
+
+.controller('client-controller', function($scope, webfactory, $cookies, $modal, $timeout){
 
   console.log($cookies.get("com.yapnak.email"));
 
@@ -95,13 +101,18 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   var offer3Active;
 
   $scope.offers = [];
-  $scope.data = {};
 
-  $scope.closeModal = function() {
-    $modal.$close("true");
-  }
-
-  var details = function() {
+  var details = function(val) {
+    if (val == 1) {
+      var modal = $modal.open({
+        animation: true,
+        controller: 'modal-controller',
+        templateUrl: 'modules/templates/updated-modal.html'
+      });
+      $timeout(function() {
+        modal.close();
+      }, 2000);
+    }
     webfactory.getInfo(email).then(function(details){
       if (details.status == "True") {
         $scope.name = details.name;
@@ -128,6 +139,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
         webfactory.getOffers($scope.clientId).then(function(response) {
           $scope.offers = response;
+          $scope.offers.splice(i,3);
           $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
           for (var i = 0; i < $scope.offers.length; i++) {
             if (details.offer1Id == $scope.offers[i].offerId) {
@@ -166,38 +178,60 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     })
   }
 
-  if (email !== undefined || email !== null || email !== "") {
-    details();
+  if (email !== undefined) {
+    details(0);
   } else {
     $modal.open({
       animation: true,
+      controller: 'modal-controller',
       templateUrl: 'modules/templates/account-not-found-modal.html'
     });
   }
 
   $scope.updateInfo = function() {
-    if($scope.offer3text.offerId == $scope.offer2text.offerId || $scope.offer3text.offerId == $scope.offer1text.offerId || $scope.offer1text.offerId == $scope.offer2text.offerId) {
-      $scope.data.modal = $modal.open({
+    if(
+      (($scope.offer3text.offerId == $scope.offer2text.offerId) && $scope.offer3text.offerId !== 0)
+      || (($scope.offer3text.offerId == $scope.offer1text.offerId) && $scope.offer3text.offerId !== 0)
+      || (($scope.offer1text.offerId == $scope.offer2text.offerId) && $scope.offer2text.offerId !== 0)
+    ) {
+      $modal.open({
         animation: true,
+        controller: 'modal-controller',
         templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
     } else {
+      var counter = 9;
       if ($scope.newLocation !== "") {
         webfactory.updateLocation($scope.newLocation,email).then(function(response) {
-          details();
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
         });
+      } else {
+        counter -= 1;
       }
 
       if ($scope.newFoodStyle !== "") {
         webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
-          details();
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
         });
+      } else {
+        counter -= 1;
       }
 
       if ($scope.newName !== "") {
         webfactory.updateName($scope.newName,email).then(function(response) {
-          details();
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
         });
+      } else {
+        counter -=1 ;
       }
 
       //Check if offer 1 active state has changed
@@ -205,32 +239,56 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         if ($scope.offer1 == false) {
           //Toggle off
           webfactory.toggleOffer(email, 1, 0).then(function(){
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });
         } else {
           //Toggle on
           webfactory.toggleOffer(email, 1, 1).then(function(){
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });;
         }
+      } else {
+        counter -= 1;
       }
 
       //Check if offer 1 offer has changed
       if ($scope.offer1text.offerId !== offer1Changed.offerId) {
         //Check if a new offer is being submitted
         if ($scope.offer1text.offerId == 0) {
-          webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response) {
-            webfactory.toggleOffer(email, 1, 1).then(function() {
-              details();
+          if ($scope.newOffer1text !== "") {
+            webfactory.insertOffer(email,1,$scope.newOffer1text).then(function(response) {
+              webfactory.toggleOffer(email, 1, 1).then(function() {
+                counter -= 1;
+                if (counter == 0) {
+                  details(1);
+                }
+              });
             });
-          });
+          } else {
+            $modal.open({
+              animation: true,
+              controller: 'modal-controller',
+              templateUrl: 'modules/templates/blank-offer-modal.html'
+            });
+          }
         }
         //Replace the current offer with the old offer
         else {
           webfactory.replaceOffer(email,offer1Changed.offerId,$scope.offer1text.offerId,1).then(function() {
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });
         }
+      } else {
+        counter -= 1;
       }
 
       //Check if offer 2 active state has changed
@@ -238,32 +296,56 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         if ($scope.offer2 == false) {
           //Toggle off
           webfactory.toggleOffer(email, 2, 0).then(function(){
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });
         } else {
           //Toggle on
           webfactory.toggleOffer(email, 2, 1).then(function(){
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });;
         }
+      } else {
+        counter -= 1;
       }
 
       //Check if offer 2 offer has changed
       if ($scope.offer2text.offerId !== offer2Changed.offerId) {
         //Check if a new offer is being submitted
         if ($scope.offer2text.offerId == 0) {
-          webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response) {
-            webfactory.toggleOffer(email, 2, 1).then(function() {
-              details();
+          if ($scope.newOffer1text !== "") {
+            webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response) {
+              webfactory.toggleOffer(email, 2, 1).then(function() {
+                counter -= 1;
+                if (counter == 0) {
+                  details(1);
+                }
+              });
             });
-          });
+          } else {
+            $modal.open({
+              animation: true,
+              controller: 'modal-controller',
+              templateUrl: 'modules/templates/blank-offer-modal.html'
+            });
+          }
         }
         //Replace the current offer with the old offer
         else {
           webfactory.replaceOffer(email,offer2Changed.offerId,$scope.offer2text.offerId,2).then(function() {
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });
         }
+      } else {
+        counter -= 1;
       }
 
       //Check if offer 3 active state has changed
@@ -271,33 +353,58 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         if ($scope.offer3 == false) {
           //Toggle off
           webfactory.toggleOffer(email, 3, 0).then(function(){
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });
         } else {
           //Toggle on
           webfactory.toggleOffer(email, 3, 1).then(function(){
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });;
         }
+      } else {
+        counter -= 1;
       }
 
       //Check if offer 3 offer has changed
       if ($scope.offer3text.offerId !== offer3Changed.offerId) {
         //Check if a new offer is being submitted
         if ($scope.offer3text.offerId == 0) {
-          webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response) {
-            webfactory.toggleOffer(email, 3, 1).then(function() {
-              details();
+          if ($scope.newOffer1text !== "") {
+            webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response) {
+              webfactory.toggleOffer(email, 3, 1).then(function() {
+                counter -= 1;
+                if (counter == 0) {
+                  details(1);
+                }
+              });
             });
-          });
+          } else {
+            $modal.open({
+              animation: true,
+              controller: 'modal-controller',
+              templateUrl: 'modules/templates/blank-offer-modal.html'
+            });
+          }
         }
         //Replace the current offer with the old offer
         else {
           webfactory.replaceOffer(email,offer3Changed.offerId,$scope.offer3text.offerId,3).then(function() {
-            details();
+            counter -= 1;
+            if (counter == 0) {
+              details(1);
+            }
           });
         }
+      } else {
+        counter -= 1;
       }
+
     }
   }
 

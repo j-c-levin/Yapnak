@@ -86,7 +86,7 @@ public class signup extends HttpServlet {
                 PreparedStatement stmt = connection.prepareStatement(sql);
                 stmt.setString(1, user);
                 ResultSet rs = stmt.executeQuery();
-                //check if user has signed up
+                //check if client has signed up
                 if (rs.next()) {
                     sql = "INSERT INTO client (email, password, clientPhoto, clientName) VALUES (?,?,?,?)";
                     stmt = connection.prepareStatement(sql);
@@ -94,9 +94,9 @@ public class signup extends HttpServlet {
                     stmt.setString(2, rs.getString("password"));
                     stmt.setString(3, "");
                     stmt.setString(4, rs.getString("name"));
-                    int success = 2;
-                    success = stmt.executeUpdate();
-                    if (success == 1) {
+                    int success = stmt.executeUpdate();
+                    if (success != -1) {
+
                         sql = "INSERT INTO offers (clientID) VALUES (LAST_INSERT_ID()),(LAST_INSERT_ID()),(LAST_INSERT_ID())";
                         stmt = connection.prepareStatement(sql);
                         stmt.executeUpdate();
@@ -104,7 +104,7 @@ public class signup extends HttpServlet {
                         stmt = connection.prepareStatement(sql);
                         stmt.setString(1, rs.getString("email"));
                         stmt.executeUpdate();
-                        out.println(rs.getString("name") + "has been signed up and informed.");
+                        out.println(rs.getString("name") + " has been signed up and informed.");
                         //inform of signup
                         Properties props = new Properties();
                         Session session = Session.getDefaultInstance(props, null);
@@ -206,26 +206,23 @@ public class signup extends HttpServlet {
                 PreparedStatement stmt = connection.prepareStatement(sql);
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
-
+                String resubmit = "";
                 //Resend email
                 if (rs.next()) {
-                    out.println("It looks like you've already signed up, we'll go ahead and resend the confirmation");
-                    resp.setHeader("Refresh", "3; url=/client");
-                    name = name + " (re-submit)";
-                    sendEmail(email, name);
+                    resubmit = " (resubmit)";
                 }
                 //Send e-mail confirmation
-                else {
-                    sql = "INSERT INTO signup (email, hash, password, name) VALUES (?,?,?,?)";
+
+                    sql = "REPLACE signup (email, hash, password, name) VALUES (?,?,?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, email);
                     stmt.setString(2, hashPassword(email));
                     System.out.println(hashPassword(password));
                     stmt.setString(3, hashPassword(password));
                     stmt.setString(4, name);
-                    int success = 2;
-                    success = stmt.executeUpdate();
-                    if (success == 1) {
+                    int success = stmt.executeUpdate();
+                    if (success != -1) {
+                        name = name + resubmit;
                         sendEmail(email, name);
                         out.println("Check your e-mail for confirmation");
                         resp.setHeader("Refresh", "3; url=/client");
@@ -234,7 +231,7 @@ public class signup extends HttpServlet {
                         //TODO:Forward this somewhere for our attention
                         resp.setHeader("Refresh", "3; url=/client");
                     }
-                }
+
             } finally {
                 connection.close();
             }
