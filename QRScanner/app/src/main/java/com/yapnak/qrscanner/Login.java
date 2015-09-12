@@ -95,7 +95,8 @@ public class Login extends Activity {
     }
 
     private void login(){
-        new Authenticate().execute();
+        new Authenticate().execute(clientEmail.getText().toString(),clientPass.getText().toString());
+
     }
 
 
@@ -104,34 +105,39 @@ public class Login extends Activity {
 
 
 
-    private class Authenticate extends AsyncTask<Void,Void,Void>{
+    private boolean submitDB;
+    private boolean loginM;
+    private String emailA;
+    private class Authenticate extends AsyncTask<String,Void,Void>{
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
             SQLEntityApi.Builder sqlb = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                     .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
             sqlb.setApplicationName("Yapnak");
             SQLEntityApi entity = sqlb.build();
 
-            String passEncrypt = hashPass(clientPass.getText().toString());
-            String email = clientEmail.getText().toString();
+            String passEncrypt = hashPass(params[1]);
+            emailA = params[0];
 
             try {
-                ClientEntity login = entity.clientLogin(email, passEncrypt).execute();
+                ClientEntity login = entity.clientLogin(emailA, passEncrypt).execute();
                 Log.d("login", login.getStatus());
                 if (login.getStatus().equalsIgnoreCase("True")) {
 
-                    new LocalDBInput().execute(email);
-
+                    submitDB = true;
+                    loginM=true;
                     Intent i = new Intent(a, MainActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.putExtra("clientID",login.getId());
                     startActivity(i);
                     a.finish();
 
                 }else{
                     Log.d("fail", "Not valid email/password");
+                    loginM=false;
                 }
             }catch(IOException e){
                 e.printStackTrace();
@@ -141,9 +147,22 @@ public class Login extends Activity {
 
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(!loginM){
+                Toast.makeText(getApplicationContext(),"Not valid email/password",Toast.LENGTH_SHORT).show();
+            }
+            if(submitDB){
+                new LocalDBInput().execute(emailA);
+            }
+        }
     }
 
+
     private class LocalDBInput extends AsyncTask<String,Void,Void>{
+
 
         @Override
         protected Void doInBackground(String... params) {
@@ -153,8 +172,10 @@ public class Login extends Activity {
 
                 if(helper.clientExists(params[0])){
                     helper.updateValues(params[0]);
+                    Log.d("db", "UPDATED");
                 }else{
                     helper.insertValues(params[0]);
+                    Log.d("db", "ADDED");
                 }
                 helper.close();
 
@@ -162,6 +183,7 @@ public class Login extends Activity {
             }catch(SQLException e){
                 e.printStackTrace();
             }
+
 
 
 

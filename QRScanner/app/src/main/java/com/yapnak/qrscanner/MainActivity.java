@@ -6,21 +6,36 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.json.JsonParser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.SQLEntityApi;
+import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.model.QrEntity;
 
 
 public class MainActivity extends Activity {
 
     private static final int RESULT = 123;
+    private Intent loginIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loginIntent=getIntent();
         scanQR();
         setContentView(R.layout.activity_main);
 
@@ -59,11 +74,10 @@ public class MainActivity extends Activity {
 
     //OnClick
     public void scanQR(){
-
-            //Intent camera = new Intent("com.google.zxing.client.android.SCAN");
-            //camera.putExtra("SCAN_MODE", "QR_CODE_MODE");
-            //startActivityForResult(camera, RESULT);
-            intent().initiateScan();
+        //Intent camera = new Intent("com.google.zxing.client.android.SCAN");
+        //camera.putExtra("SCAN_MODE", "QR_CODE_MODE");
+        //startActivityForResult(camera, RESULT);
+        intent().initiateScan();
     }
 
     private IntentIntegrator intent(){
@@ -94,8 +108,10 @@ public class MainActivity extends Activity {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
             if(result!=null){
                 String d = result.getContents();
-                String JSON = result.getFormatName();
-                Toast.makeText(this, "DATA " + d + " FORMAT: " + JSON, Toast.LENGTH_SHORT).show();
+                //String JSON = result.getFormatName();
+
+                new SubmitQR(loginIntent.getLongExtra("clientID",-1)).execute(d);
+                //Toast.makeText(this, "DATA " + d + " FORMAT: " + JSON, Toast.LENGTH_SHORT).show();
                 Handler h = new Handler();
                 h.postDelayed(new Runnable() {
                     @Override
@@ -108,11 +124,40 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class Scanner extends AsyncTask<Void,Void,Void>{
+
+
+
+
+    private class SubmitQR extends AsyncTask<String,Void,Void>{
+
+        private QrEntity qr;
+        private long clientID;
+
+        private SubmitQR(long client){
+            clientID= client;
+        }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            scanQR();
+        protected Void doInBackground(String... params) {
+            try {
+                String userID = new JSONObject(params[0]).getString("id");
+                String date = new JSONObject(params[0]).getString("date");
+                String hash = new JSONObject(params[0]).getString("hash");
+
+                SQLEntityApi.Builder sqlb = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                        .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                sqlb.setApplicationName("Yapnak");
+                SQLEntityApi entity = sqlb.build();
+
+                qr = entity.qrSubmit((int)clientID, date, hash, userID).execute();
+                Log.d("status",qr.getStatus());
+
+
+            }catch(JSONException e){
+                e.printStackTrace();
+            }catch(IOException io){
+                io.printStackTrace();
+            }
             return null;
         }
     }
