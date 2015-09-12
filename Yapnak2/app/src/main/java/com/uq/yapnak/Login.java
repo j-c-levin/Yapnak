@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.frontend.yapnak.client.ClientLogin;
 import com.frontend.yapnak.subview.MyEditText;
+import com.frontend.yapnak.subview.MyProgressDialog;
 import com.frontend.yapnak.tutorial.FragmentSlideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
@@ -59,10 +60,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 
+//implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
+public class Login extends Activity{
 
-public class Login extends Activity{ //implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
-
-    private final String FILE_NAME = "yapnak_details";
+    private final String FILE_NAME="yapnak_details";
     private EditText email;
     private EditText phone;
     private String emailAd,phoneNum;
@@ -143,7 +144,7 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         password = (EditText) findViewById(R.id.passwordEdit);
 
-       final SharedPreferences remember = (SharedPreferences) getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+       final SharedPreferences remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
         final SecureDetails details = new SecureDetails();
 
         new Handler().post(new Runnable() {
@@ -186,7 +187,7 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
             public void onClick(View v) {
 
                 try {
-                    String[] details = {email.getText().toString(),phone.getText().toString().substring(7), password.getText().toString()}; //,promo.getText().toString()};
+                    String[] details = {email.getText().toString(),phone.getText().toString(), password.getText().toString()}; //,promo.getText().toString()};
                     //new UserLoginAsyncTask(getApplicationContext(), details).execute();
                     //note: the details argument has been removed and probably won't be re-added.
                     //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
@@ -205,7 +206,7 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
                     Log.d("password",password.getText().toString());
                     emailAd = email.getText().toString();
                     phoneNum = phone.getText().toString();
-                    new InternalUser(v).execute(email.getText().toString(), password.getText().toString(),phone.getText().toString());
+                    new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
 
 
 
@@ -226,8 +227,14 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
     private class InternalUser extends AsyncTask<String,Integer,String>{
 
         private View view;
+        private String registerLog;
         private String pass;
         private SecureDetails secure;
+        private RegisterUserEntity reg;
+        private AuthenticateEntity e;
+        private MyProgressDialog progress;
+        private String password,emailAddress,phoneNumber;
+
         public InternalUser(View v){
 
             this.view = v;
@@ -242,10 +249,15 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
             */
 
 
-             UserEndpointApi.Builder builder = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
-             builder.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-             builder.setApplicationName("Yapnak");
-             UserEndpointApi userEndpoint = builder.build();
+              emailAddress = params[0];
+              phoneNumber= params[2];
+              password = params[1];
+
+              UserEndpointApi.Builder builder = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+              builder.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+              builder.setApplicationName("yapnak");
+              UserEndpointApi userEndpoint = builder.build();
+
 
 
             try{
@@ -257,10 +269,12 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
 
             try{
 
+                //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bob@somemail.com").setMobNo("00000000000").execute();
+                //registerLog= reg.getMessage();
+
                 if(params[1]!=null) {
-                    AuthenticateEntity e = userEndpoint.authenticateUser(params[1]).execute();
-                    Log.d("loginResult", e.getMessage());
-                    if(Boolean.parseBoolean(e.getStatus())) {
+                    e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
+                    if(e.getUserId()!=null) {
                         return e.getUserId();
                     }else{
                         return null;
@@ -276,7 +290,14 @@ public class Login extends Activity{ //implements GoogleApiClient.ConnectionCall
         }
 
         @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
         protected void onPostExecute(String s) {
+            Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: "+ phoneNumber +"\nEmail: " + emailAddress + "\nPassword: " + password);
+            
             if(s!=null){
                 Log.d("usernameid",s);
                 Intent i = new Intent(Login.this, MainActivity.class);

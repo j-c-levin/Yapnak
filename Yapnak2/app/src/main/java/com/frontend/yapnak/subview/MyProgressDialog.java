@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,12 +28,11 @@ public class MyProgressDialog extends ProgressDialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.progress_dialog);
 
-        message = (TextView) findViewById(R.id.progressMessage);
-        startImage= (ImageView) findViewById(R.id.startImage);
-        startImage.setBackgroundResource(R.drawable.progress_anim);
+        setMessage((TextView) findViewById(R.id.progressMessage));
 
-        drawable = (AnimationDrawable) startImage.getBackground();
-
+                startImage= (ImageView) findViewById(R.id.startImage);
+                startImage.setBackgroundResource(R.drawable.progress_anim);
+                drawable = (AnimationDrawable) startImage.getBackground();
     }
 
     @Override
@@ -45,6 +45,14 @@ public class MyProgressDialog extends ProgressDialog {
     public void dismiss() {
         super.dismiss();
         drawable.stop();
+    }
+
+    public TextView getMessage() {
+        return message;
+    }
+
+    public void setMessage(TextView message) {
+        this.message = message;
     }
 
    /*public void setMsg(String msg){

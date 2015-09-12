@@ -43,6 +43,8 @@ public class ItemPrev {
     private RelativeLayout extendIcon;
     private RelativeLayout extendText;
     private ImageView tutorial1;
+    private long offerID;
+    private long clientID;
 
 
 
@@ -161,4 +163,19 @@ public class ItemPrev {
     }
 
 
+    public long getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(long clientID) {
+        this.clientID = clientID;
+    }
+
+    public long getOfferID() {
+        return offerID;
+    }
+
+    public void setOfferID(long offerID) {
+        this.offerID = offerID;
+    }
 }

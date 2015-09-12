@@ -94,7 +94,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
             locationName.setText(deal.getDistanceTime());
             points.setText(deal.getPoints());
             hotDeal.setImageResource(deal.getHotDeal());
-            restaurantLogo.setImageResource(deal.getLogo());
+            //restaurantLogo.setImageResource(deal.getLogo());
 
              if(deal.isTutorial()){
                  tutorial = deal.getPreferences();

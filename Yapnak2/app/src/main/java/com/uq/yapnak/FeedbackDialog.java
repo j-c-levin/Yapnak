@@ -72,9 +72,6 @@ public class FeedbackDialog extends AlertDialog {
         //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_spinner_item,options);
        // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
        // spinner.setAdapter(adapter);
-
-
-
         group=(RadioGroup) v.findViewById(R.id.feedbackRadioGroup);
         submit = (Button) v.findViewById(R.id.submitButton);
         cancel = (Button) v.findViewById(R.id.cancelButton);
@@ -97,7 +94,6 @@ public class FeedbackDialog extends AlertDialog {
 
         feedbackNum();
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +108,6 @@ public class FeedbackDialog extends AlertDialog {
             v.setBackgroundColor(Color.parseColor("#BF360C"));
         }
     }
-
     private void cancelClick(){
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +118,6 @@ public class FeedbackDialog extends AlertDialog {
         });
 
     }
-
     private void submitClick(){
 
         submit.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +131,6 @@ public class FeedbackDialog extends AlertDialog {
             }
         });
     }
-
     private void feedbackNum(){
 
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -181,11 +174,7 @@ public class FeedbackDialog extends AlertDialog {
             }
             return null;
         }
-
-
     }
-
-
     public RadioButton getOption() {
         return option;
     }
@@ -209,8 +198,4 @@ public class FeedbackDialog extends AlertDialog {
     public void setGroup(RadioGroup group) {
         this.group = group;
     }
-
-
-
-
 }

@@ -10,6 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.frontend.yapnak.subview.MyDatePickerDialog;
@@ -24,9 +26,16 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
+import com.yapnak.gcmbackend.userEndpointApi.model.SetUserDetailsEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.UserEndpoint;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by vahizan on 11/07/2015.
@@ -41,7 +50,8 @@ public class ProfileDialog extends AlertDialog {
     private EditText name,phone,email,password;
     private AlertDialog d;
     private String ID;
-    private Button gender;
+    private String log;
+    private Button gender,dob;
     private GenderDialog genderDialog;
 
 
@@ -67,6 +77,7 @@ public class ProfileDialog extends AlertDialog {
         email = (EditText)v.findViewById(R.id.emailEdit);
         password = (EditText)v.findViewById(R.id.passwordEdit);
         gender = (Button) v.findViewById(R.id.genderGroupButtons);
+        dob = (Button)v.findViewById(R.id.dateInput);
 
 
         genderDialog = new GenderDialog(context,activity);
@@ -103,10 +114,14 @@ public class ProfileDialog extends AlertDialog {
                 final String phoneNum = phone.getText().toString();
                 final String[] names = name.getText().toString().split(" ");
 
-                if(names.length==1) {
-                    new SubmitDetails().execute(names[0]," ",phoneNum);
+                if(ID!=null) {
+                    if (names.length == 1) {
+                        new SubmitDetails().execute(names[0], " ", phoneNum, email.getText().toString(), password.getText().toString(), date.toString());
+                    } else {
+                        new SubmitDetails().execute(names[0], names[1], phoneNum, email.getText().toString(), password.getText().toString(), date.toString());
+                    }
                 }else{
-                    new SubmitDetails().execute(names[0],names[1],phoneNum);
+                    Toast.makeText(getContext(),"Failed to submit profile",Toast.LENGTH_SHORT).show();
                 }
 
                 d.dismiss();
@@ -115,22 +130,43 @@ public class ProfileDialog extends AlertDialog {
     }
 
 
-    private class SubmitDetails extends AsyncTask<String,Integer,Void>{
+    private class SubmitDetails extends AsyncTask<String,Integer,String>{
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             try{
-                SQLEntityApi.Builder apiB = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                UserEndpointApi.Builder apiB = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
                 apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 apiB.setApplicationName("Yapnak");
-                SQLEntityApi api = apiB.build();
-                api.setUserDetails(params[0],params[1],params[2],ID).execute();
+                UserEndpointApi api = apiB.build();
+                String email,pass,phone,dob;
+                email = (params[3]!=null) ? params[3] : "";
+                pass = (params[4]!=null) ? params[4] : "";
+                dob = (params[5]!=null)?params[5]:"";
+                phone = (params[2]!=null)?params[2]:"";
+
+                SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
+                        .setEmail(email)
+                        .setFirstName(params[0])
+                        .setLastName(params[1])
+                        .setMobNo(phone)
+                        .setDateOfBirth(dob)
+                        .setPassword(pass).execute();
+                log = "STATUS: "+userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
+
 
             }catch(IOException e){
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.d("profileDialog",log);
         }
     }
 
@@ -169,7 +205,8 @@ public class ProfileDialog extends AlertDialog {
 
     }
 
-
+    private String dateString;
+    private Date date;
    private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private int day, month, year;
@@ -194,12 +231,20 @@ public class ProfileDialog extends AlertDialog {
             return pickerDialog;
        }
 
+
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             //setTargetFragment(this, DATEFRAGMENT);
             int month = monthOfYear+1;
-            String dateString = dayOfMonth + " / " + month + " / " + year;
-            button.setText(dateString);
+            dateString = year+month+""+dayOfMonth;
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            try {
+                date = format.parse(dateString);
+            }catch(ParseException e){
+                e.printStackTrace();
+            }
+            String dateS = dayOfMonth+" / "+month+" / "+year;
+            button.setText(dateS);
             this.dismiss();
         }
     }
@@ -219,20 +264,23 @@ public class ProfileDialog extends AlertDialog {
 
     }
 
-    private class FillUserInfo extends AsyncTask<Void,Integer,UserEntity>{
+    private class FillUserInfo extends AsyncTask<Void,Integer,UserDetailsEntity>{
 
 
         @Override
-        protected UserEntity doInBackground(Void... params) {
+        protected UserDetailsEntity doInBackground(Void... params) {
 
             try {
-                SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
+                /*SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                         .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
                 builder.setApplicationName("Yapnak");
 
                 SQLEntityApi sqlEntity = builder.build();
                 sqlEntity.getUserDetails(ID);
-                return sqlEntity.getUserDetails(ID).execute();
+                */
+
+                UserEndpointApi user = new UserEndpointApi (AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+                return user.getUserDetails().setUserId(ID).execute();
 
             }catch(IOException e){
               e.printStackTrace();
@@ -240,12 +288,14 @@ public class ProfileDialog extends AlertDialog {
             }
         }
         @Override
-        protected void onPostExecute(UserEntity userEntity) {
+        protected void onPostExecute(UserDetailsEntity userEntity) {
 
           try{
-              if (!userEntity.getMobNo().equalsIgnoreCase("_null") && !userEntity.getFirstName().equalsIgnoreCase("_null")) {
+              if (Boolean.parseBoolean(userEntity.getStatus())) {
                   phone.setText(userEntity.getMobNo());
                   name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+                  dob.setText(userEntity.getDateOfBirth().toString());
+                  email.setText(userEntity.getEmail());
               }
           }catch (NullPointerException e){
               e.printStackTrace();

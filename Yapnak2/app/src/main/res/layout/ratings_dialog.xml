@@ -50,6 +50,7 @@
         android:textSize="15sp"
         android:id="@+id/ratingComment"
         android:gravity="center"
+
         android:background="@android:color/transparent"
         android:hint="Leave a Comment"/>
 
