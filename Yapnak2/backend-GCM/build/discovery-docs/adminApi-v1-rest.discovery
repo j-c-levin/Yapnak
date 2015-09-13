@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/aRo0w_wwTKc0zvveaZ5Tv5BSAA4\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/55grVjmeliw-QdR2wTQbDW4jQo0\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -73,6 +73,64 @@
   }
  },
  "schemas": {
+  "ClientListEntity": {
+   "id": "ClientListEntity",
+   "type": "object",
+   "properties": {
+    "clientList": {
+     "type": "array",
+     "items": {
+      "$ref": "OfferEntity"
+     }
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "OfferEntity": {
+   "id": "OfferEntity",
+   "type": "object",
+   "properties": {
+    "clientId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "clientName": {
+     "type": "string"
+    },
+    "clientPhoto": {
+     "type": "string"
+    },
+    "foodStyle": {
+     "type": "string"
+    },
+    "latitude": {
+     "type": "number",
+     "format": "double"
+    },
+    "longitude": {
+     "type": "number",
+     "format": "double"
+    },
+    "message": {
+     "type": "string"
+    },
+    "offerId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "offerText": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "SimpleEntity": {
    "id": "SimpleEntity",
    "type": "object",
@@ -110,6 +168,35 @@
    "response": {
     "$ref": "SimpleEntity"
    },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getAllClients": {
+   "id": "adminApi.getAllClients",
+   "path": "getAllClients",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "ClientListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "hashGenerator": {
+   "id": "adminApi.hashGenerator",
+   "path": "hashGenerator",
+   "httpMethod": "POST",
+   "parameters": {
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "password"
+   ],
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

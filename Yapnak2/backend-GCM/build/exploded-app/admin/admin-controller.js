@@ -6,7 +6,7 @@ angular.module('app.controller', [])
   }
 })
 
-.controller('LoginController', function($scope, webfactory, $cookies, $modal, $state){
+.controller('LoginController', function($scope, webfactory, $modal, $state){
 
   $scope.data = {};
 
@@ -21,7 +21,7 @@ angular.module('app.controller', [])
     } else {
       //make API call
       webfactory.login($scope.data).then(function(response) {
-        if (response == -1) {
+        if (response == 1) {
           //Login success
           console.log("login success");
           // Put a cookie in here
@@ -48,4 +48,28 @@ angular.module('app.controller', [])
     }
 
   }
+})
+
+.controller('ConsoleController', function($scope, webfactory, $modal) {
+
+  $scope.gotDetails = "";
+
+  $scope.clientList = [];
+
+  $scope.clientData = {};
+
+  webfactory.getAllClients().then(function(response) {
+    if (response !== -1) {
+      $scope.clientList = response.clientList;
+    }
+  });
+
+  $scope.retrieveClient = function() {
+    webfactory.retrieveClient($scope.chosenClient.clientId).then(function(response) {
+      if (response !== -1) {
+        $scope.clientData = response;
+        $scope.gotDetails = "client";
+      }
+    });
+  };
 })

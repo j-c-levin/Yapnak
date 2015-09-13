@@ -14,6 +14,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Named;
@@ -90,6 +92,7 @@ public class AdminEndpoint {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, email);
                 statement.setString(2, hashPassword(password));
+                logger.info(hashPassword(password));
                 logger.info("Searching for admin: " + email);
                 ResultSet rs = statement.executeQuery();
                 rs.next();
@@ -119,5 +122,55 @@ public class AdminEndpoint {
             return response;
         }
 
+    }
+
+    @ApiMethod(
+            name = "hashGenerator",
+            path = "hashGenerator",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public void hashGenerator(@Named("password") String password) {
+        logger.info(hashPassword(password));
+    }
+
+    @ApiMethod(
+            name = "getAllClients",
+            path = "getAllClients",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public ClientListEntity getAllClients() {
+        ClientListEntity response = new ClientListEntity();
+        List<OfferEntity> list = new ArrayList<>();
+        OfferEntity offer;
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT clientID,clientName from client";
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    offer = new OfferEntity();
+                    offer.setClientId(rs.getInt("clientID"));
+                    offer.setClientName(rs.getString("clientName"));
+                    list.add(offer);
+                }
+                response.setClientList(list);
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
+            return response;
+        }
     }
 }
