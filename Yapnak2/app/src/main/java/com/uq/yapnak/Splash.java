@@ -216,6 +216,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     a.finish();
+
                 }
 
             }
@@ -270,14 +271,8 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                     }
                 }else{
                     Log.d("loginProcess","Preferences and Status  = NULL");
-                    hasExecuted=true;
-                    Intent i = new Intent(Splash.this, Login.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    //stopStoredPref();
-                    a.finish();
+                    hasExecuted=false;
+
                 }
 
 

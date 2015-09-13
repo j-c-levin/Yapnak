@@ -213,7 +213,7 @@ public class Login extends Activity{
                         */
 
 
-                    if(email.getText().toString()!=null && password.getText().toString()!=null && (!email.getText().toString().equalsIgnoreCase("")&& password.getText().toString().equalsIgnoreCase(""))) {
+                    if(email.getText().toString()!=null && password.getText().toString()!=null && (!email.getText().toString().equalsIgnoreCase("")&& !password.getText().toString().equalsIgnoreCase(""))) {
                         Log.d("password", password.getText().toString());
                         emailAd = email.getText().toString();
                         phoneNum = phone.getText().toString();
@@ -291,8 +291,11 @@ public class Login extends Activity{
                // RegisterUserEntity reg = userEndpoint.registerUser("1").setEmail("bobb@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-                RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
-                registerLog= reg.getMessage();
+               // RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
+                //registerLog= reg.getMessage();
+
+
+
 
                 if(params[1]!=null) {
                     e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
@@ -319,7 +322,7 @@ public class Login extends Activity{
         @Override
         protected void onPostExecute(String s) {
 
-            Log.d("register",registerLog);
+            //Log.d("register",registerLog);
             Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: "+ phoneNumber +"\nEmail: " + emailAddress + "\nPassword: " + password);
             if(s!=null){
                 Log.d("usernameid",s);

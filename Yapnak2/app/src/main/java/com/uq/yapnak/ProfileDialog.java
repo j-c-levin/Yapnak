@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.frontend.yapnak.subview.MyDatePickerDialog;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.util.DateTime;
 import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
@@ -114,30 +115,33 @@ public class ProfileDialog extends AlertDialog {
             public void onClick(View v) {
                  pnumber = phone.getText().toString();
                  names = name.getText().toString().split(" ");
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                Date date=null;
-                try {
-                     date = sdf.parse(dateString);
-                }catch (ParseException ex){
-                    ex.printStackTrace();
-                }
+                 SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
-                String buttonDate = button.getText().toString().replace("/","");
-                String actualDate = buttonDate.replaceAll("\\s+","");
-                Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString +" Actual Date: "+actualDate );
 
-               // try {
-                    if (ID != null) {
-                        if (names.length == 1) {
-                            new SubmitDetails().execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
-                        } else {
-                            new SubmitDetails().execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "Failed to submit profile", Toast.LENGTH_SHORT).show();
-                    }
+                String buttonDate = button.getText().toString().replace("/", "");
+                String actualDate = buttonDate.replaceAll("\\s+", "");
 
-                    d.dismiss();
+               if(ID!=null) {
+                   if (dateString != null) {
+                       if(names.length==1) {
+                           dateString = sdf.format(dateTime);
+                           Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
+                           new SubmitDetails(5).execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                       }else{
+                           new SubmitDetails(5).execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                       }
+                   } else {
+                       if(names.length==1) {
+                           new SubmitDetails(4).execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString());
+                       }else{
+                           new SubmitDetails(4).execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString());
+                       }
+                   }
+               }else{
+                   Toast.makeText(getContext(), "Failed to submit profile", Toast.LENGTH_SHORT).show();
+               }
+
+                d.dismiss();
                // }catch (NullPointerException e) {
                   //  Toast.makeText(getContext(), "Please Fill in the Empty Fields", Toast.LENGTH_SHORT).show();
                 //}
@@ -148,26 +152,38 @@ public class ProfileDialog extends AlertDialog {
 
     private class SubmitDetails extends AsyncTask<String,Integer,String>{
 
+        private int length;
+        public SubmitDetails(int length){
+            this.length=length;
+        }
         @Override
         protected String doInBackground(String... params) {
             try{
                 UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
-                String email,pass,phone,dob;
-                email = (params[3]!=null)?params[3]:"";
-                pass = (params[4]!=null)?params[4]:"";
-                dob = (params[5]!=null)?params[5]:"";
-                phone = (params[2]!=null)?params[2]:"";
 
-                SetUserDetailsEntity userDetails = api.setUserDetails(ID,null)
-                        .setEmail(params[3])
-                        .setFirstName(params[0])
-                        .setLastName(params[1])
-                        .setMobNo(params[2])
-                        .setDateOfBirth(params[5])
-                        .setPassword(params[4]).execute();
+               if(length==5) {
+                   SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
+                           .setEmail(params[3])
+                           .setFirstName(params[0])
+                           .setLastName(params[1])
+                           .setMobNo(params[2])
+                           .setDateOfBirth(params[5])
+                           .setPassword(params[4]).execute();
 
-                log = "STATUS: "+userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
-                return log;
+                   log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
+                   return log;
+               }else {
+                   SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
+                               .setEmail(params[3])
+                               .setFirstName(params[0])
+                               .setLastName(params[1])
+                               .setMobNo(params[2])
+                               .setPassword(params[4]).execute();
+
+                       log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
+                       return log;
+
+               }
             }catch(IOException e){
                 e.printStackTrace();
                 return null;
@@ -218,6 +234,7 @@ public class ProfileDialog extends AlertDialog {
     }
 
     private String dateString;
+    private Date dateTime;
    private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private int day, month, year;
@@ -247,10 +264,18 @@ public class ProfileDialog extends AlertDialog {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             //setTargetFragment(this, DATEFRAGMENT);
             int month = monthOfYear+1;
-            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-            Calendar cal = Calendar.getInstance();
-            cal.set(year,monthOfYear,dayOfMonth);
-            dateString = format.format(cal);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date d=null;
+            try {
+                d = format.parse(year+"-"+month+"-"+dayOfMonth);
+            }catch (ParseException e){
+
+            }
+
+
+            //dateString = format.format(cal);
+            dateTime = d;
+
             String dateS = dayOfMonth+" / "+month+" / "+year;
             button.setText(dateS);
             this.dismiss();
@@ -302,7 +327,10 @@ public class ProfileDialog extends AlertDialog {
               if (Boolean.parseBoolean(userEntity.getStatus())) {
                   phone.setText(userEntity.getMobNo());
                   name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
-                  dob.setText(userEntity.getDateOfBirth().toString());
+                  SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                  Date d = new Date();
+                  d.setTime(userEntity.getDateOfBirth().getValue());
+                  dob.setText(sdf.format(d));
                   email.setText(userEntity.getEmail());
               }
           }catch (NullPointerException e){
