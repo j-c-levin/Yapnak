@@ -6,7 +6,7 @@ angular.module('app.controller', [])
   }
 })
 
-.controller('LoginController', function($scope, webfactory, $modal, $state){
+.controller('LoginController', function($scope, webfactory, $modal, $state, detailsfactory){
 
   $scope.data = {};
 
@@ -21,10 +21,10 @@ angular.module('app.controller', [])
     } else {
       //make API call
       webfactory.login($scope.data).then(function(response) {
-        if (response == 1) {
+        if (response !== -1) {
           //Login success
           console.log("login success");
-          // Put a cookie in here
+          detailsfactory.setSession(response.session);
           $state.go('console');
         } else {
           //Login failed
@@ -50,7 +50,17 @@ angular.module('app.controller', [])
   }
 })
 
-.controller('ConsoleController', function($scope, webfactory, $modal) {
+.controller('ConsoleController', function($scope, webfactory, $modal, detailsfactory, $state) {
+  if (detailsfactory.getSession() == "") {
+    $state.go('login')
+  } else {
+    console.log("allowed past");
+    webfactory.getAllClients().then(function(response) {
+      if (response !== -1) {
+        $scope.clientList = response.clientList;
+      }
+    });
+  }
 
   $scope.gotDetails = "";
 
@@ -58,17 +68,35 @@ angular.module('app.controller', [])
 
   $scope.clientData = {};
 
-  webfactory.getAllClients().then(function(response) {
-    if (response !== -1) {
-      $scope.clientList = response.clientList;
-    }
-  });
+  $scope.modal;
+
+  $scope.closeModal= function() {
+    $scope.modal.close();
+  }
+
+  $scope.confirmUpdate = function() {
+    console.log("called");
+  }
+
+  $scope.update = function() {
+    $scope.modal = $modal.open({
+      animation: true,
+      templateUrl: 'admin/templates/confirm-admin-update-modal.html',
+      scope: $scope
+    });
+  }
 
   $scope.retrieveClient = function() {
     webfactory.retrieveClient($scope.chosenClient.clientId).then(function(response) {
       if (response !== -1) {
         $scope.clientData = response;
         $scope.gotDetails = "client";
+        $scope.clientData.locationText = $scope.clientData.x + " " + $scope.clientData.y;
+
+      ($scope.clientData.isActive == 1) ? $scope.isActive = true : $scope.isActive = false;
+      ($scope.clientData.showOffer1 == 1) ? $scope.offer1 = true : $scope.offer1 = false;
+      ($scope.clientData.showOffer2 == 1) ? $scope.offer2 = true : $scope.offer2 = false;
+      ($scope.clientData.showOffer3 == 1) ? $scope.offer3 = true : $scope.offer3 = false;
       }
     });
   };

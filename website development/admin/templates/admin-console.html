@@ -12,24 +12,30 @@
 
     <div ng-switch-when="client">
       <div class="form-signin">
-
-        <label
-        for="exampleInputEmail1">Restaurant Name</label>
-        <input type="text"
-        class="form-control" name="name" ng-model="newName" id="name" placeholder="{{clientData.clientName}}">
+        <label>
+          <input type="checkbox" name = "show-offer"
+          value="show-offer" ng-model="isActive"> Client active?
+        </label>
       </div>
 
       <div class="form-signin">
-        <label for="exampleInputPassword1">Restaurant Type</label>
+
+        <label>Restaurant Name</label>
+        <input type="text"
+        class="form-control" name="name" ng-model="newName" id="name" placeholder="{{clientData.name}}">
+      </div>
+
+      <div class="form-signin">
+        <label>Restaurant Type</label>
         <input type="text" class="form-control" ng-model="newFoodStyle" name="type" id="type"
         placeholder="{{clientData.foodStyle}}">
       </div>
 
       <div class="form-signin">
-        <label
-        for="exampleInputPassword1">Address</label>
+        <label>Address</label>
 
-        <input type="text" ng-model="newLocation" placeholder="{{clientData.location}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" typeahead-min-length="5" class="form-control">
+        <input type="text" ng-model="newLocation" placeholder="{{clientData.locationText}}" typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" typeahead-min-length="5" class="form-control">
+
         <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
         <div ng-show="noResults">
           <i class="glyphicon glyphicon-remove"></i> No Results Found
@@ -41,11 +47,11 @@
 
         <label>
           <input type="checkbox" name = "show-offer"
-          value="show-offer" ng-model="clientData.offer1" ng-click="showOffer()"> Offer one
+          value="show-offer" ng-model="offer1" ng-click="showOffer()"> Offer one
         </label>
 
         <hr>
-        <div collapse="!offer1">
+        <div collapse="!clientData.showOffer1">
 
           <select class="form-control" ng-model="clientData.offer1text" ng-options="offer.offerText for offer in offers"></select>
 
@@ -59,7 +65,7 @@
 
         <label>
           <input type="checkbox" name = "show-offer"
-          value="show-offer" ng-model="clientData.offer2" ng-click="showOffer()"> Offer two
+          value="show-offer" ng-model="offer2" ng-click="showOffer()"> Offer two
         </label>
 
         <hr>
@@ -76,7 +82,7 @@
 
         <label>
           <input type="checkbox" name = "show-offer"
-          value="show-offer" ng-model="clientData.offer3" ng-click="showOffer()" DISABLED> Offer three
+          value="show-offer" ng-model="offer3" ng-click="showOffer()" DISABLED> Offer three
         </label>
 
         <hr>
@@ -92,7 +98,7 @@
 
 
       <div class="form-signin">
-        <button class="btn btn-default btn-block" ng-click="updateInfo()">Update
+        <button class="btn btn-default btn-block" ng-click="update()">Update
           information
         </button>
       </div>

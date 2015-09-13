@@ -27,6 +27,15 @@ public class ClientEntity {
     int offer1Id;
     int offer2Id;
     int offer3Id;
+    long isActive;
+
+    public long getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(long isActive) {
+        this.isActive = isActive;
+    }
 
     public int getOffer2Id() {
         return offer2Id;

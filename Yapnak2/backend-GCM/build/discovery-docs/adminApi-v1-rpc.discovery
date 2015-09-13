@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/55grVjmeliw-QdR2wTQbDW4jQo0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/IKIOHn3SM4jypn5YkJ-bzwlaR7w\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -71,6 +71,95 @@
   }
  },
  "schemas": {
+  "AdminAuthEntity": {
+   "id": "AdminAuthEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "session": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "ClientEntity": {
+   "id": "ClientEntity",
+   "type": "object",
+   "properties": {
+    "foodStyle": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "isActive": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "offer1": {
+     "type": "string"
+    },
+    "offer1Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer2": {
+     "type": "string"
+    },
+    "offer2Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer3": {
+     "type": "string"
+    },
+    "offer3Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "photo": {
+     "type": "string"
+    },
+    "rating": {
+     "type": "number",
+     "format": "double"
+    },
+    "showOffer1": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "showOffer2": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "showOffer3": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "status": {
+     "type": "string"
+    },
+    "x": {
+     "type": "number",
+     "format": "double"
+    },
+    "y": {
+     "type": "number",
+     "format": "double"
+    }
+   }
+  },
   "ClientListEntity": {
    "id": "ClientListEntity",
    "type": "object",
@@ -128,21 +217,24 @@
      "type": "string"
     }
    }
-  },
-  "SimpleEntity": {
-   "id": "SimpleEntity",
-   "type": "object",
-   "properties": {
-    "message": {
-     "type": "string"
-    },
-    "status": {
-     "type": "string"
-    }
-   }
   }
  },
  "methods": {
+  "adminApi.adminEndpoint.insertPromo": {
+   "id": "adminApi.adminEndpoint.insertPromo",
+   "parameters": {
+    "promoCode": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "promoCode"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "adminApi.adminLogin": {
    "id": "adminApi.adminLogin",
    "parameters": {
@@ -160,7 +252,7 @@
     "password"
    ],
    "returns": {
-    "$ref": "SimpleEntity"
+    "$ref": "AdminAuthEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
@@ -171,6 +263,25 @@
    "allowGet": true,
    "returns": {
     "$ref": "ClientListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "adminApi.getClientInfo": {
+   "id": "adminApi.getClientInfo",
+   "allowGet": true,
+   "parameters": {
+    "clientId": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "clientId"
+   ],
+   "returns": {
+    "$ref": "ClientEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

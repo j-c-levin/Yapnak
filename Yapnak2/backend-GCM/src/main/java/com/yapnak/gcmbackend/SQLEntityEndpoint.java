@@ -1413,16 +1413,16 @@ public class SQLEntityEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT COUNT(*) FROM user WHERE email = ? OR mobNO = ?";
+                String statement = "SELECT COUNT(*),userID FROM user WHERE email = ? OR mobNO = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 ResultSet rs;
-                List<Integer> isUser = new ArrayList<Integer>();
+                List<String> isUser = new ArrayList<String>();
                 for (int i = 0; i < details.length; i++) {
                     stmt.setString(1, details[i]);
                     stmt.setString(2, details[i]);
                     rs = stmt.executeQuery();
                     rs.next();
-                    isUser.add(rs.getInt(1));
+                    isUser.add(rs.getString("userID"));
                 }
                 user.setStatus("True");
                 user.setIsUser(isUser);
