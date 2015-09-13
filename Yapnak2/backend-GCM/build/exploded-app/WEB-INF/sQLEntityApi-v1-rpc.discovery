@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/W3s92k3kEN2wNGCnertU5EAzpc4\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/MFvWM74BpfCQCJl08Dit4OJ-R4w\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -223,8 +223,7 @@
     "isUser": {
      "type": "array",
      "items": {
-      "type": "integer",
-      "format": "int32"
+      "type": "string"
      }
     },
     "message": {

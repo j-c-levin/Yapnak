@@ -3,31 +3,33 @@ angular.module('app.factories', [])
 .factory('detailsfactory', [function() {
   var result = {};
 
-  result.setDetails = function(details) {
-    result = details;
+  var session = "";
+
+  result.setSession = function(details) {
+    session = details;
   }
 
-  result.getDetails = function() {
-    return result;
+  result.getSession = function() {
+    return session;
   }
 
   return result;
 }])
 
-.factory('webfactory', ['$http', '$q', function($http, $q){
+.factory('webfactory', ['$http', function($http){
   var result = {};
 
   result.login = function(data) {
     var req = {
       method: 'POST',
-      // url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/adminLogin?email='.concat(data.email).concat("&password=").concat(data.password),
-      url: 'http://localhost:8080/_ah/api/adminApi/v1/adminLogin?email='.concat(data.email).concat("&password=").concat(data.password)
+       url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/adminLogin?email='.concat(data.email).concat("&password=").concat(data.password)
+//      url: 'http://localhost:8080/_ah/api/adminApi/v1/adminLogin?email='.concat(data.email).concat("&password=").concat(data.password)
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {
         console.log("admin login success");
         console.log(response);
-        return 1;
+        return response.data;
       } else {
         console.log("admin login FAILED");
         console.log(response);
@@ -43,8 +45,8 @@ angular.module('app.factories', [])
   result.getAllClients = function() {
     var req = {
       method: 'GET',
-      // url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/getAllClients'
-      url: 'http://localhost:8080/_ah/api/adminApi/v1/getAllClients'
+       url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/getAllClients'
+//      url: 'http://localhost:8080/_ah/api/adminApi/v1/getAllClients'
     }
     console.log(req);
     return $http(req).then(function(response) {
@@ -67,8 +69,8 @@ angular.module('app.factories', [])
   result.retrieveClient = function(clientId) {
     var req = {
       method: 'GET',
-      // url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/getClientInfo?clientId='.concat(clientId)
-      url: 'http://localhost:8080/_ah/api/adminApi/v1/getClientInfo?clientId='.concat(clientId)
+       url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/getClientInfo?clientId='.concat(clientId)
+//      url: 'http://localhost:8080/_ah/api/adminApi/v1/getClientInfo?clientId='.concat(clientId)
     }
     return $http(req).then(function(response) {
       if (response.data.status == "True") {

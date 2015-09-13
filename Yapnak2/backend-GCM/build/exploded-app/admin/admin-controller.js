@@ -6,7 +6,7 @@ angular.module('app.controller', [])
   }
 })
 
-.controller('LoginController', function($scope, webfactory, $modal, $state){
+.controller('LoginController', function($scope, webfactory, $modal, $state, detailsfactory){
 
   $scope.data = {};
 
@@ -21,10 +21,10 @@ angular.module('app.controller', [])
     } else {
       //make API call
       webfactory.login($scope.data).then(function(response) {
-        if (response == 1) {
+        if (response !== -1) {
           //Login success
           console.log("login success");
-          // Put a cookie in here
+          detailsfactory.setSession(response.session);
           $state.go('console');
         } else {
           //Login failed
@@ -50,7 +50,17 @@ angular.module('app.controller', [])
   }
 })
 
-.controller('ConsoleController', function($scope, webfactory, $modal) {
+.controller('ConsoleController', function($scope, webfactory, $modal, detailsfactory, $state) {
+  if (detailsfactory.getSession() == "") {
+    $state.go('login')
+  } else {
+    console.log("allowed past");
+    webfactory.getAllClients().then(function(response) {
+      if (response !== -1) {
+        $scope.clientList = response.clientList;
+      }
+    });
+  }
 
   $scope.gotDetails = "";
 
@@ -59,12 +69,6 @@ angular.module('app.controller', [])
   $scope.clientData = {};
 
   $scope.modal;
-
-  webfactory.getAllClients().then(function(response) {
-    if (response !== -1) {
-      $scope.clientList = response.clientList;
-    }
-  });
 
   $scope.closeModal= function() {
     $scope.modal.close();

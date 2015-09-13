@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/-DlFU3DslgzbL7WIwMTa9j9gtvY\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/XYTKo300gfzEd7hkp-u5mVxawcU\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -210,6 +210,9 @@
     },
     "status": {
      "type": "string"
+    },
+    "userId": {
+     "type": "string"
     }
    }
   },
@@ -220,8 +223,7 @@
     "isUser": {
      "type": "array",
      "items": {
-      "type": "integer",
-      "format": "int32"
+      "type": "string"
      }
     },
     "message": {

@@ -225,6 +225,7 @@ public class UserEndpoint {
                     response.setMessage("Registration insert failed");
                     break queryBlock;
                 }
+                response.setUserId(userIdCode);
                 if (promoCode == null) {
                     logger.info("Registration insert success");
                     response.setStatus("True");
@@ -1028,7 +1029,11 @@ public class UserEndpoint {
                     stmt.setString(2, details[i]);
                     rs = stmt.executeQuery();
                     rs.next();
-                    isUser.add(rs.getString("userID"));
+                    if (rs.getString("userID") != null) {
+                        isUser.add(rs.getString("userID"));
+                    } else {
+                        isUser.add("");
+                    }
                 }
                 response.setStatus("True");
                 response.setIsUser(isUser);

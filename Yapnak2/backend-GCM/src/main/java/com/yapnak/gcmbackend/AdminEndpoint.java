@@ -7,8 +7,10 @@ import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
 import com.google.appengine.api.utils.SystemProperty;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -66,14 +68,21 @@ public class AdminEndpoint {
         }
         return "";
     }
+
     //********************************
+
+    //Generates secure numbers
+    static String secureInt() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(130, random).toString(32);
+    }
 
     @ApiMethod(
             name = "adminLogin",
             path = "adminLogin",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SimpleEntity adminLogin(@Named("email") String email, @Named("password") String password) throws InternalServerErrorException, UnauthorizedException {
-        SimpleEntity response = new SimpleEntity();
+    public AdminAuthEntity adminLogin(@Named("email") String email, @Named("password") String password) throws InternalServerErrorException, UnauthorizedException {
+        AdminAuthEntity response = new AdminAuthEntity();
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -96,16 +105,29 @@ public class AdminEndpoint {
                 logger.info("Searching for admin: " + email);
                 ResultSet rs = statement.executeQuery();
                 rs.next();
-                if (rs.getInt(1) > 0) {
-                    //Details authenticated
-                    logger.info("Admin authorized");
-                    response.setStatus("True");
-                } else {
+                if (rs.getInt(1) == 0) {
                     //Details invalid
                     logger.warning("Admin details invalid");
                     response.setStatus("False");
                     response.setMessage("Admin details invalid");
+                    break queryBlock;
                 }
+                //Details authenticated, generate token
+                response.setSession(hashPassword(secureInt()));
+                query = "UPDATE admin SET session = ? where email = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, response.getSession());
+                statement.setString(2, email);
+                int success = statement.executeUpdate();
+                if (success == -1 ) {
+                    logger.info("Session insert failed");
+                    response.setSession("");
+                    response.setSession("False");
+                    response.setMessage("Session insert failed");
+                    break queryBlock;
+                }
+                logger.info("Admin authorized");
+                response.setStatus("True");
             } finally {
                 connection.close();
                 return response;
