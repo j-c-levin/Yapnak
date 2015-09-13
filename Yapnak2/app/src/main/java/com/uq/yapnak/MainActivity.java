@@ -83,7 +83,7 @@ import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RecommendEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
-import com.yapnak.gcmbackend.userEndpointApi.model.UserEndpoint;
+
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -1452,7 +1452,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //AlertDialog.Builder ratings = new RatingBuilder(this,this);
 
         if(connection() && (deals.getCount()>1)) {
-            RatingBuilder ratings = new RatingBuilder(this, this);
+            RatingBuilder ratings = new RatingBuilder(this, this,getItemPrev(),ID);
 
             int value =0;
             if(isTutorialOn()){
@@ -2874,6 +2874,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             new SQLConnectAsyncTask(getApplicationContext(),getLocation(),getRestaurantName(),a).execute();
                         }else{
                             Toast.makeText(getApplicationContext(),"The location/restaurant you've searched is unavailable",Toast.LENGTH_SHORT).show();
+                            refresh.setRefreshing(false);
                         }
                     }
                 });

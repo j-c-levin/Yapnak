@@ -29,7 +29,7 @@ import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.SetUserDetailsEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
-import com.yapnak.gcmbackend.userEndpointApi.model.UserEndpoint;
+import com.yapnak.gcmbackend.userEndpointApi.model.UserImageEntity;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -106,25 +106,41 @@ public class ProfileDialog extends AlertDialog {
     }
 
 
-
+      String [] names;
+      String pnumber;
     private void submitProfile(){
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String phoneNum = phone.getText().toString();
-                final String[] names = name.getText().toString().split(" ");
-
-                if(ID!=null) {
-                    if (names.length == 1) {
-                        new SubmitDetails().execute(names[0], " ", phoneNum, email.getText().toString(), password.getText().toString(), date.toString());
-                    } else {
-                        new SubmitDetails().execute(names[0], names[1], phoneNum, email.getText().toString(), password.getText().toString(), date.toString());
-                    }
-                }else{
-                    Toast.makeText(getContext(),"Failed to submit profile",Toast.LENGTH_SHORT).show();
+                 pnumber = phone.getText().toString();
+                 names = name.getText().toString().split(" ");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                Date date=null;
+                try {
+                     date = sdf.parse(dateString);
+                }catch (ParseException ex){
+                    ex.printStackTrace();
                 }
 
-                d.dismiss();
+                String buttonDate = button.getText().toString().replace("/","");
+                String actualDate = buttonDate.replaceAll("\\s+","");
+                Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString +" Actual Date: "+actualDate );
+
+               // try {
+                    if (ID != null) {
+                        if (names.length == 1) {
+                            new SubmitDetails().execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString(), actualDate);
+                        } else {
+                            new SubmitDetails().execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString(), actualDate);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to submit profile", Toast.LENGTH_SHORT).show();
+                    }
+
+                    d.dismiss();
+               // }catch (NullPointerException e) {
+                  //  Toast.makeText(getContext(), "Please Fill in the Empty Fields", Toast.LENGTH_SHORT).show();
+                //}
             }
         });
     }
@@ -135,31 +151,27 @@ public class ProfileDialog extends AlertDialog {
         @Override
         protected String doInBackground(String... params) {
             try{
-                UserEndpointApi.Builder apiB = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
-                apiB.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-                apiB.setApplicationName("Yapnak");
-                UserEndpointApi api = apiB.build();
+                UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
                 String email,pass,phone,dob;
-                email = (params[3]!=null) ? params[3] : "";
-                pass = (params[4]!=null) ? params[4] : "";
+                email = (params[3]!=null)?params[3]:"";
+                pass = (params[4]!=null)?params[4]:"";
                 dob = (params[5]!=null)?params[5]:"";
                 phone = (params[2]!=null)?params[2]:"";
 
-                SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
-                        .setEmail(email)
+                SetUserDetailsEntity userDetails = api.setUserDetails(ID,null)
+                        .setEmail(params[3])
                         .setFirstName(params[0])
                         .setLastName(params[1])
-                        .setMobNo(phone)
-                        .setDateOfBirth(dob)
-                        .setPassword(pass).execute();
+                        .setMobNo(params[2])
+                        .setDateOfBirth(params[5])
+                        .setPassword(params[4]).execute();
+
                 log = "STATUS: "+userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
-
-
+                return log;
             }catch(IOException e){
                 e.printStackTrace();
+                return null;
             }
-
-            return null;
         }
 
         @Override
@@ -206,7 +218,6 @@ public class ProfileDialog extends AlertDialog {
     }
 
     private String dateString;
-    private Date date;
    private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private int day, month, year;
@@ -236,13 +247,9 @@ public class ProfileDialog extends AlertDialog {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             //setTargetFragment(this, DATEFRAGMENT);
             int month = monthOfYear+1;
-            dateString = year+month+""+dayOfMonth;
+            dateString = year+String.valueOf(month)+dayOfMonth;
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-            try {
-                date = format.parse(dateString);
-            }catch(ParseException e){
-                e.printStackTrace();
-            }
+
             String dateS = dayOfMonth+" / "+month+" / "+year;
             button.setText(dateS);
             this.dismiss();

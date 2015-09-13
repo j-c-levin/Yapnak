@@ -33,6 +33,7 @@ import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 import java.io.IOException;
 
@@ -95,7 +96,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             alphaGlow.setDuration(1000).start();
         }
 
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
@@ -108,9 +109,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
 
             }
         }, 2000);
-
-       // h.postDelayed(run,2000);
-
+        */
 
     }
 
@@ -195,7 +194,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         mSignInClicked = true;
         mGoogleApiClient.connect();*/
         Log.d("onStart","Doing work");
-        startStoredPref();
+        h.postDelayed(run,2000);
         Log.d("onStart", "Finished work");
 
 
@@ -206,14 +205,26 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     private Runnable run = new Runnable() {
         @Override
         public void run() {
-            SharedPreferences login = getSharedPreferences("KeepMe",Context.MODE_PRIVATE);
-          if(login.getBoolean("on",false)) {
-              if (!login.getString("password", "-1").equalsIgnoreCase("-1")) {
-                  Log.d("emails",login.getString("email","NO EMAIL"));
-                   new CheckLogin(login).execute();
-              }
-          }
-        }
+            try {
+                SharedPreferences login = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
+                if (login.getBoolean("on", false)) {
+                    if (!login.getString("password", "-1").equalsIgnoreCase("-1")) {
+                        Log.d("emails", login.getString("email", "NO EMAIL"));
+                        new CheckLogin(login).execute();
+                    }
+                }else{
+                    Intent i = new Intent(Splash.this, Login.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                    //stopStoredPref();
+                    a.finish();
+                }
+            } catch(Exception exception){
+
+            }
+            }
     };
 
     private void stopStoredPref(){
@@ -222,13 +233,13 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     private void startStoredPref(){
         run.run();
     }
-
     private Activity a = this;
 
 
     private class CheckLogin extends AsyncTask<String,Void,Void>{
 
         private SharedPreferences preferences;
+        private boolean hasExecuted;
 
         protected CheckLogin(SharedPreferences preferences){
             this.preferences=preferences;
@@ -242,12 +253,13 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             builder.setApplicationName("Yapnak");
             SQLEntityApi sqlEntity = builder.build();
             */
-
+            hasExecuted=false;
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
 
             try{
 
-                AuthenticateEntity e = api.authenticateUser(preferences.getString("pass", "-1")).execute();
+                //AuthenticateEntity e = api.authenticateUser(preferences.getString("pass", "-1")).execute();
+                UserDetailsEntity e= api.getUserDetails().setEmail(preferences.getString("email", "-1")).execute();
                 //execute();
                 if(preferences!=null && Boolean.parseBoolean(e.getStatus())) {
                     if (e.getUserId().equalsIgnoreCase(preferences.getString("userID", "-1"))) {
@@ -257,15 +269,11 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(i);
+                        hasExecuted = Boolean.parseBoolean(e.getStatus());
                         a.finish();
                     }
                 }else{
-                    Intent i = new Intent(Splash.this, Login.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    a.finish();
+                    hasExecuted=false;
                 }
 
 
@@ -279,6 +287,15 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         @Override
         protected void onPostExecute(Void s) {
             super.onPostExecute(s);
+            if(!hasExecuted){
+                Intent i = new Intent(Splash.this, Login.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                //stopStoredPref();
+                a.finish();
+            }
         }
     }
 

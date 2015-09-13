@@ -15,6 +15,8 @@ import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
+import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,11 +24,11 @@ import java.util.ArrayList;
 /**
  * Created by Joshua on 17/05/2015.
  */
-public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
+public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntity> {
 
-    private static SQLEntityApi sqlEntity;
+    //private static SQLEntityApi sqlEntity;
     static boolean useDialog;
-
+    private static OfferListEntity listEntity;
     static boolean restore;
     static boolean loaded;
     private static boolean listLoaded=false;
@@ -34,6 +36,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     private Location location;
     MainActivity main;
     private String ID;
+    private String restaurant;
 
     private static void setListLoaded(boolean loaded){
         listLoaded = loaded;
@@ -43,13 +46,14 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
         return listLoaded;
     }
 
-    private MyProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
-    SQLConnectAsyncTask(Context context, Location location, MainActivity main) {
+    SQLConnectAsyncTask(Context context, Location location,String res, MainActivity main) {
         this.context = context;
         this.location = location;
         this.main = main;
-        this.progressDialog = new MyProgressDialog(this.main);
+        this.progressDialog = new ProgressDialog(this.main);
+        this.restaurant = res;
 
     }
 
@@ -57,22 +61,26 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
     private GPSTrack track;
     @Override
-    protected SQLList doInBackground(Void... params) {
-        if (sqlEntity == null) {
+    protected OfferListEntity doInBackground(Void... params) {
+        /*if (sqlEntity == null) {
             SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                     .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
             builder.setApplicationName("Yapnak");
             sqlEntity = builder.build();
         }
+        */
 //            real code to use to get location
 //            SQLEntity x = sqlEntity.getClients(location.getLongitude(), location.getLatitude()).execute();
 //            hard-coded just for debugging purposes because it's where I've stuck in some dummy data
+
+        UserEndpointApi userApi = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+
 
         try {
 
             //track = new GPSTrack(main);
             //Location loc = track.getLocation();
-            SQLList result = sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.getID()).execute();
+            /*SQLList result = sqlEntity.getClients(location.getLatitude(),location.getLongitude(),main.getID()).execute();
 
             ArrayList<SQLEntity> showOffers=new ArrayList<>();
 
@@ -84,8 +92,73 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
             SQLList showOffersList = new SQLList();
             showOffersList.setList(showOffers);
+            */
 
-            return showOffersList;
+            if(location!=null && restaurant!=null ){
+                ArrayList<OfferEntity> temp = new ArrayList<>();
+
+                OfferListEntity loc = userApi.getClients(location.getLatitude(), location.getLongitude()).execute();
+                OfferListEntity res = userApi.searchClients(restaurant).execute();
+                int countRes = res.getOfferList().size();
+                int countLoc = loc.getOfferList().size();
+
+                if(countLoc<countRes){
+                    int count = 0;
+                    while(count!=countLoc){
+
+                        if(loc.getOfferList().get(count).getOfferId()==res.getOfferList().get(count).getOfferId()){
+                            temp.add(loc.getOfferList().get(count));
+                        }else{
+                            temp.add(loc.getOfferList().get(count));
+                            temp.add(res.getOfferList().get(count));
+                        }
+                        count++;
+                    }
+                    OfferListEntity joined = new OfferListEntity();
+                    joined.setOfferList(temp);
+                    joined.setStatus(loc.getStatus());
+                    joined.setMessage(loc.getMessage());
+                    joined.setFoundOffers(loc.getFoundOffers());
+                    joined.setFactory(loc.getFactory());
+                    joined.setUnknownKeys(loc.getUnknownKeys());
+                    listEntity = joined;
+
+                }else{
+
+                    int count = 0;
+                    while(count!=countRes){
+
+                        if(res.getOfferList().get(count).getOfferId()==loc.getOfferList().get(count).getOfferId()){
+                            temp.add(res.getOfferList().get(count));
+                        }else{
+                            temp.add(loc.getOfferList().get(count));
+                            temp.add(res.getOfferList().get(count));
+                        }
+                        count++;
+                    }
+                    OfferListEntity joined = new OfferListEntity();
+                    joined.setOfferList(temp);
+                    joined.setStatus(res.getStatus());
+                    joined.setMessage(res.getMessage());
+                    joined.setFoundOffers(res.getFoundOffers());
+                    joined.setFactory(res.getFactory());
+                    joined.setUnknownKeys(res.getUnknownKeys());
+                    listEntity = joined;
+                }
+
+
+
+            }else if(restaurant!=null){
+                listEntity = userApi.searchClients(restaurant).execute();
+
+
+            }else if(location!=null){
+                listEntity = userApi.getClients(location.getLatitude(),location.getLongitude()).execute();
+
+            }
+
+
+            return listEntity;
 
 
         } catch (IOException e) {
@@ -101,7 +174,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
     protected void onPreExecute() {
         //super.onPreExecute();
         if(useDialog) {
-            //progressDialog.setMsg("Please Wait For List To Load...");
+            progressDialog.setMessage("Please Wait For List To Load...");
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setCancelable(false);
             new Handler().post(new Runnable() {
@@ -116,9 +189,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, SQLList> {
 
 
 
-    protected void onPostExecute(SQLList result) {
+    protected void onPostExecute(OfferListEntity result) {
         if (result != null && location!=null) {
-            Log.d("Debug", "completed: " + result.getList().size());
+           // Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
             main.load(result);
             main.floatButton();
             main.setList(result);

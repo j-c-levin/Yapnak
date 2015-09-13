@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -29,6 +31,7 @@ public class RatingDialog extends DialogFragment {
     private View dialogView;
     private RatingBar rating;
     private TextView ratingComment;
+    private RadioGroup radioB;
     private ItemPrev item;
     private String ID;
 
@@ -48,16 +51,26 @@ public class RatingDialog extends DialogFragment {
 
         rating = (RatingBar) dialogView.findViewById(R.id.rateDeal);
         ratingComment = (TextView) dialogView.findViewById(R.id.ratingComment);
+        radioB = (RadioGroup) dialogView.findViewById(R.id.storeCodeAccept);
+
+        radioB.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton b = (RadioButton)dialogView.findViewById(checkedId);
+                if(b.getText().toString().equalsIgnoreCase("yes")){
+                    setAccepted(true);
+                }else{
+                    setAccepted(false);
+                }
+            }
+        });
+
 
 
         rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-
                 setRating(rating);
-                TextView text = (TextView) dialogView.findViewById(R.id.ratingNumber);
-                text.setText(String.valueOf(rating));
-
             }
         });
 
@@ -98,6 +111,14 @@ public class RatingDialog extends DialogFragment {
         this.ratingNumber= rating;
     }
 
+    private boolean accept;
+    private void setAccepted(boolean accept){
+        this.accept = accept;
+    }
+    private boolean getAccepted(){
+        return accept;
+    }
+
     private class RateDeal extends AsyncTask<Void,Void,String>{
 
         @Override
@@ -105,7 +126,8 @@ public class RatingDialog extends DialogFragment {
             UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
 
             try {
-                FeedbackEntity feedback= user.feedback((int)item.getClientID(), false, (int)item.getOfferID(), (int) getRating(), ID).execute();
+
+                FeedbackEntity feedback = user.feedback((int)item.getClientID(),getAccepted(),(int)item.getOfferID(),(int)getRating(),ID).execute();
                 String fbk = "Feedback Message: "+ feedback.getMessage() + "\nStatus: " +feedback.getStatus();
                 return fbk;
             }catch(IOException e){
