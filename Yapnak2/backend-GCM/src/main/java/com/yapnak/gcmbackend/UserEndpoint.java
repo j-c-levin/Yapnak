@@ -399,7 +399,7 @@ public class UserEndpoint {
             name = "setUserDetails",
             path = "setUserDetails",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName, @Nullable UserImageEntity userImage) {
+    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName,  @Nullable UserImageEntity userImage) {
         SetUserDetailsEntity response = new SetUserDetailsEntity();
         Connection connection;
         try {
