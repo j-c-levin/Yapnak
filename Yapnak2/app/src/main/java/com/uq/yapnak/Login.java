@@ -58,6 +58,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 
 //implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
@@ -123,6 +126,10 @@ public class Login extends Activity{
 
     SharedPreferences remember;
     @Override
+
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
@@ -206,17 +213,22 @@ public class Login extends Activity{
                         */
 
 
-                    Log.d("password",password.getText().toString());
-                    emailAd = email.getText().toString();
-                    phoneNum = phone.getText().toString();
-                    new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
+                    if(email.getText().toString()!=null && password.getText().toString()!=null && (!email.getText().toString().equalsIgnoreCase("")&& password.getText().toString().equalsIgnoreCase(""))) {
+                        Log.d("password", password.getText().toString());
+                        emailAd = email.getText().toString();
+                        phoneNum = phone.getText().toString();
+                        new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
 
+                    }else{
+                        error.show(fragmentManager, "error");
+                        if(remember.getString("email","-1").equalsIgnoreCase("-1")){
+                            remember.edit().clear().apply();
+                        }
+                    }
 
 
 
                 } catch (StringIndexOutOfBoundsException e) {
-                    error.show(fragmentManager, "error");
-                } catch (NullPointerException ex){
                     error.show(fragmentManager, "error");
                 }
             }
@@ -279,8 +291,8 @@ public class Login extends Activity{
                // RegisterUserEntity reg = userEndpoint.registerUser("1").setEmail("bobb@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-                //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("john@somemail.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
+                RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
+                registerLog= reg.getMessage();
 
                 if(params[1]!=null) {
                     e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
@@ -307,6 +319,7 @@ public class Login extends Activity{
         @Override
         protected void onPostExecute(String s) {
 
+            Log.d("register",registerLog);
             Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: "+ phoneNumber +"\nEmail: " + emailAddress + "\nPassword: " + password);
             if(s!=null){
                 Log.d("usernameid",s);
@@ -738,6 +751,7 @@ public class Login extends Activity{
         }
         */
     }
+
 
     private boolean checkUserPass(){
 

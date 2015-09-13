@@ -129,9 +129,9 @@ public class ProfileDialog extends AlertDialog {
                // try {
                     if (ID != null) {
                         if (names.length == 1) {
-                            new SubmitDetails().execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString(), actualDate);
+                            new SubmitDetails().execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
                         } else {
-                            new SubmitDetails().execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString(), actualDate);
+                            new SubmitDetails().execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
                         }
                     } else {
                         Toast.makeText(getContext(), "Failed to submit profile", Toast.LENGTH_SHORT).show();
@@ -247,9 +247,10 @@ public class ProfileDialog extends AlertDialog {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             //setTargetFragment(this, DATEFRAGMENT);
             int month = monthOfYear+1;
-            dateString = year+String.valueOf(month)+dayOfMonth;
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-
+            Calendar cal = Calendar.getInstance();
+            cal.set(year,monthOfYear,dayOfMonth);
+            dateString = format.format(cal);
             String dateS = dayOfMonth+" / "+month+" / "+year;
             button.setText(dateS);
             this.dismiss();
