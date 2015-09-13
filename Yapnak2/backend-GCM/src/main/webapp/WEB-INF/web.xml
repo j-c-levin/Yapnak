@@ -94,7 +94,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
             <param-value>com.yapnak.gcmbackend.RegistrationEndpoint,
                 com.yapnak.gcmbackend.MessagingEndpoint,
                 com.yapnak.gcmbackend.SQLEntityEndpoint, com.yapnak.gcmbackend.UserEndpoint,
-                com.yapnak.gcmbackend.ClientEndpoint</param-value>
+                com.yapnak.gcmbackend.ClientEndpoint, com.yapnak.gcmbackend.AdminEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
@@ -150,9 +150,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/console</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>admin</servlet-name>#
+        <jsp-file>/admin/admin.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>admin</servlet-name>
+        <url-pattern>/admin</url-pattern>
+    </servlet-mapping>
+
     <static-files>
-        <include path="**.html"></include>
-        <include path="**.js"></include>
+        <include path="/**.html"></include>
+        <include path="/**.js"></include>
         <include path="/**.png"></include>
     </static-files>
 
