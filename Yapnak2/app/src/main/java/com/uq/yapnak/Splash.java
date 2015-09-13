@@ -96,22 +96,11 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             alphaGlow.setDuration(1000).start();
         }
 
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                Intent i = new Intent(Splash.this, Login.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-                finish();
-
-            }
-        }, 2000);
-        */
-
     }
+
+
+
+   /*
 
     private int UPDATE_TIME=3000;
     private void repeatTask(){
@@ -126,7 +115,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         h.removeCallbacks(runnable);
 
     }
-    private Runnable runnable = new Runnable() {
+   private Runnable runnable = new Runnable() {
         @Override
         public void run() {
 
@@ -169,6 +158,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             }
         }
     };
+    */
 
 
     @Override
@@ -218,7 +208,6 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
-                    //stopStoredPref();
                     a.finish();
                 }
             } catch(Exception exception){
@@ -253,6 +242,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             builder.setApplicationName("Yapnak");
             SQLEntityApi sqlEntity = builder.build();
             */
+
             hasExecuted=false;
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
 
@@ -299,6 +289,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         }
     }
 
+    /*
     @Override
     protected void onStop() {
         super.onStop();
@@ -505,6 +496,7 @@ private class BackgroundWork extends AsyncTask<Void,Integer,GoogleApiClient> imp
 
         }
     }
+    */
 
    /* @Override
     public void onConnected(Bundle bundle) {
