@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/A5Hjn-p4kwGYgeewYlr-Th78M38\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/W3s92k3kEN2wNGCnertU5EAzpc4\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -79,6 +79,10 @@
      "type": "string"
     },
     "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "isActive": {
      "type": "string",
      "format": "int64"
     },

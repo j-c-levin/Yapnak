@@ -5,6 +5,8 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.appengine.api.utils.SystemProperty;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -30,6 +32,38 @@ import javax.inject.Named;
 public class ClientEndpoint {
 
     private static final Logger logger = Logger.getLogger(ClientEndpoint.class.getName());
+
+    //*******Handles hashing********
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for (int j = 0; j < bytes.length; j++) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    private static String SALT = "Y3aQcfpTiUUdpSAY";
+
+    static String hashPassword(String in) {
+        try {
+            MessageDigest md = MessageDigest
+                    .getInstance("SHA-256");
+            md.update(SALT.getBytes());        // <-- Prepend SALT.
+            md.update(in.getBytes());
+
+            byte[] out = md.digest();
+            return bytesToHex(out);            // <-- Return the Hex Hash.
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    //********************************
 
     @ApiMethod(
             name = "getAllOffers",
@@ -160,7 +194,7 @@ public class ClientEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND isActive = 1";
+                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, client.isActive, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.email = ? AND offers.isActive = 1";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
@@ -174,6 +208,7 @@ public class ClientEndpoint {
                     client.setY(rs.getDouble("clientY"));
                     client.setFoodStyle(rs.getString("clientFoodStyle"));
                     client.setPhoto(rs.getString("clientPhotoUrl"));
+                    client.setIsActive(rs.getInt("isActive"));
                     do {
                         if (rs.getInt("offerID") == rs.getInt("offer1")) {
                             logger.info("found offer 1: " + rs.getString("offer"));
@@ -206,6 +241,50 @@ public class ClientEndpoint {
             }
         } finally {
             return client;
+        }
+    }
+
+    @ApiMethod(
+            name = "authenticateClient",
+            path = "authenticateClient",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity authenticateClient(@Named("email") String email, @Named("password") String password) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                logger.info("Beginning authentication for client " + email);
+                String query = "SELECT COUNT(*) FROM client WHERE email = ? AND password = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1,email);
+                statement.setString(2,hashPassword(password));
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    logger.info("Authenticated client");
+                    response.setStatus("True");
+                } else {
+                    logger.info("Incorrect client details");
+                    response.setStatus("False");
+                    response.setMessage("Incorrect client details");
+                }
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
+            return response;
         }
     }
 

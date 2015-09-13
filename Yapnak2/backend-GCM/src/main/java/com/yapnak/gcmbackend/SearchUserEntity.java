@@ -14,13 +14,13 @@ public class SearchUserEntity {
     @Id
     String status;
     String message;
-    List<Integer> isUser;
+    List<String> isUser;
 
-    public List<Integer> getIsUser() {
+    public List<String> getIsUser() {
         return isUser;
     }
 
-    public void setIsUser(List<Integer> isUser) {
+    public void setIsUser(List<String> isUser) {
         this.isUser = isUser;
     }
 

@@ -169,8 +169,116 @@ public class AdminEndpoint {
                 connection.close();
                 return response;
             }
-        }  finally {
+        } finally {
             return response;
         }
+    }
+
+    @ApiMethod(
+            name = "getClientInfo",
+            path = "getClientInfo",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public ClientEntity getClientInfo(@Named("clientId") String clientId) {
+        ClientEntity client = new ClientEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            try {
+                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, client.isActive, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.clientID = ? AND offers.isActive = 1";
+                PreparedStatement stmt = connection.prepareStatement(statement);
+                stmt.setString(1, clientId);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    //client found
+                    logger.info("retrieving client data: " + rs.getString("clientName"));
+                    client.setStatus("True");
+                    client.setId(rs.getInt("clientID"));
+                    client.setName(rs.getString("clientName"));
+                    client.setX(rs.getDouble("clientX"));
+                    client.setY(rs.getDouble("clientY"));
+                    client.setFoodStyle(rs.getString("clientFoodStyle"));
+                    client.setPhoto(rs.getString("clientPhotoUrl"));
+                    client.setIsActive(rs.getInt("isActive"));
+                    do {
+                        if (rs.getInt("offerID") == rs.getInt("offer1")) {
+                            logger.info("found offer 1: " + rs.getString("offer"));
+                            client.setShowOffer1(rs.getInt("showOffer"));
+                            client.setOffer1(rs.getString("offer"));
+                            client.setOffer1Id(rs.getInt("offerID"));
+
+                        } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
+                            logger.info("found offer 2: " + rs.getString("offer"));
+                            client.setShowOffer2(rs.getInt("showOffer"));
+                            client.setOffer2(rs.getString("offer"));
+                            client.setOffer2Id(rs.getInt("offerID"));
+
+                        } else {
+                            logger.info("found offer 3: " + rs.getString("offer"));
+                            client.setShowOffer3(rs.getInt("showOffer"));
+                            client.setOffer3(rs.getString("offer"));
+                            client.setOffer3Id(rs.getInt("offerID"));
+                        }
+                    } while (rs.next());
+
+                } else {
+                    //client not found
+                    client.setStatus("False");
+                    client.setMessage("No client found with that email");
+                }
+            } finally {
+                connection.close();
+                return client;
+            }
+        } finally {
+            return client;
+        }
+    }
+
+    public void insertPromo(@Named("promoCode") String promoCode) {
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "INSERT INTO promo (promoCode) VALUE (?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, promoCode);
+                int success = statement.executeUpdate();
+                if (success != -1) {
+                    logger.info("Successfully added promo code " + promoCode);
+                } else {
+                    logger.warning("Promo code adding failed!");
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            logger.warning("SQLException: " + e);
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+            logger.warning("ClassNotFoundException: " + e1);
+        }
+        finally {
+        }
+
     }
 }

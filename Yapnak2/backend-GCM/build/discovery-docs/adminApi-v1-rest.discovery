@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/55grVjmeliw-QdR2wTQbDW4jQo0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/oWGxWuoR7dh4zS302nuI9dqmENk\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -73,6 +73,80 @@
   }
  },
  "schemas": {
+  "ClientEntity": {
+   "id": "ClientEntity",
+   "type": "object",
+   "properties": {
+    "foodStyle": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "isActive": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "offer1": {
+     "type": "string"
+    },
+    "offer1Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer2": {
+     "type": "string"
+    },
+    "offer2Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer3": {
+     "type": "string"
+    },
+    "offer3Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "photo": {
+     "type": "string"
+    },
+    "rating": {
+     "type": "number",
+     "format": "double"
+    },
+    "showOffer1": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "showOffer2": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "showOffer3": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "status": {
+     "type": "string"
+    },
+    "x": {
+     "type": "number",
+     "format": "double"
+    },
+    "y": {
+     "type": "number",
+     "format": "double"
+    }
+   }
+  },
   "ClientListEntity": {
    "id": "ClientListEntity",
    "type": "object",
@@ -183,6 +257,27 @@
     "https://www.googleapis.com/auth/userinfo.email"
    ]
   },
+  "getClientInfo": {
+   "id": "adminApi.getClientInfo",
+   "path": "getClientInfo",
+   "httpMethod": "GET",
+   "parameters": {
+    "clientId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId"
+   ],
+   "response": {
+    "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "hashGenerator": {
    "id": "adminApi.hashGenerator",
    "path": "hashGenerator",
@@ -200,6 +295,30 @@
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]
+  }
+ },
+ "resources": {
+  "adminEndpoint": {
+   "methods": {
+    "insertPromo": {
+     "id": "adminApi.adminEndpoint.insertPromo",
+     "path": "void/{promoCode}",
+     "httpMethod": "POST",
+     "parameters": {
+      "promoCode": {
+       "type": "string",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "promoCode"
+     ],
+     "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email"
+     ]
+    }
+   }
   }
  }
 }

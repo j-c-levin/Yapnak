@@ -46,6 +46,7 @@ angular.module('app.factories', [])
       // url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/getAllClients'
       url: 'http://localhost:8080/_ah/api/adminApi/v1/getAllClients'
     }
+    console.log(req);
     return $http(req).then(function(response) {
       if (response.data.status == "True") {
         console.log("Retrieved clients");
@@ -64,29 +65,26 @@ angular.module('app.factories', [])
   };
 
   result.retrieveClient = function(clientId) {
-    // var req = {
-    //   method: 'POST',
-    //   // url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/adminLogin?email='.concat(data.email).concat("&password=").concat(data.password),
-    //   url: 'http://localhost:8080/_ah/api/adminApi/v1/adminLogin?email='.concat(data.email).concat("&password=").concat(data.password)
-    // }
-    // return $http(req).then(function(response) {
-    //   if (response.data.status == "True") {
-    //     console.log("Retrieved client data");
-    //     console.log(response);
-    //     return response.data;
-    //   } else {
-    //     console.log("FAILED retrieving client data");
-    //     console.log(response);
-    //     return -1
-    //   }
-    // }, function(error){
-    //   console.log("REALLY FAILED retrieving client data");
-    //   console.log(error);
-    //   return -1
-    // })
-    var response = $q.defer();
-    response.resolve(1);
-    return response.promise;
+    var req = {
+      method: 'GET',
+      // url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/getClientInfo?clientId='.concat(clientId)
+      url: 'http://localhost:8080/_ah/api/adminApi/v1/getClientInfo?clientId='.concat(clientId)
+    }
+    return $http(req).then(function(response) {
+      if (response.data.status == "True") {
+        console.log("Retrieved client data");
+        console.log(response);
+        return response.data;
+      } else {
+        console.log("FAILED retrieving client data");
+        console.log(response);
+        return -1
+      }
+    }, function(error){
+      console.log("REALLY FAILED retrieving client data");
+      console.log(error);
+      return -1
+    });
   };
 
   return result;

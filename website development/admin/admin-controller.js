@@ -58,17 +58,41 @@ angular.module('app.controller', [])
 
   $scope.clientData = {};
 
+  $scope.modal;
+
   webfactory.getAllClients().then(function(response) {
     if (response !== -1) {
       $scope.clientList = response.clientList;
     }
   });
 
+  $scope.closeModal= function() {
+    $scope.modal.close();
+  }
+
+  $scope.confirmUpdate = function() {
+    console.log("called");
+  }
+
+  $scope.update = function() {
+    $scope.modal = $modal.open({
+      animation: true,
+      templateUrl: 'admin/templates/confirm-admin-update-modal.html',
+      scope: $scope
+    });
+  }
+
   $scope.retrieveClient = function() {
     webfactory.retrieveClient($scope.chosenClient.clientId).then(function(response) {
       if (response !== -1) {
         $scope.clientData = response;
         $scope.gotDetails = "client";
+        $scope.clientData.locationText = $scope.clientData.x + " " + $scope.clientData.y;
+
+      ($scope.clientData.isActive == 1) ? $scope.isActive = true : $scope.isActive = false;
+      ($scope.clientData.showOffer1 == 1) ? $scope.offer1 = true : $scope.offer1 = false;
+      ($scope.clientData.showOffer2 == 1) ? $scope.offer2 = true : $scope.offer2 = false;
+      ($scope.clientData.showOffer3 == 1) ? $scope.offer3 = true : $scope.offer3 = false;
       }
     });
   };

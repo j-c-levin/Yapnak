@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/2PNhSQ8CijqSGEZpPPsYwKWuUhQ\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/gwGJpkgsNnzN0lpp1CDGrHc0yZ8\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -81,6 +81,10 @@
      "type": "string"
     },
     "id": {
+     "type": "string",
+     "format": "int64"
+    },
+    "isActive": {
      "type": "string",
      "format": "int64"
     },
@@ -194,6 +198,33 @@
   }
  },
  "methods": {
+  "authenticateClient": {
+   "id": "clientEndpointApi.authenticateClient",
+   "path": "authenticateClient",
+   "httpMethod": "POST",
+   "parameters": {
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "password": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "email",
+    "password"
+   ],
+   "response": {
+    "$ref": "SimpleEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
   "getAllOffers": {
    "id": "clientEndpointApi.getAllOffers",
    "path": "getAllOffers",
