@@ -48,7 +48,7 @@ import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
-import com.yapnak.gcmbackend.userEndpointApi.model.UserEndpoint;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -66,6 +66,7 @@ public class Login extends Activity{
     private final String FILE_NAME="yapnak_details";
     private EditText email;
     private EditText phone;
+    private SecureDetails secure;
     private String emailAd,phoneNum;
     private Button loginButton;
     private EditText password;
@@ -120,10 +121,12 @@ public class Login extends Activity{
     */
 
 
+    SharedPreferences remember;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+        secure = new SecureDetails();
 
         //Template google signin code.
        /* mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -144,8 +147,8 @@ public class Login extends Activity{
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         password = (EditText) findViewById(R.id.passwordEdit);
 
-       final SharedPreferences remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
-        final SecureDetails details = new SecureDetails();
+        remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+
 
         new Handler().post(new Runnable() {
             @Override
@@ -157,7 +160,7 @@ public class Login extends Activity{
                         phone.setText(remember.getString("phone", ""));
                         String decryptPass = "";
                         try {
-                            decryptPass = details.decrypt(remember.getString("password", ""));
+                            decryptPass = secure.decrypt(remember.getString("password", ""));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -229,7 +232,6 @@ public class Login extends Activity{
         private View view;
         private String registerLog;
         private String pass;
-        private SecureDetails secure;
         private RegisterUserEntity reg;
         private AuthenticateEntity e;
         private MyProgressDialog progress;
@@ -261,15 +263,23 @@ public class Login extends Activity{
 
 
             try{
-                secure = new SecureDetails();
                 pass = secure.encrypt(params[1]);
             }catch(Exception ex){
-
+                  ex.printStackTrace();
             }
 
             try{
 
                 //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bob@somemail.com").setMobNo("00000000000").execute();
+                //registerLog= reg.getMessage();
+
+                //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bobby@somemail.com").setMobNo("00000000000").execute();
+                //registerLog= reg.getMessage();
+
+               // RegisterUserEntity reg = userEndpoint.registerUser("1").setEmail("bobb@somemail.com").setMobNo("00000000000").execute();
+                //registerLog= reg.getMessage();
+
+                //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("john@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
                 if(params[1]!=null) {
@@ -296,8 +306,8 @@ public class Login extends Activity{
 
         @Override
         protected void onPostExecute(String s) {
+
             Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: "+ phoneNumber +"\nEmail: " + emailAddress + "\nPassword: " + password);
-            
             if(s!=null){
                 Log.d("usernameid",s);
                 Intent i = new Intent(Login.this, MainActivity.class);
@@ -313,8 +323,6 @@ public class Login extends Activity{
                 ErrorDialog dialog = new ErrorDialog();
                 dialog.show(fragmentManager,"error");
             }
-
-
         }
     }
 
@@ -669,19 +677,21 @@ public class Login extends Activity{
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                SharedPreferences remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+                remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
                 if(remember!=null) {
 
                     if (remember.getBoolean("on",false)) {
                         phone.setText(remember.getString("phone", ""));
                         email.setText(remember.getString("email", ""));
-                        SecureDetails details = new SecureDetails();
                         String decryptedPass = null;
 
                         try {
-                            decryptedPass = details.decrypt(remember.getString("password", "-1"));
-                        } catch (Exception e) {
 
+                            Log.d("beforeDecryption",remember.getString("password","-1"));
+                            decryptedPass = secure.decrypt(remember.getString("password", "-1"));
+                            Log.d("decryptedPass",decryptedPass);
+                        } catch (Exception e) {
+                           e.printStackTrace();
                         }
                         password.setText(decryptedPass);
 

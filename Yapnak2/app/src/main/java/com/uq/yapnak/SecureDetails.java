@@ -53,7 +53,6 @@ public class SecureDetails {
         AlgorithmParameters params = cipher.getParameters();
         mBytes = params.getParameterSpec(IvParameterSpec.class).getIV();
         byte[] encryptedText = cipher.doFinal(content.getBytes("UTF-8"));
-
         String encryptedPass = new Base64().encodeAsString(encryptedText);
         return encryptedPass;
     }
@@ -61,7 +60,7 @@ public class SecureDetails {
     public String decrypt(String content) throws Exception{
 
         byte [] saltB = salt.getBytes();
-        byte [] encryptedText = new Base64().decodeBase64(content);
+        byte [] encryptedText = Base64.decodeBase64(content);
 
 
 
@@ -81,6 +80,7 @@ public class SecureDetails {
         //Decryption of Pass
 
         Cipher passCipher = Cipher.getInstance("AES/CBS/PKCS5Padding");
+        passCipher.init(Cipher.DECRYPT_MODE,secretPass,new IvParameterSpec(mBytes));
 
         byte [] decryptedBytes = null;
 

@@ -35,11 +35,38 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="Number"
+        android:text="Did Store Accept Code?"
         android:gravity="center"
         android:id="@+id/ratingNumber"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.00" />
+
+    <RadioGroup
+        android:id="@+id/storeCodeAccept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:layout_margin="10dp"
+            android:paddingLeft="10dp"
+            android:drawablePadding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/red_radio"
+            android:text="No"/>
+
+        <RadioButton
+            android:layout_margin="10dp"
+            android:drawablePadding="10dp"
+            android:paddingLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/red_radio"
+            android:text="Yes"/>
+
+    </RadioGroup>
 
     <com.frontend.yapnak.subview.RedEditText
         android:layout_marginTop="20dp"

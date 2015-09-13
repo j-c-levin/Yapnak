@@ -5,15 +5,27 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.frontend.yapnak.ItemPrev;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.uq.yapnak.R;
+import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
+import com.yapnak.gcmbackend.userEndpointApi.model.FeedbackEntity;
+
+import java.io.IOException;
 
 /**
  * Created by vahizan on 11/07/2015.
@@ -24,16 +36,21 @@ public class RatingBuilder extends AlertDialog {
     private Context context;
     private RatingBar rating;
     private Button submit,cancel;
+    private RadioGroup radioB;
     private View v;
     private float ratingNumber;
     private AlertDialog d;
-
-    public RatingBuilder(Context context,Activity activity) {
+    private ItemPrev item;
+    private String ID;
+    private EditText comment;
+    public RatingBuilder(Context context,Activity activity,ItemPrev item,String ID) {
         super(context);
 
         this.context=context;
         this.activity=activity;
         d = this;
+        this.item =item;
+        this.ID = ID;
 
         LayoutInflater inflater = this.activity.getLayoutInflater();
 
@@ -42,12 +59,26 @@ public class RatingBuilder extends AlertDialog {
 
         rating = (RatingBar) v.findViewById(R.id.rateDeal);
 
+        comment = (EditText) v.findViewById(R.id.ratingComment);
+
         rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                TextView text = (TextView) v.findViewById(R.id.ratingNumber);
-                text.setText(String.valueOf(rating));
                 setRating(Float.parseFloat(String.valueOf(rating)));
+            }
+        });
+
+        radioB = (RadioGroup) v.findViewById(R.id.storeCodeAccept);
+
+        radioB.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton b = (RadioButton) v.findViewById(checkedId);
+                if (b.getText().toString().equalsIgnoreCase("yes")) {
+                    setAccepted(true);
+                } else {
+                    setAccepted(false);
+                }
             }
         });
 
@@ -76,6 +107,8 @@ public class RatingBuilder extends AlertDialog {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String s = (comment.getText().toString()==null) ? "" : comment.getText().toString();
+                new RateDeal().execute(s);
                 d.dismiss();
             }
         });
@@ -111,5 +144,42 @@ public class RatingBuilder extends AlertDialog {
 
     private void setRating(float rating){
         this.ratingNumber= rating;
+    }
+    private boolean accept;
+    private void setAccepted(boolean accept){
+        this.accept = accept;
+    }
+    private boolean getAccepted(){
+        return accept;
+    }
+
+
+    private class RateDeal extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+
+            try {
+                FeedbackEntity feedback;
+                if(!params[0].equalsIgnoreCase("")) {
+                     feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).setComment(params[0]).execute();
+                }else{
+                     feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).execute();
+                }
+                String fbk = "Feedback Message: "+ feedback.getMessage() + "\nStatus: " +feedback.getStatus();
+                return fbk;
+            }catch(IOException e){
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.d("feedbackMessage", s);
+            super.onPostExecute(s);
+        }
     }
 }
