@@ -1423,6 +1423,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             String insert = object.toString();
 
 
+
             AlertDialog generator = new QRGenerator(this, this, insert);
             generator.setTitle("GET DEAL");
             int value = 0;

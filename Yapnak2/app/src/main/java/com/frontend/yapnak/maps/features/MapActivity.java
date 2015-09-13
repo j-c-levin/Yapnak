@@ -20,6 +20,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.uq.yapnak.GPSTrack;
 import com.uq.yapnak.R;
+import com.yapnak.gcmbackend.clientEndpointApi.ClientEndpointApi;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -256,6 +257,8 @@ public class MapActivity extends ActionBarActivity implements View.OnClickListen
 
                 startPosition = new LatLng(lat,lng);
             }
+
+
 
 
 
