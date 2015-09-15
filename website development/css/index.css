@@ -15,7 +15,6 @@ body {
   margin: auto;
 }
 
-
 .submit-button-container {
   text-align: center;
   max-width: 100%;
@@ -52,7 +51,7 @@ body {
   max-width: 300px;
 }
 
-.center-image {
+.center-image, .center-text {
   text-align:center;
 }
 

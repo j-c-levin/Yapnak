@@ -293,10 +293,10 @@ public class ClientEndpoint {
     }
 
     @ApiMethod(
-            name = "getRemeptionForUser",
-            path = "getRemeptionForUser",
+            name = "getRedemptionForUser",
+            path = "getRedemptionForUser",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public LoyaltyRedeemEntity getRemeptionForUser(@Named("userId") String userId) {
+    public LoyaltyRedeemEntity getRedemptionForUser(@Named("userId") String userId) {
         LoyaltyRedeemEntity response = new LoyaltyRedeemEntity();
         Connection connection;
         try {
