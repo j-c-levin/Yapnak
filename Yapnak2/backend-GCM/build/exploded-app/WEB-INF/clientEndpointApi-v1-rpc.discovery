@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/qinxA1wriO2Txu0OcTww3U-6keo\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/NieCTu4Jxw_p9kaZOXAlLQX02G8\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -198,6 +198,26 @@
     }
    }
   },
+  "LoyaltyRedeemEntity": {
+   "id": "LoyaltyRedeemEntity",
+   "type": "object",
+   "properties": {
+    "loyaltyPoints": {
+     "type": "string",
+     "format": "int64"
+    },
+    "loyaltyRedeemedLevel": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "SimpleEntity": {
    "id": "SimpleEntity",
    "type": "object",
@@ -269,6 +289,24 @@
    ],
    "returns": {
     "$ref": "ClientEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "clientEndpointApi.getRemeptionForUser": {
+   "id": "clientEndpointApi.getRemeptionForUser",
+   "parameters": {
+    "userId": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "userId"
+   ],
+   "returns": {
+    "$ref": "LoyaltyRedeemEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

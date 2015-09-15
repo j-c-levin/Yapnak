@@ -269,8 +269,8 @@ public class ClientEndpoint {
                 logger.info("Beginning authentication for client " + email);
                 String query = "SELECT clientID FROM client WHERE email = ? AND password = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1,email);
-                statement.setString(2,hashPassword(password));
+                statement.setString(1, email);
+                statement.setString(2, hashPassword(password));
                 ResultSet rs = statement.executeQuery();
                 rs.next();
                 if (rs.getInt(1) > 0) {
@@ -287,7 +287,82 @@ public class ClientEndpoint {
                 connection.close();
                 return response;
             }
-        }  finally {
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "getRemeptionForUser",
+            path = "getRemeptionForUser",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public LoyaltyRedeemEntity getRemeptionForUser(@Named("userId") String userId) {
+        LoyaltyRedeemEntity response = new LoyaltyRedeemEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT loyaltyPoints FROM user WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //User doesn't exist
+                    logger.warning("UserId " + userId + " not found");
+                    response.setStatus("False");
+                    response.setMessage("UserId not found");
+                    break queryBlock;
+                }
+                int points = rs.getInt("loyaltyPoints");
+                if (points >= 200) {
+                    //Got gold
+                    response.setStatus("True");
+                    response.setLoyaltyRedeemedLevel(3);
+                    points -= 200;
+                } else if (points >= 120) {
+                    //Got silver
+                    response.setStatus("True");
+                    response.setLoyaltyRedeemedLevel(2);
+                    points -= 120;
+                } else if (points >= 60) {
+                    //Got bronze
+                    response.setStatus("True");
+                    response.setLoyaltyRedeemedLevel(1);
+                    points -= 60;
+                } else {
+                    //Got red
+                    response.setStatus("True");
+                    response.setLoyaltyRedeemedLevel(0);
+                    break queryBlock;
+                }
+                query = "UPDATE user SET loyaltyPoints = ? where userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, points);
+                statement.setString(2, userId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //update failed
+                    logger.warning("Updating points failed");
+                    response.setStatus("False");
+                    response.setMessage("Updating points failed");
+                    break queryBlock;
+                }
+                response.setLoyaltyPoints(points);
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
             return response;
         }
     }
