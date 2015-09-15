@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/bmdY5WbbcPiI-1-XwPNImcXngSc\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/A_s293LJlOa7Gdb0Ip6jejEOfgY\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -220,6 +220,29 @@
     }
    }
   },
+  "RedemptionEntity": {
+   "id": "RedemptionEntity",
+   "type": "object",
+   "properties": {
+    "loyaltyPoints": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "offerText": {
+     "type": "string"
+    },
+    "recommended": {
+     "type": "string",
+     "format": "int64"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "SimpleEntity": {
    "id": "SimpleEntity",
    "type": "object",
@@ -320,6 +343,69 @@
    ],
    "response": {
     "$ref": "LoyaltyRedeemEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "qrRedeem": {
+   "id": "clientEndpointApi.qrRedeem",
+   "path": "qrRedeem",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "offerId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "RedemptionEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "redeemUser": {
+   "id": "clientEndpointApi.redeemUser",
+   "path": "redeemUser",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "userId"
+   ],
+   "response": {
+    "$ref": "RedemptionEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

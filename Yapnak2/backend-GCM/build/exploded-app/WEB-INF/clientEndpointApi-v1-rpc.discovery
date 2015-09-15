@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/bmdY5WbbcPiI-1-XwPNImcXngSc\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/A_s293LJlOa7Gdb0Ip6jejEOfgY\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -218,6 +218,29 @@
     }
    }
   },
+  "RedemptionEntity": {
+   "id": "RedemptionEntity",
+   "type": "object",
+   "properties": {
+    "loyaltyPoints": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "offerText": {
+     "type": "string"
+    },
+    "recommended": {
+     "type": "string",
+     "format": "int64"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "SimpleEntity": {
    "id": "SimpleEntity",
    "type": "object",
@@ -307,6 +330,60 @@
    ],
    "returns": {
     "$ref": "LoyaltyRedeemEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "clientEndpointApi.qrRedeem": {
+   "id": "clientEndpointApi.qrRedeem",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "userId": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "offerId",
+    "userId"
+   ],
+   "returns": {
+    "$ref": "RedemptionEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "clientEndpointApi.redeemUser": {
+   "id": "clientEndpointApi.redeemUser",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32"
+    },
+    "userId": {
+     "type": "string",
+     "required": true
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "userId"
+   ],
+   "returns": {
+    "$ref": "RedemptionEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

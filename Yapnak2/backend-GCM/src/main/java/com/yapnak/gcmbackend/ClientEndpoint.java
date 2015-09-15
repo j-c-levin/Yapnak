@@ -367,4 +367,216 @@ public class ClientEndpoint {
         }
     }
 
+    @ApiMethod(
+            name = "redeemUser",
+            path = "redeemUser",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public RedemptionEntity redeemUser(@Named("userId") String userId, @Named("clientId") int clientId) {
+        RedemptionEntity response = new RedemptionEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                //check if there's a recommendation
+                String query = "SELECT user.loyaltyPoints, recommend.referrerID FROM user JOIN recommend ON user.userID = recommend.userID WHERE user.userID = ? AND recommend.clientID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setInt(2, clientId);
+                logger.info("Beginning redemption, searching for a recommendation");
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    //Recommendation found
+                    logger.info("recommendation found");
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+5 WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, rs.getString("referrerID"));
+                    int success = statement.executeUpdate();
+                    if (success == -1) {
+                        logger.warning("Referrer points update failed");
+                        response.setMessage("Referrer points update failed");
+                    }
+                    logger.info("Referrer points updated");
+                    //Delete from recommend table
+                    query = "DELETE FROM recommend WHERE userID = ? and clientID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    statement.setInt(2, clientId);
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        logger.warning("Removing from recommend table failed");
+                        response.setMessage("Removing from recommend table failed");
+                    }
+                    logger.info("Removed row from recommend table");
+                } else {
+                    //No recommendation
+                    logger.info("No recommendation found, searching for user");
+                    query = "SELECT loyaltyPoints FROM user WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    rs = statement.executeQuery();
+                    if (!rs.next()) {
+                        //User not in system.
+                        logger.warning("User " + userId + " not found in system");
+                        response.setStatus("False");
+                        response.setMessage("User not found in system");
+                        break queryBlock;
+                    }
+                }
+                logger.info("Found user");
+                int points = rs.getInt("loyaltyPoints");
+                points += 10;
+                query = "UPDATE user SET loyaltyPoints = loyaltyPoints+10 WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //update failed
+                    logger.warning("Updating points failed");
+                    response.setStatus("False");
+                    response.setMessage("Updating points failed");
+                    break queryBlock;
+                }
+                logger.info("Updated points successfully");
+                response.setStatus("True");
+                response.setLoyaltyPoints(points);
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "qrRedeem",
+            path = "qrRedeem",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public RedemptionEntity qrRedeem(@Named("userId") String userId, @Named("clientId") int clientId, @Named("offerId") int offerId) {
+        RedemptionEntity response = new RedemptionEntity();
+        Connection connection;
+        int success;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                //Check offer exists
+                String query = "SELECT offerText FROM offers WHERE offerID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, offerId);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //Offer doesn't exist
+                    logger.warning("Offer doesn't exist");
+                    response.setStatus("False");
+                    response.setMessage("Offer doesn't exist");
+                    break queryBlock;
+                }
+                response.setOfferText(rs.getString("offerText"));
+                //check if there's a recommendation
+                query = "SELECT user.loyaltyPoints, recommend.referrerID FROM user JOIN recommend ON user.userID = recommend.userID WHERE user.userID = ? AND recommend.clientID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setInt(2, clientId);
+                logger.info("Beginning redemption, searching for a recommendation");
+                rs = statement.executeQuery();
+                if (rs.next()) {
+                    //Recommendation found
+                    response.setRecommended(1);
+                    logger.info("recommendation found");
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+5 WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, rs.getString("referrerID"));
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        logger.warning("Referrer points update failed");
+                        response.setMessage("Referrer points update failed");
+                    }
+                    logger.info("Referrer points updated");
+                    //Delete from recommend table
+                    query = "DELETE FROM recommend WHERE userID = ? and clientID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    statement.setInt(2, clientId);
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        logger.warning("Removing from recommend table failed");
+                        response.setMessage("Removing from recommend table failed");
+                    }
+                    logger.info("Removed row from recommend table");
+                } else {
+                    response.setRecommended(0);
+                    //No recommendation
+                    logger.info("No recommendation found, searching for user");
+                    query = "SELECT loyaltyPoints FROM user WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    rs = statement.executeQuery();
+                    if (!rs.next()) {
+                        //User not in system.
+                        logger.warning("User " + userId + " not found in system");
+                        response.setStatus("False");
+                        response.setMessage("User not found in system");
+                        break queryBlock;
+                    }
+                }
+                logger.info("Found user");
+                int points = rs.getInt("loyaltyPoints");
+                points += 10;
+                query = "UPDATE user SET loyaltyPoints = loyaltyPoints+10 WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    //update failed
+                    logger.warning("Updating points failed");
+                    response.setStatus("False");
+                    response.setMessage("Updating points failed");
+                    break queryBlock;
+                }
+                response.setStatus("True");
+                response.setLoyaltyPoints(points);
+                //Log it in the claims table
+                logger.info("Updated points successfully");
+                query = "INSERT INTO claims (userID,clientID,offerID) VALUES(?,?,?)";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setInt(2, clientId);
+                statement.setInt(3, offerId);
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    //logging failed
+                    logger.warning("Logging user claim FAILED");
+                    response.setMessage("Logging user claim FAILED");
+                    break queryBlock;
+                }
+                logger.info("Logging user claim success");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
 }
