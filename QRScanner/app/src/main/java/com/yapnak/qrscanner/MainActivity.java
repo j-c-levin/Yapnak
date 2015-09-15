@@ -84,10 +84,16 @@ public class MainActivity extends Activity {
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setCameraId(0)
                 .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+                .setPrompt("Scan Your QR Code Within Viewfinder")
+                .setCaptureLayout(R.layout.capture_layout)
+                .setLegacyCaptureLayout(R.layout.legacy_capture_layout)
+                .setOrientation(90);
+        /*integrator.setCameraId(0)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
                 .setCaptureActivity(oCaptureActivity.class)
                 .setOrientationLocked(false)
                 .setPrompt("Scan QR Code")
-                .setBeepEnabled(false);
+                .setBeepEnabled(false);*/
         return integrator;
     }
 

@@ -1,4 +1,4 @@
-package com.yapnak.gcmbackend;
+package com.yapnak.joshua.qrscanner.backend;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -160,7 +160,7 @@ public class UserEndpoint {
             name = "registerUser",
             path = "registerUser",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public RegisterUserEntity registerUser(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName, @Named("promoCode") @Nullable String promoCode) {
+    public RegisterUserEntity registerUser(@Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") String password, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName) {
         RegisterUserEntity response = new RegisterUserEntity();
         Connection connection;
         try {
@@ -210,8 +210,7 @@ public class UserEndpoint {
                 //User needs to be registered
                 query = "INSERT INTO user (userID, firstName, lastName, mobNo, email, password) VALUES (?,?,?,?,?,?)";
                 statement = connection.prepareStatement(query);
-                String userIdCode = userId.substring(0, 4) + randInt();
-                statement.setString(1, userIdCode);
+                statement.setString(1, userId.substring(0, 4) + randInt());
                 statement.setString(2, (firstName == null) ? "" : firstName);
                 statement.setString(3, (lastName == null) ? "" : lastName);
                 statement.setString(4, (mobNo == null) ? "" : mobNo);
@@ -223,52 +222,11 @@ public class UserEndpoint {
                     logger.warning("Registration insert FAILED");
                     response.setStatus("False");
                     response.setMessage("Registration insert failed");
-                    break queryBlock;
-                }
-                response.setUserId(userIdCode);
-                if (promoCode == null) {
+                } else {
+                    //Insert succeeded
                     logger.info("Registration insert success");
                     response.setStatus("True");
-                    break queryBlock;
                 }
-                //find promoId
-                query = "SELECT promoId FROM promo WHERE promoCode = ?";
-                statement = connection.prepareStatement(query);
-                statement.setString(1, promoCode);
-                rs = statement.executeQuery();
-                if (!rs.next()) {
-                    //ID not found
-                    logger.info("No promoID found for " + promoCode);
-                    response.setMessage("User inserted but promo code invalid");
-                    response.setStatus("False");
-                    break queryBlock;
-                }
-                logger.info("Found promoID " + rs.getInt("promoId"));
-                //add to promo redeemed table
-                query = "INSERT INTO promoRedeemed (promoId,userId) VALUES (?,?)";
-                statement = connection.prepareStatement(query);
-                statement.setInt(1, rs.getInt("promoId"));
-                statement.setString(2, userIdCode);
-                success = statement.executeUpdate();
-                if (success == -1) {
-                    logger.warning("Insert to promoRedeemed failed");
-                    response.setStatus("False");
-                    response.setStatus("Insert to promoRedeemed failed");
-                    break queryBlock;
-                }
-                //Update user points
-                query = "UPDATE user SET loyaltyPoints = 10 where userID = ?";
-                statement = connection.prepareStatement(query);
-                statement.setString(1, userIdCode);
-                success = statement.executeUpdate();
-                if (success == -1) {
-                    logger.warning("Insert to update user loyalty points");
-                    response.setStatus("False");
-                    response.setStatus("Insert to update user loyalty points");
-                }
-                //Points update done
-                logger.info("Registration insert and promo redeemed success");
-                response.setStatus("True");
             } finally {
                 connection.close();
                 return response;
@@ -624,7 +582,7 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND client.isActive = 1";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -1006,7 +964,7 @@ public class UserEndpoint {
             path = "searchUsers",
             httpMethod = ApiMethod.HttpMethod.POST)
     public SearchUserEntity searchUsers(@Named("details") String[] details) {
-        SearchUserEntity response = new SearchUserEntity();
+        SearchUserEntity user = new SearchUserEntity();
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -1020,38 +978,34 @@ public class UserEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT COUNT(*), userID FROM user WHERE email = ? OR mobNo = ?";
+                String statement = "SELECT COUNT(*) FROM user WHERE email = ? OR mobNo = ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 ResultSet rs;
-                List<String> isUser = new ArrayList<String>();
+                List<Integer> isUser = new ArrayList<Integer>();
                 for (int i = 0; i < details.length; i++) {
                     stmt.setString(1, details[i]);
                     stmt.setString(2, details[i]);
                     rs = stmt.executeQuery();
                     rs.next();
-                    if (rs.getString("userID") != null) {
-                        isUser.add(rs.getString("userID"));
-                    } else {
-                        isUser.add("");
-                    }
+                    isUser.add(rs.getInt(1));
                 }
-                response.setStatus("True");
-                response.setIsUser(isUser);
+                user.setStatus("True");
+                user.setIsUser(isUser);
                 logger.info("Successfully searched for users");
             } finally {
                 connection.close();
-                return response;
+                return user;
             }
         } catch (ClassNotFoundException e) {
-            response.setStatus("False");
-            response.setMessage("ClassNotFoundException");
+            user.setStatus("False");
+            user.setMessage("ClassNotFoundException");
             e.printStackTrace();
         } catch (SQLException e) {
-            response.setStatus("False");
-            response.setMessage("SQLException");
+            user.setStatus("False");
+            user.setMessage("SQLException");
             e.printStackTrace();
         } finally {
-            return response;
+            return user;
         }
     }
 }

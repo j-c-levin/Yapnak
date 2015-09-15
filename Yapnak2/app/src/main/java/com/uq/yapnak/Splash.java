@@ -36,6 +36,9 @@ import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Created by Nand on 23/03/15.
@@ -72,7 +75,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     @Override
     protected void onPause() {
         super.onPause();
-        timePaused += timeInSecs;
+        //timePaused += timeInSecs;
 
        /* if(!onConnected) {
             repeatTask();
@@ -166,8 +169,10 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.splash_activity);
-        firstTime = false;
-        activity = this;
+        //firstTime = false;
+        //activity = this;
+
+
     }
 
     @Override
@@ -195,24 +200,25 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     private Runnable run = new Runnable() {
         @Override
         public void run() {
-            try {
+
                 SharedPreferences login = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
                 if (login.getBoolean("on", false)) {
+                    Log.d("loginProcess",String.valueOf(login.getBoolean("on",false)));
                     if (!login.getString("password", "-1").equalsIgnoreCase("-1")) {
-                        Log.d("emails", login.getString("email", "NO EMAIL"));
                         new CheckLogin(login).execute();
+                        Log.d("loginProcess", login.getString("email", "NO EMAIL"));
                     }
                 }else{
+                    Log.d("loginProcess","preferences NULL");
                     Intent i = new Intent(Splash.this, Login.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     a.finish();
-                }
-            } catch(Exception exception){
 
-            }
+                }
+
             }
     };
 
@@ -243,7 +249,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             SQLEntityApi sqlEntity = builder.build();
             */
 
-            hasExecuted=false;
+
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
 
             try{
@@ -253,6 +259,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                 //execute();
                 if(preferences!=null && Boolean.parseBoolean(e.getStatus())) {
                     if (e.getUserId().equalsIgnoreCase(preferences.getString("userID", "-1"))) {
+                        Log.d("loginProcess","Preferences and Status  NOT NULL");
                         Intent i = new Intent(Splash.this, MainActivity.class);
                         i.putExtra("userID", e.getUserId());
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -263,7 +270,9 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                         a.finish();
                     }
                 }else{
+                    Log.d("loginProcess","Preferences and Status  = NULL");
                     hasExecuted=false;
+
                 }
 
 
@@ -287,6 +296,54 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                 a.finish();
             }
         }
+    }
+
+
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for (int j = 0; j < bytes.length; j++) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    private static String SALT = "Y3aQcfpTiUUdpSAY";
+
+    static String hashPassword(String in) {
+        try {
+            MessageDigest md = MessageDigest
+                    .getInstance("SHA-256");
+            md.update(SALT.getBytes());        // <-- Prepend SALT.
+            md.update(in.getBytes());
+
+            byte[] out = md.digest();
+            return bytesToHex(out);            // <-- Return the Hex Hash.
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    //********************************
+
+    //Generates some random numbers
+    public static int randInt() {
+
+        // NOTE: Usually this should be a field rather than a method
+        // variable so that it is not re-seeded every call.
+        Random rand = new Random();
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int max = 9998;
+        int min = 1000;
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
     }
 
     /*

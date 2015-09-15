@@ -1403,10 +1403,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             String toHash = userid + date + "YAPNAKRULES";
 
-            String insert = "{ " +
+            JSONObject object = new JSONObject();
+            try {
+                object.put("id", userid);
+                object.put("date",date);
+                object.put("hash",toHash);
+                object.put("offerid",getOfferID());
+                object.put("clientid",getClientID());
+            }catch (JSONException e){
+
+            }
+            /*String insert = "{ " +
                     "\"id\" : \"" + userid + "\"," +
                     "\"date\" :\"" + date + "\"," +
-                    "\"hash\" : \"" + hashing(toHash) + "\" }";
+                    "\"hash\" : \"" + hashing(toHash) + "\" " +
+                    "\"hash\" : \"" + "" + "\"" +
+                    "}";*/
+
+            String insert = object.toString();
+
 
 
             AlertDialog generator = new QRGenerator(this, this, insert);
@@ -2129,6 +2144,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    private long offerID;
+    private void setOfferID(long offerID){
+        this.offerID=offerID;
+    }
+    private long getOfferID(){
+        return offerID;
+    }
     private class ItemInfoListener implements AdapterView.OnItemClickListener{
         private boolean inLoad;
         public ItemInfoListener(boolean bool){
@@ -2141,6 +2163,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             itemTemp = (ItemPrev)parent.getItemAtPosition(position);
             setClientID(itemTemp.getClientID());
+            setOfferID(itemTemp.getOfferID());
             //setItemPrev(itemTemp);
             if(position!=0) {
                 GetItemPrev threadGetItem = new GetItemPrev();
