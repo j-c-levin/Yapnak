@@ -139,7 +139,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
         webfactory.getOffers($scope.clientId).then(function(response) {
           $scope.offers = response;
-          $scope.offers.splice(i,3);
           $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
           for (var i = 0; i < $scope.offers.length; i++) {
             if (details.offer1Id == $scope.offers[i].offerId) {
@@ -153,6 +152,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
               offer3Changed = $scope.offers[i];
             }
           }
+          $scope.offers.splice(1,3);
         });
 
         $scope.foodStyle = details.foodStyle;
@@ -318,7 +318,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       if ($scope.offer2text.offerId !== offer2Changed.offerId) {
         //Check if a new offer is being submitted
         if ($scope.offer2text.offerId == 0) {
-          if ($scope.newOffer1text !== "") {
+          if ($scope.newOffer2text !== "") {
             webfactory.insertOffer(email,2,$scope.newOffer2text).then(function(response) {
               webfactory.toggleOffer(email, 2, 1).then(function() {
                 counter -= 1;
@@ -375,7 +375,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       if ($scope.offer3text.offerId !== offer3Changed.offerId) {
         //Check if a new offer is being submitted
         if ($scope.offer3text.offerId == 0) {
-          if ($scope.newOffer1text !== "") {
+          if ($scope.newOffer3text !== "") {
             webfactory.insertOffer(email,3,$scope.newOffer3text).then(function(response) {
               webfactory.toggleOffer(email, 3, 1).then(function() {
                 counter -= 1;

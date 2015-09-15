@@ -250,7 +250,7 @@ angular.module('app.factories', [])
   result.insertOffer = function(email,offer,text) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/insertOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(text)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/insertOffer?email='.concat(email).concat("&offer=").concat(offer).concat("&text=").concat(encodeURIComponent(text))
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {

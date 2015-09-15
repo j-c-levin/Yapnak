@@ -324,23 +324,27 @@ public class ClientEndpoint {
                     break queryBlock;
                 }
                 int points = rs.getInt("loyaltyPoints");
-                if (points >= 200) {
+                if (points >= 420) {
+                    //Got ruby
+                    response.setStatus("True");
+                    response.setLoyaltyRedeemedLevel(4);
+                    points -= 420;
+                } else if (points >= 300) {
                     //Got gold
                     response.setStatus("True");
                     response.setLoyaltyRedeemedLevel(3);
-                    points -= 200;
-                } else if (points >= 120) {
+                    points -= 300;
+                } else if (points >= 200) {
                     //Got silver
                     response.setStatus("True");
                     response.setLoyaltyRedeemedLevel(2);
-                    points -= 120;
-                } else if (points >= 60) {
+                    points -= 200;
+                } else if (points >= 120) {
                     //Got bronze
                     response.setStatus("True");
                     response.setLoyaltyRedeemedLevel(1);
-                    points -= 60;
+                    points -= 120;
                 } else {
-                    //Got red
                     response.setStatus("True");
                     response.setLoyaltyRedeemedLevel(0);
                     break queryBlock;
@@ -480,7 +484,7 @@ public class ClientEndpoint {
             queryBlock:
             try {
                 //Check offer exists
-                String query = "SELECT offerText FROM offers WHERE offerID = ?";
+                String query = "SELECT offerText,clientID FROM offers WHERE offerID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, offerId);
                 ResultSet rs = statement.executeQuery();
@@ -489,6 +493,14 @@ public class ClientEndpoint {
                     logger.warning("Offer doesn't exist");
                     response.setStatus("False");
                     response.setMessage("Offer doesn't exist");
+                    break queryBlock;
+                }
+                //Check it is the client's own offer
+                if (rs.getInt("clientID") != clientId) {
+                    //Offer does not belong to the client
+                    logger.warning("Offer redeemed does not belong to the client");
+                    response.setStatus("False");
+                    response.setMessage("Offer redeemed does not belong to the client");
                     break queryBlock;
                 }
                 response.setOfferText(rs.getString("offerText"));
@@ -503,7 +515,7 @@ public class ClientEndpoint {
                     //Recommendation found
                     response.setRecommended(1);
                     logger.info("recommendation found");
-                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+5 WHERE userID = ?";
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+1 WHERE userID = ?";
                     statement = connection.prepareStatement(query);
                     statement.setString(1, rs.getString("referrerID"));
                     success = statement.executeUpdate();
@@ -541,20 +553,47 @@ public class ClientEndpoint {
                 }
                 logger.info("Found user");
                 int points = rs.getInt("loyaltyPoints");
-                points += 10;
-                query = "UPDATE user SET loyaltyPoints = loyaltyPoints+10 WHERE userID = ?";
+                //Check if it is their first visit
+                query = "SELECT COUNT(*) FROM claims WHERE userID = ? AND clientID = ?";
                 statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
-                success = statement.executeUpdate();
-                if (success == -1) {
-                    //update failed
-                    logger.warning("Updating points failed");
-                    response.setStatus("False");
-                    response.setMessage("Updating points failed");
-                    break queryBlock;
+                statement.setInt(2, clientId);
+                rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    //Not their first visit
+                    points += 5;
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+5 WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        //update failed
+                        logger.warning("Updating points failed");
+                        response.setStatus("False");
+                        response.setMessage("Updating points failed");
+                        break queryBlock;
+                    }
+                    response.setStatus("True");
+                    response.setLoyaltyPoints(points);
+                } else {
+                    //Their first visit
+                    points += 8;
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+8 WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        //update failed
+                        logger.warning("Updating points failed");
+                        response.setStatus("False");
+                        response.setMessage("Updating points failed");
+                        break queryBlock;
+                    }
+                    response.setStatus("True");
+                    response.setStatus("New customer bonus");
+                    response.setLoyaltyPoints(points);
                 }
-                response.setStatus("True");
-                response.setLoyaltyPoints(points);
                 //Log it in the claims table
                 logger.info("Updated points successfully");
                 query = "INSERT INTO claims (userID,clientID,offerID) VALUES(?,?,?)";

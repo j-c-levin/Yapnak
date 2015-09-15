@@ -1329,6 +1329,7 @@ public class SQLEntityEndpoint {
                 stmt.setString(1, email);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
+                    logger.info("Inserting new offer: " + text);
                     sql = "INSERT INTO offers (clientID, offerText) VALUES (?,?)";
                     stmt = connection.prepareStatement(sql);
                     stmt.setInt(1, rs.getInt("clientID"));
