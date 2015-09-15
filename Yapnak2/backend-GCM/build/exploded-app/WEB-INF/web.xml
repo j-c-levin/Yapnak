@@ -159,6 +159,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/admin</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>support</servlet-name>#
+        <jsp-file>/support.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>support</servlet-name>
+        <url-pattern>/support</url-pattern>
+    </servlet-mapping>
+
     <static-files>
         <include path="/**.html"></include>
         <include path="/**.js"></include>
