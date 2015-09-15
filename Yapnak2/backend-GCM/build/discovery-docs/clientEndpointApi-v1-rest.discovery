@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/gwGJpkgsNnzN0lpp1CDGrHc0yZ8\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/qinxA1wriO2Txu0OcTww3U-6keo\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -73,6 +73,22 @@
   }
  },
  "schemas": {
+  "ClientAuthEntity": {
+   "id": "ClientAuthEntity",
+   "type": "object",
+   "properties": {
+    "clientId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "ClientEntity": {
    "id": "ClientEntity",
    "type": "object",
@@ -219,7 +235,7 @@
     "password"
    ],
    "response": {
-    "$ref": "SimpleEntity"
+    "$ref": "ClientAuthEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

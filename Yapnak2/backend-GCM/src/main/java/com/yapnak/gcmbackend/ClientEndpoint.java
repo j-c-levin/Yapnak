@@ -135,6 +135,7 @@ public class ClientEndpoint {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, newOfferId);
                 statement.setString(2, email);
+                logger.info("Replacing offer " + currentOfferId + " with " + newOfferId + " at position " + offerPosition);
                 int success = statement.executeUpdate();
                 if (success == -1) {
                     logger.warning("Replacing active offer failed");
@@ -142,6 +143,7 @@ public class ClientEndpoint {
                     response.setMessage("Replacing active offer failed");
                     break queryBlock;
                 }
+                logger.info("Replacing offer successful");
                 query = "UPDATE offers SET isActive = ?, showOffer = ? WHERE offerID = ?";
                 statement = connection.prepareStatement(query);
                 statement.setInt(1, 0);
@@ -248,8 +250,8 @@ public class ClientEndpoint {
             name = "authenticateClient",
             path = "authenticateClient",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SimpleEntity authenticateClient(@Named("email") String email, @Named("password") String password) {
-        SimpleEntity response = new SimpleEntity();
+    public ClientAuthEntity authenticateClient(@Named("email") String email, @Named("password") String password) {
+        ClientAuthEntity response = new ClientAuthEntity();
         Connection connection;
         try {
             if (SystemProperty.environment.value() ==
@@ -265,7 +267,7 @@ public class ClientEndpoint {
             queryBlock:
             try {
                 logger.info("Beginning authentication for client " + email);
-                String query = "SELECT COUNT(*) FROM client WHERE email = ? AND password = ?";
+                String query = "SELECT clientID FROM client WHERE email = ? AND password = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1,email);
                 statement.setString(2,hashPassword(password));
@@ -274,6 +276,8 @@ public class ClientEndpoint {
                 if (rs.getInt(1) > 0) {
                     logger.info("Authenticated client");
                     response.setStatus("True");
+                    logger.info("ID " + rs.getInt("clientID"));
+                    response.setClientId(rs.getInt("clientID"));
                 } else {
                     logger.info("Incorrect client details");
                     response.setStatus("False");
