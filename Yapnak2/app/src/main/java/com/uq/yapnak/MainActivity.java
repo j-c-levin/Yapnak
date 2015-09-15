@@ -1403,6 +1403,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             String toHash = userid + date + "YAPNAKRULES";
 
+
             JSONObject object = new JSONObject();
             try {
                 object.put("id", userid);
@@ -1411,6 +1412,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 object.put("offer",String.valueOf(getOfferID()));
                 object.put("client",String.valueOf(getClientID()));
                 object.put("clientname",getClientName());
+                object.put("isReward","false");
             }catch (JSONException e){
 
             }

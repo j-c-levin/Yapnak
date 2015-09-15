@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -76,6 +77,7 @@ public class Login extends Activity{
     private MenuItem itemMen;
     private ErrorDialog error;
     private boolean resume;
+    private Context c = this;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
     private String personName;
@@ -134,6 +136,7 @@ public class Login extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         secure = new SecureDetails();
+        progress = new ProgressDialog(c);
 
         //Template google signin code.
        /* mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -223,16 +226,25 @@ public class Login extends Activity{
                             new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
 
                         } else {
+                            if(progress.isShowing()){
+                                progress.dismiss();
+                            }
                             error.show(fragmentManager, "error");
                             if (remember.getString("email", "-1").equalsIgnoreCase("-1")) {
                                 remember.edit().clear().apply();
                             }
                         }
                     }else{
+                        if(progress.isShowing()){
+                            progress.dismiss();
+                        }
                         Toast.makeText(getApplicationContext(),"Please Turn On Internet",Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (StringIndexOutOfBoundsException e) {
+                    if(progress.isShowing()){
+                        progress.dismiss();
+                    }
                     error.show(fragmentManager, "error");
                 }
             }
@@ -243,14 +255,15 @@ public class Login extends Activity{
     }
 
 
+    private ProgressDialog progress;
     private class InternalUser extends AsyncTask<String,Integer,String>{
+
 
         private View view;
         private String registerLog;
         private String pass;
         private RegisterUserEntity reg;
         private AuthenticateEntity e;
-        private MyProgressDialog progress;
         private String password,emailAddress,phoneNumber;
 
         public InternalUser(View v){
@@ -295,7 +308,7 @@ public class Login extends Activity{
                 //RegisterUserEntity reg = userEndpoint.registerUser("123").setEmail("b@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("s.com").setMobNo("00000000000").execute();
+                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
                 //RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
@@ -321,9 +334,19 @@ public class Login extends Activity{
 
         }
 
+
+
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
+        protected void onPreExecute() {
+            progress.setMessage("Signing in...");
+            progress.setCancelable(false);
+            progress.setCanceledOnTouchOutside(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    progress.show();
+                }
+            });
         }
 
         @Override

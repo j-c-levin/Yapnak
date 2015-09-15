@@ -8,6 +8,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -183,9 +186,14 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
                     return b;
                 }
                 */
+            url = urls[0];
             try{
-                Bitmap b= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
-                return b;
+
+                //Bitmap b= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
+
+                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),100, 100);
+
+                return bitmap;
             }catch (Exception e){
                 e.printStackTrace();
                 return  null;
@@ -211,6 +219,47 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
         return this.view;
     }
 
+    private String url;
+    private int calculateSampleSize(BitmapFactory.Options options,int reqWidth,int reqHeight){
+      final int width = options.outWidth;
+      final int height = options.outHeight;
+
+        int inSampleSize=1;
+
+        if(height>reqHeight || width>reqWidth){
+
+            final int halfHeight = height/2;
+            final int halfWidth = width/2;
+
+            while((halfHeight/inSampleSize>reqHeight)&&(halfWidth/inSampleSize)>reqWidth){
+                      inSampleSize*=2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    private Bitmap compressImage(InputStream stream,int reqWidth,int reqHeight){
+
+        try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(stream, null, options);
+            options.inSampleSize = calculateSampleSize(options, reqWidth, reqHeight);
+
+
+            options.inJustDecodeBounds = false;
+
+
+            stream.close();
+            stream = (InputStream) new URL(url).getContent();
+
+            Bitmap b= BitmapFactory.decodeStream(stream, null, options);
+            stream.close();
+            return b;
+        }catch(IOException e){
+            return null;
+        }
+    }
 
     @Override
     public int getItemViewType(int position) {
