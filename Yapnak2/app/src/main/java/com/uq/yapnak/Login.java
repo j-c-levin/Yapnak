@@ -213,20 +213,24 @@ public class Login extends Activity{
                         */
 
 
-                    if(email.getText().toString()!=null && password.getText().toString()!=null && (!email.getText().toString().equalsIgnoreCase("")&& !password.getText().toString().equalsIgnoreCase(""))) {
-                        Log.d("password", password.getText().toString());
-                        emailAd = email.getText().toString();
-                        phoneNum = phone.getText().toString();
-                        new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
+                    if(connection()) {
 
-                    }else{
-                        error.show(fragmentManager, "error");
-                        if(remember.getString("email","-1").equalsIgnoreCase("-1")){
-                            remember.edit().clear().apply();
+
+                        if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase(""))) {
+                            Log.d("password", password.getText().toString());
+                            emailAd = email.getText().toString();
+                            phoneNum = phone.getText().toString();
+                            new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
+
+                        } else {
+                            error.show(fragmentManager, "error");
+                            if (remember.getString("email", "-1").equalsIgnoreCase("-1")) {
+                                remember.edit().clear().apply();
+                            }
                         }
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Please Turn On Internet",Toast.LENGTH_SHORT).show();
                     }
-
-
 
                 } catch (StringIndexOutOfBoundsException e) {
                     error.show(fragmentManager, "error");
@@ -288,10 +292,13 @@ public class Login extends Activity{
                 //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bobby@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-               // RegisterUserEntity reg = userEndpoint.registerUser("1").setEmail("bobb@somemail.com").setMobNo("00000000000").execute();
+                //RegisterUserEntity reg = userEndpoint.registerUser("123").setEmail("b@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-               // RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
+                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("s.com").setMobNo("00000000000").execute();
+                //registerLog= reg.getMessage();
+
+                //RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
 
@@ -322,23 +329,25 @@ public class Login extends Activity{
         @Override
         protected void onPostExecute(String s) {
 
-            //Log.d("register",registerLog);
-            Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: "+ phoneNumber +"\nEmail: " + emailAddress + "\nPassword: " + password);
-            if(s!=null){
-                Log.d("usernameid",s);
-                Intent i = new Intent(Login.this, MainActivity.class);
-                i.putExtra("userID", s);
-                i.putExtra("password", pass);
-                i.putExtra("email",emailAd);
-                i.putExtra("phone",phoneNum);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                view.getContext().startActivity(i);
-            }else{
-                ErrorDialog dialog = new ErrorDialog();
-                dialog.show(fragmentManager,"error");
-            }
+
+                Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
+
+                if (s != null) {
+                    Log.d("usernameid", s);
+                    Intent i = new Intent(Login.this, MainActivity.class);
+                    i.putExtra("userID", s);
+                    i.putExtra("password", pass);
+                    i.putExtra("email", emailAd);
+                    i.putExtra("phone", phoneNum);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    view.getContext().startActivity(i);
+                } else {
+                    ErrorDialog dialog = new ErrorDialog();
+                    dialog.show(fragmentManager, "error");
+                }
+
         }
     }
 
@@ -370,6 +379,13 @@ public class Login extends Activity{
 
     }
 
+    private boolean connection(){
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+        return (wifi||lte);
+    }
 
     private AnimatorSet arrowGone(){
         ValueAnimator animator = ValueAnimator.ofFloat(originalUserY,-1000.0f);

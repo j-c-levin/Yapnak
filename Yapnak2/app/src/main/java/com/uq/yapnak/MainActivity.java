@@ -1406,10 +1406,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             JSONObject object = new JSONObject();
             try {
                 object.put("id", userid);
-                object.put("date",date);
+                object.put("datetime",date);
                 object.put("hash",toHash);
-                object.put("offerid",getOfferID());
-                object.put("clientid",getClientID());
+                object.put("offer",String.valueOf(getOfferID()));
+                object.put("client",String.valueOf(getClientID()));
+                object.put("clientname",getClientName());
             }catch (JSONException e){
 
             }
@@ -2144,6 +2145,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
+    private String clientName;
+    private void setClientName(String n){
+        clientName=n;
+    }
+    private String getClientName(){
+        return clientName;
+    }
     private long offerID;
     private void setOfferID(long offerID){
         this.offerID=offerID;
@@ -2164,6 +2172,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             itemTemp = (ItemPrev)parent.getItemAtPosition(position);
             setClientID(itemTemp.getClientID());
             setOfferID(itemTemp.getOfferID());
+            setClientName(itemTemp.getSubText());
             //setItemPrev(itemTemp);
             if(position!=0) {
                 GetItemPrev threadGetItem = new GetItemPrev();
@@ -2723,6 +2732,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //temp.setMainText(list.get(i).getName());
                 //temp.setRestaurantName(list.get(i).getName());
                 //temp.setSubText(list.get(i).getOffer());
+
                 temp.setOfferID(list.get(i).getOfferId());
                 temp.setClientID(list.get(i).getClientId());
                 temp.setMainText(list.get(i).getOfferText());
