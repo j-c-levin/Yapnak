@@ -296,6 +296,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         details.setEmailAd(name.getStringExtra("email"));
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
+        details.setOn(name.getBooleanExtra("on",false));
 
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);

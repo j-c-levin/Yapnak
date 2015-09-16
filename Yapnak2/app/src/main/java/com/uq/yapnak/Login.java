@@ -365,6 +365,7 @@ public class Login extends Activity{
                     i.putExtra("password", pass);
                     i.putExtra("email", emailAd);
                     i.putExtra("phone", phoneNum);
+                    i.putExtra("on",true);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

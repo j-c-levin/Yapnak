@@ -70,7 +70,9 @@ public class SettingsDialog extends AlertDialog {
                         editor.putString("password", details.getPassword());
                         editor.putString("email", details.getEmailAd());
                         editor.putString("userID", details.getUserID());
-                        editor.putBoolean("on",isChecked);
+                        if(!keep.getBoolean("on",false)) {
+                            editor.putBoolean("on", isChecked);
+                        }
                         editor.apply();
                     }
                 }else{
