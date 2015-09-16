@@ -2,12 +2,14 @@ package com.frontend.yapnak.rate;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -109,9 +111,12 @@ public class RatingBuilder extends AlertDialog {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = (comment.getText().toString()==null) ? "" : comment.getText().toString();
+                String s = (comment.getText().toString().length()==0) ? "" : comment.getText().toString();
+                if(comment.getText().toString().length()!=0){
+
+                }
                 new RateDeal().execute(s);
-                d.dismiss();
+
             }
         });
     }
@@ -158,39 +163,81 @@ public class RatingBuilder extends AlertDialog {
 
     private class RateDeal extends AsyncTask<String,Void,String> {
 
+        private ProgressDialog progress;
+        private boolean success;
+
+        protected RateDeal(){
+            progress = new ProgressDialog(context);
+        }
+
         @Override
         protected String doInBackground(String... params) {
             UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
             String fbk ="";
-            try {
-                FeedbackEntity feedback;
-                if(!params[0].equalsIgnoreCase("")) {
-                    if(connection()) {
-                        feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).setComment(params[0]).execute();
-                    }else{
-                        Toast.makeText(context, "Please Check If Your Internet is On", Toast.LENGTH_LONG).show();
-                    }
-                }else{
-                    if(connection()) {
-                        feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).execute();
-                        fbk = "Feedback Message: " + feedback.getMessage() + "\nStatus: " + feedback.getStatus();
-                    }else{
-                        Toast.makeText(context, "Please Check If Your Internet is On", Toast.LENGTH_LONG).show();
-                    }
-                }
+            if(connection()) {
+                try {
+                    FeedbackEntity feedback;
+                    if (!params[0].equalsIgnoreCase("")) {
 
-                return fbk;
-            }catch(IOException e){
-                e.printStackTrace();
+                        feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).setComment(params[0]).execute();
+                        success = Boolean.parseBoolean(feedback.getStatus());
+
+                    } else {
+
+                        feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).execute();
+                        //fbk = "Feedback Message: " + feedback.getMessage() + "\nStatus: " + feedback.getStatus();
+                        success = Boolean.parseBoolean(feedback.getStatus());
+                    }
+
+                    return fbk;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }else{
+                success = false;
                 return null;
             }
 
         }
 
         @Override
+        protected void onPreExecute() {
+            progress.setMessage("Submitting Feedback...");
+            progress.setCanceledOnTouchOutside(false);
+            progress.setCancelable(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run(){progress.show();}});}
+
+        @Override
         protected void onPostExecute(String s) {
             Log.d("feedbackMessage", s);
             super.onPostExecute(s);
+
+            if(success) {
+                Toast.makeText(context, "Feedback/Rating Submitted", Toast.LENGTH_SHORT).show();
+                if(progress.isShowing()){
+                    progress.cancel();
+                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        d.dismiss();
+                    }
+                }, 1000);
+            }else if(!connection()){
+                if(progress.isShowing()){
+                    progress.cancel();
+                }
+                Toast.makeText(context,"Please Enable Your Internet Connection",Toast.LENGTH_SHORT).show();
+
+            }else{
+                if(progress.isShowing()){
+                    progress.cancel();
+                }
+                Toast.makeText(context,"Submission Error, Please Try Again",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

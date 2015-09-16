@@ -313,8 +313,8 @@ public class Login extends Activity{
                 //RegisterUserEntity reg = userEndpoint.registerUser("123").setEmail("b@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
+                RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
+
 
                 //RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
@@ -353,7 +353,7 @@ public class Login extends Activity{
         @Override
         protected void onPostExecute(String s) {
             if(connection()) {
-                Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
+                //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
 
                 if (s != null) {
                     Log.d("usernameid", s);

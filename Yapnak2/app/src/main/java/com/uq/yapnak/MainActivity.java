@@ -14,6 +14,7 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
@@ -296,7 +298,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         details.setEmailAd(name.getStringExtra("email"));
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
-        details.setOn(name.getBooleanExtra("on",false));
+        details.setOn(name.getBooleanExtra("on", false));
 
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
@@ -955,34 +957,71 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    private class RecommendUser extends AsyncTask<String,Void,String>{
+    private class RecommendUser extends AsyncTask<String,Void,Boolean>{
+        private ProgressDialog progress;
+        private boolean isSuccess;
+        private String contactName;
+
+        protected RecommendUser(String contactName){
+            progress = new ProgressDialog(getApplicationContext());
+            this.contactName =contactName;
+        }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
 
-            UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(),null);
-            try {
-                UserDetailsEntity recommendee=null;
-                 if(params[0]!=null) {
-                     recommendee = user.getUserDetails().setMobNo(params[0]).execute();
-                 }else{
-                     recommendee = user.getUserDetails().setEmail(params[1]).execute();
+
+            if(connection()) {
+                UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                try {
+                    UserDetailsEntity recommendee = null;
+                    if (params[0] != null) {
+                        recommendee = user.getUserDetails().execute().setMobNo(params[0]);
+                    } else if (params[1] != null) {
+                        recommendee = user.getUserDetails().execute().setEmail(params[1]);
+                    } else {
+                        recommendee = user.getUserDetails().execute().setEmail(params[1]).setMobNo(params[0]);
+                    }
+                    RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
+                    isSuccess = Boolean.parseBoolean(recommender.getStatus());
+
+                    //               String message = "Status: "+recommender.getStatus() + " Recommend Message: " + recommender.getMessage() + "\nRecommendee Info Message and Status : "+ recommendee.getStatus() +" " + recommendee.getStatus() ;
+                    return isSuccess;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
                 }
-                 RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
-
-                String message = "Status: "+recommender.getStatus() + " Recommend Message: " + recommender.getMessage() + "\nRecommendee Info Message and Status : "+ recommendee.getStatus() +" " + recommendee.getStatus() ;
-                return message;
-            }catch(IOException e){
-                e.printStackTrace();
-                return null;
+            }else{
+                return false;
             }
 
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPreExecute() {
+            progress.setMessage("Recommending Deal To "+ contactName+" ...");
+            progress.setCancelable(false);
+            progress.setCanceledOnTouchOutside(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    progress.show();
+                }
+            });
+        }
+
+        @Override
+        protected void onPostExecute(Boolean s) {
             super.onPostExecute(s);
-            Log.d("recommendMsg",s);
+            if(progress.isShowing()){
+                progress.cancel();
+            }
+            if(isSuccess){
+                Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
+
+            }else{
+                Toast.makeText(getApplicationContext(),"Deal Was NOT Recommended\nPlease Check if Internet is Enabled",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -990,15 +1029,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == CONTACTPICK_RESULT){
+        if(requestCode == PICK_CONTACT){
 
             if(resultCode==RESULT_OK) {
                 //String phoneNum = data.getStringExtra("phone_num");
                 //contactButton.setText(phoneNum);
                 Uri contactDetails = data.getData();
+                new ContactInfo().execute();
 
-                Cursor c = getContentResolver().query(contactDetails,new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},null,null,null);
-                if(c.moveToFirst() && c!=null){
+                /*Cursor c = getContentResolver().query(contactDetails,new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},null,null,null);
+                if(c.moveToFirst()){
 
                     String phone = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     String email = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
@@ -1009,6 +1049,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
                     }
                 }
+                c.close();*/
+            }else{
+                Toast.makeText(getApplicationContext(), "There Has Been An Error\nDoes the Selected Contact Have A Valid\nPhone Number/E-Mail Address?", Toast.LENGTH_SHORT).show();
             }
 
         }else if(requestCode == FRAGMENT_RESULT){
@@ -1038,6 +1081,76 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         }
 
+    }
+
+    private class ContactInfo extends AsyncTask<Uri,Void,Void>{
+
+        private String phone,email,id,contactName;
+        private ProgressDialog progress;
+        protected ContactInfo(){
+            progress = new ProgressDialog(getApplicationContext());
+        }
+
+        @Override
+        protected void onPreExecute() {
+            /*progress.setMessage("Retrieving Contact Information...");
+            progress.setCancelable(false);
+            progress.setCanceledOnTouchOutside(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                progress.show();
+                }
+            });*/
+        }
+
+        @Override
+        protected Void doInBackground(Uri... params) {
+
+            Uri contactDetails = params[0];
+            Cursor c = getContentResolver().query(contactDetails,new String[]{ContactsContract.Contacts._ID},ContactsContract.Contacts.HAS_PHONE_NUMBER,null,null);
+            if(c.moveToFirst()){
+
+                 id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+                 String displayName = (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)? ContactsContract.Contacts.DISPLAY_NAME: ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
+                 contactName = c.getString(c.getColumnIndex(displayName));
+                //phone = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                 //email = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+
+            }
+
+
+            Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?" ,new String[]{id},null);
+            if(phoneNum.moveToFirst()){
+                phone = phoneNum.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                Log.d("Contactphone ",phone);
+            }
+
+
+            Cursor emailAd = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= ?" ,new String[]{id},null);
+            if(emailAd.moveToFirst()){
+                email = emailAd.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            }
+
+            c.close();
+            phoneNum.close();
+            emailAd.close();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+
+            if(connection()) {
+                new RecommendUser(contactName).execute(phone, email);
+                Toast.makeText(getApplicationContext(), "Phone Number: " + phone + " Email: " + email, Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 
 
@@ -1074,7 +1187,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         if (connection() &&(deals.getCount()>1) ){
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-            int value = this.tutorial.getInt("tutorial2",-1);
+            //int value = this.tutorial.getInt("tutorial2",-1);
             startActivityForResult(intent, PICK_CONTACT);
         }
         /*contactButton.setOnClickListener(new View.OnClickListener() {
