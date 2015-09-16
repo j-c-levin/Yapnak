@@ -11,12 +11,14 @@
 
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Please Enter The Correct Login Information"
-        android:layout_margin="10dp"
+        android:gravity="center_horizontal"
+        android:layout_margin="20dp"
+        android:maxLines="3"
         android:id="@+id/infoAboutLogin"
         android:layout_gravity="center"
         android:layout_weight="0.02" />
 
-    <TextView
+    <!--<TextView
         android:layout_width="296dp"
         android:layout_height="50dp"
         android:layout_margin="10dp"
@@ -24,7 +26,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="If you haven't registered,
 please select the red button below to register."
-        android:id="@+id/additionalErrorInfo" />
+        android:id="@+id/additionalErrorInfo" />-->
 
 
 </LinearLayout>

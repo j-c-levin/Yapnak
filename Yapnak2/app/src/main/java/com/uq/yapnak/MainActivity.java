@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -26,7 +25,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -71,8 +69,6 @@ import com.frontend.yapnak.rate.RatingBuilder;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.native_tutorial.TutorialFragOne;
-import com.native_tutorial.TutorialFragThree;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
@@ -346,8 +342,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void tutorial(){
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+       // transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
 
     }
 
@@ -615,6 +611,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 */
 
 
+                keep.edit().putBoolean("on",false).apply();
                 Intent intent = new Intent(MainActivity.this,Login.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -1004,16 +1001,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                     String phone = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     String email = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
-                    new RecommendUser().execute(phone,email);
-                    Toast.makeText(getApplicationContext(),"Phone Number: " + phone+ " Email: "+ email,Toast.LENGTH_SHORT).show();
+                    if(connection()) {
+                        new RecommendUser().execute(phone, email);
+                        Toast.makeText(getApplicationContext(), "Phone Number: " + phone + " Email: " + email, Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
         }else if(requestCode == FRAGMENT_RESULT){
 
-                FragmentTransaction t = getFragmentManager().beginTransaction();
-                t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
-                t.commit();
+              //  FragmentTransaction t = getFragmentManager().beginTransaction();
+               // t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
+                //t.commit();
 
         }
         if(isTutorialOn()){
@@ -1069,12 +1070,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private final int CONTACTPICK_RESULT= 123;
     AlertDialog posRec;
     public void recommendMealButton(View v) {
-
-        //RecommendDialog recommend = new RecommendDialog(this,this);
-        //recommend.setUserID(ID);
-        //recommend.setClientID(clientID);
-        //contactButton = recommend.getContactListButton();
-        //recommend.show();
 
         if (connection() &&(deals.getCount()>1) ){
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
@@ -1484,6 +1479,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
             Log.d("value",String.valueOf(value));
             ratings.show();
+        }else{
+            Toast.makeText(getApplicationContext(),"Please Check If Your Internet is On",Toast.LENGTH_LONG).show();
         }
         /*
         ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {

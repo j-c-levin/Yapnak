@@ -5,11 +5,14 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -113,8 +116,8 @@ public class ProfileDialog extends AlertDialog {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 pnumber = phone.getText().toString();
-                 names = name.getText().toString().split(" ");
+                // pnumber = phone.getText().toString();
+                // names = name.getText().toString().split(" ");
                  SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
 
@@ -122,26 +125,90 @@ public class ProfileDialog extends AlertDialog {
                 String actualDate = buttonDate.replaceAll("\\s+", "");
 
                if(ID!=null) {
-                   if (dateString != null) {
-                       if(names.length==1) {
+
+
+                   /*if(names.length==1) {
                            dateString = sdf.format(dateTime);
                            Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
-                           new SubmitDetails(5).execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
+
+                           if(connection()) {
+                               new SubmitDetails(5).execute(names[0], " ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                           }else{
+                               Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+
+                           }
+
+                       }else if(names.length>1){
+                           if(connection()) {
+                               new SubmitDetails(5).execute(names[0], names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                           }else{
+                               Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                           }
                        }else{
-                           new SubmitDetails(5).execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
-                       }
+                           name.setHint("Please Fill In Name");
+                           name.setHintTextColor(Color.parseColor("#D32F2F"));
+                       }*/
+
+                   if (dob.getText().toString().length()!=0
+                           && name.getText().toString().length()!=0
+                           && phone.getText().toString().length()==11
+                           && email.getText().toString().length()!=0
+                           && password.getText().toString().length()!=0){
+
+                       pnumber = phone.getText().toString();
+                       names = name.getText().toString().split(" ");
+
+                           if(names.length==1) {
+                               dateString = sdf.format(dateTime);
+                               Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
+
+                               if(connection()) {
+                                   new SubmitDetails(5).execute(names[0], " ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                               }else{
+                                   Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                               }
+
+                           }else if(names.length>1){
+                               if(connection()) {
+                                   new SubmitDetails(5).execute(names[0], names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                               }else{
+                                   Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                               }
+                           }
+
                    } else {
-                       if(names.length==1) {
-                           new SubmitDetails(4).execute(names[0]," ", pnumber, email.getText().toString(), password.getText().toString());
-                       }else{
-                           new SubmitDetails(4).execute(names[0],names[1], pnumber, email.getText().toString(), password.getText().toString());
+                       if(phone.getText().length()==0) {
+                           phone.setHint("Enter Phone Number");
+                           phone.setHintTextColor(Color.parseColor("#D32F2F"));
+                       }if((phone.getText().toString().length()>0 && phone.getText().toString().length()<11) || phone.getText().toString().length()>11){
+                           phone.setHint("Enter Phone Number");
+                           phone.setHintTextColor(Color.parseColor("#D32F2F"));
+                           Toast.makeText(getContext(),"Phone Number Must be 11 Digits",Toast.LENGTH_SHORT).show();
+
+                       }if(email.getText().toString().length()==0){
+                           email.setHint("Enter E-mail ");
+                           email.setHintTextColor(Color.parseColor("#D32F2F"));
+                       }if(password.getText().toString().length()==0){
+                           password.setHint("Enter Password");
+                           password.setHintTextColor(Color.parseColor("#D32F2F"));
+                       //}if(gender.getText()==null){
+                         //  gender.setHint("Enter Password");
+                           //gender.setHintTextColor(Color.parseColor("#D32F2F"));
+                       }if(dob.getText().toString().length()==0){
+                           dob.setHint("Date of Birth");
+                           dob.setHintTextColor(Color.parseColor("#D32F2F"));
+                       }if(name.getText().toString().length()==0){
+                           name.setHint("Please Enter Name");
+                           name.setHintTextColor(Color.parseColor("#D32F2F"));
                        }
                    }
+
                }else{
                    Toast.makeText(getContext(), "Failed to submit profile", Toast.LENGTH_SHORT).show();
+                   d.dismiss();
                }
 
-                d.dismiss();
+
                // }catch (NullPointerException e) {
                   //  Toast.makeText(getContext(), "Please Fill in the Empty Fields", Toast.LENGTH_SHORT).show();
                 //}
@@ -149,45 +216,78 @@ public class ProfileDialog extends AlertDialog {
         });
     }
 
+    private void textChecker(final EditText text){
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (text.getText() == null) {
+                    text.setHintTextColor(Color.parseColor("#D32F2F"));
+                }
+            }
+        });
+    }
 
     private class SubmitDetails extends AsyncTask<String,Integer,String>{
 
+        private boolean replyStatus;
+        private String responseMsg;
+        private ProgressDialog progress;
         private int length;
+        private boolean noInternet;
         public SubmitDetails(int length){
             this.length=length;
+            progress = new ProgressDialog(context);
         }
         @Override
         protected String doInBackground(String... params) {
-            try{
-                UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            if(connection()) {
+                try {
+                    UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
 
-               if(length==5) {
-                   SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
-                           .setEmail(params[3])
-                           .setFirstName(params[0])
-                           .setLastName(params[1])
-                           .setMobNo(params[2])
-                           .setDateOfBirth(params[5])
-                           .setPassword(params[4]).execute();
+                    if (length == 5) {
+                        SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
+                                .setEmail(params[3])
+                                .setFirstName(params[0])
+                                .setLastName(params[1])
+                                .setMobNo(params[2])
+                                .setDateOfBirth(params[5])
+                                .setPassword(params[4]).execute();
+                        responseMsg = userDetails.getMessage();
+                        log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
+                        replyStatus = Boolean.parseBoolean(userDetails.getStatus());
+                        return log;
+                    } else {
+                        SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
+                                .setEmail(params[3])
+                                .setFirstName(params[0])
+                                .setLastName(params[1])
+                                .setMobNo(params[2])
+                                .setPassword(params[4]).execute();
 
-                   log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
-                   return log;
-               }else {
-                   SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
-                               .setEmail(params[3])
-                               .setFirstName(params[0])
-                               .setLastName(params[1])
-                               .setMobNo(params[2])
-                               .setPassword(params[4]).execute();
+                        responseMsg = userDetails.getMessage();
+                        replyStatus = Boolean.parseBoolean(userDetails.getStatus());
+                        log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
+                        return log;
 
-                       log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
-                       return log;
+                    }
 
-               }
-            }catch(IOException e){
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }else{
+                noInternet =true;
                 return null;
             }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            //super.onPreExecute();
+            progress.setMessage("Processing Details");
+            progress.setCancelable(true);
+            progress.setCanceledOnTouchOutside(true);
+            progress.show();
         }
 
         @Override
@@ -195,6 +295,40 @@ public class ProfileDialog extends AlertDialog {
             super.onPostExecute(s);
 
             Log.d("profileDialog",log);
+
+            if(!noInternet) {
+                if (replyStatus) {
+                    if (progress.isShowing()) {
+                        progress.cancel();
+                    }
+
+                    Toast.makeText(context, "Profile Updated!", Toast.LENGTH_SHORT).show();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            d.dismiss();
+                        }
+                    }, 1000);
+
+                } else {
+                    if (progress.isShowing()) {
+                        progress.cancel();
+                    }
+
+                    Toast.makeText(context, "Profile Was Not Updated Due to an Error", Toast.LENGTH_SHORT).show();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            d.dismiss();
+                        }
+                    }, 1000);
+                }
+            }else{
+                Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                d.dismiss();
+            }
         }
     }
 
@@ -342,5 +476,13 @@ public class ProfileDialog extends AlertDialog {
     }
     public void setID(String id){
         ID = id;
+    }
+
+    private boolean connection(){
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+        return (wifi||lte);
     }
 }

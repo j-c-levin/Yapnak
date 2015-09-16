@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.frontend.yapnak.ItemPrev;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -159,15 +161,24 @@ public class RatingBuilder extends AlertDialog {
         @Override
         protected String doInBackground(String... params) {
             UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
-
+            String fbk ="";
             try {
                 FeedbackEntity feedback;
                 if(!params[0].equalsIgnoreCase("")) {
-                     feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).setComment(params[0]).execute();
+                    if(connection()) {
+                        feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).setComment(params[0]).execute();
+                    }else{
+                        Toast.makeText(context, "Please Check If Your Internet is On", Toast.LENGTH_LONG).show();
+                    }
                 }else{
-                     feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).execute();
+                    if(connection()) {
+                        feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).execute();
+                        fbk = "Feedback Message: " + feedback.getMessage() + "\nStatus: " + feedback.getStatus();
+                    }else{
+                        Toast.makeText(context, "Please Check If Your Internet is On", Toast.LENGTH_LONG).show();
+                    }
                 }
-                String fbk = "Feedback Message: "+ feedback.getMessage() + "\nStatus: " +feedback.getStatus();
+
                 return fbk;
             }catch(IOException e){
                 e.printStackTrace();
@@ -181,5 +192,13 @@ public class RatingBuilder extends AlertDialog {
             Log.d("feedbackMessage", s);
             super.onPostExecute(s);
         }
+    }
+
+    private boolean connection(){
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+        return (wifi||lte);
     }
 }
