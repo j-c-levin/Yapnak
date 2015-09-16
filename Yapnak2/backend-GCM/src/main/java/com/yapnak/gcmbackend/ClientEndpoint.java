@@ -5,6 +5,9 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.appengine.api.utils.SystemProperty;
 
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 
 /**
@@ -293,10 +297,10 @@ public class ClientEndpoint {
     }
 
     @ApiMethod(
-            name = "getRedemptionForUser",
-            path = "getRedemptionForUser",
+            name = "redeemReward",
+            path = "redeemReward",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public LoyaltyRedeemEntity getRedemptionForUser(@Named("userId") String userId) {
+    public LoyaltyRedeemEntity redeemReward(@Named("userId") String userId, @Named("reward") String reward) {
         LoyaltyRedeemEntity response = new LoyaltyRedeemEntity();
         Connection connection;
         try {
@@ -312,56 +316,80 @@ public class ClientEndpoint {
             }
             queryBlock:
             try {
-                String query = "SELECT loyaltyPoints FROM user WHERE userID = ?";
+                String query = "SELECT loyaltyPoints,redemptionAvailable FROM user WHERE userID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
                 ResultSet rs = statement.executeQuery();
                 if (!rs.next()) {
                     //User doesn't exist
-                    logger.warning("UserId " + userId + " not found");
+                    logger.warning("User " + userId + " not found");
                     response.setStatus("False");
-                    response.setMessage("UserId not found");
+                    response.setMessage("User not found");
                     break queryBlock;
                 }
+                logger.info("Returning available redemption for " + userId);
                 int points = rs.getInt("loyaltyPoints");
-                if (points >= 420) {
-                    //Got ruby
-                    response.setStatus("True");
-                    response.setLoyaltyRedeemedLevel(4);
-                    points -= 420;
-                } else if (points >= 300) {
-                    //Got gold
-                    response.setStatus("True");
-                    response.setLoyaltyRedeemedLevel(3);
-                    points -= 300;
-                } else if (points >= 200) {
-                    //Got silver
-                    response.setStatus("True");
-                    response.setLoyaltyRedeemedLevel(2);
-                    points -= 200;
-                } else if (points >= 120) {
-                    //Got bronze
-                    response.setStatus("True");
-                    response.setLoyaltyRedeemedLevel(1);
-                    points -= 120;
-                } else {
-                    response.setStatus("True");
-                    response.setLoyaltyRedeemedLevel(0);
+                int neededPoints = 0;
+                boolean enoughPoints;
+                //Check user has enough points
+                switch (reward) {
+                    case "BRONZE":
+                        enoughPoints = (points >= 120) ? true : false;
+                        neededPoints = 120;
+                        break;
+                    case "SILVER":
+                        enoughPoints = (points >= 200) ? true : false;
+                        neededPoints = 200;
+                        break;
+                    case "GOLD":
+                        enoughPoints = (points >= 300) ? true : false;
+                        neededPoints = 300;
+                        break;
+                    default:
+                        enoughPoints = false;
+                }
+                if (!enoughPoints) {
+                    //User does not have enough points for that level
+                    response.setStatus("False");
+                    response.setMessage("User does not have enough points (" + points + ") for reward level " + reward);
+                    logger.warning("User does not have enough points (" + points + "/" + neededPoints + ") for reward level " + reward);
                     break queryBlock;
                 }
-                query = "UPDATE user SET loyaltyPoints = ? where userID = ?";
+                logger.info("User has enough points");
+                //Check the user has the redemption level available
+                JSONParser parse = new JSONParser();
+                JSONArray list = (JSONArray) parse.parse(rs.getString("redemptionAvailable"));
+                boolean found = false;
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).equals(reward)) {
+                        //Reward available
+                        list.remove(i);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    //Did not redeem reward
+                    response.setStatus("False");
+                    response.setMessage("Loyalty level already redeemed");
+                    logger.warning("Loyalty level already redeemed");
+                    break queryBlock;
+                }
+                logger.info("User has redemption level available");
+                query = "UPDATE user SET redemptionAvailable = ? WHERE userID = ?";
                 statement = connection.prepareStatement(query);
-                statement.setInt(1, points);
+                statement.setString(1, list.toString());
                 statement.setString(2, userId);
                 int success = statement.executeUpdate();
                 if (success == -1) {
-                    //update failed
-                    logger.warning("Updating points failed");
+                    logger.warning("Updating user table failed");
                     response.setStatus("False");
-                    response.setMessage("Updating points failed");
+                    response.setMessage("Updating user table failed");
                     break queryBlock;
                 }
-                response.setLoyaltyPoints(points);
+                logger.info("Successfully redeemed " + reward);
+                response.setStatus("True");
+                response.setLoyaltyRedeemedLevel(reward);
             } finally {
                 connection.close();
                 return response;
@@ -466,7 +494,7 @@ public class ClientEndpoint {
             name = "qrRedeem",
             path = "qrRedeem",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public RedemptionEntity qrRedeem(@Named("userId") String userId, @Named("clientId") int clientId, @Named("offerId") int offerId) {
+    public RedemptionEntity qrRedeem(@Named("userId") String userId, @Named("clientId") int clientId, @Named("offerId") int offerId, @Named("rewardRedeemed") @Nullable String reward) {
         RedemptionEntity response = new RedemptionEntity();
         Connection connection;
         int success;
@@ -487,30 +515,115 @@ public class ClientEndpoint {
                 String query = "SELECT offerText,clientID FROM offers WHERE offerID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, offerId);
+                logger.info("Beginning redemption, searching for offer " + offerId);
                 ResultSet rs = statement.executeQuery();
                 if (!rs.next()) {
                     //Offer doesn't exist
-                    logger.warning("Offer doesn't exist");
+                    logger.warning("Offer " + offerId + " doesn't exist");
                     response.setStatus("False");
-                    response.setMessage("Offer doesn't exist");
+                    response.setMessage("Offer " + offerId + " doesn't exist");
                     break queryBlock;
                 }
+                logger.info("Found an offer, checking it belongs to client " + clientId);
+
                 //Check it is the client's own offer
                 if (rs.getInt("clientID") != clientId) {
                     //Offer does not belong to the client
-                    logger.warning("Offer redeemed does not belong to the client");
+                    logger.warning("Offer redeemed does not belong to client " + clientId);
                     response.setStatus("False");
-                    response.setMessage("Offer redeemed does not belong to the client");
+                    response.setMessage("Offer redeemed does not belong to client " + clientId);
                     break queryBlock;
                 }
+                logger.info("Offer belongs to the client");
                 response.setOfferText(rs.getString("offerText"));
-                //check if there's a recommendation
-                query = "SELECT user.loyaltyPoints, recommend.referrerID FROM user JOIN recommend ON user.userID = recommend.userID WHERE user.userID = ? AND recommend.clientID = ?";
+
+                //Check user exists
+                logger.info("Checking user exists");
+                query = "SELECT loyaltyPoints,redemptionAvailable FROM user WHERE userID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //User doesn't exist
+                    logger.warning("User " + userId + " is not in the system");
+                    response.setStatus("False");
+                    response.setMessage("User " + userId + " is not in the system");
+                    break queryBlock;
+                }
+                logger.info("Found user and their loyalty points");
+                String rewards = rs.getString("redemptionAvailable");
+                int points = rs.getInt("loyaltyPoints");
+
+                //Check if it is their first visit
+                query = "SELECT COUNT(*) FROM claims WHERE userID = ? AND clientID = ?";
                 statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
                 statement.setInt(2, clientId);
-                logger.info("Beginning redemption, searching for a recommendation");
                 rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) > 0) {
+                    //Not their first visit
+                    logger.info("Repeat visit, 5 points");
+                    points += 5;
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+5 WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        //update failed
+                        logger.warning("Updating points failed");
+                        response.setStatus("False");
+                        response.setMessage("Updating points failed");
+                        break queryBlock;
+                    }
+                    response.setStatus("True");
+                    response.setLoyaltyPoints(points);
+                } else {
+                    //Their first visit
+                    logger.info("First visit, 8 points");
+                    points += 8;
+                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+8 WHERE userID = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, userId);
+                    success = statement.executeUpdate();
+                    if (success == -1) {
+                        //update failed
+                        logger.warning("Updating points failed");
+                        response.setStatus("False");
+                        response.setMessage("Updating points failed");
+                        break queryBlock;
+                    }
+                    response.setStatus("True");
+                    response.setStatus("New customer bonus");
+                    response.setLoyaltyPoints(points);
+                }
+
+                //Log it in the claims table
+                logger.info("Updated points successfully");
+                query = "INSERT INTO claims (userID,clientID,offerID) VALUES(?,?,?)";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setInt(2, clientId);
+                statement.setInt(3, offerId);
+                success = statement.executeUpdate();
+                if (success == -1) {
+                    //logging failed
+                    logger.warning("Logging user claim FAILED");
+                    response.setMessage("Logging user claim FAILED");
+                    break queryBlock;
+                }
+                logger.info("Logged user's claim");
+                //Unofficial end, all necessary components successful
+                response.setStatus("True");
+
+                //check if there's a recommendation
+                query = "SELECT referrerID FROM recommend WHERE userID = ? AND clientID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                statement.setInt(2, clientId);
+                logger.info("Searching for a recommendation");
+                rs = statement.executeQuery();
+
                 if (rs.next()) {
                     //Recommendation found
                     response.setRecommended(1);
@@ -537,78 +650,73 @@ public class ClientEndpoint {
                     logger.info("Removed row from recommend table");
                 } else {
                     response.setRecommended(0);
-                    //No recommendation
-                    logger.info("No recommendation found, searching for user");
-                    query = "SELECT loyaltyPoints FROM user WHERE userID = ?";
-                    statement = connection.prepareStatement(query);
-                    statement.setString(1, userId);
-                    rs = statement.executeQuery();
-                    if (!rs.next()) {
-                        //User not in system.
-                        logger.warning("User " + userId + " not found in system");
-                        response.setStatus("False");
-                        response.setMessage("User not found in system");
+                    logger.info("No recommendation found");
+                }
+
+                if (reward != null) {
+                    //Reward claimed
+                    logger.info("Returning available redemption for " + userId);
+                    int neededPoints = 0;
+                    boolean enoughPoints;
+                    //Check user has enough points
+                    switch (reward) {
+                        case "BRONZE":
+                            enoughPoints = (points >= 120) ? true : false;
+                            neededPoints = 120;
+                            break;
+                        case "SILVER":
+                            enoughPoints = (points >= 200) ? true : false;
+                            neededPoints = 200;
+                            break;
+                        case "GOLD":
+                            enoughPoints = (points >= 300) ? true : false;
+                            neededPoints = 300;
+                            break;
+                        default:
+                            enoughPoints = false;
+                    }
+                    if (!enoughPoints) {
+                        //User does not have enough points for that level
+                        response.setLoyaltyRedeemedLevel("User does not have enough points (" + points + "/" + neededPoints + ") for reward level " + reward);
+                        logger.warning("User does not have enough points (" + points + "/" + neededPoints + ") for reward level " + reward);
                         break queryBlock;
                     }
-                }
-                logger.info("Found user");
-                int points = rs.getInt("loyaltyPoints");
-                //Check if it is their first visit
-                query = "SELECT COUNT(*) FROM claims WHERE userID = ? AND clientID = ?";
-                statement = connection.prepareStatement(query);
-                statement.setString(1, userId);
-                statement.setInt(2, clientId);
-                rs = statement.executeQuery();
-                rs.next();
-                if (rs.getInt(1) > 0) {
-                    //Not their first visit
-                    points += 5;
-                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+5 WHERE userID = ?";
+                    logger.info("User has enough points");
+                    //Check the user has the redemption level available
+                    JSONParser parse = new JSONParser();
+                    JSONArray list = (JSONArray) parse.parse(rewards);
+                    boolean found = false;
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).equals(reward)) {
+                            //Reward available
+                            list.remove(i);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        //Did not redeem reward
+                        response.setLoyaltyRedeemedLevel("Reward level already redeemed");
+                        logger.info("Reward level already redeemed");
+                        break queryBlock;
+                    }
+                    logger.info("User has redemption level available");
+                    query = "UPDATE user SET redemptionAvailable = ? WHERE userID = ?";
                     statement = connection.prepareStatement(query);
-                    statement.setString(1, userId);
+                    statement.setString(1, list.toString());
+                    statement.setString(2, userId);
                     success = statement.executeUpdate();
                     if (success == -1) {
-                        //update failed
-                        logger.warning("Updating points failed");
-                        response.setStatus("False");
-                        response.setMessage("Updating points failed");
+                        logger.warning("Updating user table failed");
+                        response.setLoyaltyRedeemedLevel("Updating user table failed");
                         break queryBlock;
                     }
-                    response.setStatus("True");
-                    response.setLoyaltyPoints(points);
+                    logger.info("Successfully redeemed " + reward);
+                    response.setLoyaltyRedeemedLevel(reward);
                 } else {
-                    //Their first visit
-                    points += 8;
-                    query = "UPDATE user SET loyaltyPoints = loyaltyPoints+8 WHERE userID = ?";
-                    statement = connection.prepareStatement(query);
-                    statement.setString(1, userId);
-                    success = statement.executeUpdate();
-                    if (success == -1) {
-                        //update failed
-                        logger.warning("Updating points failed");
-                        response.setStatus("False");
-                        response.setMessage("Updating points failed");
-                        break queryBlock;
-                    }
-                    response.setStatus("True");
-                    response.setStatus("New customer bonus");
-                    response.setLoyaltyPoints(points);
+                    logger.info("No reward claimed");
                 }
-                //Log it in the claims table
-                logger.info("Updated points successfully");
-                query = "INSERT INTO claims (userID,clientID,offerID) VALUES(?,?,?)";
-                statement = connection.prepareStatement(query);
-                statement.setString(1, userId);
-                statement.setInt(2, clientId);
-                statement.setInt(3, offerId);
-                success = statement.executeUpdate();
-                if (success == -1) {
-                    //logging failed
-                    logger.warning("Logging user claim FAILED");
-                    response.setMessage("Logging user claim FAILED");
-                    break queryBlock;
-                }
-                logger.info("Logging user claim success");
+                //End
             } finally {
                 connection.close();
                 return response;

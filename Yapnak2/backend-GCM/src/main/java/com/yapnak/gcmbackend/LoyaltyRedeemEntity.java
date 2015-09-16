@@ -11,23 +11,14 @@ public class LoyaltyRedeemEntity {
     @Id
     String status;
     String message;
-    long loyaltyPoints;
-    long loyaltyRedeemedLevel;
+    String loyaltyRedeemedLevel;
 
-    public long getLoyaltyRedeemedLevel() {
+    public String getLoyaltyRedeemedLevel() {
         return loyaltyRedeemedLevel;
     }
 
-    public void setLoyaltyRedeemedLevel(long loyaltyRedeemedLevel) {
+    public void setLoyaltyRedeemedLevel(String loyaltyRedeemedLevel) {
         this.loyaltyRedeemedLevel = loyaltyRedeemedLevel;
-    }
-
-    public long getLoyaltyPoints() {
-        return loyaltyPoints;
-    }
-
-    public void setLoyaltyPoints(long loyaltyPoints) {
-        this.loyaltyPoints = loyaltyPoints;
     }
 
     public String getStatus() {

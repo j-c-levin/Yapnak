@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/XYTKo300gfzEd7hkp-u5mVxawcU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/g2Q70RmCpXzfxlN5tWgjH9pfxIc\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -121,6 +121,15 @@
     },
     "status": {
      "type": "string"
+    }
+   }
+  },
+  "JSONArray": {
+   "id": "JSONArray",
+   "type": "object",
+   "properties": {
+    "empty": {
+     "type": "boolean"
     }
    }
   },
@@ -295,6 +304,21 @@
      "type": "string"
     }
    }
+  },
+  "UserRedemptionEntity": {
+   "id": "UserRedemptionEntity",
+   "type": "object",
+   "properties": {
+    "available": {
+     "$ref": "JSONArray"
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
   }
  },
  "methods": {
@@ -452,6 +476,27 @@
    ],
    "response": {
     "$ref": "OfferListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getRedemptionForUser": {
+   "id": "userEndpointApi.getRedemptionForUser",
+   "path": "getRedemptionForUser",
+   "httpMethod": "GET",
+   "parameters": {
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "userId"
+   ],
+   "response": {
+    "$ref": "UserRedemptionEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

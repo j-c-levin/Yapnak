@@ -10,6 +10,9 @@ import com.google.appengine.api.images.ImagesServiceFailureException;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -441,7 +444,7 @@ public class UserEndpoint {
             name = "setUserDetails",
             path = "setUserDetails",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName,  @Nullable UserImageEntity userImage) {
+    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName, @Nullable UserImageEntity userImage) {
         SetUserDetailsEntity response = new SetUserDetailsEntity();
         Connection connection;
         try {
@@ -961,7 +964,7 @@ public class UserEndpoint {
                     break queryBlock;
                 }
                 //User found
-                logger.info("User " + userId + " is recommending " + otherUserId + " to eat at " + clientId);
+                logger.info("User " + otherUserId + " is recommending " + userId + " to eat at " + clientId);
                 query = "SELECT COUNT(*) FROM recommend WHERE userID = ? AND clientID = ?";
                 statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
@@ -1051,6 +1054,52 @@ public class UserEndpoint {
             response.setMessage("SQLException");
             e.printStackTrace();
         } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "getRedemptionForUser",
+            path = "getRedemptionForUser",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public UserRedemptionEntity getRedemptionForUser(@Named("userId") String userId) {
+        UserRedemptionEntity response = new UserRedemptionEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT redemptionAvailable FROM user WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //User doesn't exist
+                    logger.warning("User " + userId + " not found");
+                    response.setStatus("False");
+                    response.setMessage("User not found");
+                    break queryBlock;
+                }
+                logger.info("Returning available redemption for " + userId);
+                JSONParser parse = new JSONParser();
+                JSONArray list = new JSONArray();
+                list = (JSONArray)parse.parse(rs.getString("redemptionAvailable"));
+                response.setAvailable(list);
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
             return response;
         }
     }
