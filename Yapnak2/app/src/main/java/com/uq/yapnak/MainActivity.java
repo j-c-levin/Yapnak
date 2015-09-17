@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -15,6 +14,7 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,8 +26,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
@@ -71,8 +71,6 @@ import com.frontend.yapnak.rate.RatingBuilder;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.native_tutorial.TutorialFragOne;
-import com.native_tutorial.TutorialFragThree;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
@@ -276,6 +274,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 .addScope(Plus.SCOPE_PLUS_PROFILE).build();
         */
 
+//        progress =new ProgressDialog(getApplicationContext());
         GPSTrack track = new GPSTrack(MainActivity.this);
         loc = track.getLocation();
 
@@ -300,6 +299,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         details.setEmailAd(name.getStringExtra("email"));
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
+        details.setOn(name.getBooleanExtra("on", false));
 
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
@@ -346,8 +346,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void tutorial(){
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
+        //FragmentTransaction transaction = getFragmentManager().beginTransaction();
+       // transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
 
     }
 
@@ -615,6 +615,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 */
 
 
+                keep.edit().putBoolean("on",false).apply();
                 Intent intent = new Intent(MainActivity.this,Login.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -957,63 +958,42 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
-    private class RecommendUser extends AsyncTask<String,Void,String>{
 
-        @Override
-        protected String doInBackground(String... params) {
-
-            UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(),null);
-            try {
-                UserDetailsEntity recommendee=null;
-                 if(params[0]!=null) {
-                     recommendee = user.getUserDetails().setMobNo(params[0]).execute();
-                 }else{
-                     recommendee = user.getUserDetails().setEmail(params[1]).execute();
-                }
-                 RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
-
-                String message = "Status: "+recommender.getStatus() + " Recommend Message: " + recommender.getMessage() + "\nRecommendee Info Message and Status : "+ recommendee.getStatus() +" " + recommendee.getStatus() ;
-                return message;
-            }catch(IOException e){
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Log.d("recommendMsg",s);
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == CONTACTPICK_RESULT){
+        if(requestCode == PICK_CONTACT){
 
             if(resultCode==RESULT_OK) {
                 //String phoneNum = data.getStringExtra("phone_num");
                 //contactButton.setText(phoneNum);
                 Uri contactDetails = data.getData();
+                new ContactInfo().execute(contactDetails);
 
-                Cursor c = getContentResolver().query(contactDetails,new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},null,null,null);
-                if(c.moveToFirst() && c!=null){
+                /*Cursor c = getContentResolver().query(contactDetails,new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},null,null,null);
+                if(c.moveToFirst()){
 
                     String phone = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     String email = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
-                    new RecommendUser().execute(phone,email);
-                    Toast.makeText(getApplicationContext(),"Phone Number: " + phone+ " Email: "+ email,Toast.LENGTH_SHORT).show();
+                    if(connection()) {
+                        new RecommendUser().execute(phone, email);
+                        Toast.makeText(getApplicationContext(), "Phone Number: " + phone + " Email: " + email, Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
+                    }
                 }
+                c.close();*/
+            }else{
+                Toast.makeText(getApplicationContext(), "There Has Been An Error\nDoes the Selected Contact Have A Valid\nPhone Number/E-Mail Address?", Toast.LENGTH_SHORT).show();
             }
 
         }else if(requestCode == FRAGMENT_RESULT){
 
-                FragmentTransaction t = getFragmentManager().beginTransaction();
-                t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
-                t.commit();
+              //  FragmentTransaction t = getFragmentManager().beginTransaction();
+               // t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
+                //t.commit();
 
         }
         if(isTutorialOn()){
@@ -1036,6 +1016,134 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         }
 
+    }
+
+    private class RecommendUser extends AsyncTask<String,Void,Boolean>{
+        private boolean isSuccess;
+        private String contactName;
+
+        protected RecommendUser(String contactName){
+            this.contactName =contactName;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+
+            if(connection()) {
+                UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
+                try {
+                    UserDetailsEntity recommendee = null;
+                    if (params[0] != null) {
+                        recommendee = user.getUserDetails().setMobNo(params[0]).execute();
+                    } else if (params[1] != null) {
+                        recommendee = user.getUserDetails().setEmail(params[1]).execute();
+                    } else {
+                        recommendee = user.getUserDetails().setEmail(params[1]).setMobNo(params[0]).execute();
+                    }
+                    RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
+                    isSuccess = Boolean.parseBoolean(recommender.getStatus());
+
+                    //               String message = "Status: "+recommender.getStatus() + " Recommend Message: " + recommender.getMessage() + "\nRecommendee Info Message and Status : "+ recommendee.getStatus() +" " + recommendee.getStatus() ;
+                    return isSuccess;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }else{
+                return false;
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            //super.onPreExecute();
+            //progress.setMessage("Recommending Deal to "+contactName+" ...");
+        }
+
+        @Override
+        protected void onPostExecute(Boolean s) {
+            super.onPostExecute(s);
+            /*if(progress.isShowing()){
+                progress.cancel();
+            }*/
+            if(isSuccess){
+                Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
+
+            }else{
+                Toast.makeText(getApplicationContext(),"Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class ContactInfo extends AsyncTask<Uri,Void,Void>{
+
+        private String phone,email,id,contactName;
+
+        @Override
+        protected void onPreExecute() {
+           /* progress.setMessage("Retrieving Contact Information...");
+            progress.setCancelable(false);
+            progress.setCanceledOnTouchOutside(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                progress.show();
+                }
+            });
+            */
+        }
+
+        @Override
+        protected Void doInBackground(Uri... params) {
+
+            Uri contactDetails = params[0];
+            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID}, ContactsContract.Contacts.HAS_PHONE_NUMBER, null, null);
+            if(c.moveToFirst()){
+
+                 id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+            }
+
+            Cursor contact = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null,ContactsContract.Contacts._ID + "= ?",new String[]{id},null);
+            if(contact.moveToFirst()){
+                String displayName = (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)? ContactsContract.Contacts.DISPLAY_NAME: ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
+                contactName = contact.getString(contact.getColumnIndex(displayName));
+            }
+
+            Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?" ,new String[]{id},null);
+            if(phoneNum.moveToFirst()){
+                phone = phoneNum.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                Log.d("Contactphone ",phone);
+            }
+
+
+            Cursor emailAd = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= ?" ,new String[]{id},null);
+            if(emailAd.moveToFirst()){
+                email = emailAd.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            }
+
+            c.close();
+            phoneNum.close();
+            emailAd.close();
+            contact.close();
+            return null;
+        }
+
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if(connection()) {
+                new RecommendUser(contactName).execute(phone, email);
+                Toast.makeText(getApplicationContext(), "Phone Number: " + phone + " Email: " + email, Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 
 
@@ -1070,15 +1178,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     AlertDialog posRec;
     public void recommendMealButton(View v) {
 
-        //RecommendDialog recommend = new RecommendDialog(this,this);
-        //recommend.setUserID(ID);
-        //recommend.setClientID(clientID);
-        //contactButton = recommend.getContactListButton();
-        //recommend.show();
-
         if (connection() &&(deals.getCount()>1) ){
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-            int value = this.tutorial.getInt("tutorial2",-1);
+            //int value = this.tutorial.getInt("tutorial2",-1);
             startActivityForResult(intent, PICK_CONTACT);
         }
         /*contactButton.setOnClickListener(new View.OnClickListener() {
@@ -1403,6 +1505,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             String toHash = userid + date + "YAPNAKRULES";
 
+
             JSONObject object = new JSONObject();
             try {
                 object.put("id", userid);
@@ -1411,6 +1514,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 object.put("offer",String.valueOf(getOfferID()));
                 object.put("client",String.valueOf(getClientID()));
                 object.put("clientname",getClientName());
+                object.put("isReward","false");
             }catch (JSONException e){
 
             }
@@ -1482,6 +1586,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
             Log.d("value",String.valueOf(value));
             ratings.show();
+        }else{
+            Toast.makeText(getApplicationContext(),"Please Check If Your Internet is On",Toast.LENGTH_LONG).show();
         }
         /*
         ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {

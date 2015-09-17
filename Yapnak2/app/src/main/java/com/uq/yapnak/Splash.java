@@ -207,6 +207,13 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
                     if (!login.getString("password", "-1").equalsIgnoreCase("-1")) {
                         new CheckLogin(login).execute();
                         Log.d("loginProcess", login.getString("email", "NO EMAIL"));
+                    }else{
+                        Intent i = new Intent(Splash.this, Login.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(i);
+                        a.finish();
                     }
                 }else{
                     Log.d("loginProcess","preferences NULL");

@@ -9,6 +9,7 @@ public class ContactDetails {
     private String emailAd;
     private String password;
     private String userID;
+    private boolean on;
 
 
     public String getPhoneNum() {
@@ -41,5 +42,13 @@ public class ContactDetails {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public boolean isOn() {
+        return on;
+    }
+
+    public void setOn(boolean on) {
+        this.on = on;
     }
 }

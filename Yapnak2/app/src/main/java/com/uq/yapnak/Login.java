@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -76,6 +77,7 @@ public class Login extends Activity{
     private MenuItem itemMen;
     private ErrorDialog error;
     private boolean resume;
+    private Context c = this;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
     private String personName;
@@ -124,16 +126,13 @@ public class Login extends Activity{
     */
 
 
-    SharedPreferences remember;
+    SharedPreferences remember,keep;
     @Override
-
-
-
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
         secure = new SecureDetails();
+        progress = new ProgressDialog(c);
 
         //Template google signin code.
        /* mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -155,6 +154,7 @@ public class Login extends Activity{
         password = (EditText) findViewById(R.id.passwordEdit);
 
         remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
+        keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
 
 
         new Handler().post(new Runnable() {
@@ -202,7 +202,6 @@ public class Login extends Activity{
                     //note: the details argument has been removed and probably won't be re-added.
                     //new SQLConnectAsyncTask(getApplicationContext(), details).execute();
 
-
                     /* Intent i = new Intent(Login.this, MainActivity.class);
                      i.putExtra("email", email.getText().toString());
                      i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -210,29 +209,48 @@ public class Login extends Activity{
                      i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                      v.getContext().startActivity(i);
                      finish();
-                        */
-
+                    */
 
                     if(connection()) {
 
 
-                        if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase(""))) {
+                        if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase("")) && phone.getText().toString() != null && (!phone.getText().toString().equalsIgnoreCase(""))) {
                             Log.d("password", password.getText().toString());
                             emailAd = email.getText().toString();
                             phoneNum = phone.getText().toString();
                             new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
 
                         } else {
+                            if(email.getText().toString().equalsIgnoreCase("") || email.getText().toString() == null ){
+                                error.setInfoText("Please Enter Your E-mail");
+                            }else if(password.getText().toString().equalsIgnoreCase("")|| password.getText().toString() == null){
+                                error.setInfoText("Please Enter Your Password");
+                            }else if(phone.getText().toString().equalsIgnoreCase("")|| phone.getText().toString() == null){
+                                error.setInfoText("Please Enter Your Phone Number");
+                            }else{
+                                error.setInfoText("Please Enter The Correct Login Information");
+                            }
+                            if(progress.isShowing()){
+                                progress.cancel();
+                            }
+
                             error.show(fragmentManager, "error");
                             if (remember.getString("email", "-1").equalsIgnoreCase("-1")) {
                                 remember.edit().clear().apply();
                             }
                         }
                     }else{
-                        Toast.makeText(getApplicationContext(),"Please Turn On Internet",Toast.LENGTH_SHORT).show();
+                        if(progress.isShowing()){
+                            progress.cancel();
+                        }
+                        Toast.makeText(getApplicationContext(),"Please Enable Your Internet Connection",Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (StringIndexOutOfBoundsException e) {
+                    if(progress.isShowing()){
+                        progress.cancel();
+                    }
+                    error.setInfoText("Please Enter The Correct Login Information");
                     error.show(fragmentManager, "error");
                 }
             }
@@ -243,14 +261,15 @@ public class Login extends Activity{
     }
 
 
+    private ProgressDialog progress;
     private class InternalUser extends AsyncTask<String,Integer,String>{
+
 
         private View view;
         private String registerLog;
         private String pass;
         private RegisterUserEntity reg;
         private AuthenticateEntity e;
-        private MyProgressDialog progress;
         private String password,emailAddress,phoneNumber;
 
         public InternalUser(View v){
@@ -285,7 +304,6 @@ public class Login extends Activity{
             }
 
             try{
-
                 //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bob@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
@@ -295,14 +313,11 @@ public class Login extends Activity{
                 //RegisterUserEntity reg = userEndpoint.registerUser("123").setEmail("b@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("s.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
+                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
+
 
                 //RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
-
-
-
 
                 if(params[1]!=null) {
                     e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
@@ -321,32 +336,58 @@ public class Login extends Activity{
 
         }
 
+
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
+        protected void onPreExecute() {
+            progress.setMessage("Signing in...");
+            progress.setCancelable(false);
+            progress.setCanceledOnTouchOutside(false);
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    progress.show();
+                }
+            });
         }
 
         @Override
         protected void onPostExecute(String s) {
-
-
-                Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
+            if(connection()) {
+                //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
 
                 if (s != null) {
                     Log.d("usernameid", s);
+                    if(keep!=null){
+                        keep.edit().putBoolean("on",true).apply();
+                    }
                     Intent i = new Intent(Login.this, MainActivity.class);
                     i.putExtra("userID", s);
                     i.putExtra("password", pass);
                     i.putExtra("email", emailAd);
                     i.putExtra("phone", phoneNum);
+                    i.putExtra("on",true);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     view.getContext().startActivity(i);
                 } else {
+                    if (progress.isShowing()) {
+                        progress.cancel();
+                    }
+
                     ErrorDialog dialog = new ErrorDialog();
+                    dialog.setInfoText("Please Enter The Correct Login Information");
                     dialog.show(fragmentManager, "error");
                 }
+
+            }else{
+                if (progress.isShowing()) {
+                    progress.cancel();
+                }
+                ErrorDialog dialog = new ErrorDialog();
+                dialog.setInfoText("Please Enable Your Internet Connection");
+                dialog.show(fragmentManager, "error");
+            }
 
         }
     }
@@ -533,7 +574,7 @@ public class Login extends Activity{
 
     private String userID;
 
-    private class GetUserId extends AsyncTask<String,Integer,String>{
+    /*private class GetUserId extends AsyncTask<String,Integer,String>{
 
 
         private String email;
@@ -581,9 +622,9 @@ public class Login extends Activity{
             }
             */
             //handler.post(runnable);
-            repeat();
+            //repeat();
 
-        }
+        //}
 
         private String accName;
         private void setAccName(String a){
@@ -593,13 +634,13 @@ public class Login extends Activity{
             return this.accName;
         }
         private Handler handler=new Handler();
-        private void repeat(){
-            runnable.run();
-        }
-        private void stop(){
-            handler.removeCallbacks(runnable);
-        }
-        private Runnable runnable=new Runnable() {
+        //private void repeat(){
+           // runnable.run();
+        //}
+        //private void stop(){
+       //     handler.removeCallbacks(runnable);
+        //}
+        /*private Runnable runnable=new Runnable() {
             @Override
             public void run() {
                 if(wifi||lte){
@@ -619,7 +660,7 @@ public class Login extends Activity{
                 }
             }
         };
-    }
+    }*/
 
 /*
     @Override
