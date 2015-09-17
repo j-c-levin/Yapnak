@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/IKIOHn3SM4jypn5YkJ-bzwlaR7w\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ipaQUnEBSBevEUAmefMEWT5A7Lc\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -219,6 +219,18 @@
      "type": "string"
     }
    }
+  },
+  "SimpleEntity": {
+   "id": "SimpleEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
   }
  },
  "methods": {
@@ -298,30 +310,59 @@
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]
-  }
- },
- "resources": {
-  "adminEndpoint": {
-   "methods": {
-    "insertPromo": {
-     "id": "adminApi.adminEndpoint.insertPromo",
-     "path": "void/{promoCode}",
-     "httpMethod": "POST",
-     "parameters": {
-      "promoCode": {
-       "type": "string",
-       "required": true,
-       "location": "path"
-      }
-     },
-     "parameterOrder": [
-      "promoCode"
-     ],
-     "scopes": [
-      "https://www.googleapis.com/auth/userinfo.email"
-     ]
+  },
+  "insertPromo": {
+   "id": "adminApi.insertPromo",
+   "path": "insertPromo",
+   "httpMethod": "POST",
+   "parameters": {
+    "promoCode": {
+     "type": "string",
+     "required": true,
+     "location": "query"
     }
-   }
+   },
+   "parameterOrder": [
+    "promoCode"
+   ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "toggleClient": {
+   "id": "adminApi.toggleClient",
+   "path": "toggleClient",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    },
+    "session": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "value": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId",
+    "session",
+    "value"
+   ],
+   "response": {
+    "$ref": "SimpleEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
   }
  }
 }

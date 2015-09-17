@@ -93,11 +93,30 @@ angular.module('app.controller', [])
         $scope.gotDetails = "client";
         $scope.clientData.locationText = $scope.clientData.x + " " + $scope.clientData.y;
 
-      ($scope.clientData.isActive == 1) ? $scope.isActive = true : $scope.isActive = false;
-      ($scope.clientData.showOffer1 == 1) ? $scope.offer1 = true : $scope.offer1 = false;
-      ($scope.clientData.showOffer2 == 1) ? $scope.offer2 = true : $scope.offer2 = false;
-      ($scope.clientData.showOffer3 == 1) ? $scope.offer3 = true : $scope.offer3 = false;
+        ($scope.clientData.isActive == 1) ? $scope.isActive = true : $scope.isActive = false;
+        ($scope.clientData.showOffer1 == 1) ? $scope.offer1 = true : $scope.offer1 = false;
+        ($scope.clientData.showOffer2 == 1) ? $scope.offer2 = true : $scope.offer2 = false;
+        ($scope.clientData.showOffer3 == 1) ? $scope.offer3 = true : $scope.offer3 = false;
       }
     });
   };
+
+  $scope.toggleOn = function() {
+    console.log("toggling on");
+    $scope.isActive != $scope.isActive;
+    webfactory.toggleClient($scope.clientData.id, 1).then(function() {
+      //Modal success?
+      $scope.retrieveClient();
+    });
+  }
+
+  $scope.toggleOff = function() {
+    console.log("toggling off");
+    $scope.isActive = !$scope.isActive;
+    webfactory.toggleClient($scope.clientData.id, 0).then(function() {
+      //Modal success?
+      $scope.retrieveClient();
+    });
+  }
+
 })

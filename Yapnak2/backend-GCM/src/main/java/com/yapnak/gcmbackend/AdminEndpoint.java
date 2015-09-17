@@ -265,6 +265,10 @@ public class AdminEndpoint {
         }
     }
 
+    @ApiMethod(
+            name = "insertPromo",
+            path = "insertPromo",
+            httpMethod = ApiMethod.HttpMethod.POST)
     public void insertPromo(@Named("promoCode") String promoCode) {
         Connection connection;
         try {
@@ -300,6 +304,65 @@ public class AdminEndpoint {
             logger.warning("ClassNotFoundException: " + e1);
         }
         finally {
+        }
+
+    }
+
+    @ApiMethod(
+            name = "toggleClient",
+            path = "toggleClient",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity toggleClient(@Named("clientId") int clientId, @Named("session") String session, @Named("value") int value) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                //Authorise admin
+                String query = "SELECT adminID FROM admin WHERE session = ? ";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1,session);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()){
+                    //Admin auth failed
+                    response.setStatus("False");
+                    response.setMessage("Session auth failed");
+                    logger.warning("Session auth failed");
+                    break queryBlock;
+                }
+                int adminId = rs.getInt("adminID");
+                logger.info("Found admin " + adminId);
+
+                //Toggle client
+                logger.info("Toggling client " + clientId + " to " + value);
+                query = "UPDATE client SET isActive = ? WHERE clientID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, value);
+                statement.setInt(2, clientId);
+                int success = statement.executeUpdate();
+                if (success == -1 ){
+                    logger.warning("Update client toggle failed");
+                    response.setStatus("False");
+                    response.setMessage("Update client toggle failed");
+                    break queryBlock;
+                }
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
+            return response;
         }
 
     }

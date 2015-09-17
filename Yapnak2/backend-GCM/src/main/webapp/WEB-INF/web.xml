@@ -172,6 +172,13 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <include path="/**.html"></include>
         <include path="/**.js"></include>
         <include path="/**.png"></include>
+        <include path="/**.jpg"></include>
+        <include path="/**.mp4"></include>
+        <include path="/**.eot"></include>
+        <include path="/**.svg"></include>
+        <include path="/**.ttf"></include>
+        <include path="/**.woff"></include>
+        <include path="/**.woff2"></include>
     </static-files>
 
     <welcome-file-list>
