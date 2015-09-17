@@ -313,7 +313,7 @@ public class Login extends Activity{
                 //RegisterUserEntity reg = userEndpoint.registerUser("123").setEmail("b@somemail.com").setMobNo("00000000000").execute();
                 //registerLog= reg.getMessage();
 
-                RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
+                //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
 
 
                 //RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();

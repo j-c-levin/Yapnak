@@ -1072,7 +1072,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
 
             }else{
-                Toast.makeText(getApplicationContext(),"Deal Was NOT Recommended\nPlease Check if Internet is Enabled",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member",Toast.LENGTH_SHORT).show();
             }
         }
     }

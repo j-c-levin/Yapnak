@@ -212,7 +212,7 @@ public class RatingBuilder extends AlertDialog {
 
         @Override
         protected void onPostExecute(String s) {
-            Log.d("feedbackMessage", s);
+           // Log.d("feedbackMessage", s);
             super.onPostExecute(s);
 
             if(success) {
