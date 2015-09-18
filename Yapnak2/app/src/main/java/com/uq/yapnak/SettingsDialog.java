@@ -65,7 +65,7 @@ public class SettingsDialog extends AlertDialog {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    if(keep.getString("password","-1").equalsIgnoreCase("-1")) {
+                    if(!keep.getBoolean("on",false)) {
                         SharedPreferences.Editor editor = keep.edit();
                         editor.putString("password", details.getPassword());
                         editor.putString("email", details.getEmailAd());
@@ -74,7 +74,17 @@ public class SettingsDialog extends AlertDialog {
                             editor.putBoolean("on", isChecked);
                         }
                         editor.apply();
+                    }else {
+                        SharedPreferences.Editor editor = keep.edit();
+                        editor.putString("password", details.getPassword());
+                        editor.putString("email", details.getEmailAd());
+                        editor.putString("userID", details.getUserID());
+                        if (!keep.getBoolean("on", false)) {
+                            editor.putBoolean("on", isChecked);
+                        }
+                        editor.apply();
                     }
+
                 }else{
                     keep.edit().clear().apply();
                     keep.edit().putBoolean("on", isChecked).apply();
@@ -87,7 +97,7 @@ public class SettingsDialog extends AlertDialog {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (remember.getString("phone", "-1").equalsIgnoreCase("-1")) {
+                    if (!remember.getBoolean("on",false)){
                         SharedPreferences.Editor editor = remember.edit();
                         editor.putString("userID", details.getUserID());
                         editor.putString("password", details.getPassword());
@@ -97,6 +107,7 @@ public class SettingsDialog extends AlertDialog {
                         editor.apply();
                         Log.d("settingOn",String.valueOf(remember.getBoolean("on",false)));
                     }
+
                 } else {
                     remember.edit().clear().apply();
                     remember.edit().putBoolean("on", isChecked).apply();

@@ -252,7 +252,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         SQLConnectAsyncTask.restore=true;
         this.setList(list.getList());
-        new SQLConnectAsyncTask(getApplicationContext(),locationCheck,null, this).execute();
+        new SQLConnectAsyncTask(getApplicationContext(),locationCheck,this).execute();
 
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -285,34 +285,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //if(locationCheck!=null) {
 
              SQLConnectAsyncTask.useDialog = true;
-             new SQLConnectAsyncTask(getApplicationContext(), locationCheck,null, this).execute();
+             new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
              if (SQLConnectAsyncTask.getListLoaded()) {
                  //dealList.notifyDataSetChanged();
              }
 
-
         this.name = getIntent();
         ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
-
         details = new ContactDetails();
         details.setUserID(name.getStringExtra("userID"));
         details.setEmailAd(name.getStringExtra("email"));
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
         details.setOn(name.getBooleanExtra("on", false));
-
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
+        keep.edit().putBoolean("on",details.isOn()).apply();
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
-
-
-
-       // Log.d("main-id",ID);
-
+        // Log.d("main-id",ID);
         //navBarToggle();
         //navigationBarContent();
-
-
-
     }
 
 
@@ -436,19 +427,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         SearchManager sManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView view = (SearchView) menu.findItem(R.id.search).getActionView();
-        view.setSearchableInfo(
-                sManager.getSearchableInfo(new ComponentName(getApplicationContext(), SearchMain.class)));
+        //view.setSearchableInfo(
+          //      sManager.getSearchableInfo(new ComponentName(getApplicationContext(), SearchMain.class)));
 
         view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 queryMain = query;
                 Log.d("querySub", query);
+                new CheckRestaurantDeals().execute(queryMain);
                 new SearchLocation().execute(queryMain);
                 InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(!input.isAcceptingText()){
+                if (!input.isAcceptingText()) {
                     view.clearFocus();
-                    input.hideSoftInputFromInputMethod(view.getWindowToken(),0);
+                    input.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
                 }
                 return true;
             }
@@ -521,7 +513,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         private String loc;
         @Override
         protected Location doInBackground(String... params) {
-             loc = params[0];
+             loc = (params[0]==null)?"":params[0];
             Location location = getLoc(loc);
             return location;
         }
@@ -530,33 +522,77 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected void onPostExecute(Location location) {
             super.onPostExecute(location);
 
-            if(location!=null){
-                Log.d("location","Latitude: "+String.valueOf(location.getLatitude())+ " Longitude: " + String.valueOf(location.getLongitude()));
-                setLocation(location);
-                SQLConnectAsyncTask.useDialog=true;
-                new SQLConnectAsyncTask(getApplicationContext(),location,null,activity).execute();
-            }else if(location==null && loc!=null){
+            Log.d("stringquery",loc);
+
+            if(!hasRestaurant){
+                Log.d("restaurant","NO RESTAURANTS UNDER THAT NAME");
+                if(location!=null) {
+                    Log.d("location", "Latitude: " + String.valueOf(location.getLatitude()) + " Longitude: " + String.valueOf(location.getLongitude()));
+                    setLocation(location);
+                    SQLConnectAsyncTask.useDialog = true;
+                    new SQLConnectAsyncTask(getApplicationContext(), location, activity).execute();
+                }else{
+                    SQLConnectAsyncTask.useDialog = true;
+                    new SQLConnectAsyncTask(getApplicationContext(), null, activity).execute();
+                }
+            }else if(hasRestaurant){
+                Log.d("restaurant","YES IT IS A RESTAURANT");
                 setRestaurantName(loc);
                 SQLConnectAsyncTask.useDialog=true;
-                new SQLConnectAsyncTask(getApplicationContext(),null,loc,activity).execute();
-            }else if(location!=null && loc!=null){
-                setRestaurantName(loc);
-                setLocation(location);
-                SQLConnectAsyncTask.useDialog=true;
-                new SQLConnectAsyncTask(getApplicationContext(),getLocation(),loc,activity).execute();
+                if(offers!=null) {
+                    new SQLConnectAsyncTask(getApplicationContext(), activity, offers).execute();
+                }
+            }else{
                 Toast.makeText(getApplicationContext(),"The Restaurant/Location You Queried Is Not Available",Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
+    private boolean hasRestaurant;
+    private OfferListEntity offers;
+    private String entityStatus;
+
+
+    private class CheckRestaurantDeals extends AsyncTask<String,Void,OfferListEntity>{
+        @Override
+        protected OfferListEntity doInBackground(String... params) {
+            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            try{
+                //OfferListEntity entity = api.searchClients(params[0]).execute();
+                OfferListEntity entity = api.searchClients(params[0]).execute();
+                entityStatus = entity.getMessage();
+               // Log.d("queryString",entityStatus);
+                return entity;
+
+            }catch(IOException e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(OfferListEntity list) {
+            super.onPostExecute(list);
+           try {
+               Log.d("queryString",entityStatus);
+               if (list.getOfferList().size() == 0) {
+                   hasRestaurant = false;
+                   offers = null;
+               }else{
+                   offers = list;
+               }
+
+
+           }catch(NullPointerException e){
+               e.printStackTrace();
+           }
+        }
+    }
     private boolean connection(){
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
         boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-
-
-
         return (wifi||lte);
     }
 
@@ -1021,6 +1057,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private class RecommendUser extends AsyncTask<String,Void,Boolean>{
         private boolean isSuccess;
         private String contactName;
+        private boolean validContact;
 
         protected RecommendUser(String contactName){
             this.contactName =contactName;
@@ -1036,16 +1073,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     UserDetailsEntity recommendee = null;
                     if (params[0] != null) {
                         recommendee = user.getUserDetails().setMobNo(params[0]).execute();
+                        validContact = true;
                     } else if (params[1] != null) {
                         recommendee = user.getUserDetails().setEmail(params[1]).execute();
-                    } else {
+                        validContact = true;
+                    } else if(params[1]!=null && params[0]!=null){
                         recommendee = user.getUserDetails().setEmail(params[1]).setMobNo(params[0]).execute();
+                        validContact = true;
+                    }else{
+                        recommendee = null;
+                        validContact = false;
                     }
-                    RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
-                    isSuccess = Boolean.parseBoolean(recommender.getStatus());
+                    if(recommendee!=null) {
+                        RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
+                        isSuccess = Boolean.parseBoolean(recommender.getStatus());
+                    }
+
 
                     //               String message = "Status: "+recommender.getStatus() + " Recommend Message: " + recommender.getMessage() + "\nRecommendee Info Message and Status : "+ recommendee.getStatus() +" " + recommendee.getStatus() ;
-                    return isSuccess;
+                    return false;
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
@@ -1072,11 +1118,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
 
             }else{
-                Toast.makeText(getApplicationContext(),"Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member",Toast.LENGTH_SHORT).show();
+                if(validContact) {
+                    Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if the Selected Contact is Valid", Toast.LENGTH_SHORT).show();
+
+                }
             }
         }
     }
 
+    private boolean emailExist,phoneExist;
     private class ContactInfo extends AsyncTask<Uri,Void,Void>{
 
         private String phone,email,id,contactName;
@@ -1115,12 +1167,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             if(phoneNum.moveToFirst()){
                 phone = phoneNum.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 Log.d("Contactphone ",phone);
+            }else{
+                phoneExist =false;
             }
 
 
             Cursor emailAd = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= ?" ,new String[]{id},null);
             if(emailAd.moveToFirst()){
                 email = emailAd.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            }else{
+                emailExist = false;
             }
 
             c.close();
@@ -1137,8 +1193,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             super.onPostExecute(aVoid);
 
             if(connection()) {
-                new RecommendUser(contactName).execute(phone, email);
-                Toast.makeText(getApplicationContext(), "Phone Number: " + phone + " Email: " + email, Toast.LENGTH_SHORT).show();
+                if(emailExist && phoneExist){
+                    new RecommendUser(contactName).execute(phone, email);
+                }else if(!emailExist){
+                    new RecommendUser(contactName).execute(phone, null);
+                }else{
+                    new RecommendUser(contactName).execute(null,email);
+                }
             }else{
                 Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
             }
@@ -2995,8 +3056,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
+
+                        //new CheckRestaurantDeals().execute(getRestaurantName());
+                        if(!hasRestaurant){
+                            SQLConnectAsyncTask.useDialog=false;
+                            new SQLConnectAsyncTask(getApplicationContext(),getLocation(),a).execute();
+                        }else if(hasRestaurant && offers!=null){
+                            SQLConnectAsyncTask.useDialog=false;
+                            new SQLConnectAsyncTask(getApplicationContext(),a,offers).execute();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"The Restaurant/Location You Queried Is Not Available",Toast.LENGTH_SHORT).show();
+                        }
+                    }
                         //if(getLocation()!=null) {
-                            SQLConnectAsyncTask.useDialog = false;
+                           /* SQLConnectAsyncTask.useDialog = false;
                         if(getLocation()!=null && getRestaurantName()==null) {
                             new SQLConnectAsyncTask(getApplicationContext(),getLocation(),null, a).execute();
                             if (SQLConnectAsyncTask.getListLoaded()) {
@@ -3015,7 +3088,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             Toast.makeText(getApplicationContext(),"The location/restaurant you've searched is unavailable",Toast.LENGTH_SHORT).show();
                             refresh.setRefreshing(false);
                         }
-                    }
+                    }*/
                 });
             }
         });

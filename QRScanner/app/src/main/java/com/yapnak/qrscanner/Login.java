@@ -8,7 +8,9 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,14 +24,15 @@ import android.widget.Toast;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.auth.clientlogin.ClientLogin;
+import com.yapnak.gcmbackend.clientEndpointApi.ClientEndpointApi;
+import com.yapnak.gcmbackend.clientEndpointApi.model.ClientAuthEntity;
+import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
+import com.yapnak.gcmbackend.sQLEntityApi.model.ClientEntity;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-
-import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.SQLEntityApi;
-import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.model.ClientEntity;
 
 
 /**
@@ -37,6 +40,7 @@ import backend.qrscanner.joshua.yapnak.com.sQLEntityApi.model.ClientEntity;
  */
 public class Login extends Activity {
 
+    private SharedPreferences pref;
     private EditText clientEmail;
     private EditText clientPass;
     private int errorID = -1;
@@ -61,16 +65,36 @@ public class Login extends Activity {
         setContentView(R.layout.login);
 
 
+        clientEmail =(EditText) findViewById(R.id.clientEmailEdit);
+        clientPass = (EditText) findViewById(R.id.clientPassEdit);
         clientB = (Button) findViewById(R.id.clientLoginButton);
         helper = new DBHelper("LOGIN",this);
 
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+
+                pref=getSharedPreferences("clientlogin",Context.MODE_PRIVATE);
+                if (pref != null) {
+                    if(!pref.getBoolean("on",false)) {
+                        clientEmail.setText(pref.getString("email", ""));
+                        clientPass.setText(pref.getString("pass", ""));
+                    }
+                }
+            }
+        });
+    }
 
     public void clientLogin(View v){
 
-        clientEmail =(EditText) findViewById(R.id.clientEmailEdit);
-        clientPass = (EditText) findViewById(R.id.clientPassEdit);
+        //clientEmail =(EditText) findViewById(R.id.clientEmailEdit);
+        //clientPass = (EditText) findViewById(R.id.clientPassEdit);
 
 
         //TODO: Compare Email and Pass against database and return boolean;
@@ -89,14 +113,18 @@ public class Login extends Activity {
         }else{
             //ErrorDialog dialog = new ErrorDialog();
             //dialog.show(getFragmentManager(),"LoginError");
-        }*/
+        }
+        */
         login();
 
     }
 
     private void login(){
-        new Authenticate().execute(clientEmail.getText().toString(),clientPass.getText().toString());
-
+        if(connection()) {
+            new Authenticate().execute(clientEmail.getText().toString(), clientPass.getText().toString());
+        }else{
+            Toast.makeText(getApplicationContext(),"Turn Internet On",Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -112,26 +140,37 @@ public class Login extends Activity {
 
         @Override
         protected Void doInBackground(String... params) {
-            SQLEntityApi.Builder sqlb = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-            sqlb.setApplicationName("Yapnak");
-            SQLEntityApi entity = sqlb.build();
+            ClientEndpointApi.Builder builder = new ClientEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            ClientEndpointApi client = builder.build();
 
             String passEncrypt = hashPass(params[1]);
             emailA = params[0];
 
-            try {
-                ClientEntity login = entity.clientLogin(emailA, passEncrypt).execute();
-                Log.d("login", login.getStatus());
-                if (login.getStatus().equalsIgnoreCase("True")) {
 
-                    submitDB = true;
+
+            try {
+
+                ClientAuthEntity login= client.authenticateClient(params[0], params[1]).execute();
+                Log.d("login", login.getStatus());
+
+                if (Boolean.parseBoolean(login.getStatus())) {
+
+                    //Log.d("login", login.getStatus());
+                    pref = getSharedPreferences("clientlogin",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor edit = pref.edit();
+
+                    edit.remove("pass");
+                    edit.putString("email",params[0]);
+                    edit.putString("pass",params[1]);
+                    edit.putBoolean("on",true).apply();
+
+                    //submitDB = true;
                     loginM=true;
                     Intent i = new Intent(a, MainActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.putExtra("clientID",login.getId());
+                    i.putExtra("clientID",login.getClientId());
                     startActivity(i);
                     a.finish();
 
@@ -155,9 +194,16 @@ public class Login extends Activity {
                 Toast.makeText(getApplicationContext(),"Not valid email/password",Toast.LENGTH_SHORT).show();
             }
             if(submitDB){
-                new LocalDBInput().execute(emailA);
+                //new LocalDBInput().execute(emailA);
             }
         }
+    }
+
+    private boolean connection(){
+        ConnectivityManager manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        return (lte||wifi);
     }
 
 
@@ -206,18 +252,18 @@ public class Login extends Activity {
     }
     private String hashPass(String pass){
 
-            try {
-                MessageDigest md = MessageDigest
-                        .getInstance("SHA-256");
-                md.update(SALT.getBytes());        // <-- Prepend SALT.
-                md.update(pass.getBytes());
+        try {
+            MessageDigest md = MessageDigest
+                    .getInstance("SHA-256");
+            md.update(SALT.getBytes());        // <-- Prepend SALT.
+            md.update(pass.getBytes());
 
-                byte[] out = md.digest();
-                return bytesToHex(out);            // <-- Return the Hex Hash.
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            return "";
+            byte[] out = md.digest();
+            return bytesToHex(out);            // <-- Return the Hex Hash.
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
 
     }
 
