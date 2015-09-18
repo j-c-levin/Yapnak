@@ -217,9 +217,8 @@ public class Login extends Activity{
                         if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase("")) && phone.getText().toString() != null && (!phone.getText().toString().equalsIgnoreCase(""))) {
                             Log.d("password", password.getText().toString());
                             emailAd = email.getText().toString();
-                            phoneNum = phone.getText().toString();
-                            new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
-
+                            phoneNum = (phone.getText().toString().length()!=0)?phone.getText().toString():"";
+                            new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phoneNum.trim());
                         } else {
                             if(email.getText().toString().equalsIgnoreCase("") || email.getText().toString() == null ){
                                 error.setInfoText("Please Enter Your E-mail");
@@ -233,7 +232,6 @@ public class Login extends Activity{
                             if(progress.isShowing()){
                                 progress.cancel();
                             }
-
                             error.show(fragmentManager, "error");
                             if (remember.getString("email", "-1").equalsIgnoreCase("-1")) {
                                 remember.edit().clear().apply();
@@ -354,12 +352,12 @@ public class Login extends Activity{
         protected void onPostExecute(String s) {
             if(connection()) {
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
-
                 if (s != null) {
+                    SharedPreferences.Editor pref = keep.edit();
+                    pref.putString("userID",s).putString("password",pass).putString("email",emailAd).putString("phone",phoneNum).putBoolean("on",true).apply();
+                    SharedPreferences.Editor keeper = remember.edit();
+                    keeper.putString("userID",s).putString("password",pass).putString("email",emailAd).putString("phone",phoneNum).putBoolean("on",true).apply();
                     Log.d("usernameid", s);
-                    if(keep!=null){
-                        keep.edit().putBoolean("on",true).apply();
-                    }
                     Intent i = new Intent(Login.this, MainActivity.class);
                     i.putExtra("userID", s);
                     i.putExtra("password", pass);
@@ -397,27 +395,15 @@ public class Login extends Activity{
 
     private AnimatorSet arrowAppear(){
         ValueAnimator animator = ValueAnimator.ofFloat(-1000.0f,(originalUserY+110));
-
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-
-
                 float y = (Float) animation.getAnimatedValue();
-
-
-                userB.setY(y);
-
-            }
-        });
-
-        ObjectAnimator alpha = ObjectAnimator.ofFloat(userB,"alpha",0.0f,1.0f);
-
+                userB.setY(y);}});
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 0.0f, 1.0f);
         AnimatorSet s = new AnimatorSet();
         s.playTogether(animator, alpha);
-
         return s;
-
     }
 
     private boolean connection(){
@@ -564,22 +550,12 @@ public class Login extends Activity{
 
     }
 
-    private boolean isInternetOn(){
-        ConnectivityManager manager =  (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        wifi= manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        lte =manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-
-        return wifi||lte;
-    }
 
     private String userID;
 
     /*private class GetUserId extends AsyncTask<String,Integer,String>{
-
-
-        private String email;
-
-        @Override
+      private String email;
+      @Override
         protected String doInBackground(String... params) {
             this.email  = params[0];
             try{
@@ -744,8 +720,6 @@ public class Login extends Activity{
     @Override
     protected void onStart() {
         super.onStart();
-       // mGoogleApiClient.connect();
-
 
         new Handler().post(new Runnable() {
             @Override
@@ -759,7 +733,6 @@ public class Login extends Activity{
                         String decryptedPass = null;
 
                         try {
-
                             Log.d("beforeDecryption",remember.getString("password","-1"));
                             decryptedPass = secure.decrypt(remember.getString("password", "-1"));
                             Log.d("decryptedPass",decryptedPass);
@@ -791,8 +764,8 @@ public class Login extends Activity{
     protected void onResume() {
         super.onResume();
 
-       // if(mSignInClicked) {
-         //   startButtonClick();
+       //if(mSignInClicked) {
+         //startButtonClick();
         //}
     }
 

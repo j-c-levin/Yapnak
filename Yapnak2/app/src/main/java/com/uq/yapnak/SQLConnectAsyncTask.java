@@ -37,6 +37,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
     MainActivity main;
     private String ID;
     private String restaurant;
+    private boolean notLocation;
 
     private static void setListLoaded(boolean loaded){
         listLoaded = loaded;
@@ -48,12 +49,23 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
     private ProgressDialog progressDialog;
 
-    SQLConnectAsyncTask(Context context, Location location,String res, MainActivity main) {
+    SQLConnectAsyncTask(Context context, Location location, MainActivity main) {
         this.context = context;
         this.location = location;
         this.main = main;
         this.progressDialog = new ProgressDialog(this.main);
-        this.restaurant = res;
+        notLocation=false;
+
+
+    }
+
+    SQLConnectAsyncTask(Context context, MainActivity main,OfferListEntity list) {
+        this.context = context;
+        this.main = main;
+        listEntity = list;
+        notLocation=true;
+        this.progressDialog = new ProgressDialog(this.main);
+
 
     }
 
@@ -92,9 +104,16 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
             SQLList showOffersList = new SQLList();
             showOffersList.setList(showOffers);
-            */
+          */
+            if(!notLocation){
+                if(location!=null) {
+                    listEntity = userApi.getClients(location.getLatitude(), location.getLongitude()).execute();
+                }else{
+                    listEntity=null;
+                }
+            }
 
-            if(location!=null && restaurant!=null ){
+            /*if(location!=null && restaurant!=null ){
                 ArrayList<OfferEntity> temp = new ArrayList<>();
 
                 OfferListEntity loc = userApi.getClients(location.getLatitude(), location.getLongitude()).execute();
@@ -123,7 +142,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
                     joined.setUnknownKeys(loc.getUnknownKeys());
                     listEntity = joined;
 
-                }else{
+                } else{
 
                     int count = 0;
                     while(count!=countRes){
@@ -148,14 +167,12 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
 
 
-            }else if(restaurant!=null){
-                listEntity = userApi.searchClients(restaurant).execute();
+            }*/
 
-
-            }else if(location!=null){
+            /*else if(location!=null){
                 listEntity = userApi.getClients(location.getLatitude(),location.getLongitude()).execute();
 
-            }
+            }*/
 
 
             return listEntity;
@@ -191,7 +208,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
     protected void onPostExecute(OfferListEntity result) {
         if (result != null && location!=null) {
-           // Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
+            // Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
             main.load(result);
             main.floatButton();
             main.setList(result);
@@ -199,7 +216,19 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
             if (useDialog) {
                 progressDialog.cancel();
-                loaded=true;
+                loaded = true;
+            }
+            setListLoaded(true);
+
+        }else if(result!=null && location==null){
+            main.load(result);
+            main.floatButton();
+            main.setList(result);
+            main.swipeRefresh(main);
+
+            if (useDialog) {
+                progressDialog.cancel();
+                loaded = true;
             }
             setListLoaded(true);
 

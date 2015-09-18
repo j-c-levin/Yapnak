@@ -170,7 +170,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
         @Override
         protected Bitmap doInBackground(String... urls) {
 
-           // httpClient = new DefaultHttpClient();
+            //httpClient = new DefaultHttpClient();
             //get = new HttpGet(urls[0]);
             //HttpResponse response = httpClient.execute(get);
             //entity = response.getEntity();
@@ -191,7 +191,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
                 //Bitmap b= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
 
-                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),100, 100);
+                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),1000,1000);
 
                 return bitmap;
             }catch (Exception e){
