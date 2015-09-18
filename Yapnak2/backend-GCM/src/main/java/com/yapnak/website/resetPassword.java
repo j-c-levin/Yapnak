@@ -46,7 +46,7 @@ public class resetPassword extends HttpServlet {
                         //reset requested
                         Cookie part1 = new Cookie("com.yapnak.hash", hash);
                         resp.addCookie(part1);
-                        resp.setHeader("Refresh", "0; url=/reset.html");
+                        resp.setHeader("Refresh", "0; url=/reset");
                     } else {
                         //Incorrect hash
                         out.println("You don't have permission to view this page");

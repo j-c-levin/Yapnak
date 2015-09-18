@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/ipaQUnEBSBevEUAmefMEWT5A7Lc\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/m6hjsRoFTfZrmDozFGVDDT-lFws\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -92,6 +92,9 @@
    "id": "ClientEntity",
    "type": "object",
    "properties": {
+    "email": {
+     "type": "string"
+    },
     "foodStyle": {
      "type": "string"
     },
@@ -174,6 +177,43 @@
     },
     "message": {
      "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "ClientOfferEntity": {
+   "id": "ClientOfferEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "offerId": {
+     "type": "string",
+     "format": "int64"
+    },
+    "offerText": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "ClientOfferListEntity": {
+   "id": "ClientOfferListEntity",
+   "type": "object",
+   "properties": {
+    "message": {
+     "type": "string"
+    },
+    "offerList": {
+     "type": "array",
+     "items": {
+      "$ref": "ClientOfferEntity"
+     }
     },
     "status": {
      "type": "string"
@@ -267,6 +307,28 @@
    "httpMethod": "GET",
    "response": {
     "$ref": "ClientListEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "getAllOffers": {
+   "id": "adminApi.getAllOffers",
+   "path": "getAllOffers",
+   "httpMethod": "GET",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId"
+   ],
+   "response": {
+    "$ref": "ClientOfferListEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

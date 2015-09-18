@@ -259,6 +259,7 @@ public class UserEndpoint {
                     response.setStatus("Insert to promoRedeemed failed");
                     break queryBlock;
                 }
+                response.setMessage("Promo code accepted");
                 //Update user points
                 query = "UPDATE user SET loyaltyPoints = 10 where userID = ?";
                 statement = connection.prepareStatement(query);
@@ -926,7 +927,6 @@ public class UserEndpoint {
             queryBlock:
             try {
                 String details;
-                String detailsAttribute;
                 String query;
                 boolean isMob = false;
                 if (otherUserId != null) {
@@ -938,9 +938,9 @@ public class UserEndpoint {
                     query = "SELECT COUNT(*) FROM user WHERE mobNo = ?";
                 } else {
                     //Details not provided
-                    logger.info("Other user details have not been provided");
+                    logger.info("other user details have not been provided");
                     response.setStatus("False");
-                    response.setMessage("Other user details have not been provided");
+                    response.setMessage("other user details have not been provided");
                     break queryBlock;
                 }
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -963,11 +963,20 @@ public class UserEndpoint {
                     logger.info("User not found in the system");
                     break queryBlock;
                 }
+                if (isMob) {
+                    //Get userId from mobile number
+                    query = "SELECT userID FROM user WHERE mobNo = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, details);
+                    rs = statement.executeQuery();
+                    rs.next();
+                    details = rs.getString("userID");
+                }
                 //User found
-                logger.info("User " + otherUserId + " is recommending " + userId + " to eat at " + clientId);
+                logger.info("User " + userId + " is recommending " + details + " to eat at " + clientId);
                 query = "SELECT COUNT(*) FROM recommend WHERE userID = ? AND clientID = ?";
                 statement = connection.prepareStatement(query);
-                statement.setString(1, userId);
+                statement.setString(1, details);
                 statement.setInt(2, clientId);
                 rs = statement.executeQuery();
                 rs.next();
@@ -981,9 +990,9 @@ public class UserEndpoint {
                 //Insert recommendation details
                 query = "REPLACE recommend (userID, clientID, referrerID) VALUES (?,?,?)";
                 statement = connection.prepareStatement(query);
-                statement.setString(1, userId);
+                statement.setString(1, details);
                 statement.setInt(2, clientId);
-                statement.setString(3, details);
+                statement.setString(3, userId);
                 int success = statement.executeUpdate();
                 if (success == -1) {
                     //Insert update failed

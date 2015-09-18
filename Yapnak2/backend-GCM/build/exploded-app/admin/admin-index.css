@@ -52,7 +52,7 @@ body {
   max-width: 300px;
 }
 
-.center-image {
+.center-image, .center-text {
   text-align:center;
 }
 
@@ -98,3 +98,7 @@ body {
 }
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+.left-float {
+  float:left;
+}

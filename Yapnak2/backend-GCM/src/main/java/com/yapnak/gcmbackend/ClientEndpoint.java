@@ -112,7 +112,6 @@ public class ClientEndpoint {
         } finally {
             return response;
         }
-
     }
 
     @ApiMethod(

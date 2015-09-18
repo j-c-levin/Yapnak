@@ -577,59 +577,60 @@ public class SQLEntityEndpoint {
         }
     }
 
-    @ApiMethod(
-            name = "insertExternalUser",
-            path = "insertExternalUser",
-            httpMethod = ApiMethod.HttpMethod.POST)
-    public UserEntity insertExternal(@Named("email") String email) throws ClassNotFoundException, SQLException {
-        Connection connection;
-        UserEntity user = new UserEntity();
-        try {
-            if (SystemProperty.environment.value() ==
-                    SystemProperty.Environment.Value.Production) {
-                // Load the class that provides the new "jdbc:google:mysql://" prefix.
-                Class.forName("com.mysql.jdbc.GoogleDriver");
-                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
-            } else {
-                // Local MySQL instance kto use during development.
-                Class.forName("com.mysql.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
-            }
-            int success = -1;
-            try {
-                String statement = "SELECT userID FROM user WHERE email = ?";
-                PreparedStatement stmt = connection.prepareStatement(statement);
-                stmt.setString(1, email);
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    //user already exists with a google sign in
-                    logger.info("found user " + rs.getString("userID"));
-                    user.setUserID(rs.getString("userID"));
-                } else {
-                    statement = "INSERT INTO user (userID, email) VALUES(?,?)";
-                    stmt = connection.prepareStatement(statement);
-                    //Generate userID
-                    String userID = "";
-                    userID = email.substring(0, 4) + randInt();
-                    user.setUserID(userID);
-                    stmt.setString(1, userID);
-                    stmt.setString(2, email);
-                    success = stmt.executeUpdate();
-                    if (success == -1) {
-                        logger.warning("Inserting user failed");
-                        user.setUserID("Failed");
-                    } else {
-                        logger.info("Successfully inserted the user " + user.getUserID());
-                    }
-                }
-            } finally {
-                connection.close();
-                return user;
-            }
-        } finally {
-            return user;
-        }
-    }
+    //Dangerous API, depreciated
+//    @ApiMethod(
+//            name = "insertExternalUser",
+//            path = "insertExternalUser",
+//            httpMethod = ApiMethod.HttpMethod.POST)
+//    public UserEntity insertExternal(@Named("email") String email) throws ClassNotFoundException, SQLException {
+//        Connection connection;
+//        UserEntity user = new UserEntity();
+//        try {
+//            if (SystemProperty.environment.value() ==
+//                    SystemProperty.Environment.Value.Production) {
+//                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+//                Class.forName("com.mysql.jdbc.GoogleDriver");
+//                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+//            } else {
+//                // Local MySQL instance kto use during development.
+//                Class.forName("com.mysql.jdbc.Driver");
+//                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+//            }
+//            int success = -1;
+//            try {
+//                String statement = "SELECT userID FROM user WHERE email = ?";
+//                PreparedStatement stmt = connection.prepareStatement(statement);
+//                stmt.setString(1, email);
+//                ResultSet rs = stmt.executeQuery();
+//                if (rs.next()) {
+//                    //user already exists with a google sign in
+//                    logger.info("found user " + rs.getString("userID"));
+//                    user.setUserID(rs.getString("userID"));
+//                } else {
+//                    statement = "INSERT INTO user (userID, email) VALUES(?,?)";
+//                    stmt = connection.prepareStatement(statement);
+//                    //Generate userID
+//                    String userID = "";
+//                    userID = email.substring(0, 4) + randInt();
+//                    user.setUserID(userID);
+//                    stmt.setString(1, userID);
+//                    stmt.setString(2, email);
+//                    success = stmt.executeUpdate();
+//                    if (success == -1) {
+//                        logger.warning("Inserting user failed");
+//                        user.setUserID("Failed");
+//                    } else {
+//                        logger.info("Successfully inserted the user " + user.getUserID());
+//                    }
+//                }
+//            } finally {
+//                connection.close();
+//                return user;
+//            }
+//        } finally {
+//            return user;
+//        }
+//    }
 
     @ApiMethod(
             name = "feedback",

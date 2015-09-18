@@ -165,44 +165,43 @@ public class login extends HttpServlet {
                                 part1.setMaxAge(60 * 60 * 24 * 30 * 12);
                                 resp.addCookie(part1);
                                 //Save a user's session in a cookie if they've requested it
-                                if (req.getParameter("save") != null) {
-                                    //get unique salt for client
-                                    sql = "SELECT salt FROM client WHERE email = ?";
-                                    stmt = connection.prepareStatement(sql);
-                                    stmt.setString(1, email);
-                                    rs = stmt.executeQuery();
-                                    rs.next();
-                                    out.println(rs.getString("salt"));
-                                    //Check if a salt exists
-                                    if (rs.getString("salt") == null) {
-                                        out.println("No salt exists, creating");
-                                        sql = "UPDATE client SET salt = ? WHERE email = ?";
-                                        stmt = connection.prepareStatement(sql);
-                                        stmt.setString(1, nextSessionId());
-                                        stmt.setString(2, email);
-                                        int success = 2;
-                                        success = stmt.executeUpdate();
-                                        if (success == 1) {
-                                            out.println("salt created");
-                                            sql = "SELECT salt FROM client WHERE email = ?";
-                                            stmt = connection.prepareStatement(sql);
-                                            stmt.setString(1, email);
-                                            rs = null;
-                                            rs = stmt.executeQuery();
-                                            rs.next();
-                                        } else {
-                                            out.println("trouble creating the salt");
-                                        }
-                                    }
-                                    //Use created salt
-                                    String x = email + hashPassword(password) + rs.getString("salt");
-                                    Cookie part2 = new Cookie("com.yapnak.hash", hashPassword(x));
-                                    int time = 60 * 60 * 24 * 7;
-                                    part2.setMaxAge(time);
-                                    resp.addCookie(part2);
-                                    out.println("cookies added");
-                                }
-                                //TODO: Add the client page
+//                                if (req.getParameter("save") != null) {
+//                                    //get unique salt for client
+//                                    sql = "SELECT salt FROM client WHERE email = ?";
+//                                    stmt = connection.prepareStatement(sql);
+//                                    stmt.setString(1, email);
+//                                    rs = stmt.executeQuery();
+//                                    rs.next();
+//                                    out.println(rs.getString("salt"));
+//                                    //Check if a salt exists
+//                                    if (rs.getString("salt") == null) {
+//                                        out.println("No salt exists, creating");
+//                                        sql = "UPDATE client SET salt = ? WHERE email = ?";
+//                                        stmt = connection.prepareStatement(sql);
+//                                        stmt.setString(1, nextSessionId());
+//                                        stmt.setString(2, email);
+//                                        int success = 2;
+//                                        success = stmt.executeUpdate();
+//                                        if (success == 1) {
+//                                            out.println("salt created");
+//                                            sql = "SELECT salt FROM client WHERE email = ?";
+//                                            stmt = connection.prepareStatement(sql);
+//                                            stmt.setString(1, email);
+//                                            rs = null;
+//                                            rs = stmt.executeQuery();
+//                                            rs.next();
+//                                        } else {
+//                                            out.println("trouble creating the salt");
+//                                        }
+//                                    }
+//                                    //Use created salt
+//                                    String x = email + hashPassword(password) + rs.getString("salt");
+//                                    Cookie part2 = new Cookie("com.yapnak.hash", hashPassword(x));
+//                                    int time = 60 * 60 * 24 * 7;
+//                                    part2.setMaxAge(time);
+//                                    resp.addCookie(part2);
+//                                    out.println("cookies added");
+//                                }
                                 HttpSession session = req.getSession();
                                 session.setAttribute("email", email);
                                 resp.setHeader("Refresh", "0; url=/console");
