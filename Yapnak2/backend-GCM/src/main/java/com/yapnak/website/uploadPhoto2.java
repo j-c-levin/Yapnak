@@ -95,10 +95,10 @@ public class uploadPhoto2 extends HttpServlet {
                         url = services.getServingUrl(serve);
                         url = url + "=s100";
                     } catch (IllegalArgumentException e) {
-                        url = "http://yapnak.com/images/yapnakmonster.png";
+                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
                         e.printStackTrace();
                     } catch (ImagesServiceFailureException e1) {
-                        url = "http://yapnak.com/images/yapnakmonster.png";
+                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
                         e1.printStackTrace();
                     }
                     sql = "UPDATE client SET clientPhoto = ?, clientPhotoUrl = ? WHERE email = ?";

@@ -31,9 +31,9 @@
         <input type="email" id="clientID" name="username" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <div class="checkbox">
+        <div class="checkbox" style="text-align: center;">
           <label>
-            <input type="checkbox" name = "save" value="remember-me"> Remember me for a week
+            <a href="/forgot">Forgotten your password?</a>
           </label>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

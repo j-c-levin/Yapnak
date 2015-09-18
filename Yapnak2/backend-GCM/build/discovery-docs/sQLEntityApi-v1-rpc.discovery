@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/MFvWM74BpfCQCJl08Dit4OJ-R4w\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/7kyihyoFz9dHdCo2rUFSuPY3Fx4\"",
  "discoveryVersion": "v1",
  "id": "sQLEntityApi:v1",
  "name": "sQLEntityApi",
@@ -75,6 +75,9 @@
    "id": "ClientEntity",
    "type": "object",
    "properties": {
+    "email": {
+     "type": "string"
+    },
     "foodStyle": {
      "type": "string"
     },
@@ -507,24 +510,6 @@
    },
    "parameterOrder": [
     "userID"
-   ],
-   "returns": {
-    "$ref": "UserEntity"
-   },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
-  "sQLEntityApi.insertExternalUser": {
-   "id": "sQLEntityApi.insertExternalUser",
-   "parameters": {
-    "email": {
-     "type": "string",
-     "required": true
-    }
-   },
-   "parameterOrder": [
-    "email"
    ],
    "returns": {
     "$ref": "UserEntity"

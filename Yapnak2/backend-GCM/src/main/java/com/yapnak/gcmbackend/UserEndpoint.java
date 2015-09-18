@@ -10,6 +10,9 @@ import com.google.appengine.api.images.ImagesServiceFailureException;
 import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -256,6 +259,7 @@ public class UserEndpoint {
                     response.setStatus("Insert to promoRedeemed failed");
                     break queryBlock;
                 }
+                response.setMessage("Promo code accepted");
                 //Update user points
                 query = "UPDATE user SET loyaltyPoints = 10 where userID = ?";
                 statement = connection.prepareStatement(query);
@@ -441,7 +445,7 @@ public class UserEndpoint {
             name = "setUserDetails",
             path = "setUserDetails",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName,  @Nullable UserImageEntity userImage) {
+    public SetUserDetailsEntity setUserDetails(@Named("userId") String userId, @Named("email") @Nullable String email, @Named("mobNo") @Nullable String mobNo, @Named("password") @Nullable String password, @Named("dateOfBirth") @Nullable String dateOfBirth, @Named("firstName") @Nullable String firstName, @Named("lastName") @Nullable String lastName, @Nullable UserImageEntity userImage) {
         SetUserDetailsEntity response = new SetUserDetailsEntity();
         Connection connection;
         try {
@@ -624,7 +628,7 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND client.isActive = 1";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -923,7 +927,6 @@ public class UserEndpoint {
             queryBlock:
             try {
                 String details;
-                String detailsAttribute;
                 String query;
                 boolean isMob = false;
                 if (otherUserId != null) {
@@ -935,9 +938,9 @@ public class UserEndpoint {
                     query = "SELECT COUNT(*) FROM user WHERE mobNo = ?";
                 } else {
                     //Details not provided
-                    logger.info("Other user details have not been provided");
+                    logger.info("other user details have not been provided");
                     response.setStatus("False");
-                    response.setMessage("Other user details have not been provided");
+                    response.setMessage("other user details have not been provided");
                     break queryBlock;
                 }
                 PreparedStatement statement = connection.prepareStatement(query);
@@ -960,11 +963,20 @@ public class UserEndpoint {
                     logger.info("User not found in the system");
                     break queryBlock;
                 }
+                if (isMob) {
+                    //Get userId from mobile number
+                    query = "SELECT userID FROM user WHERE mobNo = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, details);
+                    rs = statement.executeQuery();
+                    rs.next();
+                    details = rs.getString("userID");
+                }
                 //User found
-                logger.info("User " + userId + " is recommending " + otherUserId + " to eat at " + clientId);
+                logger.info("User " + userId + " is recommending " + details + " to eat at " + clientId);
                 query = "SELECT COUNT(*) FROM recommend WHERE userID = ? AND clientID = ?";
                 statement = connection.prepareStatement(query);
-                statement.setString(1, userId);
+                statement.setString(1, details);
                 statement.setInt(2, clientId);
                 rs = statement.executeQuery();
                 rs.next();
@@ -978,9 +990,9 @@ public class UserEndpoint {
                 //Insert recommendation details
                 query = "REPLACE recommend (userID, clientID, referrerID) VALUES (?,?,?)";
                 statement = connection.prepareStatement(query);
-                statement.setString(1, userId);
+                statement.setString(1, details);
                 statement.setInt(2, clientId);
-                statement.setString(3, details);
+                statement.setString(3, userId);
                 int success = statement.executeUpdate();
                 if (success == -1) {
                     //Insert update failed
@@ -1051,6 +1063,52 @@ public class UserEndpoint {
             response.setMessage("SQLException");
             e.printStackTrace();
         } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "getRedemptionForUser",
+            path = "getRedemptionForUser",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public UserRedemptionEntity getRedemptionForUser(@Named("userId") String userId) {
+        UserRedemptionEntity response = new UserRedemptionEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT redemptionAvailable FROM user WHERE userID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    //User doesn't exist
+                    logger.warning("User " + userId + " not found");
+                    response.setStatus("False");
+                    response.setMessage("User not found");
+                    break queryBlock;
+                }
+                logger.info("Returning available redemption for " + userId);
+                JSONParser parse = new JSONParser();
+                JSONArray list = new JSONArray();
+                list = (JSONArray)parse.parse(rs.getString("redemptionAvailable"));
+                response.setAvailable(list);
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
             return response;
         }
     }

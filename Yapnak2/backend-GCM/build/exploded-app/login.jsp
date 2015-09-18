@@ -76,7 +76,7 @@ body {
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <div class="checkbox">
           <label>
-            <input type="checkbox" name = "save" value="remember-me"> Remember me for a week
+            <a href="/forgot">Forgotten your password?</a>
           </label>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

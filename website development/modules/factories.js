@@ -173,7 +173,7 @@ angular.module('app.factories', [])
   result.updateLocation = function(address,email) {
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(address)
+      url: 'https://yapnak-app.appspot.com/_ah/api/sQLEntityApi/v1/updateClientLocation?email='.concat(email).concat("&address=").concat(encodeURIComponent(address))
     }
     return $http(req).then(function(response){
       if (response.data.status == "True") {

@@ -215,7 +215,7 @@ public class AdminEndpoint {
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
             try {
-                String statement = "SELECT client.clientID, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, client.isActive, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.clientID = ? AND offers.isActive = 1";
+                String statement = "SELECT client.clientID, client.email, clientName, clientX, clientY, clientFoodStyle, clientPhotoUrl, client.offer1,client.offer2,client.offer3, client.isActive, offers.offerID, offers.offerText offer, offers.showOffer showOffer FROM client JOIN offers ON client.clientID=offers.clientID WHERE client.clientID = ? AND offers.isActive = 1";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 stmt.setString(1, clientId);
                 ResultSet rs = stmt.executeQuery();
@@ -230,6 +230,7 @@ public class AdminEndpoint {
                     client.setFoodStyle(rs.getString("clientFoodStyle"));
                     client.setPhoto(rs.getString("clientPhotoUrl"));
                     client.setIsActive(rs.getInt("isActive"));
+                    client.setEmail(rs.getString("email"));
                     do {
                         if (rs.getInt("offerID") == rs.getInt("offer1")) {
                             logger.info("found offer 1: " + rs.getString("offer"));
@@ -265,6 +266,55 @@ public class AdminEndpoint {
         }
     }
 
+    @ApiMethod(
+            name = "getAllOffers",
+            path = "getAllOffers",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public ClientOfferListEntity getAllOffers(@Named("clientId") int clientId) {
+        ClientOfferListEntity response = new ClientOfferListEntity();
+        ClientOfferEntity offer;
+        List<ClientOfferEntity> list = new ArrayList<ClientOfferEntity>();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT offerID, offerText FROM offers WHERE clientID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, clientId);
+                logger.info("Searching for offers from " + clientId);
+                ResultSet rs = statement.executeQuery();
+                while (rs.next()) {
+                    logger.info("Found offer " + rs.getInt("offerID"));
+                    offer = new ClientOfferEntity();
+                    offer.setOfferId(rs.getInt("offerID"));
+                    offer.setOfferText(rs.getString("offerText"));
+                    list.add(offer);
+                }
+                response.setOfferList(list);
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "insertPromo",
+            path = "insertPromo",
+            httpMethod = ApiMethod.HttpMethod.POST)
     public void insertPromo(@Named("promoCode") String promoCode) {
         Connection connection;
         try {
@@ -300,6 +350,65 @@ public class AdminEndpoint {
             logger.warning("ClassNotFoundException: " + e1);
         }
         finally {
+        }
+
+    }
+
+    @ApiMethod(
+            name = "toggleClient",
+            path = "toggleClient",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity toggleClient(@Named("clientId") int clientId, @Named("session") String session, @Named("value") int value) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                //Authorise admin
+                String query = "SELECT adminID FROM admin WHERE session = ? ";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1,session);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()){
+                    //Admin auth failed
+                    response.setStatus("False");
+                    response.setMessage("Session auth failed");
+                    logger.warning("Session auth failed");
+                    break queryBlock;
+                }
+                int adminId = rs.getInt("adminID");
+                logger.info("Found admin " + adminId);
+
+                //Toggle client
+                logger.info("Toggling client " + clientId + " to " + value);
+                query = "UPDATE client SET isActive = ? WHERE clientID = ?";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, value);
+                statement.setInt(2, clientId);
+                int success = statement.executeUpdate();
+                if (success == -1 ){
+                    logger.warning("Update client toggle failed");
+                    response.setStatus("False");
+                    response.setMessage("Update client toggle failed");
+                    break queryBlock;
+                }
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        }  finally {
+            return response;
         }
 
     }

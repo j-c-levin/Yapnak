@@ -168,13 +168,38 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/support</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>forgot</servlet-name>#
+        <jsp-file>/forgot.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>forgot</servlet-name>
+        <url-pattern>/forgot</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>reset</servlet-name>#
+        <jsp-file>/reset.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>reset</servlet-name>
+        <url-pattern>/reset</url-pattern>
+    </servlet-mapping>
+
     <static-files>
         <include path="/**.html"></include>
         <include path="/**.js"></include>
         <include path="/**.png"></include>
+        <include path="/**.jpg"></include>
+        <include path="/**.mp4"></include>
+        <include path="/**.eot"></include>
+        <include path="/**.svg"></include>
+        <include path="/**.ttf"></include>
+        <include path="/**.woff"></include>
+        <include path="/**.woff2"></include>
     </static-files>
 
     <welcome-file-list>
-        <welcome-file>splash.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>

@@ -12,6 +12,15 @@ public class RedemptionEntity {
     String offerText;
     String status;
     String message;
+    String loyaltyRedeemedLevel;
+
+    public String getLoyaltyRedeemedLevel() {
+        return loyaltyRedeemedLevel;
+    }
+
+    public void setLoyaltyRedeemedLevel(String loyaltyRedeemedLevel) {
+        this.loyaltyRedeemedLevel = loyaltyRedeemedLevel;
+    }
 
     public String getOfferText() {
         return offerText;

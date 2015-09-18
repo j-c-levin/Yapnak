@@ -28,6 +28,15 @@ public class ClientEntity {
     int offer2Id;
     int offer3Id;
     long isActive;
+    String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public long getIsActive() {
         return isActive;
