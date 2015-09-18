@@ -435,11 +435,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public boolean onQueryTextSubmit(String query) {
                 queryMain = query;
                 Log.d("querySub", query);
+                new CheckRestaurantDeals().execute(queryMain);
                 new SearchLocation().execute(queryMain);
                 InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(!input.isAcceptingText()){
+                if (!input.isAcceptingText()) {
                     view.clearFocus();
-                    input.hideSoftInputFromInputMethod(view.getWindowToken(),0);
+                    input.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
                 }
                 return true;
             }
@@ -523,9 +524,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             Log.d("stringquery",loc);
 
-            new CheckRestaurantDeals().execute(loc);
-
             if(!hasRestaurant){
+                Log.d("restaurant","NO RESTAURANTS UNDER THAT NAME");
                 if(location!=null) {
                     Log.d("location", "Latitude: " + String.valueOf(location.getLatitude()) + " Longitude: " + String.valueOf(location.getLongitude()));
                     setLocation(location);
@@ -536,6 +536,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     new SQLConnectAsyncTask(getApplicationContext(), null, activity).execute();
                 }
             }else if(hasRestaurant){
+                Log.d("restaurant","YES IT IS A RESTAURANT");
                 setRestaurantName(loc);
                 SQLConnectAsyncTask.useDialog=true;
                 if(offers!=null) {
@@ -554,16 +555,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private class CheckRestaurantDeals extends AsyncTask<String,Void,OfferListEntity>{
-
-
         @Override
         protected OfferListEntity doInBackground(String... params) {
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
-
-
             try{
+                //OfferListEntity entity = api.searchClients(params[0]).execute();
                 OfferListEntity entity = api.searchClients(params[0]).execute();
                 entityStatus = entity.getMessage();
+               // Log.d("queryString",entityStatus);
                 return entity;
 
             }catch(IOException e){
@@ -576,7 +575,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected void onPostExecute(OfferListEntity list) {
             super.onPostExecute(list);
            try {
-              // Log.d("queryString",entityStatus);
+               Log.d("queryString",entityStatus);
                if (list.getOfferList().size() == 0) {
                    hasRestaurant = false;
                    offers = null;
@@ -1201,8 +1200,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }else{
                     new RecommendUser(contactName).execute(null,email);
                 }
-
-                Toast.makeText(getApplicationContext(), "Phone Number: " + phone + " Email: " + email, Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
             }

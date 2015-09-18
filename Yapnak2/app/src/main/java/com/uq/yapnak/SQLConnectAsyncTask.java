@@ -112,7 +112,6 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
                     listEntity=null;
                 }
             }
-
             /*if(location!=null && restaurant!=null ){
                 ArrayList<OfferEntity> temp = new ArrayList<>();
 
@@ -207,20 +206,8 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
 
     protected void onPostExecute(OfferListEntity result) {
-        if (result != null && location!=null) {
+        if (result != null) {
             // Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
-            main.load(result);
-            main.floatButton();
-            main.setList(result);
-            main.swipeRefresh(main);
-
-            if (useDialog) {
-                progressDialog.cancel();
-                loaded = true;
-            }
-            setListLoaded(true);
-
-        }else if(result!=null && location==null){
             main.load(result);
             main.floatButton();
             main.setList(result);

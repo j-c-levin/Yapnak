@@ -446,6 +446,7 @@ public class ProfileDialog extends AlertDialog {
                 sqlEntity.getUserDetails(ID);
                 */
 
+                Log.d("userID",ID);
                 UserEndpointApi user = new UserEndpointApi (AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
                 return user.getUserDetails().setUserId(ID).execute();
 

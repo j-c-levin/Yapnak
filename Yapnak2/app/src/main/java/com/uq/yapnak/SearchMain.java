@@ -329,9 +329,9 @@ public class SearchMain extends Activity {
             super.onPostExecute(s);
 
             if(location!=null){
-                new SQLConnectAsyncTask(getApplicationContext(),location,(MainActivity)getParent()).execute();
+            //    new SQLConnectAsyncTask(getApplicationContext(),location,(MainActivity)getParent()).execute();
             }else {
-                new SQLConnectAsyncTask(getApplicationContext(),null,(MainActivity)getParent()).execute();
+              //  new SQLConnectAsyncTask(getApplicationContext(),null,(MainActivity)getParent()).execute();
             }
         }
     }
