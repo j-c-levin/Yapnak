@@ -207,7 +207,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
     protected void onPostExecute(OfferListEntity result) {
         if (result != null) {
-            // Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
+            //Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
             main.load(result);
             main.floatButton();
             main.setList(result);
@@ -242,7 +242,6 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
                 loaded=true;
             }
             setListLoaded(true);
-
             Toast.makeText(context,"Please Turn Location/Internet On",Toast.LENGTH_SHORT).show();
             Log.d("Debug", "Failed");
         }

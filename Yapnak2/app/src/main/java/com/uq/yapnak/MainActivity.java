@@ -438,7 +438,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 new CheckRestaurantDeals().execute(queryMain);
                 new SearchLocation().execute(queryMain);
                 InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (!input.isAcceptingText()) {
+                if (!input.isAcceptingText()){
                     view.clearFocus();
                     input.hideSoftInputFromInputMethod(view.getWindowToken(), 0);
                 }
@@ -557,13 +557,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private class CheckRestaurantDeals extends AsyncTask<String,Void,OfferListEntity>{
         @Override
         protected OfferListEntity doInBackground(String... params) {
-            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+
             try{
+                UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
                 //OfferListEntity entity = api.searchClients(params[0]).execute();
-                OfferListEntity entity = api.searchClients(params[0]).execute();
-                entityStatus = entity.getMessage();
-               // Log.d("queryString",entityStatus);
-                return entity;
+                // Log.d("queryString",entityStatus);
+                return api.searchClients(params[0]).execute();
 
             }catch(IOException e){
                 e.printStackTrace();
@@ -574,8 +573,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(OfferListEntity list) {
             super.onPostExecute(list);
-           try {
-               Log.d("queryString",entityStatus);
+            Log.d("queryString",list.getMessage());
                if (list.getOfferList().size() == 0) {
                    hasRestaurant = false;
                    offers = null;
@@ -584,9 +582,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                }
 
 
-           }catch(NullPointerException e){
-               e.printStackTrace();
-           }
         }
     }
     private boolean connection(){
@@ -2868,7 +2863,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public ItemPrev[] dealList(OfferListEntity sql) {
 
         try{
-            List<OfferEntity> list = new ArrayList<OfferEntity>(sql.getOfferList());
+
+            List<OfferEntity> list = sql.getOfferList();
 
             setListSize(list.size());
 
@@ -2921,10 +2917,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             return i;
 
-        }catch(Exception e){
+        }catch(NullPointerException e){
             e.printStackTrace();
             ip = new ItemPrev[1];
-
 
             ItemPrev temp = new ItemPrev();
             //TODO:add generic location to database
