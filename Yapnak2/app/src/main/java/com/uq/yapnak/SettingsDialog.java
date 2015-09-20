@@ -122,7 +122,7 @@ public class SettingsDialog extends AlertDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Resources res = getContext().getResources();
-        final int id = res.getIdentifier("titleDivier", "id", "android");
+        final int id = res.getIdentifier("titleDivider", "id", "android");
         final View v = findViewById(id);
 
         if(v!=null) {
