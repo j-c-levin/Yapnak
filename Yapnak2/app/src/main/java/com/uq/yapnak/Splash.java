@@ -72,6 +72,8 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     private long updatedTime;
     private boolean isIn,onConnected;
 
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -175,6 +177,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
 
     }
 
+    private SharedPreferences login;
     @Override
     protected void onStart() {
         super.onStart();
@@ -188,6 +191,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
 
         mSignInClicked = true;
         mGoogleApiClient.connect();*/
+        login = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         Log.d("onStart","Doing work");
         h.postDelayed(run,2000);
         Log.d("onStart", "Finished work");
@@ -201,11 +205,11 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         @Override
         public void run() {
 
-                SharedPreferences login = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
-                if (login.getBoolean("on", false)) {
+               Log.d("loginProcess",String.valueOf(login.getBoolean("on",false)) + "\nUSER ID "+ login.getString("userID","N/A"));
+               if (login.getBoolean("on", false)) {
                     Log.d("loginProcess",String.valueOf(login.getBoolean("on",false)));
                     if (!login.getString("password", "-1").equalsIgnoreCase("-1")) {
-                        new CheckLogin(login).execute();
+                        new CheckLogin().execute();
                         Log.d("loginProcess", login.getString("email", "NO EMAIL"));
                     }else{
                         Intent i = new Intent(Splash.this, Login.class);
@@ -238,68 +242,56 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     private Activity a = this;
 
 
-    private class CheckLogin extends AsyncTask<String,Void,Void>{
+    private class CheckLogin extends AsyncTask<String,Void,UserDetailsEntity>{
 
-        private SharedPreferences preferences;
         private boolean hasExecuted;
 
-        protected CheckLogin(SharedPreferences preferences){
-            this.preferences=preferences;
+        protected CheckLogin(){
         }
 
         @Override
-        protected Void doInBackground(String... params) {
-
-            /*SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-            builder.setApplicationName("Yapnak");
-            SQLEntityApi sqlEntity = builder.build();
-            */
-
-
+        protected UserDetailsEntity doInBackground(String... params) {
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
-
             try{
+               UserDetailsEntity e= api.getUserDetails().setEmail(login.getString("email", "-1")).execute();
+               return e;
+            }catch(IOException e){
+                return null;
+            }
+        }
 
-                //AuthenticateEntity e = api.authenticateUser(preferences.getString("pass", "-1")).execute();
-                UserDetailsEntity e= api.getUserDetails().setEmail(preferences.getString("email", "-1")).execute();
-                //execute();
-                if(preferences!=null && Boolean.parseBoolean(e.getStatus())) {
-                    if (e.getUserId().equalsIgnoreCase(preferences.getString("userID", "-1"))) {
+        @Override
+        protected void onPostExecute(UserDetailsEntity s) {
+            super.onPostExecute(s);
+
+
+            try {
+                if (s!=null && Boolean.parseBoolean(s.getStatus())) {
+                    Log.d("userID","USER ID FROM PREF = "+ login.getString("userID", "-1") +"\nFROM DB "+ s.getUserId());
+                    if (s.getUserId().equalsIgnoreCase(login.getString("userID", "-1"))) {
                         Log.d("loginProcess","Preferences and Status  NOT NULL");
                         Intent i = new Intent(Splash.this, MainActivity.class);
-                        i.putExtra("userID", e.getUserId());
+                        i.putExtra("userID", s.getUserId());
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(i);
-                        hasExecuted = Boolean.parseBoolean(e.getStatus());
+                        hasExecuted = Boolean.parseBoolean(s.getStatus());
                         a.finish();
                     }
                 }else{
-                    Log.d("loginProcess","Preferences and Status  = NULL");
-                    hasExecuted=false;
-
+                    hasExecuted = false;
                 }
-
-
-            }catch(IOException e){
-
+            }catch (NullPointerException e){
+                hasExecuted = false;
             }
 
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void s) {
-            super.onPostExecute(s);
             if(!hasExecuted){
                 Intent i = new Intent(Splash.this, Login.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
-                //stopStoredPref();
                 a.finish();
             }
         }

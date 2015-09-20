@@ -26,7 +26,10 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:id="@+id/qrimage"
-        android:layout_margin="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
         android:src="@color/lightPeach"
         android:layout_gravity="center_horizontal" />
 
@@ -44,7 +47,7 @@
             android:id="@+id/dismissButton"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:text="CLOSE"
             android:layout_marginLeft="10dp"
             android:background="@android:color/transparent"

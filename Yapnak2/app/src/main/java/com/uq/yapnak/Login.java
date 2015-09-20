@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -26,6 +27,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.frontend.yapnak.client.ClientLogin;
@@ -69,7 +71,7 @@ public class Login extends Activity{
 
     private final String FILE_NAME="yapnak_details";
     private EditText email;
-    private EditText phone;
+    private EditText phone,promo;
     private SecureDetails secure;
     private String emailAd,phoneNum;
     private Button loginButton;
@@ -83,6 +85,7 @@ public class Login extends Activity{
     private String personName;
     Person person;
     private Activity activity = this;
+    private boolean promoAvailable;
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
@@ -126,7 +129,8 @@ public class Login extends Activity{
     */
 
 
-    SharedPreferences remember,keep;
+    private SharedPreferences remember,keep;
+    private TextView register;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,9 +153,16 @@ public class Login extends Activity{
         findViewById(R.id.sign_in_button).setOnClickListener(this);*/
 
         error= new ErrorDialog();
+        register = (TextView) findViewById(R.id.registerText);
+        //Enable Click Listener for Register TextView;
+        goToRegistration();
+
+
         email = (EditText) findViewById(R.id.emailEdit);
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         password = (EditText) findViewById(R.id.passwordEdit);
+        promo = (EditText) findViewById(R.id.promoBox);
+        //actionGoButton();
 
         remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
@@ -218,16 +229,100 @@ public class Login extends Activity{
                             Log.d("password", password.getText().toString());
                             emailAd = email.getText().toString();
                             phoneNum = (phone.getText().toString().length()!=0)?phone.getText().toString():"";
-                            new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phoneNum.trim());
-                        } else {
-                            if(email.getText().toString().equalsIgnoreCase("") || email.getText().toString() == null ){
-                                error.setInfoText("Please Enter Your E-mail");
-                            }else if(password.getText().toString().equalsIgnoreCase("")|| password.getText().toString() == null){
-                                error.setInfoText("Please Enter Your Password");
-                            }else if(phone.getText().toString().equalsIgnoreCase("")|| phone.getText().toString() == null){
-                                error.setInfoText("Please Enter Your Phone Number");
+                            if(promo.getText().length()==0){
+                                promoAvailable = true;
                             }else{
+                                promoAvailable =true;
+                            }
+                            new InternalUser(v).execute(email.getText().toString(), password.getText().toString(), phoneNum);
+                        } else {
+                            if(email.getText().toString().length()==0 ) {
+                                error.setInfoText("Please Enter Your E-mail");
+                            }if(password.getText().toString().length()==0){
+                                error.setInfoText("Please Enter Your Password");
+                            }if(phone.getText().toString().length()==0 ||phone.getText().toString().length()<11 ){
+                                error.setInfoText("Please Enter Your Phone Number");
+                            }if((phone.getText().toString().length()<11 || phone.getText().toString().length()==0) && password.getText().toString().length()==0 && email.getText().toString().length()==0){
                                 error.setInfoText("Please Enter The Correct Login Information");
+                            }if((phone.getText().toString().length()==0||phone.getText().toString().length()<11)&& email.getText().toString().length()==0 ){
+                                error.setInfoText("Please Enter Phone Number and Email");
+                            }if((phone.getText().toString().length()==0||phone.getText().toString().length()<11)&& password.getText().toString().length()==0 ){
+                                error.setInfoText("Please Enter Phone Number and Email");
+                            }if((password.getText().toString().length()==0)&& email.getText().toString().length()==0 ){
+                                error.setInfoText("Please Enter Phone Number and Password");
+                            }
+                            if(progress.isShowing()){
+                                progress.cancel();
+                            }
+                            error.show(fragmentManager, "error");
+                            if (remember.getString("email", "-1").equalsIgnoreCase("-1")) {
+                                remember.edit().clear().apply();
+                            }
+                        }
+                    }else{
+                        if(progress.isShowing()){
+                            progress.cancel();
+                        }
+                        Toast.makeText(getApplicationContext(),"Currently Offline. Please Enable Internet Connection",Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (StringIndexOutOfBoundsException e) {
+                    if(progress.isShowing()){
+                        progress.cancel();
+                    }
+                    error.setInfoText("Please Enter The Correct Login Information");
+                    error.show(fragmentManager, "error");
+                }
+            }
+        });
+
+//        startOnCreate();
+
+    }
+
+    private Context context = this;
+    private void goToRegistration(){
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context,RegisterActivity.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    private void actionGoButton(){
+        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                try {
+                    if(connection()) {
+                        if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase("")) && phone.getText().toString() != null && (!phone.getText().toString().equalsIgnoreCase(""))) {
+                            Log.d("password", password.getText().toString());
+                            emailAd = email.getText().toString();
+                            phoneNum = (phone.getText().toString().length()!=0)?phone.getText().toString():"";
+                            if(promo.getText().length()==0){
+                                promoAvailable= false;
+                            }else{
+                                promoAvailable = true;
+                            }
+                            new InternalUser(v).execute(email.getText().toString().trim(), password.getText().toString().trim(), phoneNum.trim());
+                            return true;
+                        } else {
+                            if(email.getText().toString().length()==0 ) {
+                                error.setInfoText("Please Enter Your E-mail");
+                            }if(password.getText().toString().length()==0){
+                                error.setInfoText("Please Enter Your Password");
+                            }if(phone.getText().toString().length()==0 ||phone.getText().toString().length()<11 ){
+                                error.setInfoText("Please Enter Your Phone Number");
+                            }if((phone.getText().toString().length()<11 || phone.getText().toString().length()==0) && password.getText().toString().length()==0 && email.getText().toString().length()==0){
+                                error.setInfoText("Please Enter The Correct Login Information");
+                            }if((phone.getText().toString().length()==0||phone.getText().toString().length()<11)&& email.getText().toString().length()==0 ){
+                                error.setInfoText("Please Enter Phone Number and Email");
+                            }if((phone.getText().toString().length()==0||phone.getText().toString().length()<11)&& password.getText().toString().length()==0 ){
+                                error.setInfoText("Please Enter Phone Number and Email");
+                            }if((password.getText().toString().length()==0)&& email.getText().toString().length()==0 ){
+                                error.setInfoText("Please Enter Phone Number and Password");
                             }
                             if(progress.isShowing()){
                                 progress.cancel();
@@ -251,16 +346,12 @@ public class Login extends Activity{
                     error.setInfoText("Please Enter The Correct Login Information");
                     error.show(fragmentManager, "error");
                 }
+                return false;
             }
         });
-
-//        startOnCreate();
-
     }
-
-
     private ProgressDialog progress;
-    private class InternalUser extends AsyncTask<String,Integer,String>{
+    private class InternalUser extends AsyncTask<String,Integer,AuthenticateEntity>{
 
 
         private View view;
@@ -275,13 +366,7 @@ public class Login extends Activity{
             this.view = v;
         }
         @Override
-        protected String doInBackground(String... params) {
-
-            /*SQLEntityApi.Builder builder = new SQLEntityApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
-                    .setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
-            builder.setApplicationName("Yapnak");
-            SQLEntityApi sqlEntity = builder.build();
-            */
+        protected AuthenticateEntity doInBackground(String... params) {
 
 
               emailAddress = params[0];
@@ -318,12 +403,13 @@ public class Login extends Activity{
                 //registerLog= reg.getMessage();
 
                 if(params[1]!=null) {
-                    e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
-                    if(e.getUserId()!=null) {
-                        return e.getUserId();
+                    if(promoAvailable){
+                        e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
                     }else{
-                        return null;
+                        e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
                     }
+                    return e;
+
                 }else{
                     return null;
                 }
@@ -349,33 +435,44 @@ public class Login extends Activity{
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(AuthenticateEntity s) {
             if(connection()) {
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
-                if (s != null) {
-                    SharedPreferences.Editor pref = keep.edit();
-                    pref.putString("userID",s).putString("password",pass).putString("email",emailAd).putString("phone",phoneNum).putBoolean("on",true).apply();
-                    SharedPreferences.Editor keeper = remember.edit();
-                    keeper.putString("userID",s).putString("password",pass).putString("email",emailAd).putString("phone",phoneNum).putBoolean("on",true).apply();
-                    Log.d("usernameid", s);
-                    Intent i = new Intent(Login.this, MainActivity.class);
-                    i.putExtra("userID", s);
-                    i.putExtra("password", pass);
-                    i.putExtra("email", emailAd);
-                    i.putExtra("phone", phoneNum);
-                    i.putExtra("on",true);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    view.getContext().startActivity(i);
-                } else {
-                    if (progress.isShowing()) {
-                        progress.cancel();
+                try {
+                    if (s != null && Boolean.parseBoolean(s.getStatus())) {
+                        SharedPreferences.Editor pref = keep.edit();
+                        pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
+                        SharedPreferences.Editor keeper = remember.edit();
+                        keeper.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
+                   Log.d("usernameid", s.getUserId());
+                        Intent i = new Intent(Login.this, MainActivity.class);
+                        i.putExtra("userID", s.getUserId());
+                        i.putExtra("password", pass);
+                        i.putExtra("email", emailAd);
+                        i.putExtra("phone", phoneNum);
+                        i.putExtra("on", true);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        view.getContext().startActivity(i);
+                    } else {
+                        if (progress.isShowing()) {
+                            progress.cancel();
+                        }
+
+                        ErrorDialog dialog = new ErrorDialog();
+                        dialog.setInfoText("Please Enter Correct Login Information");
+                        dialog.show(fragmentManager, "error");
                     }
+                }catch(NullPointerException e){
+                    if (progress.isShowing()) {
+                    progress.cancel();
+                }
 
                     ErrorDialog dialog = new ErrorDialog();
-                    dialog.setInfoText("Please Enter The Correct Login Information");
+                    dialog.setInfoText("There Has Been An Error\nPlease Try Again");
                     dialog.show(fragmentManager, "error");
+
                 }
 
             }else{

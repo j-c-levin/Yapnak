@@ -36,8 +36,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
     private Location location;
     MainActivity main;
     private String ID;
-    private String restaurant;
-    private boolean notLocation;
+    private boolean hasRestaurant;
+    private boolean hasLocation;
+    private OfferListEntity restaurant;
 
     private static void setListLoaded(boolean loaded){
         listLoaded = loaded;
@@ -49,24 +50,19 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
     private ProgressDialog progressDialog;
 
-    SQLConnectAsyncTask(Context context, Location location, MainActivity main) {
+    SQLConnectAsyncTask(Context context, Location location,OfferListEntity entity, MainActivity main) {
         this.context = context;
         this.location = location;
         this.main = main;
+        hasRestaurant=false;
         this.progressDialog = new ProgressDialog(this.main);
-        notLocation=false;
-
-
-    }
-
-    SQLConnectAsyncTask(Context context, MainActivity main,OfferListEntity list) {
-        this.context = context;
-        this.main = main;
-        listEntity = list;
-        notLocation=true;
-        this.progressDialog = new ProgressDialog(this.main);
-
-
+        restaurant = entity;
+        if(entity!=null){
+            hasRestaurant =true;
+        }
+        if(location!=null){
+            hasLocation=true;
+        }
     }
 
 
@@ -105,13 +101,16 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
             SQLList showOffersList = new SQLList();
             showOffersList.setList(showOffers);
           */
-            if(!notLocation){
-                if(location!=null) {
+
+
+                if (hasLocation) {
                     listEntity = userApi.getClients(location.getLatitude(), location.getLongitude()).execute();
-                }else{
-                    listEntity=null;
+                } else if(hasRestaurant) {
+                    listEntity = restaurant;
                 }
-            }
+
+            return listEntity;
+
             /*if(location!=null && restaurant!=null ){
                 ArrayList<OfferEntity> temp = new ArrayList<>();
 
@@ -174,7 +173,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
             }*/
 
 
-            return listEntity;
+
 
 
         } catch (IOException e) {
@@ -207,7 +206,7 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
 
     protected void onPostExecute(OfferListEntity result) {
         if (result != null) {
-            // Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
+            //Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
             main.load(result);
             main.floatButton();
             main.setList(result);
@@ -242,7 +241,6 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
                 loaded=true;
             }
             setListLoaded(true);
-
             Toast.makeText(context,"Please Turn Location/Internet On",Toast.LENGTH_SHORT).show();
             Log.d("Debug", "Failed");
         }

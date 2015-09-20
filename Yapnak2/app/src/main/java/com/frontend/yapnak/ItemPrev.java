@@ -45,6 +45,7 @@ public class ItemPrev {
     private ImageView tutorial1;
     private long offerID;
     private long clientID;
+    private String foodStyle;
 
 
 
@@ -177,5 +178,13 @@ public class ItemPrev {
 
     public void setOfferID(long offerID) {
         this.offerID = offerID;
+    }
+
+    public String getFoodStyle() {
+        return foodStyle;
+    }
+
+    public void setFoodStyle(String foodStyle) {
+        this.foodStyle = foodStyle;
     }
 }

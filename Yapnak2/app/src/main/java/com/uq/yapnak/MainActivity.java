@@ -10,10 +10,13 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +32,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -42,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -79,6 +84,7 @@ import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RecommendEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -109,6 +115,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Parcelable state;
     private SQLEntity sql;
     private SharedPreferences keep;
+    private boolean hasInfo;
     private SharedPreferences remember;
     RecyclerView recyclerView;
     private static String USER_NAME;
@@ -232,6 +239,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("saved",new SavedList(getList()));
@@ -248,7 +256,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         SQLConnectAsyncTask.restore=true;
         this.setList(list.getList());
-        new SQLConnectAsyncTask(getApplicationContext(),locationCheck,this).execute();
+        new SQLConnectAsyncTask(getApplicationContext(),locationCheck,null,this).execute();
 
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -257,6 +265,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         new GcmRegistrationAsyncTask(this).execute();
 
@@ -271,6 +280,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         */
 
 //        progress =new ProgressDialog(getApplicationContext());
+
+        if(!isTaskRoot()
+           && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
+           && getIntent().getAction()!=null
+           && getIntent().getAction().equals(Intent.ACTION_MAIN)){
+
+            finish();
+            return;
+        }
+
         GPSTrack track = new GPSTrack(MainActivity.this);
         loc = track.getLocation();
 
@@ -281,7 +300,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //if(locationCheck!=null) {
 
              SQLConnectAsyncTask.useDialog = true;
-             new SQLConnectAsyncTask(getApplicationContext(), locationCheck, this).execute();
+             new SQLConnectAsyncTask(getApplicationContext(),locationCheck,null,this).execute();
              if (SQLConnectAsyncTask.getListLoaded()) {
                  //dealList.notifyDataSetChanged();
              }
@@ -294,8 +313,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
         details.setOn(name.getBooleanExtra("on", false));
+
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
-        keep.edit().putBoolean("on",details.isOn()).apply();
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
         // Log.d("main-id",ID);
         //navBarToggle();
@@ -423,16 +442,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         SearchManager sManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView view = (SearchView) menu.findItem(R.id.search).getActionView();
-        //view.setSearchableInfo(
-          //      sManager.getSearchableInfo(new ComponentName(getApplicationContext(), SearchMain.class)));
+        view.setSearchableInfo(sManager.getSearchableInfo(new ComponentName(getApplicationContext(), SearchMain.class)));
 
         view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 queryMain = query;
-                Log.d("querySub", query);
-                new CheckRestaurantDeals().execute(queryMain);
-                new SearchLocation().execute(queryMain);
+
+                new CheckRestaurantDeals().execute(query);
+                new SearchLocation().execute(query);
+
                 InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (!input.isAcceptingText()) {
                     view.clearFocus();
@@ -443,7 +462,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("queryChange", newText);
                 return true;
             }
         });
@@ -507,6 +525,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private class SearchLocation extends AsyncTask<String,String,Location>{
         private String loc;
+        private boolean isRestaurant;
+
         @Override
         protected Location doInBackground(String... params) {
              loc = (params[0]==null)?"":params[0];
@@ -526,64 +546,69 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     Log.d("location", "Latitude: " + String.valueOf(location.getLatitude()) + " Longitude: " + String.valueOf(location.getLongitude()));
                     setLocation(location);
                     SQLConnectAsyncTask.useDialog = true;
-                    new SQLConnectAsyncTask(getApplicationContext(), location, activity).execute();
+                    new SQLConnectAsyncTask(getApplicationContext(),location,null, activity).execute();
                 }else{
-                    SQLConnectAsyncTask.useDialog = true;
-                    new SQLConnectAsyncTask(getApplicationContext(), null, activity).execute();
-                }
-            }else if(hasRestaurant){
-                Log.d("restaurant","YES IT IS A RESTAURANT");
-                setRestaurantName(loc);
-                SQLConnectAsyncTask.useDialog=true;
-                if(offers!=null) {
-                    new SQLConnectAsyncTask(getApplicationContext(), activity, offers).execute();
+                    //SQLConnectAsyncTask.useDialog = true;
+                    //new SQLConnectAsyncTask(getApplicationContext(), locationCheck, activity).execute();
+                    Toast.makeText(getApplicationContext(),"Searched Location is Unavailable",Toast.LENGTH_SHORT).show();
                 }
             }else{
-                Toast.makeText(getApplicationContext(),"The Restaurant/Location You Queried Is Not Available",Toast.LENGTH_SHORT).show();
+                Log.d("restaurant", "YES IT IS A RESTAURANT");
+                setRestaurantName(loc);
+
+                if(offers!=null) {
+                    SQLConnectAsyncTask.useDialog=true;
+                    new SQLConnectAsyncTask(getApplicationContext(),null,offers,activity).execute();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Searched Restaurant is Unavailable",Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
 
-    private boolean hasRestaurant;
-    private OfferListEntity offers;
+    private boolean hasRestaurant=false;
+    private OfferListEntity offers = new OfferListEntity();
     private String entityStatus;
 
 
-    private class CheckRestaurantDeals extends AsyncTask<String,Void,OfferListEntity>{
+    private class CheckRestaurantDeals extends AsyncTask<String,Void,Void>{
         @Override
-        protected OfferListEntity doInBackground(String... params) {
-            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+        protected Void doInBackground(String... params) {
+
+            UserEndpointApi builder = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+
             try{
-                //OfferListEntity entity = api.searchClients(params[0]).execute();
-                OfferListEntity entity = api.searchClients(params[0]).execute();
-                Log.d("debug", entity.getStatus() + " " + entity.getMessage() + " " + entity.getOfferList().get(0));
-                entityStatus = entity.getMessage();
-               // Log.d("queryString",entityStatus);
-                return entity;
+                OfferListEntity entity = builder.searchClients(params[0]).execute();
+                Log.d("debugOfferList","Message "+ entity.getMessage() +"\nstatus: "+ entity.getStatus() + "\noffer "+entity.getOfferList());
+
+                if(Boolean.parseBoolean(entity.getStatus())
+                        && entity.getOfferList()!=null ){
+                    offers = entity;
+                    hasRestaurant=true;
+                    Log.d("restaurantBoolean","TRUE");
+                }else{
+                    offers = null;
+                    hasRestaurant=false;
+                    Log.d("restaurantBoolean","FALSE");
+
+                }
 
             }catch(IOException e){
                 e.printStackTrace();
-                return null;
+
+            }catch(NullPointerException ex){
+                offers= null;
+                hasRestaurant = false;
+                ex.printStackTrace();
             }
+            return null;
         }
 
         @Override
-        protected void onPostExecute(OfferListEntity list) {
-            super.onPostExecute(list);
-           try {
-               Log.d("queryString",entityStatus);
-               if (list.getOfferList().size() == 0) {
-                   hasRestaurant = false;
-                   offers = null;
-               }else{
-                   offers = list;
-               }
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
 
-
-           }catch(NullPointerException e){
-               e.printStackTrace();
-           }
         }
     }
     private boolean connection(){
@@ -772,7 +797,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             aboutYapnak();
             Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
-            if(connection() &&(deals.getCount()>1)) {
+            if(connection() &&(deals.getCount()>1||hasInfo)) {
                 final FeedbackDialog feedback = new FeedbackDialog(this, this, ID);
                 feedback.show();
             }
@@ -829,8 +854,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             */
         } else if (v.getTag().equals(TAG_REWARD)) {
             // howToUseYapnak();
-            //Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
-            userItems();
+            Toast.makeText(this, "Coming Soon!", Toast.LENGTH_LONG).show();
+            //userItems();
         } else if (v.getTag().equals(TAG_GIFT)) {
             //userItems();
         }else if(v.getTag().equals(TAG_PROFILE)){
@@ -1148,7 +1173,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected Void doInBackground(Uri... params) {
 
             Uri contactDetails = params[0];
-            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID}, ContactsContract.Contacts.HAS_PHONE_NUMBER, null, null);
+            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID},null, null, null);
             if(c.moveToFirst()){
 
                  id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
@@ -1158,6 +1183,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             if(contact.moveToFirst()){
                 String displayName = (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)? ContactsContract.Contacts.DISPLAY_NAME: ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
                 contactName = contact.getString(contact.getColumnIndex(displayName));
+            }else{
+                phoneExist = false;
             }
 
             Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?" ,new String[]{id},null);
@@ -1236,7 +1263,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     AlertDialog posRec;
     public void recommendMealButton(View v) {
 
-        if (connection() &&(deals.getCount()>1) ){
+        if (connection() &&(deals.getCount()>1||hasInfo) ){
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
             //int value = this.tutorial.getInt("tutorial2",-1);
             startActivityForResult(intent, PICK_CONTACT);
@@ -1453,7 +1480,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void takeMeThereButton(View v) {
 
-        if(connection() &&(deals.getCount()>1)) { //&& gpsCheck()
+        if(connection() &&(deals.getCount()>1||hasInfo)) { //&& gpsCheck()
             tracker = new GPSTrack(MainActivity.this);
 
 
@@ -1553,7 +1580,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //item2 OnClick method for getDealButton
 
     public void getDeal(View v){
-        if(connection()&&(deals.getCount()>1)) {
+        if(connection()&&(deals.getCount()>1||hasInfo)) {
             String url = "http://www.google.co.uk";
             Intent userID = getIntent();
             String userid = userID.getStringExtra("userID");
@@ -1629,7 +1656,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //rate.show(getFragmentManager(),"rating");
         //AlertDialog.Builder ratings = new RatingBuilder(this,this);
 
-        if(connection() && (deals.getCount()>1)) {
+        if(connection() && (deals.getCount()>1||hasInfo)) {
             RatingBuilder ratings = new RatingBuilder(this, this,getItemPrev(),ID);
 
             int value =0;
@@ -1805,7 +1832,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setTextFilterEnabled(true);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
-        deals.setOnItemLongClickListener(new OnLongTouchListener());
+        //deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setOnItemClickListener(new ItemInfoListener(true));
         deals.setOnScrollListener(new ScrollListener());
 
@@ -1829,7 +1856,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setTextFilterEnabled(true);
         deals.setAdapter(dealList);
         deals.setOnItemClickListener(new ItemInfoListener(false));
-        deals.setOnItemLongClickListener(new OnLongTouchListener());
+        //deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setOnScrollListener(new ScrollListener());
 
 
@@ -2844,14 +2871,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         setListSize(10);
         // for(int i =0 ;i<50;i++) {
-
+        hasInfo=false;
         ItemPrev temp = new ItemPrev();
         temp.setLatitude(90.0);
         temp.setLongitude(0.0);
         //TODO:add generic location to database
         //TODO: add photo download from google storage
         temp.setMainText("Is your internet on/location enabled?");
-        temp.setRestaurantName("We couldn't connect, sorry");
+        temp.setRestaurantName("Cannot Retrieve Information");
+        temp.setFoodStyle("N/A");
         //TODO: points
         //ip[0] = temp;
         items.add(temp);
@@ -2865,7 +2893,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public ItemPrev[] dealList(OfferListEntity sql) {
 
         try{
-            List<OfferEntity> list = new ArrayList<OfferEntity>(sql.getOfferList());
+
+            hasInfo =true;
+           // Log.d("inDealList",sql.getOfferList());
+            List<OfferEntity> list = sql.getOfferList();
 
             setListSize(list.size());
 
@@ -2896,7 +2927,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //temp.setMainText(list.get(i).getName());
                 //temp.setRestaurantName(list.get(i).getName());
                 //temp.setSubText(list.get(i).getOffer());
-
+                temp.setFoodStyle(list.get(i).getFoodStyle());
                 temp.setOfferID(list.get(i).getOfferId());
                 temp.setClientID(list.get(i).getClientId());
                 temp.setMainText(list.get(i).getOfferText());
@@ -2918,11 +2949,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             return i;
 
-        }catch(Exception e){
+        }catch(NullPointerException e){
             e.printStackTrace();
             ip = new ItemPrev[1];
-
-
+            hasInfo=false;
             ItemPrev temp = new ItemPrev();
             //TODO:add generic location to database
             temp.setDistanceTime("to be added");
@@ -2931,6 +2961,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             temp.setMainText("Cannot Retrieve Information");
             temp.setRestaurantName("N/A");
             temp.setSubText("N/A ");
+            temp.setFoodStyle("N/A");
             //TODO: points
             temp.setPoints("to be added");
             ip[0] = temp;
@@ -3055,14 +3086,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     public void run() {
 
                         //new CheckRestaurantDeals().execute(getRestaurantName());
-                        if(!hasRestaurant){
-                            SQLConnectAsyncTask.useDialog=false;
-                            new SQLConnectAsyncTask(getApplicationContext(),getLocation(),a).execute();
-                        }else if(hasRestaurant && offers!=null){
-                            SQLConnectAsyncTask.useDialog=false;
-                            new SQLConnectAsyncTask(getApplicationContext(),a,offers).execute();
+                        if(connection()) {
+                            if (!hasRestaurant) {
+                                SQLConnectAsyncTask.useDialog = false;
+                                new SQLConnectAsyncTask(getApplicationContext(), getLocation(), null, a).execute();
+                            } else if (hasRestaurant && offers != null) {
+                                SQLConnectAsyncTask.useDialog = false;
+                                new SQLConnectAsyncTask(getApplicationContext(), null, offers, a).execute();
+                            } else {
+                                refresh.setRefreshing(false);
+                                Toast.makeText(getApplicationContext(), "The Restaurant/Location You Queried Is Not Available", Toast.LENGTH_SHORT).show();
+                            }
                         }else{
-                            Toast.makeText(getApplicationContext(),"The Restaurant/Location You Queried Is Not Available",Toast.LENGTH_SHORT).show();
+                            refresh.setRefreshing(false);
+                            Toast.makeText(getApplicationContext(), "Currently Offline", Toast.LENGTH_SHORT).show();
                         }
                     }
                         //if(getLocation()!=null) {

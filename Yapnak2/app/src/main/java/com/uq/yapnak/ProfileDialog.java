@@ -40,6 +40,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by vahizan on 11/07/2015.
@@ -80,18 +81,18 @@ public class ProfileDialog extends AlertDialog {
         name = (EditText) v.findViewById(R.id.nameEdit);
         email = (EditText)v.findViewById(R.id.emailEdit);
         password = (EditText)v.findViewById(R.id.passwordEdit);
-        gender = (Button) v.findViewById(R.id.genderGroupButtons);
+        //gender = (Button) v.findViewById(R.id.genderGroupButtons);
         dob = (Button)v.findViewById(R.id.dateInput);
 
 
-        genderDialog = new GenderDialog(context,activity);
-        gender.setOnClickListener(new View.OnClickListener() {
+        //genderDialog = new GenderDialog(context,activity);
+       /* gender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 genderDialog.setMainButton(gender);
                 genderDialog.show();
             }
-        });
+        });*/
 
         TextView title = new TextView(this.getContext());
         title.setText("Profile");
@@ -159,21 +160,40 @@ public class ProfileDialog extends AlertDialog {
                        names = name.getText().toString().split(" ");
 
                            if(names.length==1) {
-                               dateString = sdf.format(dateTime);
-                               Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
+                               if(dateTime!=null) {
+                                   dateString = sdf.format(dateTime);
+                                   Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
 
-                               if(connection()) {
-                                   new SubmitDetails(5).execute(names[0], " ", pnumber, email.getText().toString(), password.getText().toString(), dateString);
+                                   if (connection()) {
+                                       new SubmitDetails(5).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }else{
-                                   Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   if (connection()) {
+                                       new SubmitDetails(4).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString());
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }
 
                            }else if(names.length>1){
-                               if(connection()) {
-                                   new SubmitDetails(5).execute(names[0], names[1], pnumber, email.getText().toString(), password.getText().toString(), dateString);
+
+                               if(dateTime!=null) {
+                                   dateString = sdf.format(dateTime);
+                                   if (connection()) {
+                                       new SubmitDetails(5).execute(names[0], names[1], phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }else{
-                                   Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   if (connection()) {
+                                       new SubmitDetails(4).execute(names[0], names[1], phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }
+
                            }
 
                    } else {
@@ -433,6 +453,7 @@ public class ProfileDialog extends AlertDialog {
 
     private class FillUserInfo extends AsyncTask<Void,Integer,UserDetailsEntity>{
 
+        private String message;
 
         @Override
         protected UserDetailsEntity doInBackground(Void... params) {
@@ -447,8 +468,11 @@ public class ProfileDialog extends AlertDialog {
                 */
 
                 Log.d("userID",ID);
-                UserEndpointApi user = new UserEndpointApi (AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
-                return user.getUserDetails().setUserId(ID).execute();
+                UserEndpointApi.Builder api = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null).setApplicationName("Yapnak").setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+                UserEndpointApi user = api.build();
+                UserDetailsEntity details = user.getUserDetails().setUserId(ID).execute();
+                message = details.getMessage() + " STATUS: "+ details.getStatus();
+                return details;
 
             }catch(IOException e){
               e.printStackTrace();
@@ -458,19 +482,35 @@ public class ProfileDialog extends AlertDialog {
         @Override
         protected void onPostExecute(UserDetailsEntity userEntity) {
 
-          try{
-              if (Boolean.parseBoolean(userEntity.getStatus())) {
-                  phone.setText(userEntity.getMobNo());
-                  name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
-                  SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                  Date d = new Date();
-                  d.setTime(userEntity.getDateOfBirth().getValue());
-                  dob.setText(sdf.format(d));
-                  email.setText(userEntity.getEmail());
-              }
-          }catch (NullPointerException e){
-              e.printStackTrace();
-          }
+            Log.d("FillUser",message);
+         // try{
+            if(userEntity!=null) {
+                if (Boolean.parseBoolean(userEntity.getStatus())) {
+                    phone.setText(userEntity.getMobNo());
+                    if(!userEntity.getFirstName().equalsIgnoreCase("null") && !userEntity.getLastName().equalsIgnoreCase("null")) {
+                        name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+                    }if(!userEntity.getFirstName().equalsIgnoreCase("null")&& userEntity.getLastName().equalsIgnoreCase("null")){
+                        name.setText(userEntity.getFirstName() );
+                    }else{
+                        name.setText(userEntity.getLastName());
+                    }
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+                    Date d = new Date();
+                    try {
+                        if (userEntity.getDateOfBirth() != null) {
+                            d.setTime(userEntity.getDateOfBirth().getValue());
+                        }
+                    }catch (NullPointerException e){
+                        d.setTime(Calendar.getInstance().getTimeInMillis());
+                    }
+
+                    dob.setText(sdf.format(d));
+                    email.setText(userEntity.getEmail());
+                }
+            }
+          //}catch (NullPointerException e){
+            //  e.printStackTrace();
+         // }
 
 
         }
