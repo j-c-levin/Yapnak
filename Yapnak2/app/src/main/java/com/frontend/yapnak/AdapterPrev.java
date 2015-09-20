@@ -77,6 +77,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
             TextView locationName = (TextView)view.findViewById(R.id.distance);
             TextView loyaltyPointsTitle = (TextView)view.findViewById(R.id.loyalty);
             TextView points = (TextView)view.findViewById(R.id.loyaltyPoints);
+            TextView foodStyle = (TextView)view.findViewById(R.id.foodStyle);
 
             /* Typeface custom_font = Typeface.createFromAsset(getContext().getAssets(),"fonts/canela_light.otf");
              mainText.setTypeface(custom_font);
@@ -97,6 +98,8 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
             locationName.setText(deal.getDistanceTime());
             points.setText(deal.getPoints());
             hotDeal.setImageResource(deal.getHotDeal());
+            foodStyle.setText(deal.getFoodStyle());
+
             //restaurantLogo.setImageResource(deal.getLogo());
 
              if(deal.isTutorial()){

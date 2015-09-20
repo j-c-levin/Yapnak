@@ -134,6 +134,22 @@
                 android:textColor="#ff707070" />
 
             <TextView
+                android:id="@+id/foodStyle"
+                style="@style/Base.TextAppearance.AppCompat.Subhead"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="false"
+                android:singleLine="false"
+                android:textSize="10sp"
+                android:layout_marginBottom="2dp"
+                android:maxLines="3"
+                android:text="foodstyle"
+                android:textColor="#ff707070"
+                android:layout_below="@+id/logo"
+                android:layout_alignLeft="@+id/subtitle"
+                android:layout_alignBottom="@+id/locationIcon" />
+
+            <TextView
                 android:id="@+id/loyalty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,7 +157,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="73dp"
                 android:text="Loyalty Points:"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:textColor="#9E9E9E"
                 android:textStyle="normal" />
 

@@ -206,7 +206,7 @@ public class RegisterActivity extends Activity{
                     Toast.makeText(getApplicationContext(),"Network Error",Toast.LENGTH_SHORT).show();
                 }
             }else{
-                Toast.makeText(getApplicationContext(),"No Internet!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Currently Offline. Please Enable Internet Connection",Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -263,7 +263,7 @@ public class Login extends Activity{
                         if(progress.isShowing()){
                             progress.cancel();
                         }
-                        Toast.makeText(getApplicationContext(),"Please Enable Your Internet Connection",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"Currently Offline. Please Enable Internet Connection",Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (StringIndexOutOfBoundsException e) {
@@ -439,12 +439,12 @@ public class Login extends Activity{
             if(connection()) {
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
                 try {
-                    if (s != null) {
+                    if (s != null && Boolean.parseBoolean(s.getStatus())) {
                         SharedPreferences.Editor pref = keep.edit();
                         pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
                         SharedPreferences.Editor keeper = remember.edit();
                         keeper.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
-//                    Log.d("usernameid", s.getUserId());
+                   Log.d("usernameid", s.getUserId());
                         Intent i = new Intent(Login.this, MainActivity.class);
                         i.putExtra("userID", s.getUserId());
                         i.putExtra("password", pass);
