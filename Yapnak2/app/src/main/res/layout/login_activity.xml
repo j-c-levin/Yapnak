@@ -38,13 +38,14 @@
             android:id="@+id/phoneNumberEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="140dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:textColor="#000"
             android:textColorHint="#000"
             android:hint="Phone Number"
+            android:imeOptions="actionNext"
             android:inputType="phone"
             android:layout_alignParentLeft="true" />
 
@@ -52,13 +53,14 @@
             android:id="@+id/emailEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="220dp"
+            android:layout_marginTop="200dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:textColor="#000"
             android:textColorHint="#000"
             android:hint="E-mail"
+            android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
             android:layout_alignParentLeft="true" />
 
@@ -73,22 +75,23 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
+            android:imeOptions="actionGo"
             android:hint="Password "
             android:inputType="textPassword" />
 
-       <!-- <com.frontend.yapnak.subview.MyEditText
+        <com.frontend.yapnak.subview.MyEditText
             android:textColor="#000"
             android:textColorHint="#000"
             android:id="@+id/promoBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/emailEdit"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="80dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
-            android:hint="Promo Code  (Optional)"
-            /-->
+            android:hint="Promo Code"
+            />
 
         <TextView
             android:id="@+id/loginText"
@@ -96,7 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/emailEdit"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="150dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:text="Login"
@@ -107,20 +110,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/emailEdit"
-            android:layout_marginTop="85dp"
+            android:layout_marginTop="135dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4" />
 
-
-
-        <!--<com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageButton"
+            android:text="New to Yapnak?"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_below="@+id/loginButton"
+            android:layout_alignLeft="@+id/imageButton" />
+
+        <Button
+            android:id="@+id/registerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/loginButton"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"/>-->
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="Register"
+            android:background="@android:color/transparent"/>
+
 
         <LinearLayout
             android:orientation="vertical"
@@ -149,8 +164,6 @@
                 android:textColor="#FFF"
                 android:background="#FF8A80"/>
                 -->
-
-
 
         </LinearLayout>
 

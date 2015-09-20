@@ -81,18 +81,18 @@ public class ProfileDialog extends AlertDialog {
         name = (EditText) v.findViewById(R.id.nameEdit);
         email = (EditText)v.findViewById(R.id.emailEdit);
         password = (EditText)v.findViewById(R.id.passwordEdit);
-        gender = (Button) v.findViewById(R.id.genderGroupButtons);
+        //gender = (Button) v.findViewById(R.id.genderGroupButtons);
         dob = (Button)v.findViewById(R.id.dateInput);
 
 
-        genderDialog = new GenderDialog(context,activity);
-        gender.setOnClickListener(new View.OnClickListener() {
+        //genderDialog = new GenderDialog(context,activity);
+       /* gender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 genderDialog.setMainButton(gender);
                 genderDialog.show();
             }
-        });
+        });*/
 
         TextView title = new TextView(this.getContext());
         title.setText("Profile");
@@ -160,22 +160,40 @@ public class ProfileDialog extends AlertDialog {
                        names = name.getText().toString().split(" ");
 
                            if(names.length==1) {
-                               dateString = sdf.format(dateTime);
-                               Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
+                               if(dateTime!=null) {
+                                   dateString = sdf.format(dateTime);
+                                   Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
 
-                               if(connection()) {
-                                   new SubmitDetails(5).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   if (connection()) {
+                                       new SubmitDetails(5).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }else{
-                                   Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   if (connection()) {
+                                       new SubmitDetails(4).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString());
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }
 
                            }else if(names.length>1){
-                               dateString = sdf.format(dateTime);
-                               if(connection()) {
-                                   new SubmitDetails(5).execute(names[0], names[1], phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+
+                               if(dateTime!=null) {
+                                   dateString = sdf.format(dateTime);
+                                   if (connection()) {
+                                       new SubmitDetails(5).execute(names[0], names[1], phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }else{
-                                   Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   if (connection()) {
+                                       new SubmitDetails(4).execute(names[0], names[1], phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                   } else {
+                                       Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
+                                   }
                                }
+
                            }
 
                    } else {
@@ -469,7 +487,13 @@ public class ProfileDialog extends AlertDialog {
             if(userEntity!=null) {
                 if (Boolean.parseBoolean(userEntity.getStatus())) {
                     phone.setText(userEntity.getMobNo());
-                    name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+                    if(!userEntity.getFirstName().equalsIgnoreCase("null") && !userEntity.getLastName().equalsIgnoreCase("null")) {
+                        name.setText(userEntity.getFirstName() + " " + userEntity.getLastName());
+                    }if(!userEntity.getFirstName().equalsIgnoreCase("null")&& userEntity.getLastName().equalsIgnoreCase("null")){
+                        name.setText(userEntity.getFirstName() );
+                    }else{
+                        name.setText(userEntity.getLastName());
+                    }
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                     Date d = new Date();
                     try {

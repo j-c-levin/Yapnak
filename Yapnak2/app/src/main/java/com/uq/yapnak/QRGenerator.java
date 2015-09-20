@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.Image;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
@@ -25,13 +26,18 @@ import android.widget.TextView;
 import com.frontend.yapnak.subview.RedEditText;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.EnumMap;
 import java.util.Hashtable;
+import java.util.IllegalFormatException;
+import java.util.Map;
 
 /**
  * Created by vahizan on 24/08/2015.
@@ -52,9 +58,7 @@ public class QRGenerator extends AlertDialog {
         c = context;
         a = activity;
         content = url;
-
         View v = a.getLayoutInflater().inflate(R.layout.qr_layout, null);
-
         QR = (ImageView) v.findViewById(R.id.qrimage);
         layout = (LinearLayout) v.findViewById(R.id.qrlayout);
         dismiss = (Button) v.findViewById(R.id.dismissButton);
@@ -64,8 +68,14 @@ public class QRGenerator extends AlertDialog {
                 dismiss();
             }
         });
-
         QR.setImageBitmap(encode(content, 300, 300));
+
+        /*try {
+            QR.setImageBitmap(encodeBarcode(content, 300, 300));
+        }catch(WriterException e){
+
+        }*/
+
         final TextView title = new TextView(getContext());
         title.setText("QR Code");
         title.setTextSize(25);
@@ -78,6 +88,52 @@ public class QRGenerator extends AlertDialog {
         setView(v);
     }
 
+    public Bitmap encodeBarcode(String content,int width,int height) throws WriterException{
+        Bitmap bitmap = null;
+        BarcodeFormat format = BarcodeFormat.CODE_128;
+        Map<EncodeHintType,Object> map =null ;
+        String encoding = encoding(content);
+
+            if(encoding!=null){
+                map=  new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+                map.put(EncodeHintType.CHARACTER_SET,encoding);
+            }
+            MultiFormatWriter writer = new MultiFormatWriter();
+            BitMatrix result = null;
+
+        try{
+           result = writer.encode(content,format,width,height);
+        }catch(IllegalFormatException e){
+            return null;
+        }
+
+        int barwidth = result.getWidth();
+        int barheight = result.getHeight();
+        int[] pixels = new int[barwidth * barheight];
+        for (int y = 0; y < barheight; y++) {
+            int offset = y * barwidth;
+            for (int x = 0; x < barwidth; x++) {
+                pixels[offset + x] = result.get(x, y) ? Color.BLACK : Color.WHITE;
+            }
+        }
+
+       bitmap = Bitmap.createBitmap(barwidth,barheight,Bitmap.Config.ARGB_8888);
+       bitmap.setPixels(pixels,0,barwidth,0,0,barwidth,barheight);
+        return  bitmap;
+
+
+    }
+
+    public String encoding(CharSequence content){
+       for(int i =0;i<content.length();i++){
+
+           if(content.charAt(i)>0xff){
+
+               return "UTF-8";
+           }
+       }
+        return null;
+    }
     public Bitmap encode(String content,int width,int height){
         QRCodeWriter writer = new QRCodeWriter();
 

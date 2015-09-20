@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -45,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -261,6 +263,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         new GcmRegistrationAsyncTask(this).execute();
 
@@ -434,7 +437,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public boolean onQueryTextSubmit(String query) {
                 queryMain = query;
-                Log.d("querySub", query);
                 new CheckRestaurantDeals().execute(queryMain);
                 new SearchLocation().execute(queryMain);
                 InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -558,8 +560,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         @Override
         protected OfferListEntity doInBackground(String... params) {
 
+            UserEndpointApi.Builder builder = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            builder.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
+            builder.setApplicationName("yapnak");
+
             try{
-                UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+                UserEndpointApi api = builder.build();
                 //OfferListEntity entity = api.searchClients(params[0]).execute();
                 // Log.d("queryString",entityStatus);
                 return api.searchClients(params[0]).execute();
@@ -573,13 +579,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         @Override
         protected void onPostExecute(OfferListEntity list) {
             super.onPostExecute(list);
-            Log.d("queryString",list.getMessage());
-               if (list.getOfferList().size() == 0) {
-                   hasRestaurant = false;
-                   offers = null;
-               }else{
-                   offers = list;
-               }
+            try {
+                //Log.d("queryString",list.getMessage());
+                if (list.getOfferList().size() == 0) {
+                    hasRestaurant = false;
+                    offers = null;
+                } else {
+                    offers = list;
+                }
+            }catch(NullPointerException e){
+
+            }
 
 
         }
@@ -827,8 +837,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             */
         } else if (v.getTag().equals(TAG_REWARD)) {
             // howToUseYapnak();
-            //Toast.makeText(this, "How To Use The App", Toast.LENGTH_LONG).show();
-            userItems();
+            Toast.makeText(this, "Coming Soon!", Toast.LENGTH_LONG).show();
+            //userItems();
         } else if (v.getTag().equals(TAG_GIFT)) {
             //userItems();
         }else if(v.getTag().equals(TAG_PROFILE)){
@@ -1146,7 +1156,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected Void doInBackground(Uri... params) {
 
             Uri contactDetails = params[0];
-            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID}, ContactsContract.Contacts.HAS_PHONE_NUMBER, null, null);
+            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID},null, null, null);
             if(c.moveToFirst()){
 
                  id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
@@ -1156,6 +1166,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             if(contact.moveToFirst()){
                 String displayName = (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)? ContactsContract.Contacts.DISPLAY_NAME: ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
                 contactName = contact.getString(contact.getColumnIndex(displayName));
+            }else{
+                phoneExist = false;
             }
 
             Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?" ,new String[]{id},null);
@@ -1803,7 +1815,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setTextFilterEnabled(true);
         deals.setBackgroundResource(R.drawable.curved_card);
         deals.setAdapter(dealList);
-        deals.setOnItemLongClickListener(new OnLongTouchListener());
+        //deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setOnItemClickListener(new ItemInfoListener(true));
         deals.setOnScrollListener(new ScrollListener());
 
@@ -1827,7 +1839,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         deals.setTextFilterEnabled(true);
         deals.setAdapter(dealList);
         deals.setOnItemClickListener(new ItemInfoListener(false));
-        deals.setOnItemLongClickListener(new OnLongTouchListener());
+        //deals.setOnItemLongClickListener(new OnLongTouchListener());
         deals.setOnScrollListener(new ScrollListener());
 
 
