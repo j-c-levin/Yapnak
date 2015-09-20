@@ -68,6 +68,33 @@ angular.module('app.factories', [])
     });
   };
 
+  result.userReset = function(password,hash) {
+    var req = {
+      method: 'POST',
+      url: 'https://yapnak-app.appspot.com/_ah/api/userEndpointApi/v1/resetPassword',
+      // url: 'http://localhost:8080/_ah/api/userEndpointApi/v1/resetPassword',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      transformRequest: function (obj) {
+        var str = [];
+        for (var p in obj)
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        return str.join("&");
+      },
+      data: {
+        password: password,
+        hash: hash
+      }
+    }
+    return $http(req).then(function (response) {
+      return response.data.status;
+    }, function (error) {
+      console.log(error.data.message);
+      return error.data.status;
+    });
+  };
+
   result.getInfo = function(email) {
     var req = {
       method: 'GET',
@@ -276,5 +303,6 @@ angular.module('app.factories', [])
       return response;
     });
   };
+
   return result;
 }])

@@ -10,13 +10,10 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -81,7 +78,6 @@ import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RecommendEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
-
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -561,6 +557,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             try{
                 //OfferListEntity entity = api.searchClients(params[0]).execute();
                 OfferListEntity entity = api.searchClients(params[0]).execute();
+                Log.d("debug", entity.getStatus() + " " + entity.getMessage() + " " + entity.getOfferList().get(0));
                 entityStatus = entity.getMessage();
                // Log.d("queryString",entityStatus);
                 return entity;

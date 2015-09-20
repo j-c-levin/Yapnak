@@ -3,6 +3,8 @@ package com.yapnak.gcmbackend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.utils.SystemProperty;
 
 import org.json.simple.JSONArray;
@@ -723,6 +725,20 @@ public class ClientEndpoint {
         } finally {
             return response;
         }
+    }
+
+    @ApiMethod(
+            name = "photoUpload",
+            path = "photoUpload",
+            httpMethod = ApiMethod.HttpMethod.GET)
+    public PhotoEntity photoUpload(@Named("clientId") String clientId) {
+        PhotoEntity response = new PhotoEntity();
+        logger.info("Creating photo upload for " + clientId);
+        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        response.setUploadUrl(blobstoreService.createUploadUrl("/photoUpload?clientId=" + clientId));
+        response.setStatus("True");
+        logger.info("Got upload url: " + response.getUploadUrl());
+        return response;
     }
 
 }

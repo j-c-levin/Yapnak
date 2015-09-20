@@ -28,7 +28,7 @@
     </div>
 
     <div class="input input-group-lg">
-      <input type="password" ng-model="cPass" class="form-control input-box" placeholder="Confirm pasword">
+      <input type="password" ng-model="cPass" class="form-control input-box" placeholder="Confirm password">
     </div>
 
     <div class="submit-button-container">

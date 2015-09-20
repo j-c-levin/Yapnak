@@ -23,6 +23,19 @@
             </div>
 
             <div collapse="!isActive">
+
+                <div class="form-signin center-image">
+                    <img height="100" ng-src="{{photoUrl}}">
+                </div>
+
+                <div class="well">
+                    <div ng-controller = "myCtrl">
+                        <input type="file" file-model="myFile" onchange="angular.element(this).scope().addFile()"/>
+                        <button ng-controller="ConsoleController" ng-click="uploadFile()">upload me</button>
+                    </div>
+                </div>
+
+
                 <div class="form-signin">
                     <label>Client Email: {{clientData.email}}</label>
                 </div>

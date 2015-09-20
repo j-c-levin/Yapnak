@@ -1,5 +1,5 @@
 <!doctype html>
-<html ng-app="app">
+<html lang="en" ng-app="app">
 <head>
   <title>Yapnak Admin Console</title>
   <meta charset="utf-8">
@@ -11,12 +11,12 @@
   <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.3.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="admin/admin-index.css">
-  <script src ="admin/admin-app.js"></script>
-  <script src ="admin/admin-factory.js"></script>
-  <script src ="admin/admin-controller.js"></script>
 
 </head>
 <body>
   <div ui-view></div>
+  <script src ="admin/admin-app.js"></script>
+  <script src ="admin/admin-factory.js"></script>
+  <script src ="admin/admin-controller.js"></script>
 </body>
 </html>

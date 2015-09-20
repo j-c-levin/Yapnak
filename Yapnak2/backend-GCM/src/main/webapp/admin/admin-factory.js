@@ -5,12 +5,32 @@ angular.module('app.factories', [])
 
   var session = "";
 
+  var clientId = "";
+
+  var file = "";
+
   result.setSession = function(details) {
     session = details;
   }
 
   result.getSession = function() {
     return session;
+  }
+
+  result.setClientId = function(details) {
+    clientId = details;
+  }
+
+  result.getclientId = function() {
+    return clientId;
+  }
+
+  result.setFile = function(details) {
+    file = details;
+  }
+
+  result.getFile = function() {
+    return file;
   }
 
   return result;
@@ -111,31 +131,6 @@ angular.module('app.factories', [])
       return -1
     });
   };
-
-  result.toggleClient = function(clientId,value) {
-    var req = {
-      method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/toggleClient?clientId='.concat(clientId).concat("&value=").concat(value).concat("&session=").concat(detailsfactory.getSession())
-      // url: 'http://localhost:8080/_ah/api/adminApi/v1/toggleClient?clientId='.concat(clientId).concat("&value=").concat(value).concat("&session=").concat(detailsfactory.getSession())
-    }
-    return $http(req).then(function(response) {
-      if (response.data.status == "True") {
-        console.log("Toggled client success");
-        console.log(response);
-        return response.data;
-      } else {
-        console.log("FAILED Toggled client");
-        console.log(response);
-        return -1
-      }
-    }, function(error){
-      console.log("REALLY FAILED Toggled client");
-      console.log(error);
-      return -1
-    });
-
-  }
-
 
   result.updateLocation = function(address,email) {
     var req = {
@@ -300,6 +295,50 @@ angular.module('app.factories', [])
       return response;
     });
   };
+
+  result.getUploadUrl = function(clientId) {
+    var req = {
+      method: 'GET',
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/photoUpload?clientId='.concat(clientId)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/photoUpload?clientId='.concat(clientId)
+    }
+    return $http(req).then(function(response) {
+      if (response.data.status == "True") {
+        console.log("Retrieved upload url success");
+        console.log(response);
+        return response.data;
+      } else {
+        console.log("FAILED Retrieved upload url");
+        console.log(response);
+        return -1
+      }
+    }, function(error){
+      console.log("REALLY FAILED Retrieved upload url");
+      console.log(error);
+      return -1
+    });
+
+  }
+
+  result.uploadFileToUrl = function(file, uploadUrl){
+    var fd = new FormData();
+    fd.append('image', file);
+    return $http.post(uploadUrl, fd, {
+      transformRequest: angular.identity,
+      headers: {'Content-Type': undefined},
+      options: {
+        withCredentials: true
+      },
+    })
+    .success(function(){
+      console.log("success");
+      return 1;
+    })
+    .error(function(){
+      console.log("failure");
+      return -1
+    });
+  }
 
   return result;
 }])

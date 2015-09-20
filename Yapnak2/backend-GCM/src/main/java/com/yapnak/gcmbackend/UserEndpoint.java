@@ -13,6 +13,7 @@ import com.google.appengine.api.utils.SystemProperty;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -31,8 +32,10 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -424,6 +427,7 @@ public class UserEndpoint {
                     response.setLoyaltyPoints(rs.getInt("loyaltyPoints"));
                     response.setUserId(rs.getString("userID"));
                     response.setUserImage(rs.getString("userImage"));
+                    response.setMobNo(rs.getString("mobNo"));
                     response.setStatus("True");
                 } else {
                     //No user found
@@ -1101,14 +1105,164 @@ public class UserEndpoint {
                 logger.info("Returning available redemption for " + userId);
                 JSONParser parse = new JSONParser();
                 JSONArray list = new JSONArray();
-                list = (JSONArray)parse.parse(rs.getString("redemptionAvailable"));
+                list = (JSONArray) parse.parse(rs.getString("redemptionAvailable"));
                 response.setAvailable(list);
                 response.setStatus("True");
             } finally {
                 connection.close();
                 return response;
             }
-        }  finally {
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "forgotLogin",
+            path = "forgotLogin",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity forgotLogin(@Named("email") String email) throws ClassNotFoundException, SQLException {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT COUNT(email) AS count from user where email = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, email);
+                logger.info("user " + email + " is requesting a password reset");
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) == 0) {
+                    //User is not in the system
+                    logger.warning("User " + email + " does not exist");
+                    response.setStatus("False");
+                    response.setMessage("User " + email + " does not exist");
+                    break queryBlock;
+                }
+                logger.info("Found user");
+                //Gather hashes and send email
+                String reset = hashPassword(String.valueOf(randInt()));
+                String cancel = hashPassword(String.valueOf(randInt()));
+                query = "REPLACE forgot (email,reset,cancel,time) VALUES (?,?,?,CURDATE())";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, email);
+                statement.setString(2, reset);
+                statement.setString(3, cancel);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Replace failed
+                    logger.warning("Update forgot table failed");
+                    response.setStatus("False");
+                    response.setMessage("Update forgot table failed");
+                    break queryBlock;
+                }
+                logger.info("Updated forgot table, sending email");
+                String subject = "Yapnak password reset";
+                String message = "Hi,\n\nWe have received a request to reset the password on your Yapnak account.\n\nTo reset, click: www.yapnak.com/userPasswordReset?response=" + reset + "\n\nThis link will be active for one day.\n\nIf you didn't request this email, click here: www.yapnak.com/cancelReset?response=" + cancel + "\n\nKind regards,\nthe Yapnak team.";
+                sendEmail(email, subject, message);
+                logger.info("Email sent");
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    static void sendEmail(String email, String subject, String message) {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        try {
+            javax.mail.Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+            msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                    new InternetAddress(email));
+            msg.setSubject(subject);
+            msg.setText(message);
+            Transport.send(msg);
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ApiMethod(
+            name = "resetPassword",
+            path = "resetPassword",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity resetPassword(@Named("password") String password, @Named("hash") String hash) throws ClassNotFoundException, SQLException {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT email FROM forgot WHERE reset = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, hash);
+                ResultSet rs = statement.executeQuery();
+                if (!rs.next()) {
+                    // User has not requested reset
+                    response.setStatus("False");
+                    response.setMessage("User has not requested reset");
+                    logger.warning("User has not requested reset");
+                    break queryBlock;
+                }
+                logger.info("Found email " + rs.getString("email") + " from forgot");
+                query = "UPDATE user SET password = ? WHERE email = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, hashPassword(password));
+                statement.setString(2, rs.getString("email"));
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Update failed
+                    logger.warning("Updating user password failed");
+                    response.setStatus("False");
+                    response.setMessage("Updating user password failed");
+                    break queryBlock;
+                }
+                logger.info("Updated password");
+                query = "DELETE FROM forgot WHERE reset = ?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, hash);
+                statement.executeUpdate();
+                if (success == -1 ) {
+                    //Delete failed
+                    logger.warning("Deleting forgot row failed for " + hash);
+                    response.setMessage("Deleting forgot row failed for " + hash);
+                    break queryBlock;
+                }
+                response.setStatus("True");
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
             return response;
         }
     }
