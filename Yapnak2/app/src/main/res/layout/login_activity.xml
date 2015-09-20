@@ -71,11 +71,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/phoneNumberEdit"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="130dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
-            android:imeOptions="actionGo"
+            android:imeOptions="actionDone"
             android:hint="Password "
             android:inputType="textPassword" />
 
@@ -86,11 +86,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/emailEdit"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="15dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:alpha="0.4"
             android:hint="Promo Code"
+            android:inputType="text"
+            android:singleLine="true"
+            android:imeOptions="actionNext"
             />
 
         <TextView
