@@ -1076,7 +1076,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private class RecommendUser extends AsyncTask<String,Void,Boolean>{
+    private class RecommendUser extends AsyncTask<String,Void,RecommendEntity>{
         private boolean isSuccess;
         private String contactName;
         private boolean validContact;
@@ -1086,7 +1086,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected RecommendEntity doInBackground(String... params) {
 
 
             if(connection()) {
@@ -1106,20 +1106,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         recommendee = null;
                         validContact = false;
                     }
+                    ;RecommendEntity recommender = null;
                     if(recommendee!=null) {
-                        RecommendEntity recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
-                        isSuccess = Boolean.parseBoolean(recommender.getStatus());
+                        recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
                     }
+                    return recommender;
 
-
-                    //               String message = "Status: "+recommender.getStatus() + " Recommend Message: " + recommender.getMessage() + "\nRecommendee Info Message and Status : "+ recommendee.getStatus() +" " + recommendee.getStatus() ;
-                    return false;
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
                 }
             }else{
-                return false;
+                return null;
             }
 
         }
@@ -1131,22 +1129,26 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
         @Override
-        protected void onPostExecute(Boolean s) {
+        protected void onPostExecute(RecommendEntity s) {
             super.onPostExecute(s);
             /*if(progress.isShowing()){
                 progress.cancel();
             }*/
-            if(isSuccess){
-                Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
-
-            }else{
-                if(validContact) {
-                    Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member", Toast.LENGTH_SHORT).show();
+            try{
+                if(Boolean.parseBoolean(s.getStatus())){
+                    Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if the Selected Contact is Valid", Toast.LENGTH_SHORT).show();
+                    if(validContact) {
+                        Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if the Selected Contact is Valid", Toast.LENGTH_SHORT).show();
 
+                    }
                 }
+            }catch (NullPointerException e){
+                Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended Due to an Error\nPlease Try Again", Toast.LENGTH_SHORT).show();
             }
+
         }
     }
 
@@ -1651,10 +1653,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     public void feedbackButton(View v) {
-        Button feedbackButton = (Button) v.findViewById(R.id.feedbackButton);
-        //RatingDialog rate = new RatingDialog();
-        //rate.show(getFragmentManager(),"rating");
-        //AlertDialog.Builder ratings = new RatingBuilder(this,this);
 
         if(connection() && (deals.getCount()>1||hasInfo)) {
             RatingBuilder ratings = new RatingBuilder(this, this,getItemPrev(),ID);
@@ -1970,8 +1968,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_green));
 
-        int subActionSize = 75;
 
+
+        int subActionSize = 0;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            subActionSize = 100;
+        }else{
+             subActionSize = 75;
+        }
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(subActionSize,subActionSize);
         itemBuilder.setLayoutParams(layoutParams);
 

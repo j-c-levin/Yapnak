@@ -162,16 +162,16 @@ public class ProfileDialog extends AlertDialog {
                            if(names.length==1) {
                                if(dateTime!=null) {
                                    dateString = sdf.format(dateTime);
-                                   Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
+                                   //Log.d("names", "Name: " + names[0] + " " + names[1] + " DATE = " + dateString + " Actual Date: " + actualDate);
 
                                    if (connection()) {
-                                       new SubmitDetails(5).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
+                                       new SubmitDetails(5).execute(names[0],null, phone.getText().toString(), email.getText().toString(), password.getText().toString(), dateString);
                                    } else {
                                        Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
                                    }
                                }else{
                                    if (connection()) {
-                                       new SubmitDetails(4).execute(names[0], " ", phone.getText().toString(), email.getText().toString(), password.getText().toString());
+                                       new SubmitDetails(4).execute(names[0],null ,phone.getText().toString(), email.getText().toString(), password.getText().toString());
                                    } else {
                                        Toast.makeText(getContext(), "Please Enable Your Internet Connection", Toast.LENGTH_SHORT).show();
                                    }
@@ -247,7 +247,7 @@ public class ProfileDialog extends AlertDialog {
         });
     }
 
-    private class SubmitDetails extends AsyncTask<String,Integer,String>{
+    private class SubmitDetails extends AsyncTask<String,Integer,SetUserDetailsEntity>{
 
         private boolean replyStatus;
         private String responseMsg;
@@ -259,7 +259,7 @@ public class ProfileDialog extends AlertDialog {
             progress = new ProgressDialog(context);
         }
         @Override
-        protected String doInBackground(String... params) {
+        protected SetUserDetailsEntity doInBackground(String... params) {
             if(connection()) {
                 try {
                     UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
@@ -275,7 +275,7 @@ public class ProfileDialog extends AlertDialog {
                         responseMsg = userDetails.getMessage();
                         log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
                         replyStatus = Boolean.parseBoolean(userDetails.getStatus());
-                        return log;
+                        return userDetails;
                     } else {
                         SetUserDetailsEntity userDetails = api.setUserDetails(ID, null)
                                 .setEmail(params[3])
@@ -287,7 +287,7 @@ public class ProfileDialog extends AlertDialog {
                         responseMsg = userDetails.getMessage();
                         replyStatus = Boolean.parseBoolean(userDetails.getStatus());
                         log = "STATUS: " + userDetails.getStatus() + "MESSAGE : " + userDetails.getMessage();
-                        return log;
+                        return userDetails;
 
                     }
 
@@ -311,43 +311,48 @@ public class ProfileDialog extends AlertDialog {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(SetUserDetailsEntity s) {
             super.onPostExecute(s);
 
             Log.d("profileDialog",log);
 
-            if(!noInternet) {
-                if (replyStatus) {
-                    if (progress.isShowing()) {
-                        progress.cancel();
-                    }
-
-                    Toast.makeText(context, "Profile Updated!", Toast.LENGTH_SHORT).show();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            d.dismiss();
+            try{
+                if(!noInternet) {
+                    if (s != null && Boolean.parseBoolean(s.getStatus())) {
+                        if (progress.isShowing()) {
+                            progress.cancel();
                         }
-                    }, 1000);
 
-                } else {
-                    if (progress.isShowing()) {
-                        progress.cancel();
-                    }
+                        Toast.makeText(context, "Profile Updated!", Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(context, "Profile Was Not Updated Due to an Error", Toast.LENGTH_SHORT).show();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            d.dismiss();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                d.dismiss();
+                            }
+                        }, 1000);
+                    } else {
+                        if (progress.isShowing()) {
+                            progress.cancel();
                         }
-                    }, 1000);
+
+                        Toast.makeText(context, "Profile Was Not Updated Due to an Error", Toast.LENGTH_SHORT).show();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                d.dismiss();
+                            }
+                        }, 1000);
+                    }
+                }else{
+                    Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
+                    d.dismiss();
                 }
-            }else{
-                Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
-                d.dismiss();
+
+            }catch (NullPointerException e){
+                Toast.makeText(context, "Profile Was Not Updated Due to an Error", Toast.LENGTH_SHORT).show();
+
             }
         }
     }
@@ -482,9 +487,9 @@ public class ProfileDialog extends AlertDialog {
         @Override
         protected void onPostExecute(UserDetailsEntity userEntity) {
 
-            Log.d("FillUser",message);
-         // try{
-            if(userEntity!=null) {
+
+          try{
+            if(userEntity!=null && Boolean.parseBoolean(userEntity.getStatus())) {
                 if (Boolean.parseBoolean(userEntity.getStatus())) {
                     phone.setText(userEntity.getMobNo());
                     if(!userEntity.getFirstName().equalsIgnoreCase("null") && !userEntity.getLastName().equalsIgnoreCase("null")) {
@@ -492,7 +497,7 @@ public class ProfileDialog extends AlertDialog {
                     }if(!userEntity.getFirstName().equalsIgnoreCase("null")&& userEntity.getLastName().equalsIgnoreCase("null")){
                         name.setText(userEntity.getFirstName() );
                     }else{
-                        name.setText(userEntity.getLastName());
+                        name.setText(userEntity.getFirstName()+" "+userEntity.getLastName());
                     }
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
                     Date d = new Date();
@@ -503,14 +508,13 @@ public class ProfileDialog extends AlertDialog {
                     }catch (NullPointerException e){
                         d.setTime(Calendar.getInstance().getTimeInMillis());
                     }
-
                     dob.setText(sdf.format(d));
                     email.setText(userEntity.getEmail());
                 }
             }
-          //}catch (NullPointerException e){
-            //  e.printStackTrace();
-         // }
+          }catch (NullPointerException e){
+              e.printStackTrace();
+          }
 
 
         }

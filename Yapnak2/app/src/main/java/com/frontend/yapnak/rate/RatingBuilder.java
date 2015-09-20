@@ -161,7 +161,7 @@ public class RatingBuilder extends AlertDialog {
     }
 
 
-    private class RateDeal extends AsyncTask<String,Void,String> {
+    private class RateDeal extends AsyncTask<String,Void,FeedbackEntity> {
 
         private ProgressDialog progress;
         private boolean success;
@@ -171,31 +171,27 @@ public class RatingBuilder extends AlertDialog {
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected FeedbackEntity doInBackground(String... params) {
             UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
             String fbk ="";
             if(connection()) {
                 try {
                     FeedbackEntity feedback;
-                    if (!params[0].equalsIgnoreCase("")) {
-
+                    if (params[0].length()>0) {
                         feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).setComment(params[0]).execute();
-                        success = Boolean.parseBoolean(feedback.getStatus());
 
                     } else {
 
                         feedback = user.feedback((int) item.getClientID(), getAccepted(), (int) item.getOfferID(), (int) getRating(), ID).execute();
                         //fbk = "Feedback Message: " + feedback.getMessage() + "\nStatus: " + feedback.getStatus();
-                        success = Boolean.parseBoolean(feedback.getStatus());
                     }
 
-                    return fbk;
+                    return feedback;
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
                 }
             }else{
-                success = false;
                 return null;
             }
 
@@ -211,33 +207,43 @@ public class RatingBuilder extends AlertDialog {
                 public void run(){progress.show();}});}
 
         @Override
-        protected void onPostExecute(String s) {
-           // Log.d("feedbackMessage", s);
+        protected void onPostExecute(FeedbackEntity s) {
             super.onPostExecute(s);
 
-            if(success) {
-                Toast.makeText(context, "Feedback/Rating Submitted", Toast.LENGTH_SHORT).show();
-                if(progress.isShowing()){
-                    progress.cancel();
-                }
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        d.dismiss();
-                    }
-                }, 1000);
-            }else if(!connection()){
-                if(progress.isShowing()){
-                    progress.cancel();
-                }
-                Toast.makeText(context,"Please Enable Your Internet Connection",Toast.LENGTH_SHORT).show();
+            try{
 
-            }else{
+                if(Boolean.parseBoolean(s.getStatus())) {
+                    Toast.makeText(context, "Feedback/Rating Submitted", Toast.LENGTH_SHORT).show();
+                    if(progress.isShowing()){
+                        progress.cancel();
+                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            d.dismiss();
+                        }
+                    }, 1000);
+
+                }else if(!connection()){
+                    if(progress.isShowing()){
+                        progress.cancel();
+                    }
+                    Toast.makeText(context,"Please Enable Your Internet Connection",Toast.LENGTH_SHORT).show();
+
+                }else{
+                    if(progress.isShowing()){
+                        progress.cancel();
+                    }
+                    Toast.makeText(context,"Submission Error, Please Try Again",Toast.LENGTH_SHORT).show();
+                }
+
+            }catch(NullPointerException e){
                 if(progress.isShowing()){
                     progress.cancel();
                 }
                 Toast.makeText(context,"Submission Error, Please Try Again",Toast.LENGTH_SHORT).show();
             }
+
         }
     }
 

@@ -192,9 +192,9 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
             url = urls[0];
             try{
 
-                //Bitmap b= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
+                //Bitmap bitmap= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
 
-                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),1000,1000);
+                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),500,500);
 
                 return bitmap;
             }catch (Exception e){
@@ -209,6 +209,8 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
             if(bitmap!=null){
                 image.setImageBitmap(bitmap);
+                image.setMaxHeight(60);
+                image.setMaxHeight(60);
             }
         }
     }
