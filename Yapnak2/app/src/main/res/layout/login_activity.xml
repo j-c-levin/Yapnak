@@ -133,7 +133,7 @@
             <TextView
                 android:id="@+id/newReg"
                 android:visibility="invisible"
-                android:layout_width="wrap_content"
+                android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:text="New to Yapnak?"
                 android:gravity="center"
@@ -144,24 +144,32 @@
 
             <Button
                 android:id="@+id/registerText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="130dp"
+                android:layout_height="50dp"
                 android:text="Register"
+                android:gravity="center_horizontal"
+                android:textColor="#9E9E9E"
+                android:textSize="13sp"
                 android:background="@android:color/transparent"
-                android:layout_alignTop="@+id/forgotLogin"
-                android:layout_toRightOf="@+id/newReg" />
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/forgotLogin" />
 
 
 
 
             <Button
                 android:id="@+id/forgotLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:singleLine="true"
+                android:layout_marginTop="20dp"
                 android:text="Forgot Login?"
+                android:textColor="#9E9E9E"
+                android:textSize="13sp"
+                android:gravity="center_horizontal"
                 android:background="@android:color/transparent"
-                android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@+id/newReg" />
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true" />
 
         </RelativeLayout>
 
