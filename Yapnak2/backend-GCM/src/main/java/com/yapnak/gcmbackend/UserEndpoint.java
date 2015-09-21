@@ -616,9 +616,9 @@ public class UserEndpoint {
     public OfferListEntity getClients(@Named("longitude") double longitude, @Named("latitude") double latitude) {
         OfferListEntity response = new OfferListEntity();
         OfferEntity offer;
-        List<OfferEntity> list = new ArrayList<OfferEntity>();
+        List<OfferEntity> list = new ArrayList<>();
         Connection connection;
-        double distance = 0.1;
+        double distance = 0.05;
         try {
             if (SystemProperty.environment.value() ==
                     SystemProperty.Environment.Value.Production) {
@@ -632,7 +632,7 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ?";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? LIMIT 21";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -657,9 +657,11 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
+                        offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         list.add(offer);
                     }
                     //sort list here by top three priority and then distance
+                    sort(list);
                     response.setOfferList(list);
                     response.setStatus("True");
                     response.setFoundOffers(true);
@@ -677,6 +679,47 @@ public class UserEndpoint {
         } finally {
             return response;
         }
+    }
+
+    static List<OfferEntity> sort(List<OfferEntity> rawOffers) {
+        List<OfferEntity> response = rawOffers;
+        //set up checking variables
+        boolean hasChanged = true;
+
+        while (hasChanged) {
+            hasChanged = false;
+            //bubble sort
+            for (int i = 0; i < response.size() - 1; i++) {
+                if (Double.valueOf(response.get(i).getDistance()) > Double.valueOf(response.get(i + 1).getDistance())) {
+                    hasChanged = true;
+                    OfferEntity removedEntity = response.remove(i + 1);
+                    response.add(i + 1, response.get(i));
+                    response.remove(i);
+                    response.add(i, removedEntity);
+                }
+            }
+            logger.info("pass complete");
+        }
+        logger.info("sorted");
+
+        //stagger
+
+        //sql logging?
+
+        return response;
+    }
+
+    static String distance(double longitudeOrigin, double latitudeOrigin, double longitudeDest, double latitudeDest) {
+        //a^2=b^2+c^2
+        String response = "";
+        double b = (longitudeOrigin - longitudeDest);
+        double c = (latitudeOrigin - latitudeDest);
+        double a = Math.sqrt((b * b) + (c * c));
+        //number of minutes
+        double minutes = Math.floor(a / 0.00128489);
+        response = String.valueOf(minutes);
+        logger.info(response);
+        return response;
     }
 
     @ApiMethod(
@@ -1251,7 +1294,7 @@ public class UserEndpoint {
                 statement = connection.prepareStatement(query);
                 statement.setString(1, hash);
                 statement.executeUpdate();
-                if (success == -1 ) {
+                if (success == -1) {
                     //Delete failed
                     logger.warning("Deleting forgot row failed for " + hash);
                     response.setMessage("Deleting forgot row failed for " + hash);

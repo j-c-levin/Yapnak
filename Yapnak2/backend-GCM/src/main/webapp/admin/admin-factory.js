@@ -208,6 +208,30 @@ angular.module('app.factories', [])
     });
   };
 
+  result.toggleClient = function(clientId,value) {
+    var req = {
+      method: 'POST',
+      url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/toggleClient?clientId='.concat(clientId).concat("&value=").concat(value).concat("&session=").concat(detailsfactory.getSession())
+      // url: 'http://localhost:8080/_ah/api/adminApi/v1/toggleClient?clientId='.concat(clientId).concat("&value=").concat(value).concat("&session=").concat(detailsfactory.getSession())
+    }
+    return $http(req).then(function(response) {
+      if (response.data.status == "True") {
+        console.log("Toggled client success");
+        console.log(response);
+        return response.data;
+      } else {
+        console.log("FAILED Toggled client");
+        console.log(response);
+        return -1
+      }
+    }, function(error){
+      console.log("REALLY FAILED Toggled client");
+      console.log(error);
+      return -1
+    });
+
+  }
+
   result.updateLocation = function(address,email) {
     var req = {
       method: 'POST',
@@ -332,11 +356,9 @@ angular.module('app.factories', [])
     })
     .success(function(){
       console.log("success");
-      return 1;
     })
     .error(function(){
       console.log("failure");
-      return -1
     });
   }
 
