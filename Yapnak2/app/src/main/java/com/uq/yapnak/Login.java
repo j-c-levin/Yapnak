@@ -74,7 +74,7 @@ public class Login extends Activity{
     private EditText phone,promo;
     private SecureDetails secure;
     private String emailAd,phoneNum;
-    private Button loginButton;
+    private Button loginButton,forgotLogin;
     private EditText password;
     private MenuItem itemMen;
     private ErrorDialog error;
@@ -162,6 +162,7 @@ public class Login extends Activity{
         phone = (EditText) findViewById(R.id.phoneNumberEdit);
         password = (EditText) findViewById(R.id.passwordEdit);
         promo = (EditText) findViewById(R.id.promoBox);
+        forgotLogin= (Button)findViewById(R.id.forgotLogin);
         //actionGoButton();
 
         remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);

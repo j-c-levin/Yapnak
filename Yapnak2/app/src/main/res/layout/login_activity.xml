@@ -105,8 +105,12 @@
             android:layout_marginTop="150dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:textColor="#000"
             android:text="Login"
             android:textStyle="bold" />
+
+
+
 
         <Button
             android:id="@+id/loginButton"
@@ -118,26 +122,48 @@
             android:layout_marginRight="20dp"
             android:alpha="0.4" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New to Yapnak?"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:layout_below="@+id/loginButton"
-            android:layout_alignLeft="@+id/imageButton" />
-
-        <Button
-            android:id="@+id/registerText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/loginButton"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+        <RelativeLayout
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="Register"
-            android:background="@android:color/transparent"/>
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_below="@id/loginButton">
+
+            <TextView
+                android:id="@+id/newReg"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New to Yapnak?"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:layout_alignBaseline="@+id/registerText"
+                android:layout_alignBottom="@+id/registerText"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                android:id="@+id/registerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:background="@android:color/transparent"
+                android:layout_alignTop="@+id/forgotLogin"
+                android:layout_toRightOf="@+id/newReg" />
+
+
+
+
+            <Button
+                android:id="@+id/forgotLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Login?"
+                android:background="@android:color/transparent"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@+id/newReg" />
+
+        </RelativeLayout>
 
 
         <LinearLayout
