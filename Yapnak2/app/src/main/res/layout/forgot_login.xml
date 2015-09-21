@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    android:weightSum="1">
+
+    <!-- android:background="#ff3a3a3c"
+    android:textColor="#FFF"
+    android:textColorHint="#FFF"
+    android:background="@drawable/login_background"
+    -->
+
+    <ScrollView
+        android:background="#EFEBE9"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <RelativeLayout
+
+            android:layout_marginTop="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageButton
+                android:background="@drawable/yapnakmonster"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/imageButton" />
+
+
+
+
+            <com.frontend.yapnak.subview.MyEditText
+                android:id="@+id/forgotLoginEmailEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="130dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:alpha="0.4"
+                android:textColor="#000"
+                android:textColorHint="#000"
+                android:imeOptions="actionNext"
+                android:hint="E-mail"
+                android:inputType="textEmailAddress"
+                android:layout_alignParentLeft="true" />
+
+
+            <TextView
+                android:textColor="#000"
+                android:id="@+id/sendText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/emailEdit"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="65dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="Send E-Mail"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/sendButton"
+                android:onClick="forgotLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/emailEdit"
+                android:layout_marginTop="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:alpha="0.4" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <ImageView
+        android:id="@+id/closeReg"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/close"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true" />
+</RelativeLayout>
+
