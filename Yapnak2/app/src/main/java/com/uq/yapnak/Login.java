@@ -163,6 +163,13 @@ public class Login extends Activity{
         password = (EditText) findViewById(R.id.passwordEdit);
         promo = (EditText) findViewById(R.id.promoBox);
         forgotLogin= (Button)findViewById(R.id.forgotLogin);
+        forgotLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(c,ForgotLogin.class);
+                startActivity(i);
+            }
+        });
         //actionGoButton();
 
         remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
