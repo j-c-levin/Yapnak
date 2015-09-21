@@ -72,7 +72,7 @@
                 android:onClick="forgotLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/emailEdit"
+                android:layout_below="@id/forgotLoginEmailEdit"
                 android:layout_marginTop="50dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
