@@ -33,7 +33,7 @@
   <!-- <a class="form-signin" href="redeem.html">Go to input page</a>  -->
 
   <!-- TODO:Switch in production! -->
-  
+
   <a class="form-signin" href="/redeem">Go to input page</a>
 
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">

@@ -123,6 +123,33 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
   var email = $cookies.get("com.yapnak.email");
 
+  $scope.offerTimes = [
+    {time:0,humanHour:"Midnight"},
+    {time:1,humanHour:"1am"},
+    {time:2,humanHour:"2am"},
+    {time:3,humanHour:"3am"},
+    {time:4,humanHour:"4am"},
+    {time:5,humanHour:"5am"},
+    {time:6,humanHour:"6am"},
+    {time:7,humanHour:"7am"},
+    {time:8,humanHour:"8am"},
+    {time:9,humanHour:"9am"},
+    {time:10,humanHour:"10am"},
+    {time:11,humanHour:"11am"},
+    {time:12,humanHour:"Midday"},
+    {time:13,humanHour:"1pm"},
+    {time:14,humanHour:"2pm"},
+    {time:15,humanHour:"3pm"},
+    {time:16,humanHour:"4pm"},
+    {time:17,humanHour:"5pm"},
+    {time:18,humanHour:"6pm"},
+    {time:19,humanHour:"7pm"},
+    {time:20,humanHour:"8pm"},
+    {time:21,humanHour:"9pm"},
+    {time:22,humanHour:"10pm"},
+    {time:23,humanHour:"11pm"},
+  ]
+
   var offer1Changed;
   var offer2Changed;
   var offer3Changed;
@@ -184,6 +211,9 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
           }
           $scope.offers.splice(1,3);
         });
+
+        $scope.offer1StartTime = {time:details.offer1Start};
+        $scope.offer1EndTime ={time:details.offer1End};
 
         $scope.foodStyle = details.foodStyle;
         $scope.photo = details.photo;
