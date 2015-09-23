@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/h0oqc4dfAya5Bw4l74uhgUgNdes\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/4SAcMjpqW4tZqtp51cwmD0tLkUY\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -145,6 +145,9 @@
      "type": "string"
     },
     "clientPhoto": {
+     "type": "string"
+    },
+    "distance": {
      "type": "string"
     },
     "foodStyle": {

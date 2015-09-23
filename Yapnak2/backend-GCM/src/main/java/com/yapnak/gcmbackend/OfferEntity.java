@@ -17,6 +17,15 @@ public class OfferEntity {
     String clientName;
     String offerText;
     String clientPhoto;
+    String distance;
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public String getOfferText() {
         return offerText;
