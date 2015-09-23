@@ -102,6 +102,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -416,14 +417,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        Log.d("Location", "resuming googleAPI connection");
         super.onResume();
         //mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
-        Log.d("Location", "pausing googleAPI connection");
 
        // if (mGoogleApiClient.isConnected()) {
          //   mGoogleApiClient.disconnect();
@@ -538,12 +537,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected void onPostExecute(Location location) {
             super.onPostExecute(location);
 
-            Log.d("stringquery",loc);
 
             if(!hasRestaurant){
-                Log.d("restaurant","NO RESTAURANTS UNDER THAT NAME");
                 if(location!=null) {
-                    Log.d("location", "Latitude: " + String.valueOf(location.getLatitude()) + " Longitude: " + String.valueOf(location.getLongitude()));
                     setLocation(location);
                     SQLConnectAsyncTask.useDialog = true;
                     new SQLConnectAsyncTask(getApplicationContext(),location,null, activity).execute();
@@ -553,7 +549,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     Toast.makeText(getApplicationContext(),"Searched Location is Unavailable",Toast.LENGTH_SHORT).show();
                 }
             }else{
-                Log.d("restaurant", "YES IT IS A RESTAURANT");
                 setRestaurantName(loc);
 
                 if(offers!=null) {
@@ -580,17 +575,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             try{
                 OfferListEntity entity = builder.searchClients(params[0]).execute();
-                Log.d("debugOfferList","Message "+ entity.getMessage() +"\nstatus: "+ entity.getStatus() + "\noffer "+entity.getOfferList());
 
                 if(Boolean.parseBoolean(entity.getStatus())
                         && entity.getOfferList()!=null ){
                     offers = entity;
                     hasRestaurant=true;
-                    Log.d("restaurantBoolean","TRUE");
                 }else{
                     offers = null;
                     hasRestaurant=false;
-                    Log.d("restaurantBoolean","FALSE");
 
                 }
 
@@ -985,7 +977,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    /*public class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
         private int day, month, year;
         private Bundle bundle;
         private final int DATEFRAGMENT = 1;
@@ -1014,7 +1006,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             date.setText(dateString);
             this.dismiss();
         }
-    }
+    }*/
 
 
 
@@ -1192,7 +1184,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?" ,new String[]{id},null);
             if(phoneNum.moveToFirst()){
                 phone = phoneNum.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                Log.d("Contactphone ",phone);
             }else{
                 phoneExist =false;
             }
@@ -1265,11 +1256,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     AlertDialog posRec;
     public void recommendMealButton(View v) {
 
-        if (connection() &&(deals.getCount()>1||hasInfo) ){
+       /* if (connection() &&(deals.getCount()>1||hasInfo) ){
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
             //int value = this.tutorial.getInt("tutorial2",-1);
             startActivityForResult(intent, PICK_CONTACT);
-        }
+        }*/
+        Toast.makeText(getApplicationContext(),"Coming Soon",Toast.LENGTH_SHORT).show();
+
         /*contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1587,20 +1580,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             Intent userID = getIntent();
             String userid = userID.getStringExtra("userID");
             Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MINUTE,10);
+            Date d = cal.getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
             String date = sdf.format(cal.getTime());
 
-            String toHash = userid + date + "YAPNAKRULES";
+            String toHash = userid+d.getTime()+"YAPNAKRULES";
 
 
             JSONObject object = new JSONObject();
             try {
-                object.put("id", userid);
-                object.put("datetime",date);
-                object.put("hash",toHash);
-                object.put("offer",String.valueOf(getOfferID()));
-                object.put("client",String.valueOf(getClientID()));
-                object.put("clientname",getClientName());
+                object.put("id",userid+"/"+String.valueOf(d.getTime())+"/"+toHash);
+                object.put("datetime","");
+                object.put("hash","");
+                object.put("offer",String.valueOf(getOfferID())+"/"+String.valueOf(getClientID()));
+                object.put("client","");
                 object.put("isReward","false");
             }catch (JSONException e){
 
@@ -1645,7 +1639,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 this.tutorial.edit().putInt("tutorial2",4).apply();
             }
-            Log.d("value",String.valueOf(value));
             generator.show();
 
         }
@@ -1667,7 +1660,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 animateButton(tButton4,textButton4,true);
                 this.tutorial.edit().putInt("tutorial2",3).apply();
             }
-            Log.d("value",String.valueOf(value));
             ratings.show();
         }else{
             Toast.makeText(getApplicationContext(),"Please Check If Your Internet is On",Toast.LENGTH_LONG).show();
@@ -2689,7 +2681,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
-                Log.d("collapseValue",String.valueOf(value));
                 if(value==0){
                     Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
                         @Override
@@ -2769,7 +2760,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //Animate tutorial2 which replaces the first tutorial
                 int tutValue = this.tutorial.getInt("tutorial3", -1);
                 int newValue = this.tutorial.getInt("count",-1);
-                Log.d("tutorial3Value", String.valueOf(tutValue) + " NEW COUNT VALUE IS: " + String.valueOf(newValue));
                 if(newValue==1 && tutValue==0){
                     Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
                         @Override
@@ -2924,7 +2914,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //download and display image from url
                 String url = list.get(i).getClientPhoto();
                 temp.setFetchImageURL(url);
-                Log.d("debug", list.get(i).getClientName());
                 /////////////////////////////////////////////
 
                 //list.get(i).getFoodStyle()

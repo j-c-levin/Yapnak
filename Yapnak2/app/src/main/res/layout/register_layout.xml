@@ -92,6 +92,9 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:alpha="0.4"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
                 android:hint="Promo Code"
                 />
 

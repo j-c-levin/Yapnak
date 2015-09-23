@@ -25,6 +25,7 @@ public class ForgotLogin extends Activity {
 
     private EditText email;
     private ImageView close;
+    private Activity a = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +36,7 @@ public class ForgotLogin extends Activity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                a.finish();
             }
         });
     }

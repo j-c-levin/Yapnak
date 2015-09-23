@@ -50,7 +50,8 @@ public class ProfileDialog extends AlertDialog {
 
     private Activity activity;
     private Context context;
-    private  Button button,submit,cancel;
+    private Button submit,cancel;
+    private static Button button;
     private Color color;
     private EditText name,phone,email,password;
     private AlertDialog d;
@@ -393,8 +394,8 @@ public class ProfileDialog extends AlertDialog {
     }
 
     private String dateString;
-    private Date dateTime;
-   private class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    private static Date dateTime;
+   public static class DateDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private int day, month, year;
         private Bundle bundle;
@@ -413,9 +414,10 @@ public class ProfileDialog extends AlertDialog {
             month = calendar.get(Calendar.MONTH);
             year = calendar.get(Calendar.YEAR);
 
-            DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(), this, day, month, year);
+            DatePickerDialog pickerDialog = new DatePickerDialog(getActivity(),this,year,month,day);
+            pickerDialog.getDatePicker().setMaxDate(new Date().getTime());
 
-            return pickerDialog;
+          return pickerDialog;
        }
 
 
@@ -489,6 +491,7 @@ public class ProfileDialog extends AlertDialog {
 
 
           try{
+              Toast.makeText(getContext(),"Please Wait...",Toast.LENGTH_SHORT).show();
             if(userEntity!=null && Boolean.parseBoolean(userEntity.getStatus())) {
                 if (Boolean.parseBoolean(userEntity.getStatus())) {
                     phone.setText(userEntity.getMobNo());

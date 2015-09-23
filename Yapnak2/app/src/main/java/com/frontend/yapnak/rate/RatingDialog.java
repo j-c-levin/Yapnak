@@ -1,5 +1,6 @@
 package com.frontend.yapnak.rate;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -35,10 +36,14 @@ public class RatingDialog extends DialogFragment {
     private ItemPrev item;
     private String ID;
 
-    public RatingDialog(ItemPrev item,String id){
+    @SuppressLint("ValidFragment")
+    public RatingDialog(){
+
+    }
+   /*public RatingDialog(ItemPrev item,String id){
         this.item = item;
         this.ID = id;
-    }
+    }*/
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

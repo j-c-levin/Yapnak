@@ -10,10 +10,8 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,26 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.frontend.yapnak.client.ClientLogin;
-import com.frontend.yapnak.subview.MyEditText;
-import com.frontend.yapnak.subview.MyProgressDialog;
-import com.frontend.yapnak.tutorial.FragmentSlideActivity;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.uq.yapnak.ErrorDialog;
-import com.uq.yapnak.MainActivity;
-import com.uq.yapnak.R;
-import com.uq.yapnak.SecureDetails;
-import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
-import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 
 import java.io.BufferedReader;
@@ -61,9 +46,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 
 
 //implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
@@ -71,6 +53,7 @@ public class Login extends Activity{
 
     private final String FILE_NAME="yapnak_details";
     private EditText email;
+    private final int REGISTER = 123;
     private EditText phone,promo;
     private SecureDetails secure;
     private String emailAd,phoneNum;
@@ -82,6 +65,7 @@ public class Login extends Activity{
     private Context c = this;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
+    private SharedPreferences reg;
     private String personName;
     Person person;
     private Activity activity = this;
@@ -131,6 +115,7 @@ public class Login extends Activity{
 
     private SharedPreferences remember,keep;
     private TextView register;
+    private View view;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,7 +140,7 @@ public class Login extends Activity{
         error= new ErrorDialog();
         register = (TextView) findViewById(R.id.registerText);
         //Enable Click Listener for Register TextView;
-        goToRegistration();
+        //goToRegistration();
 
 
         email = (EditText) findViewById(R.id.emailEdit);
@@ -174,25 +159,27 @@ public class Login extends Activity{
 
         remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
+        reg = getSharedPreferences("register",Context.MODE_PRIVATE);
 
 
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                if(remember!=null) {
-                    Log.d("remember",String.valueOf(remember.getBoolean("on",false)));
-                    if (remember.getBoolean("on",false)) {
-                        email.setText(remember.getString("email", ""));
-                        phone.setText(remember.getString("phone", ""));
-                        String decryptPass = "";
-                        try {
-                            decryptPass = secure.decrypt(remember.getString("password", ""));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                   if(remember!=null) {
+                        if (remember.getBoolean("on",false)) {
+                            email.setText(remember.getString("email", ""));
+                            phone.setText(remember.getString("phone", ""));
+                            String decryptPass = "";
+                            try {
+                                decryptPass = secure.decrypt(remember.getString("password", ""));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            password.setText(decryptPass);
                         }
-                        password.setText(decryptPass);
                     }
-                }
+
+
             }
         });
 
@@ -214,7 +201,7 @@ public class Login extends Activity{
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+             view = v;
                 try {
                     String[] details = {email.getText().toString(),phone.getText().toString(), password.getText().toString()}; //,promo.getText().toString()};
                     //new UserLoginAsyncTask(getApplicationContext(), details).execute();
@@ -234,7 +221,6 @@ public class Login extends Activity{
 
 
                         if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase("")) && phone.getText().toString() != null && (!phone.getText().toString().equalsIgnoreCase(""))) {
-                            Log.d("password", password.getText().toString());
                             emailAd = email.getText().toString();
                             phoneNum = (phone.getText().toString().length()!=0)?phone.getText().toString():"";
                             if(promo.getText().length()==0){
@@ -294,7 +280,7 @@ public class Login extends Activity{
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context,RegisterActivity.class);
-                startActivity(i);
+                startActivityForResult(i, REGISTER);
             }
         });
     }
@@ -306,7 +292,6 @@ public class Login extends Activity{
                 try {
                     if(connection()) {
                         if (email.getText().toString() != null && password.getText().toString() != null && (!email.getText().toString().equalsIgnoreCase("") && !password.getText().toString().equalsIgnoreCase("")) && phone.getText().toString() != null && (!phone.getText().toString().equalsIgnoreCase(""))) {
-                            Log.d("password", password.getText().toString());
                             emailAd = email.getText().toString();
                             phoneNum = (phone.getText().toString().length()!=0)?phone.getText().toString():"";
                             if(promo.getText().length()==0){
@@ -367,7 +352,7 @@ public class Login extends Activity{
         private String pass;
         private RegisterUserEntity reg;
         private AuthenticateEntity e;
-        private String password,emailAddress,phoneNumber;
+        private String passwordString,emailAddress,phoneNumber;
 
         public InternalUser(View v){
 
@@ -379,7 +364,7 @@ public class Login extends Activity{
 
               emailAddress = params[0];
               phoneNumber= params[2];
-              password = params[1];
+              passwordString = params[1];
 
               UserEndpointApi.Builder builder = new UserEndpointApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
               builder.setRootUrl("https://yapnak-app.appspot.com/_ah/api/");
@@ -395,20 +380,8 @@ public class Login extends Activity{
             }
 
             try{
-                //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bob@somemail.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
-
-                //RegisterUserEntity reg = userEndpoint.registerUser("1234567").setEmail("bobby@somemail.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
-
-                //RegisterUserEntity reg = userEndpoint.registerUser("123").setEmail("b@somemail.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
 
                 //RegisterUserEntity reg = userEndpoint.registerUser("12").setEmail("os.com").setMobNo("00000000000").execute();
-
-
-                //RegisterUserEntity reg = userEndpoint.registerUser("bob123").setEmail("json@somemail.com").setMobNo("00000000000").execute();
-                //registerLog= reg.getMessage();
 
                 if(params[1]!=null) {
                     if(promoAvailable){
@@ -445,14 +418,12 @@ public class Login extends Activity{
         @Override
         protected void onPostExecute(AuthenticateEntity s) {
             if(connection()) {
-                //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
                 try {
                     if (s != null && Boolean.parseBoolean(s.getStatus())) {
                         SharedPreferences.Editor pref = keep.edit();
                         pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
                         SharedPreferences.Editor keeper = remember.edit();
                         keeper.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
-                   Log.d("usernameid", s.getUserId());
                         Intent i = new Intent(Login.this, MainActivity.class);
                         i.putExtra("userID", s.getUserId());
                         i.putExtra("password", pass);
@@ -463,14 +434,11 @@ public class Login extends Activity{
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         view.getContext().startActivity(i);
-                    } else {
-                        if (progress.isShowing()) {
-                            progress.cancel();
-                        }
 
-                        ErrorDialog dialog = new ErrorDialog();
-                        dialog.setInfoText("Please Enter Correct Login Information");
-                        dialog.show(fragmentManager, "error");
+                    //REGISTER IF LOGIN IS INCORRECT
+                    }else if(s!=null && !Boolean.parseBoolean(s.getStatus())){
+                        new RegisterUser().execute(email.getText().toString(),phone.getText().toString(),password.getText().toString());
+
                     }
                 }catch(NullPointerException e){
                     if (progress.isShowing()) {
@@ -495,6 +463,83 @@ public class Login extends Activity{
         }
     }
 
+
+
+    private class RegisterUser extends AsyncTask<String,Void,RegisterUserEntity>{
+
+        private boolean alreadyRegistered;
+        @Override
+        protected RegisterUserEntity doInBackground(String... params) {
+            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+
+            if(connection()) {
+                try {
+
+                     UserDetailsEntity user = api.getUserDetails().setEmail(params[0]).setMobNo(params[1]).execute();
+
+                    Log.d("userDetails","Message: " +user.getMessage()+ "\nStatus "  + user.getStatus());
+                     if(Boolean.parseBoolean(user.getStatus())){
+                         alreadyRegistered = true;
+                         return null;
+                     }else{
+                         alreadyRegistered=false;
+                         return api.registerUser(params[2]).setMobNo(params[1]).setEmail(params[0]).execute();
+                     }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            //super.onPreExecute();
+            if(progress.isShowing()){
+                progress.setMessage("Registering New User...");
+            }
+        }
+
+        @Override
+        protected void onPostExecute(RegisterUserEntity reg) {
+            super.onPostExecute(reg);
+
+            try {
+                if (!Boolean.parseBoolean(reg.getStatus())) {
+                    new InternalUser(view).execute(email.getText().toString(), password.getText().toString(), phone.getText().toString());
+
+                }else if(alreadyRegistered){
+                    Toast.makeText(getApplicationContext(), "Registration Failed\nUser Already Exists", Toast.LENGTH_SHORT).show();
+                    if (progress.isShowing()) {
+                        progress.cancel();
+                    }
+                } else {
+                    new InternalUser(view).execute(email.getText().toString(), password.getText().toString(), phone.getText().toString());
+                }
+            }catch (NullPointerException e){
+                if (progress.isShowing()) {
+                    progress.cancel();
+                }
+
+                ErrorDialog dialog = new ErrorDialog();
+                dialog.setInfoText("Please Enter Correct Login Information");
+                dialog.show(fragmentManager, "error");
+            }
+        }
+    }
+
+
+    private boolean connection(){
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+
+        return (wifi||lte);
+    }
+
     private ImageView arrow;
     private Button userB;
 
@@ -510,15 +555,6 @@ public class Login extends Activity{
         s.playTogether(animator, alpha);
         return s;
     }
-
-    private boolean connection(){
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-
-        return (wifi||lte);
-    }
-
     private AnimatorSet arrowGone(){
         ValueAnimator animator = ValueAnimator.ofFloat(originalUserY,-1000.0f);
 
@@ -604,7 +640,7 @@ public class Login extends Activity{
                     public void onAnimationEnd(Animator animation) {
                         //super.onAnimationEnd(animation);
 
-                        if(userB.getVisibility()!=View.VISIBLE) {
+                        if (userB.getVisibility() != View.VISIBLE) {
 
                             ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y", -1000, userB.getY());
                             ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 0.0f, 0.5f, 1.0f);
@@ -615,9 +651,9 @@ public class Login extends Activity{
                             s.setInterpolator(new AccelerateDecelerateInterpolator());
                             s.start();
 
-                        }else{
+                        } else {
 
-                            ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y",originalY,-1000);
+                            ObjectAnimator moveY = ObjectAnimator.ofFloat(userB, "y", originalY, -1000);
                             ObjectAnimator alpha = ObjectAnimator.ofFloat(userB, "alpha", 1.0f, 0.5f, 0.0f);
 
                             AnimatorSet s = new AnimatorSet();
@@ -633,8 +669,8 @@ public class Login extends Activity{
                 float userX = userB.getX();
                 float userY = userB.getY();
                 //TranslateAnimation buttonAnim = new TranslateAnimation(-);
-                      userB.animate().setListener(animate).start();
-                      userB.setVisibility(View.VISIBLE);
+                userB.animate().setListener(animate).start();
+                userB.setVisibility(View.VISIBLE);
 
 
                 userB.setOnClickListener(new View.OnClickListener() {
@@ -649,11 +685,11 @@ public class Login extends Activity{
                 });
 
 
-
             }
         });
 
     }
+
 
 
     private String userID;
@@ -876,18 +912,7 @@ public class Login extends Activity{
 
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        /*if (requestCode == RC_SIGN_IN) {
-            if (responseCode != RESULT_OK) {
-                mSignInClicked = false;
-            }
 
-            mIntentInProgress = false;
-
-            if (!mGoogleApiClient.isConnected()) {
-                mGoogleApiClient.reconnect();
-            }
-        }
-        */
     }
 
 

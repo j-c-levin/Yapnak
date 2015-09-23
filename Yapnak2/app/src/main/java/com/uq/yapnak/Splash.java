@@ -4,35 +4,19 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 
-import com.frontend.yapnak.tutorial.FragmentSlideActivity;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.plus.Plus;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
-import com.yapnak.gcmbackend.sQLEntityApi.model.UserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
-import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 import java.io.IOException;

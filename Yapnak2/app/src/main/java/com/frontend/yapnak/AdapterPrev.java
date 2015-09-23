@@ -11,6 +11,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -194,7 +198,13 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
                 //Bitmap bitmap= BitmapFactory.decodeStream((InputStream) new URL(urls[0]).getContent());
 
-                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),500,500);
+                Bitmap bitmap = compressImage((InputStream) new URL(urls[0]).getContent(),100,10);
+                /*BitmapShader shader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+                Paint paint = new Paint();
+                paint.setShader(shader);
+                paint.setAntiAlias(true);
+                Canvas c = new Canvas(bitmap);
+                c.drawCircle(bitmap.getWidth()/2,bitmap.getHeight()/2,bitmap.getWidth()/2,paint);*/
 
                 return bitmap;
             }catch (Exception e){
@@ -208,9 +218,13 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
             super.onPostExecute(bitmap);
 
             if(bitmap!=null){
+                if(bitmap.getWidth()<image.getWidth()){
+                    image.setMaxWidth(bitmap.getWidth());
+                }
+                if(bitmap.getHeight()<image.getHeight()){
+                    image.setMaxHeight(bitmap.getHeight());
+                }
                 image.setImageBitmap(bitmap);
-                image.setMaxHeight(60);
-                image.setMaxHeight(60);
             }
         }
     }
@@ -220,6 +234,8 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
     }
 
+    private int pictureWidth=0;
+    private int pictureHeight=0;
     public View getActualView(){
         return this.view;
     }
@@ -228,6 +244,8 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
     private int calculateSampleSize(BitmapFactory.Options options,int reqWidth,int reqHeight){
       final int width = options.outWidth;
       final int height = options.outHeight;
+        pictureHeight = options.outHeight;
+        pictureWidth=options.outWidth;
 
         int inSampleSize=1;
 
