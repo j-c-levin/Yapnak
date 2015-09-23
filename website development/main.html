@@ -33,7 +33,7 @@
   <!-- <a class="form-signin" href="redeem.html">Go to input page</a>  -->
 
   <!-- TODO:Switch in production! -->
-  
+
   <a class="form-signin" href="/redeem">Go to input page</a>
 
   <form action="<%= blobstoreService.createUploadUrl("/upload2") %>" method="post" enctype="multipart/form-data" ng-click="uploadImage">
@@ -90,6 +90,12 @@
 
       <input ng-show="offer1text.offerId == 0" type="text"
       class="form-control" maxlength="40" ng-model="newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+      <label>Offer start</label>
+      <select class="form-control" ng-model="offer1StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+
+      <label>Offer end</label>
+      <select class="form-control" ng-model="offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
 
     </div>
   </div>
