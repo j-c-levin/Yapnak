@@ -95,6 +95,24 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>mailinglist</servlet-name>
+        <servlet-class>com.yapnak.website.mailinglist</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mailinglist</servlet-name>
+        <url-pattern>/mailinglist</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>mailingremove</servlet-name>
+        <servlet-class>com.yapnak.website.mailingremove</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mailingremove</servlet-name>
+        <url-pattern>/mailingremove</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>ObjectifyFilter</filter-name>
         <filter-class>com.googlecode.objectify.ObjectifyFilter</filter-class>

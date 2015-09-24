@@ -649,8 +649,8 @@ public class UserEndpoint {
                 stmt.setDouble(3, t);
                 t = latitude + distance;
                 stmt.setDouble(4, t);
-                stmt.setInt(5, hour);
-                stmt.setInt(6, hour);
+//                stmt.setInt(5, hour);
+//                stmt.setInt(6, hour);
                 logger.info("search for clients at (lng/lat): " + longitude + " : " + latitude);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {

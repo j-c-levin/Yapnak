@@ -36,7 +36,6 @@ public class photoUpload extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Methods", "GET, PUT, POST");
-        logger.info("doPost");
         String url = null;
         Connection connection = null;
         PrintWriter out = resp.getWriter();
