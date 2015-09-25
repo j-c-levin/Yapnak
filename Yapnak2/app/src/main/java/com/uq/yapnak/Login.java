@@ -224,7 +224,7 @@ public class Login extends Activity{
                             emailAd = email.getText().toString();
                             phoneNum = (phone.getText().toString().length()!=0)?phone.getText().toString():"";
                             if(promo.getText().length()==0){
-                                promoAvailable = true;
+                                promoAvailable = false;
                             }else{
                                 promoAvailable =true;
                             }
@@ -437,8 +437,12 @@ public class Login extends Activity{
 
                     //REGISTER IF LOGIN IS INCORRECT
                     }else if(s!=null && !Boolean.parseBoolean(s.getStatus())){
-                        new RegisterUser().execute(email.getText().toString(),phone.getText().toString(),password.getText().toString());
+                        if(promoAvailable){
+                            new RegisterUser().execute(email.getText().toString(), phone.getText().toString(), password.getText().toString(),promo.getText().toString());
 
+                        }else {
+                            new RegisterUser().execute(email.getText().toString(), phone.getText().toString(), password.getText().toString());
+                        }
                     }
                 }catch(NullPointerException e){
                     if (progress.isShowing()) {
@@ -483,7 +487,13 @@ public class Login extends Activity{
                          return null;
                      }else{
                          alreadyRegistered=false;
-                         return api.registerUser(params[2]).setMobNo(params[1]).setEmail(params[0]).execute();
+                         if(promoAvailable){
+                             return api.registerUser(params[2]).setMobNo(params[1]).setEmail(params[0]).setPromoCode(params[3]).execute();
+
+                         }else{
+                             return api.registerUser(params[2]).setMobNo(params[1]).setEmail(params[0]).execute();
+
+                         }
                      }
 
 
