@@ -93,7 +93,7 @@ public class ClientEndpoint {
             }
             queryBlock:
             try {
-                String query = "SELECT offerID, offerText FROM offers WHERE clientID = ?";
+                String query = "SELECT offerID, offerText, offerStart, offerEnd FROM offers WHERE clientID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, clientId);
                 logger.info("Searching for offers from " + clientId);
@@ -183,6 +183,50 @@ public class ClientEndpoint {
     }
 
     @ApiMethod(
+            name = "changeOfferHours",
+            path = "changeOfferHours",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity changeOfferHours(@Named("email") String email, @Named("offerId") int offerId, @Named("offerStart") int offerStart, @Named("offerEnd") int offerEnd) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "UPDATE offers SET offerStart = ?, offerEnd = ? WHERE offerID = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, offerStart);
+                statement.setInt(2, offerEnd);
+                statement.setInt(4, offerId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Offer hours update failed
+                    logger.warning("Offer hours update failed");
+                    response.setStatus("False");
+                    response.setMessage("Offer hours update failed");
+                    break queryBlock;
+                }
+                response.setStatus("True");
+                logger.info("Changed offer " + offerId + " to new hours: " + offerStart + " to " + offerEnd);
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
             name = "getClientInfo",
             path = "getClientInfo",
             httpMethod = ApiMethod.HttpMethod.GET)
@@ -222,18 +266,22 @@ public class ClientEndpoint {
                             client.setShowOffer1(rs.getInt("showOffer"));
                             client.setOffer1(rs.getString("offer"));
                             client.setOffer1Id(rs.getInt("offerID"));
-
+//                            client.setOffer1Start(rs.getInt("offerStart"));
+//                            client.setOffer1End(rs.getInt("offerEnd"));
                         } else if (rs.getInt("offerID") == rs.getInt("offer2")) {
                             logger.info("found offer 2: " + rs.getString("offer"));
                             client.setShowOffer2(rs.getInt("showOffer"));
                             client.setOffer2(rs.getString("offer"));
                             client.setOffer2Id(rs.getInt("offerID"));
-
+//                            client.setOffer2Start(rs.getInt("offerStart"));
+//                            client.setOffer2End(rs.getInt("offerEnd"));
                         } else {
                             logger.info("found offer 3: " + rs.getString("offer"));
                             client.setShowOffer3(rs.getInt("showOffer"));
                             client.setOffer3(rs.getString("offer"));
                             client.setOffer3Id(rs.getInt("offerID"));
+//                            client.setOffer3Start(rs.getInt("offerStart"));
+//                            client.setOffer3End(rs.getInt("offerEnd"));
                         }
                     } while (rs.next());
 
@@ -539,7 +587,7 @@ public class ClientEndpoint {
                 response.setOfferText(rs.getString("offerText"));
 
                 //Check user exists
-                logger.info("Checking user exists");
+                logger.info("Checking user " + userId + " exists");
                 query = "SELECT loyaltyPoints,redemptionAvailable FROM user WHERE userID = ?";
                 statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
@@ -551,7 +599,7 @@ public class ClientEndpoint {
                     response.setMessage("User " + userId + " is not in the system");
                     break queryBlock;
                 }
-                logger.info("Found user and their loyalty points");
+                logger.info("Found user and their current loyalty points: " + rs.getInt("loyaltyPoints"));
                 String rewards = rs.getString("redemptionAvailable");
                 int points = rs.getInt("loyaltyPoints");
 
@@ -628,7 +676,7 @@ public class ClientEndpoint {
                 if (rs.next()) {
                     //Recommendation found
                     response.setRecommended(1);
-                    logger.info("recommendation found");
+                    logger.info("recommendation found from " + rs.getString("referrerID"));
                     query = "UPDATE user SET loyaltyPoints = loyaltyPoints+1 WHERE userID = ?";
                     statement = connection.prepareStatement(query);
                     statement.setString(1, rs.getString("referrerID"));
@@ -682,7 +730,7 @@ public class ClientEndpoint {
                         logger.warning("User does not have enough points (" + points + "/" + neededPoints + ") for reward level " + reward);
                         break queryBlock;
                     }
-                    logger.info("User has enough points");
+                    logger.info("User has enough points for " + reward);
                     //Check the user has the redemption level available
                     JSONParser parse = new JSONParser();
                     JSONArray list = (JSONArray) parse.parse(rewards);
@@ -698,7 +746,7 @@ public class ClientEndpoint {
                     if (!found) {
                         //Did not redeem reward
                         response.setLoyaltyRedeemedLevel("Reward level already redeemed");
-                        logger.info("Reward level already redeemed");
+                        logger.info("Reward level already redeemed " + list.toJSONString());
                         break queryBlock;
                     }
                     logger.info("User has redemption level available");

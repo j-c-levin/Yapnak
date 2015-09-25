@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/AwrmHKUXVluM7JhS8Cy391A7nf0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/eAJe6_IWjANO9Ox_Sw7cFSrZcF8\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -115,21 +115,45 @@
     "offer1": {
      "type": "string"
     },
+    "offer1End": {
+     "type": "integer",
+     "format": "int32"
+    },
     "offer1Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer1Start": {
      "type": "integer",
      "format": "int32"
     },
     "offer2": {
      "type": "string"
     },
+    "offer2End": {
+     "type": "integer",
+     "format": "int32"
+    },
     "offer2Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer2Start": {
      "type": "integer",
      "format": "int32"
     },
     "offer3": {
      "type": "string"
     },
+    "offer3End": {
+     "type": "integer",
+     "format": "int32"
+    },
     "offer3Id": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "offer3Start": {
      "type": "integer",
      "format": "int32"
     },
