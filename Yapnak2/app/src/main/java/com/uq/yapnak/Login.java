@@ -443,8 +443,6 @@ public class Login extends Activity{
                         }else {
                             new RegisterUser().execute(email.getText().toString(), phone.getText().toString(), password.getText().toString());
                         }
-
-
                     }
                 }catch(NullPointerException e){
                     if (progress.isShowing()) {
