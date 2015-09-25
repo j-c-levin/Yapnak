@@ -27,62 +27,8 @@ public class ClientEntity {
     int offer1Id;
     int offer2Id;
     int offer3Id;
-    int offer1Start;
-    int offer1End;
-    int offer2Start;
-    int offer2End;
-    int offer3Start;
-    int offer3End;
     long isActive;
     String email;
-
-    public int getOffer1Start() {
-        return offer1Start;
-    }
-
-    public void setOffer1Start(int offer1Start) {
-        this.offer1Start = offer1Start;
-    }
-
-    public int getOffer1End() {
-        return offer1End;
-    }
-
-    public void setOffer1End(int offer1End) {
-        this.offer1End = offer1End;
-    }
-
-    public int getOffer2Start() {
-        return offer2Start;
-    }
-
-    public void setOffer2Start(int offer2Start) {
-        this.offer2Start = offer2Start;
-    }
-
-    public int getOffer2End() {
-        return offer2End;
-    }
-
-    public void setOffer2End(int offer2End) {
-        this.offer2End = offer2End;
-    }
-
-    public int getOffer3Start() {
-        return offer3Start;
-    }
-
-    public void setOffer3Start(int offer3Start) {
-        this.offer3Start = offer3Start;
-    }
-
-    public int getOffer3End() {
-        return offer3End;
-    }
-
-    public void setOffer3End(int offer3End) {
-        this.offer3End = offer3End;
-    }
 
     public String getEmail() {
         return email;

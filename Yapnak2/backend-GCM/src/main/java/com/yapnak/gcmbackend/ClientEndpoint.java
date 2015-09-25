@@ -103,6 +103,8 @@ public class ClientEndpoint {
                     offer = new ClientOfferEntity();
                     offer.setOfferId(rs.getInt("offerID"));
                     offer.setOfferText(rs.getString("offerText"));
+                    offer.setOfferStart(rs.getInt("offerStart"));
+                    offer.setOfferEnd(rs.getInt("offerEnd"));
                     list.add(offer);
                 }
                 response.setOfferList(list);
@@ -206,7 +208,7 @@ public class ClientEndpoint {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, offerStart);
                 statement.setInt(2, offerEnd);
-                statement.setInt(4, offerId);
+                statement.setInt(3, offerId);
                 int success = statement.executeUpdate();
                 if (success == -1) {
                     //Offer hours update failed
@@ -643,7 +645,7 @@ public class ClientEndpoint {
                         break queryBlock;
                     }
                     response.setStatus("True");
-                    response.setStatus("New customer bonus");
+                    response.setMessage("New customer bonus");
                     response.setLoyaltyPoints(points);
                 }
 

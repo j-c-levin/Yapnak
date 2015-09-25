@@ -123,6 +123,14 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
   var email = $cookies.get("com.yapnak.email");
 
+  var offer1Changed;
+  var offer2Changed;
+  var offer3Changed;
+  var offer1Active;
+  var offer2Active;
+  var offer3Active;
+
+  $scope.offers = [];
   $scope.offerTimes = [
     {time:0,humanHour:"Midnight"},
     {time:1,humanHour:"1am"},
@@ -150,14 +158,28 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     {time:23,humanHour:"11pm"},
   ]
 
-  var offer1Changed;
-  var offer2Changed;
-  var offer3Changed;
-  var offer1Active;
-  var offer2Active;
-  var offer3Active;
+  $scope.changeOffers = function() {
 
-  $scope.offers = [];
+    for (var i = 0; i < $scope.offers.length; i++) {
+      if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
+
+        $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+        $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+
+      } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
+
+        $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+        $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+
+      } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
+
+        $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+        $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+
+      }
+    }
+    console.log("sorted offer start times");
+  }
 
   var details = function(val) {
     if (val == 1) {
@@ -201,19 +223,22 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
             if (details.offer1Id == $scope.offers[i].offerId) {
               $scope.offer1text = $scope.offers[i];
               offer1Changed = $scope.offers[i];
+              $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+              $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
             } else if (details.offer2Id == $scope.offers[i].offerId) {
               $scope.offer2text = $scope.offers[i];
               offer2Changed = $scope.offers[i];
+              $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+              $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
             } else if (details.offer3Id == $scope.offers[i].offerId) {
               $scope.offer3text = $scope.offers[i];
               offer3Changed = $scope.offers[i];
+              $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+              $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
             }
           }
           $scope.offers.splice(1,3);
         });
-        
-        $scope.offer1StartTime = {time:details.offer1Start};
-        $scope.offer1EndTime ={time:details.offer1End};
 
         $scope.foodStyle = details.foodStyle;
         $scope.photo = details.photo;
@@ -260,7 +285,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
     } else {
-      var counter = 9;
+      var counter = 11;
       if ($scope.newLocation !== "") {
         webfactory.updateLocation($scope.newLocation,email).then(function(response) {
           counter -= 1;
@@ -374,12 +399,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         counter -= 1;
       }
 
-      webfactory.updateOfferHours(email, $scope.offer1text.offerId, $scope.offer1StartTime.time, $scope.offer1EndTime.time).then(function(response) {
-
-      }, function(error) {
-
-      });
-
       //Check if offer 2 offer has changed
       if ($scope.offer2text.offerId !== offer2Changed.offerId) {
         //Check if a new offer is being submitted
@@ -470,6 +489,65 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
+
+      //Change offer 1 hours
+      if (($scope.offer1EndTime.time - $scope.offer1StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer1-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.offer1text.offerId, $scope.offer1StartTime.time, $scope.offer1EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
+
+      //Change offer 2 hours
+      if (($scope.offer2EndTime.time - $scope.offer2StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer2-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.offer2text.offerId, $scope.offer2StartTime.time, $scope.offer2EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
+
+      //Uncomment this when we actually use offer 3
+      // //Change offer 3 hours
+      // if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
+      //   counter -= 1;
+      //   $modal.open({
+      //     animation: true,
+      //     controller: 'modal-controller',
+      //     templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
+      //   });
+      // } else {
+      //   webfactory.updateOfferHours(email, $scope.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
+      //     counter -= 1;
+      //     if (counter == 0) {
+      //       details(1);
+      //     }
+      //   }, function(error) {
+      //     counter -= 1;
+      //   });
+      // }
+
 
     }
   }

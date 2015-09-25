@@ -639,7 +639,7 @@ public class UserEndpoint {
                 calendar.setTime(date);   // assigns calendar to given date
                 int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
                 logger.info("Hour is: " + hour);
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? LIMIT 21";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -649,8 +649,8 @@ public class UserEndpoint {
                 stmt.setDouble(3, t);
                 t = latitude + distance;
                 stmt.setDouble(4, t);
-//                stmt.setInt(5, hour);
-//                stmt.setInt(6, hour);
+                stmt.setInt(5, hour);
+                stmt.setInt(6, hour);
                 logger.info("search for clients at (lng/lat): " + longitude + " : " + latitude);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {

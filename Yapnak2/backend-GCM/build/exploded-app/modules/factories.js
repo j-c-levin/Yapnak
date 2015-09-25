@@ -121,8 +121,8 @@ angular.module('app.factories', [])
   result.getOffers = function(clientId) {
     var req = {
       method: 'GET',
-      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
-      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
+      // url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
+      url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
     }
     return $http(req).then(function (response) {
       if (response.data.status == "True") {

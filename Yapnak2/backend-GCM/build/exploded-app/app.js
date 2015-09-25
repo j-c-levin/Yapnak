@@ -1,7 +1,7 @@
 angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
 .controller('redeem', function ($scope, webfactory, $cookies, $modal) {
-
+  
   $scope.email = $cookies.get("com.yapnak.email");
   if ($scope.email == undefined || $scope.email== null || $scope.email == "") {
     $modal.open({
@@ -10,7 +10,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     });
   }
   $scope.data = {};
-
+  
   $scope.submit = function () {
     $scope.userFound = "searching";
     webfactory.submit($scope.text, $scope.email).then(function (response) {
@@ -28,7 +28,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 })
 
 .controller('forgot-controller', function ($scope, webfactory) {
-
+  
   $scope.submit = function () {
     if ($scope.email !== undefined) {
       $scope.response = "Searching for your account...";
@@ -54,12 +54,12 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 .controller('reset-controller', function ($window, $timeout, $scope, webfactory, $cookies) {
   $scope.valid = true;
   $scope.hash = $cookies.get("com.yapnak.hash");
-
+  
   if ($scope.hash == undefined) {
     $scope.response = "You do not have permission to view this page."
     $scope.valid = false;
   }
-
+  
   $scope.submit = function () {
     if ($scope.valid == true) {
       if ($scope.pass == $scope.cPass) {
@@ -72,7 +72,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         }, function (error) {
           $scope.response = "Something went wrong, sorry."
         })
-
+        
       } else {
         console.log($scope.cPass.concat(" ").concat($scope.pass));
         $scope.response = "Your passwords are not the same."
@@ -84,12 +84,12 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 .controller('userReset-controller', function ($window, $timeout, $scope, webfactory, $cookies) {
   $scope.valid = true;
   $scope.hash = $cookies.get("com.yapnak.hash");
-
+  
   if ($scope.hash == undefined) {
     $scope.response = "You do not have permission to view this page."
     $scope.valid = false;
   }
-
+  
   $scope.submit = function () {
     if ($scope.valid == true) {
       if ($scope.pass == $scope.cPass && $scope.pass !== "" && $scope.pass !== undefined) {
@@ -102,7 +102,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         }, function (error) {
           $scope.response = "Something went wrong, sorry."
         })
-
+        
       } else {
         console.log($scope.cPass.concat(" ").concat($scope.pass));
         $scope.response = "Your passwords are not the same."
@@ -118,11 +118,19 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 })
 
 .controller('client-controller', function($scope, webfactory, $cookies, $modal, $timeout){
-
+  
   console.log($cookies.get("com.yapnak.email"));
-
+  
   var email = $cookies.get("com.yapnak.email");
-
+  
+  var offer1Changed;
+  var offer2Changed;
+  var offer3Changed;
+  var offer1Active;
+  var offer2Active;
+  var offer3Active;
+  
+  $scope.offers = [];
   $scope.offerTimes = [
     {time:0,humanHour:"Midnight"},
     {time:1,humanHour:"1am"},
@@ -149,16 +157,30 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     {time:22,humanHour:"10pm"},
     {time:23,humanHour:"11pm"},
   ]
-
-  var offer1Changed;
-  var offer2Changed;
-  var offer3Changed;
-  var offer1Active;
-  var offer2Active;
-  var offer3Active;
-
-  $scope.offers = [];
-
+  
+  $scope.changeOffers = function() {
+    console.log("called");
+    for (var i = 0; i < $scope.offers.length; i++) {
+      if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
+        console.log("found offer1");
+        $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+        $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        
+      } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
+        console.log("found offer2");
+        $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+        $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        
+      } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
+        console.log("found offer3");
+        $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+        $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        
+      }
+    }
+    console.log("done");
+  }
+  
   var details = function(val) {
     if (val == 1) {
       var modal = $modal.open({
@@ -173,27 +195,27 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     webfactory.getInfo(email).then(function(details){
       if (details.status == "True") {
         $scope.name = details.name;
-
+        
         $scope.clientId = details.id;
-
+        
         // $scope.offer1text = details.offer1;
-
+        
         if (details.showOffer1 == 1) {
           $scope.offer1 = true;
         }
-
+        
         // $scope.offer2text = details.offer2;
-
+        
         if (details.showOffer2 == 1) {
           $scope.offer2 = true;
         }
-
+        
         // $scope.offer3text = details.offer3;
-
+        
         if (details.showOffer3 == 1) {
           $scope.offer3 = true;
         }
-
+        
         webfactory.getOffers($scope.clientId).then(function(response) {
           $scope.offers = response;
           $scope.offers.splice(0,0,{offerId:0, offerText:"\"New Offer\""});
@@ -201,20 +223,23 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
             if (details.offer1Id == $scope.offers[i].offerId) {
               $scope.offer1text = $scope.offers[i];
               offer1Changed = $scope.offers[i];
+              $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+              $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
             } else if (details.offer2Id == $scope.offers[i].offerId) {
               $scope.offer2text = $scope.offers[i];
               offer2Changed = $scope.offers[i];
+              $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+              $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
             } else if (details.offer3Id == $scope.offers[i].offerId) {
               $scope.offer3text = $scope.offers[i];
               offer3Changed = $scope.offers[i];
+              $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
+              $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
             }
           }
           $scope.offers.splice(1,3);
         });
-
-        $scope.offer1StartTime = {time:details.offer1Start};
-        $scope.offer1EndTime ={time:details.offer1End};
-
+        
         $scope.foodStyle = details.foodStyle;
         $scope.photo = details.photo;
         $scope.location = details.y + " " + details.x;
@@ -237,7 +262,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       }
     })
   }
-
+  
   if (email !== undefined) {
     details(0);
   } else {
@@ -247,7 +272,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       templateUrl: 'modules/templates/account-not-found-modal.html'
     });
   }
-
+  
   $scope.updateInfo = function() {
     if(
       (($scope.offer3text.offerId == $scope.offer2text.offerId) && $scope.offer3text.offerId !== 0)
@@ -260,7 +285,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
     } else {
-      var counter = 9;
+      var counter = 11;
       if ($scope.newLocation !== "") {
         webfactory.updateLocation($scope.newLocation,email).then(function(response) {
           counter -= 1;
@@ -271,7 +296,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       if ($scope.newFoodStyle !== "") {
         webfactory.updateType($scope.newFoodStyle,email).then(function(response) {
           counter -= 1;
@@ -282,7 +307,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       if ($scope.newName !== "") {
         webfactory.updateName($scope.newName,email).then(function(response) {
           counter -= 1;
@@ -293,7 +318,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -=1 ;
       }
-
+      
       //Check if offer 1 active state has changed
       if ($scope.offer1 !== offer1Active) {
         if ($scope.offer1 == false) {
@@ -316,7 +341,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       //Check if offer 1 offer has changed
       if ($scope.offer1text.offerId !== offer1Changed.offerId) {
         //Check if a new offer is being submitted
@@ -350,7 +375,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       //Check if offer 2 active state has changed
       if ($scope.offer2 !== offer2Active) {
         if ($scope.offer2 == false) {
@@ -373,7 +398,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       //Check if offer 2 offer has changed
       if ($scope.offer2text.offerId !== offer2Changed.offerId) {
         //Check if a new offer is being submitted
@@ -407,7 +432,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       //Check if offer 3 active state has changed
       if ($scope.offer3 !== offer3Active) {
         if ($scope.offer3 == false) {
@@ -430,7 +455,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
       //Check if offer 3 offer has changed
       if ($scope.offer3text.offerId !== offer3Changed.offerId) {
         //Check if a new offer is being submitted
@@ -464,10 +489,69 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       } else {
         counter -= 1;
       }
-
+      
+      //Change offer 1 hours
+      if (($scope.offer1EndTime.time - $scope.offer1StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer1-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.offer1text.offerId, $scope.offer1StartTime.time, $scope.offer1EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
+      
+      //Change offer 2 hours
+      if (($scope.offer2EndTime.time - $scope.offer2StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer2-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.offer2text.offerId, $scope.offer2StartTime.time, $scope.offer2EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
+      
+      //Uncomment this when we actually use offer 3
+      // //Change offer 3 hours
+      // if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
+      //   counter -= 1;
+      //   $modal.open({
+      //     animation: true,
+      //     controller: 'modal-controller',
+      //     templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
+      //   });
+      // } else {
+      //   webfactory.updateOfferHours(email, $scope.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
+      //     counter -= 1;
+      //     if (counter == 0) {
+      //       details(1);
+      //     }
+      //   }, function(error) {
+      //     counter -= 1;
+      //   });
+      // }
+      
+      
     }
   }
-
+  
   $scope.getLocation = function(val) {
     return webfactory.getLocations(val).then(function(response) {
       return response.data.results.map(function(item){
@@ -476,5 +560,5 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       });
     })
   };
-
+  
 })

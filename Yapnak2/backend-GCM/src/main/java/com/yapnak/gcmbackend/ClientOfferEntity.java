@@ -11,8 +11,26 @@ public class ClientOfferEntity {
     @Id
     long offerId;
     String offerText;
+    int offerStart;
+    int offerEnd;
     String status;
     String message;
+
+    public int getOfferStart() {
+        return offerStart;
+    }
+
+    public void setOfferStart(int offerStart) {
+        this.offerStart = offerStart;
+    }
+
+    public int getOfferEnd() {
+        return offerEnd;
+    }
+
+    public void setOfferEnd(int offerEnd) {
+        this.offerEnd = offerEnd;
+    }
 
     public String getStatus() {
         return status;
