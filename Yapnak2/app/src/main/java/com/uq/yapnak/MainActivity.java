@@ -1576,7 +1576,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void getDeal(View v){
         if(connection()&&(deals.getCount()>1||hasInfo)) {
-            String url = "http://www.google.co.uk";
             Intent userID = getIntent();
             String userid = userID.getStringExtra("userID");
             Calendar cal = Calendar.getInstance();
