@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/yhgILoMSJes0d5M0-UNFWSJQxZI\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/zK3m2J7evoK_hvSXHatsvf3bIbQ\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -173,6 +173,9 @@
     "message": {
      "type": "string"
     },
+    "offerDays": {
+     "$ref": "JSONArray"
+    },
     "offerEnd": {
      "type": "integer",
      "format": "int32"
@@ -208,6 +211,15 @@
     },
     "status": {
      "type": "string"
+    }
+   }
+  },
+  "JSONArray": {
+   "id": "JSONArray",
+   "type": "object",
+   "properties": {
+    "empty": {
+     "type": "boolean"
     }
    }
   },
@@ -303,6 +315,40 @@
    ],
    "response": {
     "$ref": "ClientAuthEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "changeOfferDays": {
+   "id": "clientEndpointApi.changeOfferDays",
+   "path": "changeOfferDays",
+   "httpMethod": "POST",
+   "parameters": {
+    "days": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "email": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "offerId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "days",
+    "email",
+    "offerId"
+   ],
+   "response": {
+    "$ref": "SimpleEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

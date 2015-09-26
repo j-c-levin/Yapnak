@@ -91,6 +91,13 @@
       <input ng-show="offer1text.offerId == 0" type="text"
       class="form-control" maxlength="40" ng-model="newOffer1text" name="deal" id="deal" placeholder="Type a new offer in here">
 
+      <label>Days active</label>
+      <ul>
+        <li ng-repeat="day in offer1Days">
+          <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+        </li>
+      </ul>
+
       <label>Offer start</label>
       <select class="form-control" ng-model="offer1StartTime" ng-options="time.humanHour for time in offerTimes"></select>
 
@@ -114,6 +121,13 @@
 
       <input ng-show="offer2text.offerId == 0" type="text"
       class="form-control" maxlength="40" ng-model="newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
+
+      <label>Days active</label>
+      <ul>
+        <li ng-repeat="day in offer2Days">
+          <label><input ng-model="day.active" type="checkbox" value=""> {{day.humanDay}}</label>
+        </li>
+      </ul>
 
       <label>Offer start</label>
       <select class="form-control" ng-model="offer2StartTime" ng-options="time.humanHour for time in offerTimes"></select>

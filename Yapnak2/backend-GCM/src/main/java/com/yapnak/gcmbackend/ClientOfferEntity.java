@@ -3,6 +3,8 @@ package com.yapnak.gcmbackend;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
+import org.json.simple.JSONArray;
+
 /**
  * Created by Joshua on 08/09/2015.
  */
@@ -13,8 +15,17 @@ public class ClientOfferEntity {
     String offerText;
     int offerStart;
     int offerEnd;
+    JSONArray offerDays;
     String status;
     String message;
+
+    public JSONArray getOfferDays() {
+        return offerDays;
+    }
+
+    public void setOfferDays(JSONArray offerDays) {
+        this.offerDays = offerDays;
+    }
 
     public int getOfferStart() {
         return offerStart;

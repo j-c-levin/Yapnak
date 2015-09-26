@@ -93,7 +93,7 @@ public class ClientEndpoint {
             }
             queryBlock:
             try {
-                String query = "SELECT offerID, offerText, offerStart, offerEnd FROM offers WHERE clientID = ?";
+                String query = "SELECT offerID, offerText, offerStart, offerEnd, offerDays FROM offers WHERE clientID = ?";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, clientId);
                 logger.info("Searching for offers from " + clientId);
@@ -105,6 +105,9 @@ public class ClientEndpoint {
                     offer.setOfferText(rs.getString("offerText"));
                     offer.setOfferStart(rs.getInt("offerStart"));
                     offer.setOfferEnd(rs.getInt("offerEnd"));
+                    JSONParser parse = new JSONParser();
+                    JSONArray array = (JSONArray) parse.parse(rs.getString("offerDays"));
+                    offer.setOfferDays(array);
                     list.add(offer);
                 }
                 response.setOfferList(list);
@@ -219,6 +222,50 @@ public class ClientEndpoint {
                 }
                 response.setStatus("True");
                 logger.info("Changed offer " + offerId + " to new hours: " + offerStart + " to " + offerEnd);
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
+
+    @ApiMethod(
+            name = "changeOfferDays",
+            path = "changeOfferDays",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity changeOfferDays(@Named("email") String email, @Named("offerId") int offerId, @Named("days") String days) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "UPDATE offers SET offerDays = ? WHERE offerId = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, days);
+                statement.setInt(2, offerId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Offer days update failed
+                    logger.warning("Offer days update failed for offerId " + offerId + " and email " + email);
+                    response.setStatus("False");
+                    response.setMessage("Offer days update failed for offerId " + offerId + " and email " + email);
+                    break queryBlock;
+                }
+                //Offer update success
+                logger.info("Offer update success for " + offerId);
+                response.setStatus("True");
             } finally {
                 connection.close();
                 return response;

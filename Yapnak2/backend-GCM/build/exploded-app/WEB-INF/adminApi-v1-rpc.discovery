@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Dm2rV-MGKkqE-5tc-psHpkWv2CU\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/TDbN5nf-TyDpUum_UTUe0ReIZPA\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -188,6 +188,9 @@
     "message": {
      "type": "string"
     },
+    "offerDays": {
+     "$ref": "JSONArray"
+    },
     "offerEnd": {
      "type": "integer",
      "format": "int32"
@@ -223,6 +226,15 @@
     },
     "status": {
      "type": "string"
+    }
+   }
+  },
+  "JSONArray": {
+   "id": "JSONArray",
+   "type": "object",
+   "properties": {
+    "empty": {
+     "type": "boolean"
     }
    }
   },

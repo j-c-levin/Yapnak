@@ -97,3 +97,10 @@ body {
 }
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
+ul {
+  list-style-type: none;
+  height:100px;
+  overflow:hidden;
+  overflow-y:scroll;
+}

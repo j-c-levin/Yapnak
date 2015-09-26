@@ -157,6 +157,33 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     {time:22,humanHour:"10pm"},
     {time:23,humanHour:"11pm"},
   ]
+  $scope.offer1Days = [
+    {active:false,humanDay:"Monday"},
+    {active:false,humanDay:"Tuesday"},
+    {active:false,humanDay:"Wednesday"},
+    {active:false,humanDay:"Thursday"},
+    {active:false,humanDay:"Friday"},
+    {active:false,humanDay:"Saturday"},
+    {active:false,humanDay:"Sunday"}
+  ];
+  $scope.offer2Days = [
+    {active:false,humanDay:"Monday"},
+    {active:false,humanDay:"Tuesday"},
+    {active:false,humanDay:"Wednesday"},
+    {active:false,humanDay:"Thursday"},
+    {active:false,humanDay:"Friday"},
+    {active:false,humanDay:"Saturday"},
+    {active:false,humanDay:"Sunday"}
+  ];
+  $scope.offer3Days = [
+    {active:false,humanDay:"Monday"},
+    {active:false,humanDay:"Tuesday"},
+    {active:false,humanDay:"Wednesday"},
+    {active:false,humanDay:"Thursday"},
+    {active:false,humanDay:"Friday"},
+    {active:false,humanDay:"Saturday"},
+    {active:false,humanDay:"Sunday"}
+  ];
 
   $scope.changeOffers = function() {
 
@@ -165,20 +192,29 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
         $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
         $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
 
       } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
 
         $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
         $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
 
       } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
 
         $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
         $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
-
+        //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
       }
     }
     console.log("sorted offer start times");
+  }
+
+  $scope.parseOfferDays = function(offer,data) {
+    for (var i = 0; i < data.length; i++) {
+      offer[i].active = data[i];
+    }
+    console.log(offer);
   }
 
   var details = function(val) {
@@ -223,21 +259,19 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
             if (details.offer1Id == $scope.offers[i].offerId) {
               $scope.offer1text = $scope.offers[i];
               offer1Changed = $scope.offers[i];
-              $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
-              $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+              $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
             } else if (details.offer2Id == $scope.offers[i].offerId) {
               $scope.offer2text = $scope.offers[i];
               offer2Changed = $scope.offers[i];
-              $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
-              $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+              $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
             } else if (details.offer3Id == $scope.offers[i].offerId) {
               $scope.offer3text = $scope.offers[i];
               offer3Changed = $scope.offers[i];
-              $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
-              $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+              //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
             }
           }
           $scope.offers.splice(1,3);
+          $scope.changeOffers();
         });
 
         $scope.foodStyle = details.foodStyle;
@@ -285,7 +319,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         templateUrl: 'modules/templates/same-offer-chosen-modal.html'
       });
     } else {
-      var counter = 11;
+      var counter = 13;
       if ($scope.newLocation !== "") {
         webfactory.updateLocation($scope.newLocation,email).then(function(response) {
           counter -= 1;
@@ -548,6 +582,42 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       //   });
       // }
 
+      //Change offer 1 days
+      var offer1DayString = [];
+      for (var i = 0; i < $scope.offer1Days.length; i++) {
+        offer1DayString[i] = $scope.offer1Days[i].active;
+      }
+      webfactory.updateOfferDays(email,$scope.offer1text.offerId,"[" + offer1DayString + "]").then(function() {
+        counter -= 1;
+        if (counter == 0) {
+          details(1);
+        }
+      });
+
+      //Change offer 2 days
+      var offer2DayString = [];
+      for (var i = 0; i < $scope.offer2Days.length; i++) {
+        offer2DayString[i] = $scope.offer2Days[i].active;
+      }
+      webfactory.updateOfferDays(email,$scope.offer2text.offerId,"[" + offer2DayString + "]").then(function() {
+        counter -= 1;
+        if (counter == 0) {
+          details(1);
+        }
+      });
+
+      //Uncomment when we're using offer 3
+      // //Change offer 3 days
+      // var offer3DayString = [];
+      // for (var i = 0; i < $scope.offer3Days.length; i++) {
+      //   offer3DayString[i] = $scope.offer3Days[i].active;
+      // }
+      // webfactory.updateOfferDays(email,$scope.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
+      //   counter -= 1;
+      //   if (counter == 0) {
+      //     details(1);
+      //   }
+      // });
 
     }
   }

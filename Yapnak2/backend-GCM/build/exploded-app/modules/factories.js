@@ -121,8 +121,8 @@ angular.module('app.factories', [])
   result.getOffers = function(clientId) {
     var req = {
       method: 'GET',
-      // url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
-      url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/getAllOffers?clientId='.concat(clientId)
     }
     return $http(req).then(function (response) {
       if (response.data.status == "True") {
@@ -296,8 +296,8 @@ angular.module('app.factories', [])
   result.updateOfferHours = function(email, offerId, offerStart, offerEnd) {
     var req = {
       method: 'POST',
-      // url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/changeOfferHours?email='.concat(email).concat("&offerId=").concat(offerId).concat("&offerStart=").concat(offerStart).concat("&offerEnd=").concat(offerend)
-      url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/changeOfferHours?email='.concat(email).concat("&offerId=").concat(offerId).concat("&offerStart=").concat(offerStart).concat("&offerEnd=").concat(offerEnd)
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/changeOfferHours?email='.concat(email).concat("&offerId=").concat(offerId).concat("&offerStart=").concat(offerStart).concat("&offerEnd=").concat(offerEnd)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/changeOfferHours?email='.concat(email).concat("&offerId=").concat(offerId).concat("&offerStart=").concat(offerStart).concat("&offerEnd=").concat(offerEnd)
     }
     return $http(req).then(function(response) {
       if (response.data.status == "True") {
@@ -314,6 +314,30 @@ angular.module('app.factories', [])
       console.log(error);
       return -1
     });
+  }
+
+  result.updateOfferDays = function(email,offerId, days) {
+    var req = {
+      method: 'POST',
+      url: 'https://yapnak-app.appspot.com/_ah/api/clientEndpointApi/v1/changeOfferDays?email='.concat(email).concat("&offerId=").concat(offerId).concat("&days=").concat(days)
+      // url: 'http://localhost:8080/_ah/api/clientEndpointApi/v1/changeOfferDays?email='.concat(email).concat("&offerId=").concat(offerId).concat("&days=").concat(days)
+    }
+    return $http(req).then(function(response) {
+      if (response.data.status == "True") {
+        console.log("Offer days update success");
+        console.log(response);
+        return response.data;
+      } else {
+        console.log("FAILED Offer days update");
+        console.log(response);
+        return -1
+      }
+    }, function(error){
+      console.log("REALLY FAILED Offer days update");
+      console.log(error);
+      return -1
+    });
+
   }
 
   result.getLocations = function(val) {

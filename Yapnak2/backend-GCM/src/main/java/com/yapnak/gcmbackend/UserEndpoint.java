@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
@@ -635,11 +636,13 @@ public class UserEndpoint {
             queryBlock:
             try {
                 Date date = new Date();   // given date
-                Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+                Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT")); // creates a new calendar instance
                 calendar.setTime(date);   // assigns calendar to given date
+                calendar.setFirstDayOfWeek(Calendar.MONDAY);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+                hour = (hour + 1) % 24;
                 logger.info("Hour is: " + hour);
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -655,6 +658,12 @@ public class UserEndpoint {
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     rs.beforeFirst();
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                    //Needed to compensate for the fact that monday = 1
+                    dayOfWeek = (dayOfWeek + 5) % 7;
+                    logger.info("day is " + dayOfWeek);
+                    JSONParser parse = new JSONParser();
+                    JSONArray days;
                     while (rs.next()) {
                         logger.info("Retrieving client: " + rs.getString("clientName"));
                         offer = new OfferEntity();
@@ -667,7 +676,11 @@ public class UserEndpoint {
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
                         offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
-                        list.add(offer);
+                        //Check if the offer is active on that day;
+                        days = (JSONArray) parse.parse(rs.getString("offerDays"));
+                        if (days.get(dayOfWeek) == true) {
+                            list.add(offer);
+                        }
                     }
                     //sort list here by top three priority and then distance
                     sort(list);

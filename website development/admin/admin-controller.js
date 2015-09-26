@@ -69,6 +69,60 @@ angular.module('app.controller', [])
   $scope.clientList = [];
 
   $scope.clientData = {};
+  $scope.offerTimes = [
+    {time:0,humanHour:"Midnight"},
+    {time:1,humanHour:"1am"},
+    {time:2,humanHour:"2am"},
+    {time:3,humanHour:"3am"},
+    {time:4,humanHour:"4am"},
+    {time:5,humanHour:"5am"},
+    {time:6,humanHour:"6am"},
+    {time:7,humanHour:"7am"},
+    {time:8,humanHour:"8am"},
+    {time:9,humanHour:"9am"},
+    {time:10,humanHour:"10am"},
+    {time:11,humanHour:"11am"},
+    {time:12,humanHour:"Midday"},
+    {time:13,humanHour:"1pm"},
+    {time:14,humanHour:"2pm"},
+    {time:15,humanHour:"3pm"},
+    {time:16,humanHour:"4pm"},
+    {time:17,humanHour:"5pm"},
+    {time:18,humanHour:"6pm"},
+    {time:19,humanHour:"7pm"},
+    {time:20,humanHour:"8pm"},
+    {time:21,humanHour:"9pm"},
+    {time:22,humanHour:"10pm"},
+    {time:23,humanHour:"11pm"},
+  ]
+  $scope.offer1Days = [
+    {active:false,humanDay:"Monday"},
+    {active:false,humanDay:"Tuesday"},
+    {active:false,humanDay:"Wednesday"},
+    {active:false,humanDay:"Thursday"},
+    {active:false,humanDay:"Friday"},
+    {active:false,humanDay:"Saturday"},
+    {active:false,humanDay:"Sunday"}
+  ];
+  $scope.offer2Days = [
+    {active:false,humanDay:"Monday"},
+    {active:false,humanDay:"Tuesday"},
+    {active:false,humanDay:"Wednesday"},
+    {active:false,humanDay:"Thursday"},
+    {active:false,humanDay:"Friday"},
+    {active:false,humanDay:"Saturday"},
+    {active:false,humanDay:"Sunday"}
+  ];
+  $scope.offer3Days = [
+    {active:false,humanDay:"Monday"},
+    {active:false,humanDay:"Tuesday"},
+    {active:false,humanDay:"Wednesday"},
+    {active:false,humanDay:"Thursday"},
+    {active:false,humanDay:"Friday"},
+    {active:false,humanDay:"Saturday"},
+    {active:false,humanDay:"Sunday"}
+  ];
+
 
   $scope.modal = "";
 
@@ -81,6 +135,39 @@ angular.module('app.controller', [])
   var offer2Active;
   var offer3Active;
   var email;
+
+
+  $scope.changeOffers = function() {
+
+    for (var i = 0; i < $scope.clientData.offers.length; i++) {
+      if ($scope.clientData.offer1text.offerId == $scope.clientData.offers[i].offerId) {
+
+        $scope.offer1StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
+        $scope.offer1EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.parseOfferDays($scope.offer1Days,$scope.clientData.offers[i].offerDays);
+
+      } else if ($scope.clientData.offer2text.offerId == $scope.clientData.offers[i].offerId) {
+
+        $scope.offer2StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
+        $scope.offer2EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.parseOfferDays($scope.offer2Days,$scope.clientData.offers[i].offerDays);
+
+      } else if ($scope.clientData.offer3text.offerId == $scope.clientData.offers[i].offerId) {
+
+        $scope.offer3StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
+        $scope.offer3EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
+      }
+    }
+    console.log("sorted offer start times");
+  }
+
+  $scope.parseOfferDays = function(offer,data) {
+    for (var i = 0; i < data.length; i++) {
+      offer[i].active = data[i];
+    }
+    console.log(offer);
+  }
 
   $scope.uploadFile = function(){
     var clientId = detailsfactory.getclientId();
@@ -117,15 +204,19 @@ angular.module('app.controller', [])
             if ($scope.clientData.offer1Id == $scope.clientData.offers[i].offerId) {
               $scope.clientData.offer1text = $scope.clientData.offers[i];
               offer1Changed = $scope.clientData.offers[i];
+              $scope.parseOfferDays($scope.offer1Days,$scope.clientData.offers[i].offerDays);
             } else if ($scope.clientData.offer2Id == $scope.clientData.offers[i].offerId) {
               $scope.clientData.offer2text = $scope.clientData.offers[i];
               offer2Changed = $scope.clientData.offers[i];
+              $scope.parseOfferDays($scope.offer2Days,$scope.clientData.offers[i].offerDays);
             } else if ($scope.clientData.offer3Id == $scope.clientData.offers[i].offerId) {
               $scope.clientData.offer3text = $scope.clientData.offers[i];
               offer3Changed = $scope.clientData.offers[i];
+              //$scope.parseOfferDays($scope.offer3Days,$scope.clientData.offers[i].offerDays);
             }
           }
           $scope.clientData.offers.splice(1,3);
+          $scope.changeOffers();
         });
 
         $scope.gotDetails = "client";
@@ -305,7 +396,7 @@ angular.module('app.controller', [])
         templateUrl: 'admin/templates/same-offer-chosen-modal.html'
       });
     } else {
-      var counter = 9;
+      var counter = 13;
       $scope.editList = "";
 
       if ($scope.clientData.newLocation !== "") {
@@ -511,6 +602,103 @@ angular.module('app.controller', [])
       } else {
         counter -= 1;
       }
+
+      //Change offer 1 hours
+      if (($scope.offer1EndTime.time - $scope.offer1StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'admin/templates/offer1-times-invalid-modal.html'
+        });
+      } else {
+        console.log($scope.offer1StartTime);
+        webfactory.updateOfferHours(email, $scope.clientData.offer1text.offerId, $scope.offer1StartTime.time, $scope.offer1EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
+
+      //Change offer 2 hours
+      if (($scope.offer2EndTime.time - $scope.offer2StartTime.time) <= 0) {
+        counter -= 1;
+        $modal.open({
+          animation: true,
+          controller: 'modal-controller',
+          templateUrl: 'modules/templates/offer2-times-invalid-modal.html'
+        });
+      } else {
+        webfactory.updateOfferHours(email, $scope.clientData.offer2text.offerId, $scope.offer2StartTime.time, $scope.offer2EndTime.time).then(function(response) {
+          counter -= 1;
+          if (counter == 0) {
+            details(1);
+          }
+        }, function(error) {
+          counter -= 1;
+        });
+      }
+
+      //Uncomment this when we actually use offer 3
+      // //Change offer 3 hours
+      // if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
+      //   counter -= 1;
+      //   $modal.open({
+      //     animation: true,
+      //     controller: 'modal-controller',
+      //     templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
+      //   });
+      // } else {
+      //   webfactory.updateOfferHours(email, $scope.clientData.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
+      //     counter -= 1;
+      //     if (counter == 0) {
+      //       details(1);
+      //     }
+      //   }, function(error) {
+      //     counter -= 1;
+      //   });
+      // }
+
+      //Change offer 1 days
+      var offer1DayString = [];
+      for (var i = 0; i < $scope.offer1Days.length; i++) {
+        offer1DayString[i] = $scope.offer1Days[i].active;
+      }
+      webfactory.updateOfferDays(email,$scope.clientData.offer1text.offerId,"[" + offer1DayString + "]").then(function() {
+        counter -= 1;
+        if (counter == 0) {
+          details(1);
+        }
+      });
+
+      //Change offer 2 days
+      var offer2DayString = [];
+      for (var i = 0; i < $scope.offer2Days.length; i++) {
+        offer2DayString[i] = $scope.offer2Days[i].active;
+      }
+      webfactory.updateOfferDays(email,$scope.clientData.offer2text.offerId,"[" + offer2DayString + "]").then(function() {
+        counter -= 1;
+        if (counter == 0) {
+          details(1);
+        }
+      });
+
+      //Uncomment when we're using offer 3
+      // //Change offer 3 days
+      // var offer3DayString = [];
+      // for (var i = 0; i < $scope.offer3Days.length; i++) {
+      //   offer3DayString[i] = $scope.offer3Days[i].active;
+      // }
+      // webfactory.updateOfferDays(email,$scope.clientData.offer3text.offerId,"[" + offer3DayString + "]").then(function() {
+      //   counter -= 1;
+      //   if (counter == 0) {
+      //     details(1);
+      //   }
+      // });
+
     } //if/else
   }; //confirm update
 

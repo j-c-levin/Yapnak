@@ -15,7 +15,6 @@ body {
   margin: auto;
 }
 
-
 .submit-button-container {
   text-align: center;
   max-width: 100%;
@@ -99,6 +98,9 @@ body {
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
-.left-float {
-  float:left;
+ul {
+  list-style-type: none;
+  height:100px;
+  overflow:hidden;
+  overflow-y:scroll;
 }
