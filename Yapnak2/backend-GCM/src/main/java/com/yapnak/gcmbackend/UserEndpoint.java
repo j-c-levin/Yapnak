@@ -1331,4 +1331,52 @@ public class UserEndpoint {
             return response;
         }
     }
+
+    @ApiMethod(
+            name = "userLoginAnalytics",
+            path = "userLoginAnalytics",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity userLoginAnalytics(@Named("userId") String userId) {
+        SimpleEntity response = new SimpleEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "INSERT INTO userlogin (userId) VALUES (?)";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, userId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Login analytics insert failed, user doesn't exist.
+                    logger.warning("Login analytics insert failed for user " + userId);
+                    response.setStatus("False");
+                    response.setMessage("Login analytics insert failed for user " + userId);
+                    break queryBlock;
+                }
+                //Login analytics insert success
+                logger.info("Login analytics insert success for " + userId);
+                response.setStatus("True");
+            } catch(SQLException e) {
+                logger.warning("Login analytics insert failed, user " + userId + " doesn't exist.");
+                response.setStatus("False");
+                response.setMessage("Login analytics insert failed, user " + userId + " doesn't exist.");
+                e.printStackTrace();
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
+    }
 }

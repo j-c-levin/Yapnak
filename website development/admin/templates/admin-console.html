@@ -88,10 +88,10 @@
           </ul>
 
           <label>Offer start</label>
-          <select class="form-control" ng-model="offer1StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+          <select class="form-control" ng-model="clientData.offer1StartTime" ng-options="time.humanHour for time in offerTimes" ng-change="changed()"></select>
 
           <label>Offer end</label>
-          <select class="form-control" ng-model="offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+          <select class="form-control" ng-model="clientData.offer1EndTime" ng-options="time.humanHour for time in offerTimes"></select>
 
         </div>
       </div>
@@ -109,7 +109,7 @@
           <select class="form-control" ng-model="clientData.offer2text" ng-options="offer.offerText for offer in clientData.offers" ng-change="changeOffers()"></select>
 
           <input ng-show="clientData.offer2text.offerId == 0" type="text"
-          class="form-control" maxlength="40" ng-model="newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
+          class="form-control" maxlength="40" ng-model="clientData.newOffer2text" name="deal" id="deal" placeholder="Type a new offer in here">
 
           <label>Days active</label>
           <ul>
@@ -119,10 +119,10 @@
           </ul>
 
           <label>Offer start</label>
-          <select class="form-control" ng-model="offer2StartTime" ng-options="time.humanHour for time in offerTimes"></select>
+          <select class="form-control" ng-model="clientData.offer2StartTime" ng-options="time.humanHour for time in offerTimes"></select>
 
           <label>Offer end</label>
-          <select class="form-control" ng-model="offer2EndTime" ng-options="time.humanHour for time in offerTimes"></select>
+          <select class="form-control" ng-model="clientData.offer2EndTime" ng-options="time.humanHour for time in offerTimes"></select>
         </div>
       </div>
 

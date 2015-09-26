@@ -136,26 +136,25 @@ angular.module('app.controller', [])
   var offer3Active;
   var email;
 
-
   $scope.changeOffers = function() {
 
     for (var i = 0; i < $scope.clientData.offers.length; i++) {
       if ($scope.clientData.offer1text.offerId == $scope.clientData.offers[i].offerId) {
 
-        $scope.offer1StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
-        $scope.offer1EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.clientData.offer1StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
+        $scope.clientData.offer1EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
         $scope.parseOfferDays($scope.offer1Days,$scope.clientData.offers[i].offerDays);
 
       } else if ($scope.clientData.offer2text.offerId == $scope.clientData.offers[i].offerId) {
 
-        $scope.offer2StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
-        $scope.offer2EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.clientData.offer2StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
+        $scope.clientData.offer2EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
         $scope.parseOfferDays($scope.offer2Days,$scope.clientData.offers[i].offerDays);
 
       } else if ($scope.clientData.offer3text.offerId == $scope.clientData.offers[i].offerId) {
 
-        $scope.offer3StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
-        $scope.offer3EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.clientData.offer3StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
+        $scope.clientData.offer3EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
         //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
       }
     }
@@ -604,7 +603,7 @@ angular.module('app.controller', [])
       }
 
       //Change offer 1 hours
-      if (($scope.offer1EndTime.time - $scope.offer1StartTime.time) <= 0) {
+      if (($scope.clientData.offer1EndTime.time - $scope.clientData.offer1StartTime.time) <= 0) {
         counter -= 1;
         $modal.open({
           animation: true,
@@ -612,8 +611,7 @@ angular.module('app.controller', [])
           templateUrl: 'admin/templates/offer1-times-invalid-modal.html'
         });
       } else {
-        console.log($scope.offer1StartTime);
-        webfactory.updateOfferHours(email, $scope.clientData.offer1text.offerId, $scope.offer1StartTime.time, $scope.offer1EndTime.time).then(function(response) {
+        webfactory.updateOfferHours(email, $scope.clientData.offer1text.offerId, $scope.clientData.offer1StartTime.time, $scope.clientData.offer1EndTime.time).then(function(response) {
           counter -= 1;
           if (counter == 0) {
             details(1);
@@ -624,7 +622,7 @@ angular.module('app.controller', [])
       }
 
       //Change offer 2 hours
-      if (($scope.offer2EndTime.time - $scope.offer2StartTime.time) <= 0) {
+      if (($scope.clientData.offer2EndTime.time - $scope.clientData.offer2StartTime.time) <= 0) {
         counter -= 1;
         $modal.open({
           animation: true,
@@ -632,7 +630,7 @@ angular.module('app.controller', [])
           templateUrl: 'modules/templates/offer2-times-invalid-modal.html'
         });
       } else {
-        webfactory.updateOfferHours(email, $scope.clientData.offer2text.offerId, $scope.offer2StartTime.time, $scope.offer2EndTime.time).then(function(response) {
+        webfactory.updateOfferHours(email, $scope.clientData.offer2text.offerId, $scope.clientData.offer2StartTime.time, $scope.clientData.offer2EndTime.time).then(function(response) {
           counter -= 1;
           if (counter == 0) {
             details(1);
@@ -644,7 +642,7 @@ angular.module('app.controller', [])
 
       //Uncomment this when we actually use offer 3
       // //Change offer 3 hours
-      // if (($scope.offer3EndTime.time - $scope.offer3StartTime.time) <= 0) {
+      // if (($scope.clientData.offer3EndTime.time - $scope.clientData.offer3StartTime.time) <= 0) {
       //   counter -= 1;
       //   $modal.open({
       //     animation: true,
@@ -652,7 +650,7 @@ angular.module('app.controller', [])
       //     templateUrl: 'modules/templates/offer3-times-invalid-modal.html'
       //   });
       // } else {
-      //   webfactory.updateOfferHours(email, $scope.clientData.offer3text.offerId, $scope.offer3StartTime.time, $scope.offer3EndTime.time).then(function(response) {
+      //   webfactory.updateOfferHours(email, $scope.clientData.offer3text.offerId, $scope.clientData.offer3StartTime.time, $scope.clientData.offer3EndTime.time).then(function(response) {
       //     counter -= 1;
       //     if (counter == 0) {
       //       details(1);

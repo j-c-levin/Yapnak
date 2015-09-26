@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/4SAcMjpqW4tZqtp51cwmD0tLkUY\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/r9MJmTVYsmmwZCYjgEyJW9j1BxA\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -793,6 +793,27 @@
    "httpMethod": "POST",
    "response": {
     "$ref": "OfferEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "userLoginAnalytics": {
+   "id": "userEndpointApi.userLoginAnalytics",
+   "path": "userLoginAnalytics",
+   "httpMethod": "POST",
+   "parameters": {
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "userId"
+   ],
+   "response": {
+    "$ref": "SimpleEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
