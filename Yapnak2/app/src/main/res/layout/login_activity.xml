@@ -28,11 +28,28 @@
 
         <ImageButton
             android:background="@drawable/yapnakmonster"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:id="@+id/imageButton" />
+            android:id="@+id/imageButton"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:id="@+id/registerPopUp"
+            android:layout_below="@+id/linearLayout4"
+            android:layout_alignParentRight="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register!"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/phoneNumberEdit" />
 
         <com.frontend.yapnak.subview.MyEditText
             android:id="@+id/phoneNumberEdit"
@@ -106,7 +123,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:textColor="#000"
-            android:text="Login/Register"
+            android:text="Login"
             android:textStyle="bold" />
 
 
@@ -132,7 +149,7 @@
 
             <TextView
                 android:id="@+id/newReg"
-                android:visibility="invisible"
+                android:visibility="gone"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:text="New to Yapnak?"
@@ -179,9 +196,9 @@
             android:layout_width="100dp"
             android:layout_height="200dp"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true">
-
-
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            android:id="@+id/linearLayout4">
             <!--<ImageView
                 android:id="@+id/arrowDownUser"
                 android:layout_width="70dp"
@@ -201,11 +218,22 @@
                 android:textColor="#FFF"
                 android:background="#FF8A80"/>
                 -->
-
         </LinearLayout>
 
-
-    </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="All Meals £5!"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:textColor="#000"
+            android:singleLine="false"
+            android:maxLines="2"
+            android:id="@+id/slogan"
+            android:layout_below="@+id/imageButton"
+            android:layout_centerHorizontal="true" />
+        </RelativeLayout>
 
 </ScrollView>
 
