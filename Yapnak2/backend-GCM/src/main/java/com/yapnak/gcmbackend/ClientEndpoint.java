@@ -374,16 +374,41 @@ public class ClientEndpoint {
                 statement.setString(1, email);
                 statement.setString(2, hashPassword(password));
                 ResultSet rs = statement.executeQuery();
-                rs.next();
-                if (rs.getInt(1) > 0) {
+                if (rs.next()) {
                     logger.info("Authenticated client");
                     response.setStatus("True");
                     logger.info("ID " + rs.getInt("clientID"));
                     response.setClientId(rs.getInt("clientID"));
                 } else {
-                    logger.info("Incorrect client details");
-                    response.setStatus("False");
-                    response.setMessage("Incorrect client details");
+                    //Check for masterkey
+                    query = "SELECT clientID FROM client WHERE email = ? AND masterkey = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, email);
+                    statement.setString(2, password);
+                    rs = statement.executeQuery();
+                    if (rs.next()) {
+                        //Masterkey found
+                        logger.info("Authenticated client with masterkey");
+                        response.setStatus("True");
+                        logger.info("ID " + rs.getInt("clientID"));
+                        response.setClientId(rs.getInt("clientID"));
+                        //Remove masterkey
+                        query = "UPDATE client SET masterkey = ? where email = ?";
+                        statement = connection.prepareStatement(query);
+                        statement.setString(1, "");
+                        statement.setString(2, email);
+                        int success = statement.executeUpdate();
+                        if (success == -1) {
+                            logger.warning("masterkey remove failed for client");
+                            response.setStatus("False");
+                            break queryBlock;
+                        }
+                        logger.info("masterkey removed for client");
+                    } else {
+                        logger.info("Incorrect client details");
+                        response.setStatus("False");
+                        response.setMessage("Incorrect client details");
+                    }
                 }
             } finally {
                 connection.close();

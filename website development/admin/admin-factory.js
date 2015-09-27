@@ -409,5 +409,29 @@ angular.module('app.factories', [])
     });
   }
 
+  result.generateMasterkey = function(clientId) {
+    var req = {
+      method: 'POST',
+      url: 'https://yapnak-app.appspot.com/_ah/api/adminApi/v1/generateMasterkey?clientId='.concat(clientId)
+      // url: 'http://localhost:8080/_ah/api/adminApi/v1/generateMasterkey?clientId='.concat(clientId)
+    }
+    return $http(req).then(function(response) {
+      if (response.data.status == "True") {
+        console.log("Generated masterkey");
+        console.log(response);
+        return response.data;
+      } else {
+        console.log("FAILED generating masterkey");
+        console.log(response);
+        return -1
+      }
+    }, function(error){
+      console.log("REALLY FAILED generating masterkey");
+      console.log(error);
+      return -1
+    });
+
+  }
+
   return result;
 }])

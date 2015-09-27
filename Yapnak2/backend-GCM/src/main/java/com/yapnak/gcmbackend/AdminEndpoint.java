@@ -119,7 +119,7 @@ public class AdminEndpoint {
                 statement.setString(1, response.getSession());
                 statement.setString(2, email);
                 int success = statement.executeUpdate();
-                if (success == -1 ) {
+                if (success == -1) {
                     logger.info("Session insert failed");
                     response.setSession("");
                     response.setSession("False");
@@ -348,8 +348,7 @@ public class AdminEndpoint {
         } catch (ClassNotFoundException e1) {
             e1.printStackTrace();
             logger.warning("ClassNotFoundException: " + e1);
-        }
-        finally {
+        } finally {
         }
 
     }
@@ -377,9 +376,9 @@ public class AdminEndpoint {
                 //Authorise admin
                 String query = "SELECT adminID FROM admin WHERE session = ? ";
                 PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1,session);
+                statement.setString(1, session);
                 ResultSet rs = statement.executeQuery();
-                if (!rs.next()){
+                if (!rs.next()) {
                     //Admin auth failed
                     response.setStatus("False");
                     response.setMessage("Session auth failed");
@@ -396,7 +395,7 @@ public class AdminEndpoint {
                 statement.setInt(1, value);
                 statement.setInt(2, clientId);
                 int success = statement.executeUpdate();
-                if (success == -1 ){
+                if (success == -1) {
                     logger.warning("Update client toggle failed");
                     response.setStatus("False");
                     response.setMessage("Update client toggle failed");
@@ -407,9 +406,67 @@ public class AdminEndpoint {
                 connection.close();
                 return response;
             }
-        }  finally {
+        } finally {
             return response;
         }
 
+    }
+
+    @ApiMethod(
+            name = "generateMasterkey",
+            path = "generateMasterkey",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public MasterkeyEntity generateMasterkey(@Named("clientId") int clientId) {
+        MasterkeyEntity response = new MasterkeyEntity();
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT COUNT(*) FROM client WHERE clientId = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, clientId);
+                ResultSet rs = statement.executeQuery();
+                rs.next();
+                if (rs.getInt(1) == 0) {
+                    logger.warning("Client " + clientId + " not found");
+                    response.setStatus("False");
+                    response.setMessage("Client " + clientId + " not found");
+                    break queryBlock;
+                }
+                query = "UPDATE client SET masterkey = ? WHERE clientId = ?";
+                statement = connection.prepareStatement(query);
+                String masterkey = hashPassword(secureInt()).substring(0, 5);
+                logger.info(masterkey);
+                statement.setString(1, masterkey);
+                statement.setInt(2, clientId);
+                int success = statement.executeUpdate();
+                if (success == -1) {
+                    //Master key update failed
+                    logger.warning("Master key update failed for " + clientId);
+                    response.setStatus("False");
+                    response.setMessage("Master key update failed for " + clientId);
+                    break queryBlock;
+                }
+                //Masterkey update success
+                logger.info("Masterkey update success: " + masterkey);
+                response.setStatus("True");
+                response.setMasterkey(masterkey);
+            } finally {
+                connection.close();
+                return response;
+            }
+        } finally {
+            return response;
+        }
     }
 }

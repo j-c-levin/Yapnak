@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -61,6 +62,8 @@ public class login extends HttpServlet {
         return new BigInteger(130, random).toString(32);
     }
 
+    private static final Logger logger = Logger.getLogger(login.class.getName());
+
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String url = null;
         Connection connection = null;
@@ -80,54 +83,53 @@ public class login extends HttpServlet {
             e.printStackTrace();
             return;
         }
+        try {
             try {
-                try {
-                    String email = req.getParameter("username");
-                    String password = req.getParameter("password");
-                    if (email == "" || password == "") {
-                        out.println(
-                                "<html><head></head><body>You are missing either a message or a name! Try again! " +
-                                        "Redirecting in 3 seconds...</body></html>");
-                    } else {
-                        String sql = "SELECT email, password FROM client WHERE email = ?";
-                        PreparedStatement stmt = connection.prepareStatement(sql);
-                        stmt.setString(1, email);
-                        ResultSet rs = null;
-                        rs = stmt.executeQuery();
-                        if (rs.next()) {
-                            if (hashPassword(password).equals(rs.getString("password"))) {
-                                out.println("Login success! (get)");
-                                Cookie part1 = new Cookie("com.yapnak.email", email);
-                                int time = 60 * 60 * 24 * 30 * 12;
-                                part1.setMaxAge(time);
-                                resp.addCookie(part1);
-                                out.println("cookies added");
-                                //TODO: Add the client page
-                                HttpSession session = req.getSession();
-                                session.setAttribute("email", email);
-                                resp.setHeader("Refresh", "0; url=/client.jsp");
-                            } else {
-                                out.println("Incorrect login.");
-                                resp.setHeader("Refresh", "3; url=/index.jsp");
-                            }
+                String email = req.getParameter("username");
+                String password = req.getParameter("password");
+                if (email == "" || password == "") {
+                    out.println(
+                            "<html><head></head><body>You are missing either a message or a name! Try again! " +
+                                    "Redirecting in 3 seconds...</body></html>");
+                } else {
+                    String sql = "SELECT email, password FROM client WHERE email = ?";
+                    PreparedStatement stmt = connection.prepareStatement(sql);
+                    stmt.setString(1, email);
+                    ResultSet rs = null;
+                    rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        if (hashPassword(password).equals(rs.getString("password"))) {
+                            out.println("Login success! (get)");
+                            Cookie part1 = new Cookie("com.yapnak.email", email);
+                            int time = 60 * 60 * 24 * 30 * 12;
+                            part1.setMaxAge(time);
+                            resp.addCookie(part1);
+                            out.println("cookies added");
+                            //TODO: Add the client page
+                            HttpSession session = req.getSession();
+                            session.setAttribute("email", email);
+                            resp.setHeader("Refresh", "0; url=/client.jsp");
                         } else {
-                            out.println("LOGIN FAILED!!!");
+                            out.println("Incorrect login.");
                             resp.setHeader("Refresh", "3; url=/index.jsp");
                         }
+                    } else {
+                        out.println("LOGIN FAILED!!!");
+                        resp.setHeader("Refresh", "3; url=/index.jsp");
                     }
-                } finally {
-                    connection.close();
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } finally {
+                connection.close();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String url = null;
-        Connection connection = null;
+        Connection connection;
         PrintWriter out = resp.getWriter();
         try {
             if (SystemProperty.environment.value() ==
@@ -140,87 +142,71 @@ public class login extends HttpServlet {
                 Class.forName("com.mysql.jdbc.Driver");
                 connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+            queryBlock:
             try {
-                try {
-                    String email = req.getParameter("username");
-                    String password = req.getParameter("password");
-                    if (email == "" || password == "") {
-                        out.println(
-                                "<html><head></head><body>You are missing either a message or a name! Try again! " +
-                                        "Redirecting in 3 seconds...</body></html>");
-                    } else {
-                        String sql = "SELECT email, password, clientID FROM client WHERE email = ?";
-                        PreparedStatement stmt = connection.prepareStatement(sql);
-                        stmt.setString(1, email);
-                        ResultSet rs = null;
-                        rs = stmt.executeQuery();
-                        if (rs.next()) {
-                            if (hashPassword(password).equals(rs.getString("password"))) {
-                                out.println("Login success!");
-                                Cookie part1 = new Cookie("com.yapnak.email", email);
-                                part1.setMaxAge(60 * 60 * 24 * 30 * 12);
-                                resp.addCookie(part1);
-                                //Save a user's session in a cookie if they've requested it
-//                                if (req.getParameter("save") != null) {
-//                                    //get unique salt for client
-//                                    sql = "SELECT salt FROM client WHERE email = ?";
-//                                    stmt = connection.prepareStatement(sql);
-//                                    stmt.setString(1, email);
-//                                    rs = stmt.executeQuery();
-//                                    rs.next();
-//                                    out.println(rs.getString("salt"));
-//                                    //Check if a salt exists
-//                                    if (rs.getString("salt") == null) {
-//                                        out.println("No salt exists, creating");
-//                                        sql = "UPDATE client SET salt = ? WHERE email = ?";
-//                                        stmt = connection.prepareStatement(sql);
-//                                        stmt.setString(1, nextSessionId());
-//                                        stmt.setString(2, email);
-//                                        int success = 2;
-//                                        success = stmt.executeUpdate();
-//                                        if (success == 1) {
-//                                            out.println("salt created");
-//                                            sql = "SELECT salt FROM client WHERE email = ?";
-//                                            stmt = connection.prepareStatement(sql);
-//                                            stmt.setString(1, email);
-//                                            rs = null;
-//                                            rs = stmt.executeQuery();
-//                                            rs.next();
-//                                        } else {
-//                                            out.println("trouble creating the salt");
-//                                        }
-//                                    }
-//                                    //Use created salt
-//                                    String x = email + hashPassword(password) + rs.getString("salt");
-//                                    Cookie part2 = new Cookie("com.yapnak.hash", hashPassword(x));
-//                                    int time = 60 * 60 * 24 * 7;
-//                                    part2.setMaxAge(time);
-//                                    resp.addCookie(part2);
-//                                    out.println("cookies added");
-//                                }
-                                HttpSession session = req.getSession();
-                                session.setAttribute("email", email);
-                                resp.setHeader("Refresh", "0; url=/console");
-                            } else {
-                                out.println("Incorrect login.");
-                                resp.setHeader("Refresh", "1; url=/client");
-                            }
-                        } else {
-                            out.println("LOGIN FAILED!!!");
-                            resp.setHeader("Refresh", "1; url=/client");
-                        }
-                    }
-                } finally {
-                    connection.close();
+                String email = req.getParameter("username");
+                String password = req.getParameter("password");
+                if (email == "" || password == "") {
+                    out.println(
+                            "<html><head></head><body>You are missing either a message or a name! Try again! " +
+                                    "Redirecting in 3 seconds...</body></html>");
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                logger.info("Beginning authentication for client " + email);
+                String query = "SELECT clientID FROM client WHERE email = ? AND password = ?";
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, email);
+                statement.setString(2, hashPassword(password));
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    logger.info("Authenticated client");
+                    out.println("Login success!");
+                    logger.info("ID " + rs.getInt("clientID"));
+                    Cookie part1 = new Cookie("com.yapnak.email", email);
+                    part1.setMaxAge(60 * 60 * 24 * 30 * 12);
+                    resp.addCookie(part1);
+                    resp.setHeader("Refresh", "0; url=/console");
+                } else {
+                    //Check for masterkey
+                    query = "SELECT clientID FROM client WHERE email = ? AND masterkey = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, email);
+                    statement.setString(2, password);
+                    rs = statement.executeQuery();
+                    if (rs.next()) {
+                        //Masterkey found
+                        logger.info("Authenticated client with masterkey");
+                        logger.info("ID " + rs.getInt("clientID"));
+                        Cookie part1 = new Cookie("com.yapnak.email", email);
+                        part1.setMaxAge(60 * 60 * 24 * 30 * 12);
+                        resp.addCookie(part1);
+                        //Remove masterkey
+                        query = "UPDATE client SET masterkey = ? where email = ?";
+                        statement = connection.prepareStatement(query);
+                        statement.setString(1, "");
+                        statement.setString(2, email);
+                        int success = statement.executeUpdate();
+                        if (success == -1) {
+                            logger.warning("masterkey remove failed for client");
+                            out.println("masterkey remove failed");
+                            resp.setHeader("Refresh", "2; url=/client");
+                            break queryBlock;
+                        }
+                        logger.info("masterkey removed for client");
+                        out.println("Login success");
+                        resp.setHeader("Refresh", "0; url=/console");
+                    } else {
+                        logger.info("Incorrect client details");
+                        out.println("Incorrect client details");
+                        resp.setHeader("Refresh", "2; url=/client");
+                    }
+                }
+            } finally {
+                connection.close();
             }
-//        resp.setHeader("Refresh", "3; url=/index.jsp");
-
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

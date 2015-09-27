@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/r9MJmTVYsmmwZCYjgEyJW9j1BxA\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/yZy2gIP1ODaV1d0SizmnQ_GBxr8\"",
  "discoveryVersion": "v1",
  "id": "userEndpointApi:v1",
  "name": "userEndpointApi",
@@ -803,6 +803,18 @@
    "path": "userLoginAnalytics",
    "httpMethod": "POST",
    "parameters": {
+    "latitude": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    },
+    "longitude": {
+     "type": "number",
+     "required": true,
+     "format": "double",
+     "location": "query"
+    },
     "userId": {
      "type": "string",
      "required": true,
@@ -810,6 +822,8 @@
     }
    },
    "parameterOrder": [
+    "latitude",
+    "longitude",
     "userId"
    ],
    "response": {

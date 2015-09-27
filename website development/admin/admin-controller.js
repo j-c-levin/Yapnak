@@ -136,6 +136,13 @@ angular.module('app.controller', [])
   var offer3Active;
   var email;
 
+  $scope.masterkey = "";
+  $scope.generateMasterkey = function() {
+    webfactory.generateMasterkey($scope.clientData.id).then(function(response) {
+      $scope.masterkey = response.masterkey;
+    });
+  }
+
   $scope.changeOffers = function() {
 
     for (var i = 0; i < $scope.clientData.offers.length; i++) {

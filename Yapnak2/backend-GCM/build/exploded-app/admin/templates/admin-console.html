@@ -20,6 +20,10 @@
                         Toggle client off
                     </button>
                 </label>
+                <button ng-click="generateMasterkey()" class="btn" type="button">
+                    Generate masterkey
+                </button>
+                <label ng-show="masterkey !== ''">Masterkey: {{masterkey}}</label>
             </div>
 
             <div collapse="!isActive">

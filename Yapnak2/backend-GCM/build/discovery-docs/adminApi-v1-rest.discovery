@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/TDbN5nf-TyDpUum_UTUe0ReIZPA\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Dtan0lNlukkSM-v2dtVCH3VmcLs\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -240,6 +240,21 @@
     }
    }
   },
+  "MasterkeyEntity": {
+   "id": "MasterkeyEntity",
+   "type": "object",
+   "properties": {
+    "masterkey": {
+     "type": "string"
+    },
+    "message": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
   "OfferEntity": {
    "id": "OfferEntity",
    "type": "object",
@@ -319,6 +334,28 @@
    ],
    "response": {
     "$ref": "AdminAuthEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "generateMasterkey": {
+   "id": "adminApi.generateMasterkey",
+   "path": "generateMasterkey",
+   "httpMethod": "POST",
+   "parameters": {
+    "clientId": {
+     "type": "integer",
+     "required": true,
+     "format": "int32",
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "clientId"
+   ],
+   "response": {
+    "$ref": "MasterkeyEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

@@ -1336,7 +1336,7 @@ public class UserEndpoint {
             name = "userLoginAnalytics",
             path = "userLoginAnalytics",
             httpMethod = ApiMethod.HttpMethod.POST)
-    public SimpleEntity userLoginAnalytics(@Named("userId") String userId) {
+    public SimpleEntity userLoginAnalytics(@Named("userId") String userId, @Named("longitude") double longitude, @Named("latitude") double latitude) {
         SimpleEntity response = new SimpleEntity();
         Connection connection;
         try {
@@ -1352,9 +1352,11 @@ public class UserEndpoint {
             }
             queryBlock:
             try {
-                String query = "INSERT INTO userlogin (userId) VALUES (?)";
+                String query = "INSERT INTO userlogin (userId, longitude, latitude) VALUES (?,?,?)";
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, userId);
+                statement.setDouble(2, longitude);
+                statement.setDouble(3, latitude);
                 int success = statement.executeUpdate();
                 if (success == -1) {
                     //Login analytics insert failed, user doesn't exist.
@@ -1370,6 +1372,8 @@ public class UserEndpoint {
                 logger.warning("Login analytics insert failed, user " + userId + " doesn't exist.");
                 response.setStatus("False");
                 response.setMessage("Login analytics insert failed, user " + userId + " doesn't exist.");
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } finally {
                 connection.close();

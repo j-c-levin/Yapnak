@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +32,7 @@ import javax.servlet.http.HttpSession;
 public class uploadPhoto2 extends HttpServlet {
 
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-
+    private static final Logger logger = Logger.getLogger(login.class.getName());
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
@@ -57,14 +58,17 @@ public class uploadPhoto2 extends HttpServlet {
 
         try {
             try {
+                logger.info("Beginning photo update");
                 Cookie[] cookies = req.getCookies();
                 String email = "";
                 for (Cookie cooky: cookies) {
                     if (cooky.getName().equals("com.yapnak.email")) {
                         email = cooky.getValue();
+                        break;
                     }
                 }
                 if (!email.equals("")) {
+                    logger.info("Found email cookie " + email);
                     String sql = "SELECT clientPhoto FROM client WHERE email = ?";
                     PreparedStatement stmt = connection.prepareStatement(sql);
                     stmt.setString(1, email);
@@ -72,18 +76,22 @@ public class uploadPhoto2 extends HttpServlet {
                     String logo;
                     if (rs.next()) {
                         logo = rs.getString("clientPhoto");
+                        logger.info("found clientPhoto string");
                     } else {
+                        logger.warning("No clientPhoto string found");
                         logo = "";
-                        out.print("failed to update ");
+                        out.print("failed to find previous");
                         resp.setHeader("Refresh", "1; url=/main");
                     }
                     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
                     List<BlobKey> blobKeys = blobs.get("image");
                     if (blobKeys == null || blobKeys.isEmpty()) {
                         //do nothing
+                        logger.warning("Blob empty");
                         out.print("Blob empty");
                     } else {
                         if (!logo.equals("")) {
+                            logger.info("Previous blob found, deleting");
                             BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
                             blobstoreService.delete(new BlobKey(logo));
                         }
@@ -94,6 +102,7 @@ public class uploadPhoto2 extends HttpServlet {
                     try {
                         url = services.getServingUrl(serve);
                         url = url + "=s100";
+                        logger.info("New client photo url: " + url);
                     } catch (IllegalArgumentException e) {
                         url = "http://yapnak.com/images/yapnakmonsterthumb.png";
                         e.printStackTrace();
@@ -105,18 +114,20 @@ public class uploadPhoto2 extends HttpServlet {
                     stmt = connection.prepareStatement(sql);
                     stmt.setString(1, logo);
                     stmt.setString(2, url);
-                    stmt.setString(3, (String) session.getAttribute("email"));
-                    int success = 2;
-                    success = stmt.executeUpdate();
-                    if (success == 1) {
+                    stmt.setString(3, email);
+                    int success = stmt.executeUpdate();
+                    if (success != -1) {
                         //success
+                        logger.info("successfully update photo");
                         out.print("successfully updated");
                         resp.setHeader("Refresh", "1; url=/console");
                     } else {
-                        out.print("failed to update ");
+                        logger.warning("failed to update");
+                        out.print("failed to update");
                         resp.setHeader("Refresh", "1; url=/console");
                     }
                 } else {
+                    logger.warning("No cookie found");
                     out.print("Couldn't find details, are you sure you've signed in?");
                     resp.setHeader("Refresh", "3; url=/client");
                 }
