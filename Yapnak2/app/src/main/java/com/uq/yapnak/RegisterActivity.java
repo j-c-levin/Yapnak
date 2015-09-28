@@ -42,11 +42,13 @@ public class RegisterActivity extends Activity{
     private boolean promoAvailable;
     private SharedPreferences reg,remember,keep;
     private ProgressDialog progress;
+    private Intent getData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_layout);
+        getData = getIntent();
         progress = new ProgressDialog(this);
         fragmentManager = getFragmentManager();
         name = (EditText) findViewById(R.id.nameEdit);
@@ -229,7 +231,13 @@ public class RegisterActivity extends Activity{
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
 
             try{
-                SimpleEntity en = api.userLoginAnalytics(params[0]).execute();
+                SimpleEntity en = null;
+                if(getData.getDoubleExtra("latitude",-1)==-1){
+                    en = api.userLoginAnalytics(0.0,0.0,params[0]).execute();
+                }else{
+                    en = api.userLoginAnalytics(getData.getDoubleExtra("latitude",-1),getData.getDoubleExtra("longitude",-1),params[0]).execute();
+                }
+
                 loginSuccess = Boolean.parseBoolean(en.getStatus());
                 return null;
             }catch(IOException e){

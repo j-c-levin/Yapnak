@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
+import com.yapnak.gcmbackend.userEndpointApi.model.SimpleEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 import java.io.IOException;
@@ -150,31 +153,44 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     */
 
 
+    private boolean providerNotEnabled;
+    private Location userLoc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.splash_activity);
+
+        try {
+            if (providerEnabled()) {
+                GPSTrack track = new GPSTrack(this);
+                userLoc = null;
+                userLoc.setLongitude(track.getLongitude());
+                userLoc.setLatitude(track.getLatitude());
+            } else {
+                providerNotEnabled = true;
+            }
+        }catch(NullPointerException e){
+            providerNotEnabled = true;
+        }
         //firstTime = false;
         //activity = this;
 
 
     }
 
+    private boolean providerEnabled(){
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        return (network||gps);
+    }
+
     private SharedPreferences login;
     @Override
     protected void onStart() {
         super.onStart();
-        /*mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Plus.API)
-                .addScope(new Scope("profile"))
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .addScope(Plus.SCOPE_PLUS_PROFILE).build();
-
-        mSignInClicked = true;
-        mGoogleApiClient.connect();*/
         login = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         Log.d("onStart","Doing work");
         h.postDelayed(run,2000);
@@ -226,6 +242,41 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
     private Activity a = this;
 
 
+    private boolean loginSuccess;
+    private class LoginAnalytics extends AsyncTask<String,Void,Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            try{
+                SimpleEntity en=null;
+                if(providerNotEnabled) {
+                     en = api.userLoginAnalytics(0.0, 0.0, params[0]).execute();
+                }else{
+                     en = api.userLoginAnalytics(userLoc.getLatitude(), userLoc.getLongitude(), params[0]).execute();
+                }
+                Log.d("loginSuccess",en.getStatus() + "\nMESSAGE "+en.getMessage());
+                loginSuccess = Boolean.parseBoolean(en.getStatus());
+                return null;
+            }catch(IOException e){
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void e) {
+            super.onPostExecute(e);
+            try{
+                if(loginSuccess){
+                    Log.d("loginSuccess","success");
+                }else{
+                    Log.d("errorMessage","FAILED");
+                }
+            }catch (NullPointerException n){
+                Log.d("errorMessage", "FAILED");
+            }
+        }
+    }
     private class CheckLogin extends AsyncTask<String,Void,UserDetailsEntity>{
 
         private boolean hasExecuted;
@@ -252,8 +303,10 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             try {
                 if (s!=null && Boolean.parseBoolean(s.getStatus())) {
                     Log.d("userID","USER ID FROM PREF = "+ login.getString("userID", "-1") +"\nFROM DB "+ s.getUserId());
+
                     if (s.getUserId().equalsIgnoreCase(login.getString("userID", "-1"))) {
                         Log.d("loginProcess","Preferences and Status  NOT NULL");
+                        new LoginAnalytics().execute(login.getString("userID","-1"));
                         Intent i = new Intent(Splash.this, MainActivity.class);
                         i.putExtra("userID", s.getUserId());
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
