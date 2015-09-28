@@ -35,6 +35,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.SimpleEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
 
@@ -47,8 +48,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-
-//implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
 public class Login extends Activity{
 
     private final String FILE_NAME="yapnak_details";
@@ -65,16 +64,15 @@ public class Login extends Activity{
     private Context c = this;
     private FragmentManager fragmentManager;
     private boolean needToCreateNewFile;
-    private SharedPreferences reg;
     private String personName;
     Person person;
     private Activity activity = this;
     private boolean promoAvailable;
+
     /**
      * True if the sign-in button was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
      */
-
     private float originalUserY;
     private boolean mSignInClicked;
 
@@ -138,9 +136,9 @@ public class Login extends Activity{
         findViewById(R.id.sign_in_button).setOnClickListener(this);*/
 
         error= new ErrorDialog();
-        register = (TextView) findViewById(R.id.registerText);
+        register = (TextView) findViewById(R.id.registerPopUp);
         //Enable Click Listener for Register TextView;
-        //goToRegistration();
+        goToRegistration();
 
 
         email = (EditText) findViewById(R.id.emailEdit);
@@ -159,7 +157,6 @@ public class Login extends Activity{
 
         remember = getSharedPreferences("RememberMe",Context.MODE_PRIVATE);
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
-        reg = getSharedPreferences("register",Context.MODE_PRIVATE);
 
 
         new Handler().post(new Runnable() {
@@ -228,15 +225,15 @@ public class Login extends Activity{
                             }else{
                                 promoAvailable =true;
                             }
-                            new InternalUser(v).execute(email.getText().toString(), password.getText().toString(), phoneNum);
+                            new InternalUser(v).execute(email.getText().toString(), password.getText().toString(), phoneNum,promo.getText().toString());
                         } else {
                             if(email.getText().toString().length()==0 ) {
                                 error.setInfoText("Please Enter Your E-mail");
                             }if(password.getText().toString().length()==0){
                                 error.setInfoText("Please Enter Your Password");
-                            }if(phone.getText().toString().length()==0 ||phone.getText().toString().length()<11 ){
+                            }if(phone.getText().toString().length()==0 ||phone.getText().toString().length()<11||phone.getText().toString().length()>11 ){
                                 error.setInfoText("Please Enter Your Phone Number");
-                            }if((phone.getText().toString().length()<11 || phone.getText().toString().length()==0) && password.getText().toString().length()==0 && email.getText().toString().length()==0){
+                            }if(phone.getText().toString().length()==0 && password.getText().toString().length()==0 && email.getText().toString().length()==0){
                                 error.setInfoText("Please Enter The Correct Login Information");
                             }if((phone.getText().toString().length()==0||phone.getText().toString().length()<11)&& email.getText().toString().length()==0 ){
                                 error.setInfoText("Please Enter Phone Number and Email");
@@ -420,6 +417,7 @@ public class Login extends Activity{
             if(connection()) {
                 try {
                     if (s != null && Boolean.parseBoolean(s.getStatus())) {
+                        new LoginAnalytics().execute(s.getUserId());
                         SharedPreferences.Editor pref = keep.edit();
                         pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", emailAd).putString("phone", phoneNum).putBoolean("on", true).apply();
                         SharedPreferences.Editor keeper = remember.edit();
@@ -436,13 +434,15 @@ public class Login extends Activity{
                         view.getContext().startActivity(i);
 
                     //REGISTER IF LOGIN IS INCORRECT
-                    }else if(s!=null && !Boolean.parseBoolean(s.getStatus())){
-                        if(promoAvailable){
-                            new RegisterUser().execute(email.getText().toString(), phone.getText().toString(), password.getText().toString(),promo.getText().toString());
-
-                        }else {
-                            new RegisterUser().execute(email.getText().toString(), phone.getText().toString(), password.getText().toString());
+                    }else{
+                        if (progress.isShowing()) {
+                            progress.cancel();
                         }
+
+                        ErrorDialog dialog = new ErrorDialog();
+                        dialog.setInfoText("There Has Been An Error\nPlease Try Again");
+                        dialog.show(fragmentManager, "error");
+
                     }
                 }catch(NullPointerException e){
                     if (progress.isShowing()) {
@@ -541,6 +541,36 @@ public class Login extends Activity{
         }
     }
 
+    private boolean loginSuccess;
+    private class LoginAnalytics extends AsyncTask<String,Void,Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            try{
+               SimpleEntity en = api.userLoginAnalytics(params[0]).execute();
+               Log.d("loginSuccess",en.getStatus() + "\nMESSAGE "+en.getMessage());
+               loginSuccess = Boolean.parseBoolean(en.getStatus());
+               return null;
+            }catch(IOException e){
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void e) {
+            super.onPostExecute(e);
+            try{
+                if(loginSuccess){
+                    Log.d("loginSuccess","success");
+                }else{
+                    Log.d("errorMessage","FAILED");
+                }
+            }catch (NullPointerException n){
+                Log.d("errorMessage", "FAILED");
+            }
+        }
+    }
 
     private boolean connection(){
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -624,7 +654,6 @@ public class Login extends Activity{
 
 
     }
-
     private void arrowTouch(){
 
         final float originalY = userB.getY();
@@ -699,9 +728,6 @@ public class Login extends Activity{
         });
 
     }
-
-
-
     private String userID;
 
     /*private class GetUserId extends AsyncTask<String,Integer,String>{

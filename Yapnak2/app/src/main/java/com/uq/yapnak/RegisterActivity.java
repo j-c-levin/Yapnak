@@ -25,6 +25,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
 import com.yapnak.gcmbackend.userEndpointApi.model.AuthenticateEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
+import com.yapnak.gcmbackend.userEndpointApi.model.SimpleEntity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,16 +141,6 @@ public class RegisterActivity extends Activity{
             Toast.makeText(getApplicationContext(),"Please Enter a Valid Phone Number",Toast.LENGTH_SHORT).show();
         }if(phone.getText().toString().length()<11 && phone.getText().toString().length()>0){
             Toast.makeText(getApplicationContext(),"Please Enter a Valid Phone Number",Toast.LENGTH_SHORT).show();
-        /*}if(name.getText().toString().length()==0 &&phone.getText().toString().length()==0 ){
-            Toast.makeText(getApplicationContext(),"Please Enter Your Full Name and Phone Number",Toast.LENGTH_SHORT).show();
-        }if(name.getText().toString().length()==0&&email.getText().toString().length()==0){
-            Toast.makeText(getApplicationContext(),"Please Enter Your Full Name And E-mail",Toast.LENGTH_SHORT).show();
-        }if(email.getText().toString().length()==0 &&phone.getText().toString().length()==0){
-            Toast.makeText(getApplicationContext(),"Please Enter Your E-Mail and Phone Number",Toast.LENGTH_SHORT).show();
-        }if(email.getText().toString().length()==0 &&pass.getText().toString().length()==0){
-            Toast.makeText(getApplicationContext(),"Please Enter You E-Mail and Password",Toast.LENGTH_SHORT).show();
-        }if(phone.getText().toString().length()==0 &&pass.getText().toString().length()==0){
-            Toast.makeText(getApplicationContext(),"Please Enter Your Phone Number and Password",Toast.LENGTH_SHORT).show();*/
         }if(!retypePass.getText().toString().equals(pass.getText().toString())){
             Toast.makeText(getApplicationContext(),"Passwords Do Not Match",Toast.LENGTH_SHORT).show();
         }if(promo.getText().length()==0){
@@ -184,7 +175,6 @@ public class RegisterActivity extends Activity{
                             return user.registerUser(params[0]).setFirstName(names[0]).setLastName(names[1]).setEmail(params[3]).setMobNo(params[2]).execute();
                         }
                     }
-
                 } catch (IOException e) {
                     return null;
                 }
@@ -230,6 +220,39 @@ public class RegisterActivity extends Activity{
      return (wifi||threeg);
  }
 
+    private boolean loginSuccess;
+    private class LoginAnalytics extends AsyncTask<String,Void,Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+
+            try{
+                SimpleEntity en = api.userLoginAnalytics(params[0]).execute();
+                loginSuccess = Boolean.parseBoolean(en.getStatus());
+                return null;
+            }catch(IOException e){
+                return null;
+            }
+
+
+        }
+
+        @Override
+        protected void onPostExecute(Void e) {
+            super.onPostExecute(e);
+            try{
+                if(loginSuccess){
+                    Log.d("loginSuccess","success");
+                }else{
+                    Log.d("errorMessage", "FAILED");
+                }
+            }catch (NullPointerException n){
+                Log.d("errorMessage", "FAILED");
+            }
+        }
+    }
 
     private class InternalUser extends AsyncTask<String,Integer,AuthenticateEntity>{
 
@@ -290,6 +313,7 @@ public class RegisterActivity extends Activity{
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
                 try {
                     if (s != null && Boolean.parseBoolean(s.getStatus())) {
+                        new LoginAnalytics().execute(s.getUserId());
                         SharedPreferences.Editor pref = keep.edit();
                         pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", email.getText().toString()).putString("phone", phone.getText().toString()).putBoolean("on", true).apply();
                         SharedPreferences.Editor keeper = remember.edit();
