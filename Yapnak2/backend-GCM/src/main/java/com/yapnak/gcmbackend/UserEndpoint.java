@@ -1366,7 +1366,7 @@ public class UserEndpoint {
                     break queryBlock;
                 }
                 //Login analytics insert success
-                logger.info("Login analytics insert success for " + userId);
+                logger.info("Login analytics insert success for " + userId + " at " + longitude + " : " + latitude);
                 response.setStatus("True");
             } catch(SQLException e) {
                 logger.warning("Login analytics insert failed, user " + userId + " doesn't exist.");
