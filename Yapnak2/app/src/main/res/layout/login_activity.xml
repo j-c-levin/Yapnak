@@ -224,7 +224,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="All Meals £5!"
+            android:text="Great Food £5!"
             android:gravity="center"
             android:textSize="13sp"
             android:textColor="#000"

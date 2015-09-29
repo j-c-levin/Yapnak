@@ -77,8 +77,8 @@ public class RegisterActivity extends Activity{
             @Override
             public void onClick(View v) {
                 checkDetails();
-                if (name.getText().toString().length() != 0
-                        && pass.getText().toString().length() != 0
+                if (//name.getText().toString().length() != 0
+                         pass.getText().toString().length() != 0
                         && email.getText().toString().length() != 0
                         && phone.getText().toString().length() != 0
                         && phone.getText().toString().length() == 11
@@ -86,7 +86,7 @@ public class RegisterActivity extends Activity{
                         && pass.getText().toString().equals(retypePass.getText().toString())) {
 
                     new RegisterUser().execute(pass.getText().toString(),
-                            name.getText().toString(),
+                            //name.getText().toString(),
                             phone.getText().toString(),
                             email.getText().toString(),
                             promo.getText().toString()
@@ -102,8 +102,8 @@ public class RegisterActivity extends Activity{
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
                     checkDetails();
-                    if (name.getText().toString().length() != 0
-                            && pass.getText().toString().length() != 0
+                    if (//name.getText().toString().length() != 0
+                             pass.getText().toString().length() != 0
                             && email.getText().toString().length() != 0
                             && phone.getText().toString().length() != 0
                             && phone.getText().toString().length() == 11
@@ -111,7 +111,7 @@ public class RegisterActivity extends Activity{
                             && pass.getText().toString().equals(retypePass.getText().toString())) {
 
                         new RegisterUser().execute(pass.getText().toString(),
-                                name.getText().toString(),
+                                //name.getText().toString(),
                                 phone.getText().toString(),
                                 email.getText().toString(),
                                 promo.getText().toString()
@@ -129,9 +129,10 @@ public class RegisterActivity extends Activity{
     }
 
     private void checkDetails(){
-        if(name.getText().toString().length()==0){
+       /*if(name.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(),"Please Enter Your Name",Toast.LENGTH_SHORT).show();
-        }if(phone.getText().toString().length()==0){
+        }*/
+        if(phone.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(),"Please Enter Your Phone Number",Toast.LENGTH_SHORT).show();
         }if(email.getText().toString().length()==0){
             Toast.makeText(getApplicationContext(),"Please Enter Your Email",Toast.LENGTH_SHORT).show();
@@ -163,19 +164,19 @@ public class RegisterActivity extends Activity{
                 UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
 
                 try {
-                    String[] names = params[1].split(" ");
+                    //String[] names = params[1].split(" ");
                     if(promoAvailable){
-                        if (names.length == 1) {
-                            return user.registerUser(params[0]).setFirstName(params[1]).setEmail(params[3]).setMobNo(params[2]).setPromoCode(params[4]).execute();
-                        } else {
-                            return user.registerUser(params[0]).setFirstName(names[0]).setLastName(names[1]).setEmail(params[3]).setMobNo(params[2]).setPromoCode(params[4]).execute();
-                        }
+                        //if (names.length == 1) {
+                          //  return user.registerUser(params[0]).setEmail(params[3]).setMobNo(params[2]).setPromoCode(params[4]).execute();
+                        //} else {
+                            return user.registerUser(params[0]).setEmail(params[2]).setMobNo(params[1]).setPromoCode(params[3]).execute();
+                        //}
                     }else{
-                        if (names.length == 1) {
-                            return user.registerUser(params[0]).setFirstName(params[1]).setEmail(params[3]).setMobNo(params[2]).execute();
-                        } else {
-                            return user.registerUser(params[0]).setFirstName(names[0]).setLastName(names[1]).setEmail(params[3]).setMobNo(params[2]).execute();
-                        }
+                        //if (names.length == 1) {
+                         //   return user.registerUser(params[0]).setFirstName(params[1]).setEmail(params[3]).setMobNo(params[2]).execute();
+                        //} else {
+                            return user.registerUser(params[0]).setEmail(params[2]).setMobNo(params[1]).execute();
+                       // }
                     }
                 } catch (IOException e) {
                     return null;
