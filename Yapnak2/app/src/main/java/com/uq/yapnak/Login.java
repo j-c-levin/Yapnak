@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -114,6 +116,7 @@ public class Login extends Activity{
     private SharedPreferences remember,keep;
     private TextView register;
     private View view;
+    private boolean providerNotEnabled;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +140,19 @@ public class Login extends Activity{
 
         error= new ErrorDialog();
         register = (TextView) findViewById(R.id.registerPopUp);
+        try {
+            if (providerEnabled()) {
+                GPSTrack track = new GPSTrack(this);
+                userLoc = null;
+                userLoc.setLongitude(track.getLongitude());
+                userLoc.setLatitude(track.getLatitude());
+            } else {
+                providerNotEnabled = true;
+            }
+        }catch(NullPointerException e){
+            providerNotEnabled = true;
+        }
+
         //Enable Click Listener for Register TextView;
         goToRegistration();
 
@@ -175,8 +191,6 @@ public class Login extends Activity{
                             password.setText(decryptPass);
                         }
                     }
-
-
             }
         });
 
@@ -277,11 +291,22 @@ public class Login extends Activity{
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context,RegisterActivity.class);
+                if(!providerNotEnabled) {
+                    i.putExtra("latitude", userLoc.getLatitude());
+                    i.putExtra("longitude", userLoc.getLongitude());
+                }
                 startActivityForResult(i, REGISTER);
             }
         });
     }
 
+    private boolean providerEnabled(){
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        return (network||gps);
+    }
     private void actionGoButton(){
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -548,9 +573,16 @@ public class Login extends Activity{
         protected Void doInBackground(String... params) {
             UserEndpointApi api = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
             try{
-               SimpleEntity en = api.userLoginAnalytics(params[0]).execute();
-               Log.d("loginSuccess",en.getStatus() + "\nMESSAGE "+en.getMessage());
-               loginSuccess = Boolean.parseBoolean(en.getStatus());
+               SimpleEntity en ;
+                if(providerNotEnabled){
+                    en = api.userLoginAnalytics(0.0,0.0,params[0]).execute();
+                    Log.d("loginSuccess",en.getStatus() + "\nMESSAGE "+en.getMessage());
+                }else{
+                    en = api.userLoginAnalytics(userLoc.getLatitude(),userLoc.getLongitude(),params[0]).execute();
+                    Log.d("loginSuccess",en.getStatus() + "\nMESSAGE "+en.getMessage());
+                }
+                loginSuccess = Boolean.parseBoolean(en.getStatus());
+
                return null;
             }catch(IOException e){
                 return null;
@@ -729,6 +761,7 @@ public class Login extends Activity{
 
     }
     private String userID;
+    private Location userLoc;
 
     /*private class GetUserId extends AsyncTask<String,Integer,String>{
       private String email;
