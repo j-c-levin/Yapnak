@@ -8,7 +8,6 @@ import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.PushService;
 
 import java.util.HashMap;
 
@@ -28,10 +27,8 @@ public class Application extends MultiDexApplication {
         map.put("message", "hello there, how are you?");
         map.put("recipientId", ParseInstallation.getCurrentInstallation().getInstallationId());
         ParseCloud.callFunctionInBackground("pushToUser", map, new FunctionCallback<String>() {
-
             @Override
             public void done(String s, ParseException e) {
-
                 if(e==null){
                      Log.d("debug",s);
                 }
