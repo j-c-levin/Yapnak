@@ -36,6 +36,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.journeyapps:zxing-android-embedded:3.0.2@aar'
     compile 'com.google.zxing:core:3.2.0'
-    compile files('libs/Parse-1.10.2/Parse-1.10.2.jar')
-    compile files('libs/Parse-1.10.2/bolts-android-1.2.1.jar')
+    compile 'com.parse.bolts:bolts-android:1.2.1'
+    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
 }

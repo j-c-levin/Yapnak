@@ -8,6 +8,7 @@ import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
+import com.parse.PushService;
 
 import java.util.HashMap;
 

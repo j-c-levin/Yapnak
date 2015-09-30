@@ -217,7 +217,7 @@ public class RegisterActivity extends Activity{
 
 
  private boolean internet(){
-     ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+     ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
      boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
      boolean threeg = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
      return (wifi||threeg);
