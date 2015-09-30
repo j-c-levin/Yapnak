@@ -675,7 +675,7 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
-//                        offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
+                        offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
                         if (days.get(dayOfWeek) == true) {
@@ -683,8 +683,7 @@ public class UserEndpoint {
                         }
                     }
                     //sort list here by top three priority and then distance
-                    sort(list);
-                    response.setOfferList(list);
+                    response.setOfferList(sort(list));
                     response.setStatus("True");
                     response.setFoundOffers(true);
                 } else {
@@ -723,7 +722,9 @@ public class UserEndpoint {
             logger.info("pass complete");
         }
         logger.info("sorted");
-
+        for (OfferEntity o: response) {
+            o.setDistance(null);
+        }
         //stagger
 
         //sql logging?
