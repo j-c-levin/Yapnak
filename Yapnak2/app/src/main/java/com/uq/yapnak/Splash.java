@@ -181,10 +181,12 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
 
     private boolean providerEnabled(){
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        boolean gps = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean network = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        return (network||gps);
+        if(manager!=null) {
+            boolean gps = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean network = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            return (network||gps);
+        }
+        return false;
     }
 
     private SharedPreferences login;
@@ -193,7 +195,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
         super.onStart();
         login = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         Log.d("onStart","Doing work");
-        h.postDelayed(run,2000);
+        h.postDelayed(run, 2000);
         Log.d("onStart", "Finished work");
 
 

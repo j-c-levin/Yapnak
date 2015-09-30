@@ -6,21 +6,22 @@
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="300dp"
-        android:layout_height="200dp"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
         android:id="@+id/yapnak"
-        android:src="@drawable/yapnakmonster"
+        android:src="@drawable/yapnakmonster_ad"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:layout_width="300dp"
-        android:layout_height="200dp"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
         android:id="@+id/yapnakGlow"
-        android:src="@drawable/yapnakmonster"
+        android:src="@drawable/yapnakmonster_ad"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
-    <!--android:src="@drawable/yapnakmonster_glow"-->
+    <!--android:src="@drawable/yapnakmonster_glow"
+     android:src="@drawable/yapnakmonster"-->
 
 
 </RelativeLayout>
