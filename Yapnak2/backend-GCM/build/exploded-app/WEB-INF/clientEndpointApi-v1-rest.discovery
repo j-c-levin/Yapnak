@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/zK3m2J7evoK_hvSXHatsvf3bIbQ\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/XUQAeI2Hy9fyu2i7itYPwWd0CiU\"",
  "discoveryVersion": "v1",
  "id": "clientEndpointApi:v1",
  "name": "clientEndpointApi",
@@ -591,6 +591,33 @@
    ],
    "response": {
     "$ref": "SimpleEntity"
+   },
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "rewardRedeem": {
+   "id": "clientEndpointApi.rewardRedeem",
+   "path": "rewardRedeem",
+   "httpMethod": "POST",
+   "parameters": {
+    "rewardRedeemed": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    },
+    "userId": {
+     "type": "string",
+     "required": true,
+     "location": "query"
+    }
+   },
+   "parameterOrder": [
+    "rewardRedeemed",
+    "userId"
+   ],
+   "response": {
+    "$ref": "RedemptionEntity"
    },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"

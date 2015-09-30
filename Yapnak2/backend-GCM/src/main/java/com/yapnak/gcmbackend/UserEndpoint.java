@@ -675,7 +675,7 @@ public class UserEndpoint {
                         offer.setLatitude(rs.getDouble("clientY"));
                         offer.setFoodStyle(rs.getString("clientFoodStyle"));
                         offer.setClientPhoto(rs.getString("clientPhotoUrl"));
-                        offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
+//                        offer.setDistance(distance(longitude, latitude, rs.getDouble("clientX"), rs.getDouble("clientY")));
                         //Check if the offer is active on that day;
                         days = (JSONArray) parse.parse(rs.getString("offerDays"));
                         if (days.get(dayOfWeek) == true) {
