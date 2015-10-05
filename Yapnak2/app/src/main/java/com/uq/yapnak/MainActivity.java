@@ -69,6 +69,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+import com.parse.ParseInstallation;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
@@ -306,7 +307,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         details.setPassword(name.getStringExtra("password"));
         details.setPhoneNum(name.getStringExtra("phone"));
         details.setOn(name.getBooleanExtra("on", false));
-
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("userId", name.getStringExtra("userID"));
+        installation.saveInBackground();
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
         // Log.d("main-id",ID);

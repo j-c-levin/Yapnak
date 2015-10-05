@@ -279,7 +279,7 @@ public class Splash extends Activity {//implements GoogleApiClient.ConnectionCal
             }
         }
     }
-    private class CheckLogin extends AsyncTask<String,Void,UserDetailsEntity>{
+    private class CheckLogin extends AsyncTask<String,Void,UserDetailsEntity> {
 
         private boolean hasExecuted;
 

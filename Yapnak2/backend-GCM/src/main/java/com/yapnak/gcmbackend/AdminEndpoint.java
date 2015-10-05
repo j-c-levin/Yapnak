@@ -5,6 +5,11 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.InternalServerErrorException;
 import com.google.api.server.spi.response.UnauthorizedException;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ImagesServiceFailureException;
+import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.appengine.api.utils.SystemProperty;
 
 import java.math.BigInteger;
@@ -468,5 +473,67 @@ public class AdminEndpoint {
         } finally {
             return response;
         }
+    }
+
+    @ApiMethod(
+            name = "replaceClientImages",
+            path = "replaceClientImages",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public void replaceClientImages() {
+        Connection connection;
+        try {
+            if (SystemProperty.environment.value() ==
+                    SystemProperty.Environment.Value.Production) {
+                // Load the class that provides the new "jdbc:google:mysql://" prefix.
+                Class.forName("com.mysql.jdbc.GoogleDriver");
+                connection = DriverManager.getConnection("jdbc:google:mysql://yapnak-app:yapnak-main/yapnak_main?user=root");
+            } else {
+                // Local MySQL instance to use during development.
+                Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://173.194.230.210/yapnak_main", "client", "g7lFVLRzYdJoWXc3");
+            }
+            queryBlock:
+            try {
+                String query = "SELECT clientID, clientPhoto from client limit 1";
+                PreparedStatement statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery();
+                String url;
+                ImagesService services;
+                ServingUrlOptions serve;
+                while (rs.next()) {
+                    services = ImagesServiceFactory.getImagesService();
+                    serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(rs.getString("clientPhoto"))).secureUrl(true);
+                    try {
+                        url = services.getServingUrl(serve);
+                        url = url + "=s100";
+                        logger.info("New client photo url: " + url);
+                    } catch (IllegalArgumentException e) {
+                        url = "https://yapnak.com/images/yapnakmonsterthumb.png";
+                        e.printStackTrace();
+                    } catch (ImagesServiceFailureException e1) {
+                        url = "https://yapnak.com/images/yapnakmonsterthumb.png";
+                        e1.printStackTrace();
+                    }
+                    query = "UPDATE client SET clientPhotoUrl = ? WHERE clientId = ?";
+                    statement = connection.prepareStatement(query);
+                    statement.setString(1, url);
+                    statement.setInt(2, rs.getInt("clientID"));
+                    int success = statement.executeUpdate();
+                    if (success == -1 ){
+                        //What does it mean?
+                        logger.warning("error details");
+                        break queryBlock;
+                    }
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+        }
+
     }
 }

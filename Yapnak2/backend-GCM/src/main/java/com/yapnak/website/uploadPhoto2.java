@@ -98,16 +98,16 @@ public class uploadPhoto2 extends HttpServlet {
                         logo = blobKeys.get(0).getKeyString();
                     }
                     ImagesService services = ImagesServiceFactory.getImagesService();
-                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(logo));
+                    ServingUrlOptions serve = ServingUrlOptions.Builder.withBlobKey(new BlobKey(logo)).secureUrl(true);
                     try {
                         url = services.getServingUrl(serve);
                         url = url + "=s100";
                         logger.info("New client photo url: " + url);
                     } catch (IllegalArgumentException e) {
-                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
+                        url = "https://yapnak.com/images/yapnakmonsterthumb.png";
                         e.printStackTrace();
                     } catch (ImagesServiceFailureException e1) {
-                        url = "http://yapnak.com/images/yapnakmonsterthumb.png";
+                        url = "https://yapnak.com/images/yapnakmonsterthumb.png";
                         e1.printStackTrace();
                     }
                     sql = "UPDATE client SET clientPhoto = ?, clientPhotoUrl = ? WHERE email = ?";
