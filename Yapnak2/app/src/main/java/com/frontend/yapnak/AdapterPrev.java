@@ -3,46 +3,30 @@ package com.frontend.yapnak;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Shader;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.uq.yapnak.R;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -147,6 +131,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
                     .placeholder(R.drawable.manualicon)
                     .load(deal.getFetchImageURL());
              */
+             Log.d("debug", "URL: " + deal.getFetchImageURL());
              new DownloadImage(restaurantLogo).execute(deal.getFetchImageURL());
              //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
              //Load more images after authentication

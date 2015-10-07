@@ -104,7 +104,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private static final int NOTIFICATION_ID = 0;
 
     //GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,ResultCallback<People.LoadPeopleResult>
-   // private GoogleApiClient mGoogleApiClient;
+    // private GoogleApiClient mGoogleApiClient;
     public static final int FRAGMENT_RESULT = 1001;
     private Parcelable state;
     private SQLEntity sql;
@@ -114,14 +114,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     RecyclerView recyclerView;
     private static String USER_NAME;
     private static String PASS;
-    private final int RESULT= 1;
+    private final int RESULT = 1;
     private final int SEARCH_RESULT = 123;
     private static String TAG_ABOUT = "About";
     private static String TAG_SETTINGS = "Settings";
     private static String TAG_REWARD = "Rewards";
-    private static String TAG_FEEDBACK ="Feddback";
+    private static String TAG_FEEDBACK = "Feddback";
     private static String TAG_GIFT = "Gifts";
-    private static String TAG_PROFILE ="Profile";
+    private static String TAG_PROFILE = "Profile";
     private android.widget.RelativeLayout.LayoutParams layoutParams;
     private static final String ACTION_BUTTON_TAG = "ActionButton";
     private Button cancelButton;
@@ -148,8 +148,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ItemPrev itemInfo;
     private PromoItem promoItem;
     private FloatingActionButton actionButton;
-    private ListView deals,promoList;
-    private Intent temp,name;
+    private ListView deals, promoList;
+    private Intent temp, name;
 
     private String firstName;
     private String lastName;
@@ -158,7 +158,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private RelativeLayout extendIcon;
     private RelativeLayout extendText;
     private RelativeLayout extendHeight;
-    private  String initials;
+    private String initials;
     private String personName;
     private SQLList clientList;
     private String ID;
@@ -166,16 +166,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private ContactDetails details;
 
 
-    public String getID(){
+    public String getID() {
         return this.ID;
     }
-    public void setID(String id){
+
+    public void setID(String id) {
         this.ID = id;
     }
-    public void setList(OfferListEntity list){
-        this.list= list;
+
+    public void setList(OfferListEntity list) {
+        this.list = list;
     }
-    public OfferListEntity getList(){
+
+    public OfferListEntity getList() {
         return list;
     }
 
@@ -187,17 +190,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         this.restaurantName = restaurantName;
     }
 
-    private static class SavedList implements Parcelable{
+    private static class SavedList implements Parcelable {
 
         private OfferListEntity oList;
 
-        public SavedList(OfferListEntity list){
+        public SavedList(OfferListEntity list) {
             this.setList(oList);
         }
 
         protected SavedList(Parcel in) {
-           ClassLoader cl = ClassLoader.getSystemClassLoader();
-           in.readValue(cl);
+            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            in.readValue(cl);
         }
 
         public static final Creator<SavedList> CREATOR = new Creator<SavedList>() {
@@ -236,7 +239,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("saved",new SavedList(getList()));
+        outState.putParcelable("saved", new SavedList(getList()));
         super.onSaveInstanceState(outState);
 
 
@@ -245,12 +248,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
-       SavedList list= savedInstanceState.getParcelable("saved");
+        SavedList list = savedInstanceState.getParcelable("saved");
 
 
-        SQLConnectAsyncTask.restore=true;
+        SQLConnectAsyncTask.restore = true;
         this.setList(list.getList());
-        new SQLConnectAsyncTask(getApplicationContext(),locationCheck,null,this).execute();
+        new SQLConnectAsyncTask(getApplicationContext(), locationCheck, null, this).execute();
 
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -275,10 +278,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 //        progress =new ProgressDialog(getApplicationContext());
 
-        if(!isTaskRoot()
-           && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
-           && getIntent().getAction()!=null
-           && getIntent().getAction().equals(Intent.ACTION_MAIN)){
+        if (!isTaskRoot()
+                && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
+                && getIntent().getAction() != null
+                && getIntent().getAction().equals(Intent.ACTION_MAIN)) {
 
             finish();
             return;
@@ -293,14 +296,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         locationCheck = getLocation();
         //if(locationCheck!=null) {
 
-             SQLConnectAsyncTask.useDialog = true;
-             new SQLConnectAsyncTask(getApplicationContext(),locationCheck,null,this).execute();
-             if (SQLConnectAsyncTask.getListLoaded()) {
-                 //dealList.notifyDataSetChanged();
-             }
+        SQLConnectAsyncTask.useDialog = true;
+        new SQLConnectAsyncTask(getApplicationContext(), locationCheck, null, this).execute();
+        if (SQLConnectAsyncTask.getListLoaded()) {
+            //dealList.notifyDataSetChanged();
+        }
 
         this.name = getIntent();
-        ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
+        ID = (name.getStringExtra("userID") == null) ? name.getStringExtra("initials") : name.getStringExtra("userID");
         details = new ContactDetails();
         details.setUserID(name.getStringExtra("userID"));
         details.setEmailAd(name.getStringExtra("email"));
@@ -310,6 +313,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put("userId", name.getStringExtra("userID"));
         installation.saveInBackground();
+        detailsAsyncTask details = new detailsAsyncTask();
+        details.execute(name.getStringExtra("userID"));
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
         // Log.d("main-id",ID);
@@ -329,27 +334,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
     */
 
-    private final String LOG_INFO="log";
+    private final String LOG_INFO = "log";
 
 
-    public void setUserName(Menu menu){
+    public void setUserName(Menu menu) {
         //MenuItem item = menu.findItem(R.id.userNameToolBar);
 
 
-
-
-            //personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
-            // String[] names = personName.split("@");
-            //item.setTitle(names[0]);
-            //item.setTitle(ID);
+        //personName = (name.getStringExtra("accName").equalsIgnoreCase("")) ? name.getStringExtra("initials") : name.getStringExtra("accName");
+        // String[] names = personName.split("@");
+        //item.setTitle(names[0]);
+        //item.setTitle(ID);
 
 
     }
 
-    public void tutorial(){
+    public void tutorial() {
 
         //FragmentTransaction transaction = getFragmentManager().beginTransaction();
-       // transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
+        // transaction.add(R.id.fragmentContainer,new TutorialFragOne(this)).setCustomAnimations(0,0).commit();
 
     }
 
@@ -419,8 +422,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onPause() {
 
-       // if (mGoogleApiClient.isConnected()) {
-         //   mGoogleApiClient.disconnect();
+        // if (mGoogleApiClient.isConnected()) {
+        //   mGoogleApiClient.disconnect();
         //}
 
         super.onPause();
@@ -428,11 +431,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private MainActivity activity = this;
     private String queryMain;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_with_search, menu);
-            //setUserName(menu);
+        //setUserName(menu);
 
         SearchManager sManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         final SearchView view = (SearchView) menu.findItem(R.id.search).getActionView();
@@ -462,14 +466,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return true;
     }
 
-    private Location getLoc(String address){
+    private Location getLoc(String address) {
         String trim = address.trim();
-        String finalAddress = trim.replaceAll(",","");
+        String finalAddress = trim.replaceAll(",", "");
         String newAddress = finalAddress.replaceAll("\\s+", "");
 
-        Log.d("address",newAddress);
+        Log.d("address", newAddress);
 
-        String url = "https://maps.google.com/maps/api/geocode/json?address="+newAddress+"&sensor=false";
+        String url = "https://maps.google.com/maps/api/geocode/json?address=" + newAddress + "&sensor=false";
 
 
         HttpGet get = new HttpGet(url);
@@ -477,7 +481,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         HttpResponse response;
         Location loc = new Location("");
         StringBuilder builder = new StringBuilder();
-        try{
+        try {
 
             response = client.execute(get);
             HttpEntity entity = response.getEntity();
@@ -485,45 +489,45 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
             int data;
-            while((data=stream.read())!=-1){
-                builder.append((char)data);
+            while ((data = stream.read()) != -1) {
+                builder.append((char) data);
             }
             stream.close();
 
-        }catch (ClientProtocolException cpe){
+        } catch (ClientProtocolException cpe) {
 
-        }catch (IOException io){
+        } catch (IOException io) {
 
         }
 
 
-        double lat=0.0;
-        double lng=0.0;
+        double lat = 0.0;
+        double lng = 0.0;
         JSONObject object;
 
         try {
             object = new JSONObject(builder.toString());
             lat = ((JSONArray) object.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-            lng = ((JSONArray)object.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+            lng = ((JSONArray) object.get("results")).getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
 
             loc.setLatitude(lat);
             loc.setLongitude(lng);
 
             return loc;
 
-        }catch(JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private class SearchLocation extends AsyncTask<String,String,Location>{
+    private class SearchLocation extends AsyncTask<String, String, Location> {
         private String loc;
         private boolean isRestaurant;
 
         @Override
         protected Location doInBackground(String... params) {
-             loc = (params[0]==null)?"":params[0];
+            loc = (params[0] == null) ? "" : params[0];
             Location location = getLoc(loc);
             return location;
         }
@@ -533,59 +537,59 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             super.onPostExecute(location);
 
 
-            if(!hasRestaurant){
-                if(location!=null) {
+            if (!hasRestaurant) {
+                if (location != null) {
                     setLocation(location);
                     SQLConnectAsyncTask.useDialog = true;
-                    new SQLConnectAsyncTask(getApplicationContext(),location,null, activity).execute();
-                }else{
+                    new SQLConnectAsyncTask(getApplicationContext(), location, null, activity).execute();
+                } else {
                     //SQLConnectAsyncTask.useDialog = true;
                     //new SQLConnectAsyncTask(getApplicationContext(), locationCheck, activity).execute();
-                    Toast.makeText(getApplicationContext(),"Searched Location is Unavailable",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Searched Location is Unavailable", Toast.LENGTH_SHORT).show();
                 }
-            }else{
+            } else {
                 setRestaurantName(loc);
 
-                if(offers!=null) {
-                    SQLConnectAsyncTask.useDialog=true;
-                    new SQLConnectAsyncTask(getApplicationContext(),null,offers,activity).execute();
-                }else{
-                    Toast.makeText(getApplicationContext(),"Searched Restaurant is Unavailable",Toast.LENGTH_SHORT).show();
+                if (offers != null) {
+                    SQLConnectAsyncTask.useDialog = true;
+                    new SQLConnectAsyncTask(getApplicationContext(), null, offers, activity).execute();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Searched Restaurant is Unavailable", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
 
 
-    private boolean hasRestaurant=false;
+    private boolean hasRestaurant = false;
     private OfferListEntity offers = new OfferListEntity();
     private String entityStatus;
 
 
-    private class CheckRestaurantDeals extends AsyncTask<String,Void,Void>{
+    private class CheckRestaurantDeals extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
 
-            UserEndpointApi builder = new UserEndpointApi(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null);
+            UserEndpointApi builder = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
 
-            try{
+            try {
                 OfferListEntity entity = builder.searchClients(params[0]).execute();
 
-                if(Boolean.parseBoolean(entity.getStatus())
-                        && entity.getOfferList()!=null ){
+                if (Boolean.parseBoolean(entity.getStatus())
+                        && entity.getOfferList() != null) {
                     offers = entity;
-                    hasRestaurant=true;
-                }else{
+                    hasRestaurant = true;
+                } else {
                     offers = null;
-                    hasRestaurant=false;
+                    hasRestaurant = false;
 
                 }
 
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
 
-            }catch(NullPointerException ex){
-                offers= null;
+            } catch (NullPointerException ex) {
+                offers = null;
                 hasRestaurant = false;
                 ex.printStackTrace();
             }
@@ -598,21 +602,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         }
     }
-    private boolean connection(){
+
+    private boolean connection() {
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        boolean lte = false;
+        if (manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null) {
+            lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        } else {
+            Log.d("debug", "no mobile internet");
+        }
+
         return (wifi||lte);
     }
 
-    private boolean gpsCheck(){
-        LocationManager loc = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+    private boolean gpsCheck() {
+        LocationManager loc = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         boolean network = loc.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         boolean gps = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        return gps||network;
+        return gps || network;
     }
 
-    private String hashing(String hash){
+    private String hashing(String hash) {
         StringBuffer buffer = new StringBuffer();
 
         try {
@@ -630,7 +642,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
             return buffer.toString();
 
-        }catch(NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return buffer.toString();
         }
@@ -660,13 +672,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 */
 
 
-                keep.edit().putBoolean("on",false).apply();
-                Intent intent = new Intent(MainActivity.this,Login.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
+            keep.edit().putBoolean("on", false).apply();
+            Intent intent = new Intent(MainActivity.this, Login.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
 
         }
         /*if(id==R.id.userNameToolBar){
@@ -688,10 +700,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             AlertDialog generator = new QRGenerator(this,this,insert);
             generator.show();
         }*/
-        if(id==R.id.search){
+        if (id == R.id.search) {
 
             Intent i = new Intent(this, SearchMain.class);
-            startActivityForResult(i,SEARCH_RESULT);
+            startActivityForResult(i, SEARCH_RESULT);
 
         }
 
@@ -749,7 +761,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
          */
 
 
-
     }
 
     public void signedOut() {
@@ -765,18 +776,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     //view the main activitiy - clean up code and make it simpler
 
 
-    private void showMain(){
+    private void showMain() {
 
 
         //load(sql);
-        load();
+        setContentView(R.layout.activity_main1);
+        //load();
         // navBarToggle();
         //navigationBarContent();
         getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
 
     }
 
-    private AlertDialog neg,pos;
+    private AlertDialog neg, pos;
 
     @Override
     public void onClick(View v) {
@@ -784,7 +796,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             aboutYapnak();
             Toast.makeText(this, "About", Toast.LENGTH_SHORT).show();
         } else if (v.getTag().equals(TAG_FEEDBACK)) {
-            if(connection() &&(deals.getCount()>1||hasInfo)) {
+            if (connection() && (deals.getCount() > 1 || hasInfo)) {
                 final FeedbackDialog feedback = new FeedbackDialog(this, this, ID);
                 feedback.show();
             }
@@ -845,27 +857,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //userItems();
         } else if (v.getTag().equals(TAG_GIFT)) {
             //userItems();
-        }else if(v.getTag().equals(TAG_PROFILE)){
+        } else if (v.getTag().equals(TAG_PROFILE)) {
             //SHOW PROFILE
             profileDialog(v);
-        }else if(v.getTag().equals(TAG_SETTINGS)){
-            SettingsDialog dialog = new SettingsDialog(this,details,remember,keep);
+        } else if (v.getTag().equals(TAG_SETTINGS)) {
+            SettingsDialog dialog = new SettingsDialog(this, details, remember, keep);
             dialog.show();
         }
     }
 
 
-
     private Button date;
     private RadioGroup gender;
     private AlertDialog posProf;
-    private void profileDialog(View v){
+
+    private void profileDialog(View v) {
 
         ///AlertDialog.Builder userItems = new ProfileDialog(this,this);
 
-        ProfileDialog userItems = new ProfileDialog(this,this,ID);
+        ProfileDialog userItems = new ProfileDialog(this, this, ID);
 
-       //userItems.setID(ID);
+        //userItems.setID(ID);
 
        /* posProf=userItems.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
             @Override
@@ -1004,14 +1016,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }*/
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_CONTACT){
+        if (requestCode == PICK_CONTACT) {
 
-            if(resultCode==RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 //String phoneNum = data.getStringExtra("phone_num");
                 //contactButton.setText(phoneNum);
                 Uri contactDetails = data.getData();
@@ -1030,31 +1041,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     }
                 }
                 c.close();*/
-            }else{
+            } else {
                 Toast.makeText(getApplicationContext(), "There Has Been An Error\nDoes the Selected Contact Have A Valid\nPhone Number/E-Mail Address?", Toast.LENGTH_SHORT).show();
             }
 
-        }else if(requestCode == FRAGMENT_RESULT){
+        } else if (requestCode == FRAGMENT_RESULT) {
 
-              //  FragmentTransaction t = getFragmentManager().beginTransaction();
-               // t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
-                //t.commit();
+            //  FragmentTransaction t = getFragmentManager().beginTransaction();
+            // t.replace(R.id.fragmentContainer, new TutorialFragThree(this));
+            //t.commit();
 
         }
-        if(isTutorialOn()){
-            if(requestCode == 111){
-                int value = this.tutorial.getInt("tutorial2",-1);
-                if(value==0){
-                    animateButton(tButton1,textButton1,false);
-                    animateButton(tButton2,textButton2,true);
+        if (isTutorialOn()) {
+            if (requestCode == 111) {
+                int value = this.tutorial.getInt("tutorial2", -1);
+                if (value == 0) {
+                    animateButton(tButton1, textButton1, false);
+                    animateButton(tButton2, textButton2, true);
                     this.tutorial.edit().putInt("tutorial2", 1).apply();
                 }
 
-            } if(requestCode == PICK_CONTACT){
-                int value = this.tutorial.getInt("tutorial2",-1);
-                if(value==1){
-                    animateButton(tButton2,textButton2,false);
-                    animateButton(tButton3,textButton3,true);
+            }
+            if (requestCode == PICK_CONTACT) {
+                int value = this.tutorial.getInt("tutorial2", -1);
+                if (value == 1) {
+                    animateButton(tButton2, textButton2, false);
+                    animateButton(tButton3, textButton3, true);
                     this.tutorial.edit().putInt("tutorial2", 2).apply();
                 }
 
@@ -1063,20 +1075,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private class RecommendUser extends AsyncTask<String,Void,RecommendEntity>{
+    private class RecommendUser extends AsyncTask<String, Void, RecommendEntity> {
         private boolean isSuccess;
         private String contactName;
         private boolean validContact;
 
-        protected RecommendUser(String contactName){
-            this.contactName =contactName;
+        protected RecommendUser(String contactName) {
+            this.contactName = contactName;
         }
 
         @Override
         protected RecommendEntity doInBackground(String... params) {
 
 
-            if(connection()) {
+            if (connection()) {
                 UserEndpointApi user = new UserEndpointApi(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null);
                 try {
                     UserDetailsEntity recommendee = null;
@@ -1086,15 +1098,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     } else if (params[1] != null) {
                         recommendee = user.getUserDetails().setEmail(params[1]).execute();
                         validContact = true;
-                    } else if(params[1]!=null && params[0]!=null){
+                    } else if (params[1] != null && params[0] != null) {
                         recommendee = user.getUserDetails().setEmail(params[1]).setMobNo(params[0]).execute();
                         validContact = true;
-                    }else{
+                    } else {
                         recommendee = null;
                         validContact = false;
                     }
-                    ;RecommendEntity recommender = null;
-                    if(recommendee!=null) {
+                    ;
+                    RecommendEntity recommender = null;
+                    if (recommendee != null) {
                         recommender = user.recommend((int) getClientID(), ID).setOtherUserId(recommendee.getUserId()).execute();
                     }
                     return recommender;
@@ -1103,7 +1116,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     e.printStackTrace();
                     return null;
                 }
-            }else{
+            } else {
                 return null;
             }
 
@@ -1121,28 +1134,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             /*if(progress.isShowing()){
                 progress.cancel();
             }*/
-            try{
-                if(Boolean.parseBoolean(s.getStatus())){
-                    Toast.makeText(getApplicationContext(),"You Have Successfully Recommended This Deal To "+ contactName, Toast.LENGTH_SHORT).show();
-                }else{
-                    if(validContact) {
+            try {
+                if (Boolean.parseBoolean(s.getStatus())) {
+                    Toast.makeText(getApplicationContext(), "You Have Successfully Recommended This Deal To " + contactName, Toast.LENGTH_SHORT).show();
+                } else {
+                    if (validContact) {
                         Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if User is a Yapnak Member", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended\nPlease Check if the Selected Contact is Valid", Toast.LENGTH_SHORT).show();
 
                     }
                 }
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 Toast.makeText(getApplicationContext(), "Deal Was NOT Recommended Due to an Error\nPlease Try Again", Toast.LENGTH_SHORT).show();
             }
 
         }
     }
 
-    private boolean emailExist,phoneExist;
-    private class ContactInfo extends AsyncTask<Uri,Void,Void>{
+    private boolean emailExist, phoneExist;
 
-        private String phone,email,id,contactName;
+    private class ContactInfo extends AsyncTask<Uri, Void, Void> {
+
+        private String phone, email, id, contactName;
 
         @Override
         protected void onPreExecute() {
@@ -1162,32 +1176,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected Void doInBackground(Uri... params) {
 
             Uri contactDetails = params[0];
-            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID},null, null, null);
-            if(c.moveToFirst()){
+            Cursor c = getContentResolver().query(contactDetails, new String[]{ContactsContract.Contacts._ID}, null, null, null);
+            if (c.moveToFirst()) {
 
-                 id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+                id = c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
             }
 
-            Cursor contact = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null,ContactsContract.Contacts._ID + "= ?",new String[]{id},null);
-            if(contact.moveToFirst()){
-                String displayName = (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)? ContactsContract.Contacts.DISPLAY_NAME: ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
+            Cursor contact = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts._ID + "= ?", new String[]{id}, null);
+            if (contact.moveToFirst()) {
+                String displayName = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) ? ContactsContract.Contacts.DISPLAY_NAME : ContactsContract.Contacts.DISPLAY_NAME_PRIMARY;
                 contactName = contact.getString(contact.getColumnIndex(displayName));
-            }else{
+            } else {
                 phoneExist = false;
             }
 
-            Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?" ,new String[]{id},null);
-            if(phoneNum.moveToFirst()){
+            Cursor phoneNum = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "= ?", new String[]{id}, null);
+            if (phoneNum.moveToFirst()) {
                 phone = phoneNum.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            }else{
-                phoneExist =false;
+            } else {
+                phoneExist = false;
             }
 
 
-            Cursor emailAd = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= ?" ,new String[]{id},null);
-            if(emailAd.moveToFirst()){
+            Cursor emailAd = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "= ?", new String[]{id}, null);
+            if (emailAd.moveToFirst()) {
                 email = emailAd.getString(phoneNum.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-            }else{
+            } else {
                 emailExist = false;
             }
 
@@ -1199,21 +1213,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
 
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            if(connection()) {
-                if(emailExist && phoneExist){
+            if (connection()) {
+                if (emailExist && phoneExist) {
                     new RecommendUser(contactName).execute(phone, email);
-                }else if(!emailExist){
+                } else if (!emailExist) {
                     new RecommendUser(contactName).execute(phone, null);
-                }else{
-                    new RecommendUser(contactName).execute(null,email);
+                } else {
+                    new RecommendUser(contactName).execute(null, email);
                 }
-            }else{
-                Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend " , Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "You Must Have Internet Access to Recommend a Friend ", Toast.LENGTH_LONG).show();
             }
 
         }
@@ -1223,10 +1236,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
-        tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+        tutorial = getSharedPreferences("tutorial", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = tutorial.edit();
 
-        edit.putInt("tutorial3",4);
+        edit.putInt("tutorial3", 4);
         edit.putInt("count", 1);
         edit.apply();
 
@@ -1235,10 +1248,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+        tutorial = getSharedPreferences("tutorial", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = tutorial.edit();
-        edit.putInt("tutorial3",4);
-        edit.putInt("count",1);
+        edit.putInt("tutorial3", 4);
+        edit.putInt("count", 1);
         edit.apply();
     }
 
@@ -1247,8 +1260,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private Button contactButton;
     private String clientID;
 
-    private final int CONTACTPICK_RESULT= 123;
+    private final int CONTACTPICK_RESULT = 123;
     AlertDialog posRec;
+
     public void recommendMealButton(View v) {
 
        /* if (connection() &&(deals.getCount()>1||hasInfo) ){
@@ -1256,7 +1270,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             //int value = this.tutorial.getInt("tutorial2",-1);
             startActivityForResult(intent, PICK_CONTACT);
         }*/
-        Toast.makeText(getApplicationContext(),"Coming Soon",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
 
         /*contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1368,14 +1382,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         startActivityForResult(intent, PICK_CONTACT );
                         */
 
-              //      }
-            //    });
+        //      }
+        //    });
 
-          //  }
+        //  }
         //});
-
-
-
 
 
         //list = (ListView) findViewById(R.id.contactList);
@@ -1435,42 +1446,40 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         */
 
 
-
-
     }
 
-    public void setDirections(View v){
-            double longitude = 0;
-            double latitude = 0;
-            if (tracker.canGetLoc()) {
+    public void setDirections(View v) {
+        double longitude = 0;
+        double latitude = 0;
+        if (tracker.canGetLoc()) {
 
-                longitude = tracker.getLongitude();
-                latitude = tracker.getLatitude();
-            }
+            longitude = tracker.getLongitude();
+            latitude = tracker.getLatitude();
+        }
 
-            Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
-            Intent maps = new Intent(this, MapActivity.class);
-            maps.putExtra("init", initials);
-            maps.putExtra("accName", personName);
-            final int result = 1;
+        Button takeMeThere = (Button) v.findViewById(R.id.takeMeThere);
+        Intent maps = new Intent(this, MapActivity.class);
+        maps.putExtra("init", initials);
+        maps.putExtra("accName", personName);
+        final int result = 1;
 
-            ItemPrev itemAtSelectedPosition = getItemPrev();
+        ItemPrev itemAtSelectedPosition = getItemPrev();
 
-            maps.putExtra("userLongitude", longitude);
-            maps.putExtra("userLatitude", latitude);
+        maps.putExtra("userLongitude", longitude);
+        maps.putExtra("userLatitude", latitude);
 
-            if (itemAtSelectedPosition != null) {
-                maps.putExtra("resLongitude", itemAtSelectedPosition.getLongitude());
-                maps.putExtra("resLatitude", itemAtSelectedPosition.getLatitude());
-            }
+        if (itemAtSelectedPosition != null) {
+            maps.putExtra("resLongitude", itemAtSelectedPosition.getLongitude());
+            maps.putExtra("resLatitude", itemAtSelectedPosition.getLatitude());
+        }
 
-        startActivityForResult(maps,111);
+        startActivityForResult(maps, 111);
 
     }
 
     public void takeMeThereButton(View v) {
 
-        if(connection() &&(deals.getCount()>1||hasInfo)) { //&& gpsCheck()
+        if (connection() && (deals.getCount() > 1 || hasInfo)) { //&& gpsCheck()
             tracker = new GPSTrack(MainActivity.this);
 
 
@@ -1499,43 +1508,45 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private View takeMeThere;
 
-    private void setTakeMeThereView(View v){
-        takeMeThere= v;
+    private void setTakeMeThereView(View v) {
+        takeMeThere = v;
 
     }
-    private View getTakeMeThereView(){
+
+    private View getTakeMeThereView() {
         return takeMeThere;
 
     }
-    private class GetDirections extends AsyncTask<GPSTrack,String,String>{
+
+    private class GetDirections extends AsyncTask<GPSTrack, String, String> {
         private LatLng resPosition;
         private LatLng userPosition;
 
         @Override
         protected String doInBackground(GPSTrack... params) {
-            try{
+            try {
                 GPSTrack tracker = params[0];
-                if(tracker.canGetLoc()){
-                    userPosition = new LatLng(tracker.getLatitude(),tracker.getLongitude());
+                if (tracker.canGetLoc()) {
+                    userPosition = new LatLng(tracker.getLatitude(), tracker.getLongitude());
 
-                }else{
+                } else {
 
                 }
 
-                if(getItemPrev()!=null ){
+                if (getItemPrev() != null) {
                     try {
                         ItemPrev temp = getItemPrev();
                         resPosition = new LatLng(temp.getLatitude(), temp.getLongitude());
 
-                    }catch(NullPointerException e){
+                    } catch (NullPointerException e) {
 
-                        Toast.makeText(getApplicationContext(),"There was an error in retrieving the selected restaurant/deal's location - Please enter location manually",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "There was an error in retrieving the selected restaurant/deal's location - Please enter location manually", Toast.LENGTH_LONG).show();
                         setDirections(getTakeMeThereView());
                     }
                 }
-            }catch(NullPointerException e){
+            } catch (NullPointerException e) {
 
-            }catch(ArrayIndexOutOfBoundsException ex){
+            } catch (ArrayIndexOutOfBoundsException ex) {
 
             }
             return null;
@@ -1556,11 +1567,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
                 Intent mapIntent = new Intent((Intent.ACTION_VIEW), Uri.parse(uriString));
 
-                startActivityForResult(mapIntent,111);
+                startActivityForResult(mapIntent, 111);
 
-            }catch(NullPointerException e){
+            } catch (NullPointerException e) {
 
-                Toast.makeText(getApplicationContext(),"There was an error in retrieving the selected restaurant/deal's location - Please enter location manually",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "There was an error in retrieving the selected restaurant/deal's location - Please enter location manually", Toast.LENGTH_LONG).show();
                 setDirections(getTakeMeThereView());
 
             }
@@ -1569,28 +1580,28 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     //item2 OnClick method for getDealButton
 
-    public void getDeal(View v){
-        if(connection()&&(deals.getCount()>1||hasInfo)) {
+    public void getDeal(View v) {
+        if (connection() && (deals.getCount() > 1 || hasInfo)) {
             Intent userID = getIntent();
             String userid = userID.getStringExtra("userID");
             Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MINUTE,10);
+            cal.add(Calendar.MINUTE, 10);
             Date d = cal.getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMDDhhmmss", Locale.UK);
             String date = sdf.format(cal.getTime());
 
-            String toHash = userid+d.getTime()+"YAPNAKRULES";
+            String toHash = userid + d.getTime() + "YAPNAKRULES";
 
 
             JSONObject object = new JSONObject();
             try {
-                object.put("id",userid+"/"+String.valueOf(d.getTime())+"/"+toHash);
-                object.put("datetime","");
-                object.put("hash","");
-                object.put("offer",String.valueOf(getOfferID())+"/"+String.valueOf(getClientID()));
-                object.put("client","");
-                object.put("isReward","false");
-            }catch (JSONException e){
+                object.put("id", userid + "/" + String.valueOf(d.getTime()) + "/" + toHash);
+                object.put("datetime", "");
+                object.put("hash", "");
+                object.put("offer", String.valueOf(getOfferID()) + "/" + String.valueOf(getClientID()));
+                object.put("client", "");
+                object.put("isReward", "false");
+            } catch (JSONException e) {
 
             }
             /*String insert = "{ " +
@@ -1603,15 +1614,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             String insert = object.toString();
 
 
-
             AlertDialog generator = new QRGenerator(this, this, insert);
             generator.setTitle("GET DEAL");
             int value = 0;
-            if(isTutorialOn()) {
+            if (isTutorialOn()) {
                 value = this.tutorial.getInt("tutorial2", -1);
             }
-            if(value==3){
-                animateButton(tButton4,textButton4,false);
+            if (value == 3) {
+                animateButton(tButton4, textButton4, false);
                 Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -1631,7 +1641,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 buttonContainer.setVisibility(View.GONE);
                 textContainer.setVisibility(View.GONE);
 
-                this.tutorial.edit().putInt("tutorial2",4).apply();
+                this.tutorial.edit().putInt("tutorial2", 4).apply();
             }
             generator.show();
 
@@ -1641,22 +1651,22 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void feedbackButton(View v) {
 
-        if(connection() && (deals.getCount()>1||hasInfo)) {
-            RatingBuilder ratings = new RatingBuilder(this, this,getItemPrev(),ID);
+        if (connection() && (deals.getCount() > 1 || hasInfo)) {
+            RatingBuilder ratings = new RatingBuilder(this, this, getItemPrev(), ID);
 
-            int value =0;
-            if(isTutorialOn()){
-                value= this.tutorial.getInt("tutorial2",-1);
+            int value = 0;
+            if (isTutorialOn()) {
+                value = this.tutorial.getInt("tutorial2", -1);
             }
 
-            if(value==2){
-                animateButton(tButton3,textButton3,false);
-                animateButton(tButton4,textButton4,true);
-                this.tutorial.edit().putInt("tutorial2",3).apply();
+            if (value == 2) {
+                animateButton(tButton3, textButton3, false);
+                animateButton(tButton4, textButton4, true);
+                this.tutorial.edit().putInt("tutorial2", 3).apply();
             }
             ratings.show();
-        }else{
-            Toast.makeText(getApplicationContext(),"Please Check If Your Internet is On",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "Please Check If Your Internet is On", Toast.LENGTH_LONG).show();
         }
         /*
         ratings.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -1804,11 +1814,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         navBarItems.setOnItemClickListener(new DrawerItemListener());
         */
     }
+
     //commented out because we have code to actually grab information from the database.
     public void load() {
         setContentView(R.layout.activity_main1);
         dealList = new AdapterPrev(this, R.id.item2, dealList());
-        ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
+        ListAdapter promo = new PromotionAdapter(this, R.id.promo_item, gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
         scaleListY = promoList.getY();
@@ -1824,13 +1835,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-
     private AdapterPrev dealList;
-    public void load(OfferListEntity sql) {
-        setContentView(R.layout.activity_main1);
-        dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
 
-        ListAdapter promo = new PromotionAdapter(this,R.id.promo_item,gift());
+    public void load(OfferListEntity sql) {
+//        setContentView(R.layout.activity_main1);
+        Log.d("debug", "beginning adapterPrev");
+        dealList = new AdapterPrev(this, R.id.item2, dealList(sql));
+        Log.d("debug", "post adapterPrev");
+        ListAdapter promo = new PromotionAdapter(this, R.id.promo_item, gift());
         promoList = (ListView) findViewById(R.id.listViewPromotions);
         promoList.setAdapter(promo);
 
@@ -1862,49 +1874,46 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         */
 
 
-
-
-
         deals.setDivider(null);
         deals.setBackgroundResource(R.drawable.customshape);
 
     }
 
-    private  ItemPrev itemTemp;
+    private ItemPrev itemTemp;
     private int currentPosition;
-    private  float scaleListY;
+    private float scaleListY;
 
     private SharedPreferences tutorial;
 
-    public boolean isTutorialOn(){
-        tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+    public boolean isTutorialOn() {
+        tutorial = getSharedPreferences("tutorial", Context.MODE_PRIVATE);
 
-        if (tutorial.getInt("count",-1)==1 && tutorial.getInt("tutorial2",-1)==4) {
+        if (tutorial.getInt("count", -1) == 1 && tutorial.getInt("tutorial2", -1) == 4) {
             return false;
         } else {
-            if(tutorial.getInt("tutorial2", -1)==-1){
+            if (tutorial.getInt("tutorial2", -1) == -1) {
                 SharedPreferences.Editor editor = tutorial.edit();
                 editor.putBoolean("firstTime", true);
                 editor.putInt("count", 0);
-                editor.putInt("tutorial2",0);
-                editor.putInt("tutorial3",0).apply();
-            }else{
+                editor.putInt("tutorial2", 0);
+                editor.putInt("tutorial3", 0).apply();
+            } else {
 
 
                 int count = tutorial.getInt("count", -1);
-                int tutorial2 = tutorial.getInt("tutorial2",-1);
+                int tutorial2 = tutorial.getInt("tutorial2", -1);
                 int tutorial3 = tutorial.getInt("tutorial3", -1);
 
                 SharedPreferences.Editor editor = tutorial.edit();
                 editor.putInt("count", count);
                 editor.putInt("tutorial2", tutorial2);
-                editor.putInt("tutorial3",tutorial3).apply();
+                editor.putInt("tutorial3", tutorial3).apply();
             }
             return true;
         }
     }
 
-    private class ScrollBackgroundTask extends AsyncTask<ListView,String,ListView>{
+    private class ScrollBackgroundTask extends AsyncTask<ListView, String, ListView> {
 
 
         @Override
@@ -1917,7 +1926,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             super.onPostExecute(listView);
         }
     }
-
 
 
     private SubActionButton buttonAbout;
@@ -1955,14 +1963,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         itemBuilder.setBackgroundDrawable(getResources().getDrawable(R.drawable.selector_file_green));
 
 
-
         int subActionSize = 0;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             subActionSize = 100;
-        }else{
-             subActionSize = 75;
+        } else {
+            subActionSize = 75;
         }
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(subActionSize,subActionSize);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(subActionSize, subActionSize);
         itemBuilder.setLayoutParams(layoutParams);
 
 
@@ -1985,20 +1992,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buttonProfile.setOnClickListener(this);
 
 
-
         FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this)
                 .addSubActionView(buttonAbout)
-                 .addSubActionView(buttonSettings)//.addSubActionView(buttonGift)
+                .addSubActionView(buttonSettings)//.addSubActionView(buttonGift)
                 .addSubActionView(buttonProfile)
                 .addSubActionView(buttonReward)
                 .attachTo(actionButton)
                 .build();
 
 
-
     }
 
-    private void showFloating(){
+    private void showFloating() {
         Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
 
             @Override
@@ -2014,14 +2019,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton,"alpha",0.0f,1.0f);
-                ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",0.0f,1.0f);
+                ObjectAnimator animator = ObjectAnimator.ofFloat(actionButton, "alpha", 0.0f, 1.0f);
+                ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout, "alpha", 0.0f, 1.0f);
                 //ObjectAnimator share = ObjectAnimator.ofFloat(buttonFeedback,"alpha",0.0f,1.0f);
-                ObjectAnimator settings = ObjectAnimator.ofFloat(buttonSettings,"alpha",0.0f,1.0f);
-                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward,"alpha",0.0f,1.0f);
+                ObjectAnimator settings = ObjectAnimator.ofFloat(buttonSettings, "alpha", 0.0f, 1.0f);
+                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward, "alpha", 0.0f, 1.0f);
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(animator,about,share,manual,gift);
-                s.playTogether(animator, about,settings, gift);
+                s.playTogether(animator, about, settings, gift);
                 s.setDuration(200).start();
 
             }
@@ -2038,7 +2043,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private Animator buttonAnimator(float start, float end){
+    private Animator buttonAnimator(float start, float end) {
 
         ValueAnimator animator = ValueAnimator.ofFloat(start, end);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -2059,7 +2064,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private void hideFloating(){
+    private void hideFloating() {
 
         Animator.AnimatorListener listener = new AnimatorListenerAdapter() {
 
@@ -2072,15 +2077,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void onAnimationEnd(Animator animation) {
                 //super.onAnimationEnd(animation);
 
-                ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton,"alpha",1.0f,0.0f);
-                ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout,"alpha",1.0f,0.0f);
-                ObjectAnimator settings = ObjectAnimator.ofFloat(buttonSettings,"alpha",1.0f,0.0f);
-                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward,"alpha",1.0f,0.0f);
-                ObjectAnimator profile = ObjectAnimator.ofFloat(buttonProfile,"alpha",1.0f,0.0f);
+                ObjectAnimator alpha = ObjectAnimator.ofFloat(actionButton, "alpha", 1.0f, 0.0f);
+                ObjectAnimator about = ObjectAnimator.ofFloat(buttonAbout, "alpha", 1.0f, 0.0f);
+                ObjectAnimator settings = ObjectAnimator.ofFloat(buttonSettings, "alpha", 1.0f, 0.0f);
+                ObjectAnimator gift = ObjectAnimator.ofFloat(buttonReward, "alpha", 1.0f, 0.0f);
+                ObjectAnimator profile = ObjectAnimator.ofFloat(buttonProfile, "alpha", 1.0f, 0.0f);
 
                 AnimatorSet s = new AnimatorSet();
                 //s.playTogether(alpha, about, share, manual, gift);
-                s.playTogether(alpha, about, gift,settings,profile);
+                s.playTogether(alpha, about, gift, settings, profile);
 
                 s.setDuration(200).start();
 
@@ -2096,19 +2101,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buttonProfile.setVisibility(View.GONE);
     }
 
-    private class ScrollListener implements ListView.OnScrollListener{
+    private class ScrollListener implements ListView.OnScrollListener {
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-            if(view.getId()==deals.getId()){
+            if (view.getId() == deals.getId()) {
 
                 final int firstItemPosition = deals.getFirstVisiblePosition();
 
                 View v = view.getChildAt(0);
-                float topValue = v==null ? 0 : v.getTop()-deals.getPaddingTop();
-                View bottom = view.getChildAt(view.getChildCount()-1);
-                float bottomValue = bottom==null? 0 : bottom.getBottom()-deals.getPaddingBottom();
+                float topValue = v == null ? 0 : v.getTop() - deals.getPaddingTop();
+                View bottom = view.getChildAt(view.getChildCount() - 1);
+                float bottomValue = bottom == null ? 0 : bottom.getBottom() - deals.getPaddingBottom();
 
             /*
                 if(firstItemPosition>currentPosition && (actionButton.getVisibility()!=View.GONE) && (scrollState==SCROLL_STATE_FLING) &&(scrollState != SCROLL_STATE_TOUCH_SCROLL)){
@@ -2147,7 +2152,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     //actionButton.setVisibility(View.VISIBLE);
                 }
                 */
-                if(deals.getAdapter().getCount()>=5) {
+                if (deals.getAdapter().getCount() >= 5) {
 
                     if (deals.getLastVisiblePosition() != deals.getAdapter().getCount() - 1 && !(deals.getChildAt(deals.getChildCount() - 1).getBottom() <= deals.getHeight())) {
                         new Handler().postDelayed(new Runnable() {
@@ -2179,7 +2184,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             }
                         }, 310);
                     }
-                }else{
+                } else {
                     actionButton.setAlpha(1.0f);
                     buttonAbout.setAlpha(1.0f);
                     buttonSettings.setAlpha(1.0f);
@@ -2198,6 +2203,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
         private boolean enabled;
+
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             /*
@@ -2217,7 +2223,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-    private ValueAnimator slideView(int start,int end){
+    private ValueAnimator slideView(int start, int end) {
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -2225,7 +2231,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void onAnimationUpdate(ValueAnimator animation) {
                 //Update The Height of the card
 
-                int value= (Integer) animation.getAnimatedValue();
+                int value = (Integer) animation.getAnimatedValue();
                 ViewGroup.LayoutParams layoutParams = promoList.getLayoutParams();
                 layoutParams.height = value;
                 promoList.setLayoutParams(layoutParams);
@@ -2235,14 +2241,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return animator;
     }
 
-    public void extendList(){
+    public void extendList() {
 
-        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
-        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);
+        final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
 
-        promoList.measure(widthSpec,heightSpec);
+        promoList.measure(widthSpec, heightSpec);
 
-        ValueAnimator valueAnimator = slideView(0,promoList.getMeasuredHeight());
+        ValueAnimator valueAnimator = slideView(0, promoList.getMeasuredHeight());
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -2270,10 +2276,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    public void collapseList(){
+    public void collapseList() {
         int finalHeight = promoList.getHeight();
 
-        ValueAnimator animator = slideView(promoList.getHeight(),0);
+        ValueAnimator animator = slideView(promoList.getHeight(), 0);
 
         animator.addListener(new Animator.AnimatorListener() {
             @Override
@@ -2309,14 +2315,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     }
 
-    private class OnLongTouchListener implements AdapterView.OnItemLongClickListener{
+    private class OnLongTouchListener implements AdapterView.OnItemLongClickListener {
 
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
             ItemPrev item = (ItemPrev) parent.getItemAtPosition(position);
-            Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
-            intent.putExtra("accName",ID);
+            Intent intent = new Intent(getApplicationContext(), MoreInfo.class);
+            intent.putExtra("accName", ID);
             intent.putExtra("logo", item.getLogo());
             intent.putExtra("location", item.getDistanceTime());
             intent.putExtra("rating", 2.1);
@@ -2327,22 +2333,29 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
 
     private String clientName;
-    private void setClientName(String n){
-        clientName=n;
+
+    private void setClientName(String n) {
+        clientName = n;
     }
-    private String getClientName(){
+
+    private String getClientName() {
         return clientName;
     }
+
     private long offerID;
-    private void setOfferID(long offerID){
-        this.offerID=offerID;
+
+    private void setOfferID(long offerID) {
+        this.offerID = offerID;
     }
-    private long getOfferID(){
+
+    private long getOfferID() {
         return offerID;
     }
-    private class ItemInfoListener implements AdapterView.OnItemClickListener{
+
+    private class ItemInfoListener implements AdapterView.OnItemClickListener {
         private boolean inLoad;
-        public ItemInfoListener(boolean bool){
+
+        public ItemInfoListener(boolean bool) {
             this.inLoad = bool;
         }
 
@@ -2350,32 +2363,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-            itemTemp = (ItemPrev)parent.getItemAtPosition(position);
+            itemTemp = (ItemPrev) parent.getItemAtPosition(position);
             setClientID(itemTemp.getClientID());
             setOfferID(itemTemp.getOfferID());
             setClientName(itemTemp.getSubText());
             //setItemPrev(itemTemp);
-            if(position!=0) {
+            if (position != 0) {
                 GetItemPrev threadGetItem = new GetItemPrev();
                 threadGetItem.doInBackground(itemTemp);
                 ExtendInfoInBackGround extend = new ExtendInfoInBackGround(false);
                 extend.doInBackground(view);
 
 
-            }else{
+            } else {
 
-                if(inLoad) {
+                if (inLoad) {
                     GetItemPrev threadGetItem = new GetItemPrev();
                     threadGetItem.doInBackground(itemTemp);
                     ExtendInfoInBackGround extend = new ExtendInfoInBackGround(false);
                     extend.doInBackground(view);
-                }else{
-                    if(isTutorialOn()) {
+                } else {
+                    if (isTutorialOn()) {
                         GetItemPrev threadGetItem = new GetItemPrev();
                         threadGetItem.doInBackground(itemTemp);
                         ExtendInfoInBackGround extend = new ExtendInfoInBackGround(true);
                         extend.doInBackground(view);
-                    }else{
+                    } else {
                         GetItemPrev threadGetItem = new GetItemPrev();
                         threadGetItem.doInBackground(itemTemp);
                         ExtendInfoInBackGround extend = new ExtendInfoInBackGround(false);
@@ -2385,20 +2398,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
 
 
-
-
-
         }
     }
 
     private long ClientID;
-    private void setClientID(long id){
+
+    private void setClientID(long id) {
         this.ClientID = id;
     }
-    private long getClientID(){
-        return  this.ClientID;
+
+    private long getClientID() {
+        return this.ClientID;
     }
-    private class GetItemPrev extends AsyncTask<ItemPrev,String,ItemPrev>{
+
+    private class GetItemPrev extends AsyncTask<ItemPrev, String, ItemPrev> {
 
         @Override
         protected ItemPrev doInBackground(ItemPrev... params) {
@@ -2413,7 +2426,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private View longClickView;
-    private class LongClickInfo extends AsyncTask<View,String,View>{
+
+    private class LongClickInfo extends AsyncTask<View, String, View> {
 
         @Override
         protected View doInBackground(View... params) {
@@ -2428,23 +2442,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             super.onPostExecute(view);
 
 
-
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
 
-                    Intent intent = new Intent(getApplicationContext(),MoreInfo.class);
+                    Intent intent = new Intent(getApplicationContext(), MoreInfo.class);
                     intent.putExtra("logo", itemTemp.getLogo());
                     intent.putExtra("location", itemTemp.getDistanceTime());
-                    intent.putExtra("rating",2.1);
+                    intent.putExtra("rating", 2.1);
                     startActivity(intent);
                     return true;
 
 
-
                 }
             });
-
 
 
         }
@@ -2463,10 +2474,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     ImageView textButton2;
     ImageView textButton3;
     ImageView textButton4;
-    ImageView tutorial1,tutorial2;
+    ImageView tutorial1, tutorial2;
 
-    private void animateButton(final ImageView button,final ImageView text, boolean show){
-        if(show){
+    private void animateButton(final ImageView button, final ImageView text, boolean show) {
+        if (show) {
             Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -2475,30 +2486,32 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     text.setVisibility(View.VISIBLE);
                     text.setAlpha(0.0f);
                 }
+
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(button,"alpha",0.0f,0.5f,1.0f);
-                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(text,"alpha",0.0f,0.5f,1.0f);
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(button, "alpha", 0.0f, 0.5f, 1.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(text, "alpha", 0.0f, 0.5f, 1.0f);
                     AnimatorSet s = new AnimatorSet();
                     s.setDuration(300);
-                    s.playTogether(alphaButton,alphaText);
+                    s.playTogether(alphaButton, alphaText);
                     s.start();
                 }
             };
             button.animate().setListener(containerAnimation).start();
-        }else{
+        } else {
             Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
 
                 }
+
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(button,"alpha",1.0f,0.5f,0.0f);
-                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(text,"alpha",1.0f,0.5f,0.0f);
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(button, "alpha", 1.0f, 0.5f, 0.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(text, "alpha", 1.0f, 0.5f, 0.0f);
                     AnimatorSet s = new AnimatorSet();
                     s.setDuration(300);
-                    s.playTogether(alphaButton,alphaText);
+                    s.playTogether(alphaButton, alphaText);
                     s.start();
                 }
             };
@@ -2507,8 +2520,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             text.setVisibility(View.GONE);
         }
     }
+
     private int value2;
-    private void tutorial2(){
+
+    private void tutorial2() {
 
 
         if (extendText.getVisibility() != View.GONE && extendIcon.getVisibility() != View.GONE) {
@@ -2520,20 +2535,21 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     textContainer.setVisibility(View.VISIBLE);
                     textContainer.setAlpha(0.0f);
                 }
+
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer,"alpha",0.0f,0.5f,1.0f);
-                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer,"alpha",0.0f,0.5f,1.0f);
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer, "alpha", 0.0f, 0.5f, 1.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer, "alpha", 0.0f, 0.5f, 1.0f);
                     AnimatorSet s = new AnimatorSet();
                     s.setDuration(300);
-                    s.playTogether(alphaButton,alphaText);
+                    s.playTogether(alphaButton, alphaText);
                     s.start();
                 }
             };
             buttonContainer.animate().setListener(containerAnimation).start();
 
 
-            int value = this.tutorial.getInt("tutorial2",-1);
+            int value = this.tutorial.getInt("tutorial2", -1);
             switch (value) {
                 case 0:
                     animateButton(tButton1, textButton1, true);
@@ -2542,7 +2558,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         } else {
 
-            int value = this.tutorial.getInt("tutorial2",-1);
+            int value = this.tutorial.getInt("tutorial2", -1);
             switch (value) {
                 case 0:
                     animateButton(tButton1, textButton1, false);
@@ -2550,27 +2566,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             Animator.AnimatorListener containerAnimation = new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                    }
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
 
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer, "alpha", 1.0f, 0.5f, 0.0f);
-                        ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer, "alpha", 1.0f, 0.5f, 0.0f);
-                        AnimatorSet s = new AnimatorSet();
-                        s.setDuration(300);
-                        s.playTogether(alphaButton, alphaText);
-                        s.start();
-                    }
-                };
-                buttonContainer.animate().setListener(containerAnimation).start();
-                buttonContainer.setVisibility(View.GONE);
-                textContainer.setVisibility(View.GONE);
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer, "alpha", 1.0f, 0.5f, 0.0f);
+                    ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer, "alpha", 1.0f, 0.5f, 0.0f);
+                    AnimatorSet s = new AnimatorSet();
+                    s.setDuration(300);
+                    s.playTogether(alphaButton, alphaText);
+                    s.start();
+                }
+            };
+            buttonContainer.animate().setListener(containerAnimation).start();
+            buttonContainer.setVisibility(View.GONE);
+            textContainer.setVisibility(View.GONE);
+        }
     }
 
-    private ValueAnimator slideAnimator(int start,int end){
+    private ValueAnimator slideAnimator(int start, int end) {
         ValueAnimator animator = ValueAnimator.ofInt(start, end);
 
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -2588,38 +2604,39 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private int initialHeight;
-    public void extend(){
+
+    public void extend() {
 
         extendIcon.setVisibility(View.VISIBLE);
         extendText.setVisibility(View.VISIBLE);
 
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         final int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        extendHeight.measure(widthSpec,heightSpec);
-        initialHeight=extendHeight.getHeight();
+        extendHeight.measure(widthSpec, heightSpec);
+        initialHeight = extendHeight.getHeight();
 
 
-            ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(), (extendHeight.getMeasuredHeight() - 5));
-            valueAnimator.start();
-
+        ValueAnimator valueAnimator = slideAnimator(extendHeight.getHeight(), (extendHeight.getMeasuredHeight() - 5));
+        valueAnimator.start();
 
 
     }
-    public void collapse(){
+
+    public void collapse() {
         int finalHeight = extendHeight.getHeight();
-        ValueAnimator animator = slideAnimator(finalHeight,initialHeight);
+        ValueAnimator animator = slideAnimator(finalHeight, initialHeight);
 
-            animator.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
 
-                }
+            }
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
+            @Override
+            public void onAnimationEnd(Animator animation) {
 
-                    extendIcon.setVisibility(View.GONE);
-                    extendText.setVisibility(View.GONE);
+                extendIcon.setVisibility(View.GONE);
+                extendText.setVisibility(View.GONE);
 
                 /*
                 ViewGroup.LayoutParams layoutParams = extendHeight.getLayoutParams();
@@ -2627,27 +2644,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 */
 
 
-                }
+            }
 
-                @Override
-                public void onAnimationCancel(Animator animation) {
+            @Override
+            public void onAnimationCancel(Animator animation) {
 
-                }
+            }
 
-                @Override
-                public void onAnimationRepeat(Animator animation) {
+            @Override
+            public void onAnimationRepeat(Animator animation) {
 
-                }
-            });
+            }
+        });
 
         animator.start();
     }
 
     public void extendInfo(View v, final boolean tutorial) {
         //Extend info: Rate,like and Take Me There
-        extendHeight= (RelativeLayout) v.findViewById(R.id.extendHeight);
-        extendIcon =(RelativeLayout)v.findViewById(R.id.extendIconLayout);
-        extendText =(RelativeLayout)v.findViewById(R.id.extendTextLayout);
+        extendHeight = (RelativeLayout) v.findViewById(R.id.extendHeight);
+        extendIcon = (RelativeLayout) v.findViewById(R.id.extendIconLayout);
+        extendText = (RelativeLayout) v.findViewById(R.id.extendTextLayout);
         tutorial1 = (ImageView) v.findViewById(R.id.tutorial1);
         tutorial2 = (ImageView) v.findViewById(R.id.tutorial2);
         buttonContainer = (LinearLayout) v.findViewById(R.id.buttonTutorialContainer);
@@ -2661,10 +2678,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         textButton3 = (ImageView) v.findViewById(R.id.buttonTutorialText3);
         textButton4 = (ImageView) v.findViewById(R.id.buttonTutorialText4);
 
-        if(tutorial) {
-            int value = this.tutorial.getInt("count",-1);
+        if (tutorial) {
+            int value = this.tutorial.getInt("count", -1);
 
-            if(this.tutorial.getInt("tutorial3",-1)==1){
+            if (this.tutorial.getInt("tutorial3", -1) == 1) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -2675,7 +2692,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
 
             if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
-                if(value==0){
+                if (value == 0) {
                     Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationStart(Animator animation) {
@@ -2683,10 +2700,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             tutorial1.setAlpha(1.0f);
 
                         }
+
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             // super.onAnimationEnd(animation);
-                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial1,"alpha",1.0f,0.0f);
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial1, "alpha", 1.0f, 0.0f);
                             alpha.setDuration(200).start();
                         }
                     };
@@ -2702,7 +2720,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     this.tutorial.edit().putInt("count", 1).apply();
                 }
 
-                if(this.tutorial.getInt("tutorial3",-1)==0 && value == 1) {
+                if (this.tutorial.getInt("tutorial3", -1) == 0 && value == 1) {
                     //int tutValue = this.tutorial.getInt("tutorial3", -1);
                     //Log.d("tutorial3Value", String.valueOf(tutValue));
                     Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
@@ -2719,12 +2737,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             // super.onAnimationEnd(animation);
-                            ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer,"alpha",0.0f,0.5f,1.0f);
-                            ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer,"alpha",0.0f,0.5f,1.0f);
-                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial2,"alpha",1.0f,0.0f);
+                            ObjectAnimator alphaButton = ObjectAnimator.ofFloat(buttonContainer, "alpha", 0.0f, 0.5f, 1.0f);
+                            ObjectAnimator alphaText = ObjectAnimator.ofFloat(textContainer, "alpha", 0.0f, 0.5f, 1.0f);
+                            ObjectAnimator alpha = ObjectAnimator.ofFloat(tutorial2, "alpha", 1.0f, 0.0f);
                             AnimatorSet s = new AnimatorSet();
                             s.setDuration(300);
-                            s.playTogether(alphaButton,alpha,alphaText);
+                            s.playTogether(alphaButton, alpha, alphaText);
                             s.start();
 
                         }
@@ -2738,7 +2756,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                             //tutorial2();
                         }
                     }, 210);
-                    int val = this.tutorial.getInt("tutorial2",-1);
+                    int val = this.tutorial.getInt("tutorial2", -1);
                     switch (val) {
                         case 0:
                             animateButton(tButton1, textButton1, true);
@@ -2753,8 +2771,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 //SHOW SECOND TUTORIAL
                 //Animate tutorial2 which replaces the first tutorial
                 int tutValue = this.tutorial.getInt("tutorial3", -1);
-                int newValue = this.tutorial.getInt("count",-1);
-                if(newValue==1 && tutValue==0){
+                int newValue = this.tutorial.getInt("count", -1);
+                if (newValue == 1 && tutValue == 0) {
                     Animator.AnimatorListener animation = new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationStart(Animator animation) {
@@ -2776,7 +2794,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 }
                 collapse();
             }
-        }else{
+        } else {
             if (extendText.getVisibility() == View.GONE && extendIcon.getVisibility() == View.GONE) {
                 extend();
             } else {
@@ -2788,32 +2806,34 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
 
-
     private Handler animationC = new Handler();
 
     private Runnable checkAnimationUpdate = new Runnable() {
         @Override
         public void run() {
-             updateValue();
-             animationC.postDelayed(this,1000);
+            updateValue();
+            animationC.postDelayed(this, 1000);
         }
     };
 
-    private void stopUpdate(){
+    private void stopUpdate() {
         animationC.removeCallbacks(checkAnimationUpdate);
     }
 
-    private void runUpdate(){
+    private void runUpdate() {
         checkAnimationUpdate.run();
     }
-    private void updateValue(){
-        value2 = this.tutorial.getInt("tutorial2",-1);
+
+    private void updateValue() {
+        value2 = this.tutorial.getInt("tutorial2", -1);
 
     }
-    private class ExtendInfoInBackGround extends  AsyncTask<View,String,View>{
+
+    private class ExtendInfoInBackGround extends AsyncTask<View, String, View> {
 
         private boolean tutorial;
-        public ExtendInfoInBackGround(boolean b){
+
+        public ExtendInfoInBackGround(boolean b) {
             this.tutorial = b;
         }
 
@@ -2821,25 +2841,25 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         protected View doInBackground(View... params) {
 
             View v = params[0];
-            extendInfo(v,tutorial);
+            extendInfo(v, tutorial);
 
             return null;
         }
     }
 
-    private void setItemPrev(ItemPrev itemPrev){
+    private void setItemPrev(ItemPrev itemPrev) {
         this.itemInfo = itemPrev;
     }
 
-    private ItemPrev getItemPrev(){
+    private ItemPrev getItemPrev() {
         return this.itemInfo;
     }
 
-    public PromoItem[] gift(){
+    public PromoItem[] gift() {
 
         ArrayList<PromoItem> items = new ArrayList<>();
 
-        for(int i=0;i<4;i++){
+        for (int i = 0; i < 4; i++) {
 
             PromoItem temp = new PromoItem();
             temp.setImage(R.drawable.gift);
@@ -2848,18 +2868,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             items.add(temp);
         }
 
-        PromoItem[]list = items.toArray(new PromoItem[items.size()]);
+        PromoItem[] list = items.toArray(new PromoItem[items.size()]);
 
         return list;
     }
 
-    public ItemPrev[] dealList(){
+    public ItemPrev[] dealList() {
         //ip = new ItemPrev[10];
         ArrayList<ItemPrev> items = new ArrayList<>();
 
         setListSize(10);
         // for(int i =0 ;i<50;i++) {
-        hasInfo=false;
+        hasInfo = false;
         ItemPrev temp = new ItemPrev();
         temp.setLatitude(90.0);
         temp.setLongitude(0.0);
@@ -2880,10 +2900,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public ItemPrev[] dealList(OfferListEntity sql) {
 
-        try{
+        try {
 
-            hasInfo =true;
-           // Log.d("inDealList",sql.getOfferList());
+            hasInfo = true;
+            // Log.d("inDealList",sql.getOfferList());
             List<OfferEntity> list = sql.getOfferList();
 
             setListSize(list.size());
@@ -2893,11 +2913,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             for (int i = 0; i < list.size(); i++) {
                 ItemPrev temp = new ItemPrev();
                 //TODO:add generic location to database
-                if(i==0){
+                if (i == 0) {
                     temp.setIsTutorial(true);
-                    SharedPreferences tutorial = getSharedPreferences("tutorial",Context.MODE_PRIVATE);
+                    SharedPreferences tutorial = getSharedPreferences("tutorial", Context.MODE_PRIVATE);
                     temp.setPreferences(tutorial);
-                }else{
+                } else {
                     temp.setIsTutorial(false);
                     temp.setPreferences(null);
                 }
@@ -2925,21 +2945,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 temp.setDistanceTime("to be added");
 
 
-
                 //TODO: points
                 //temp.setPoints(list.get(i).getPoints().toString());
                 //ip[i] = temp;
                 items.add(temp);
             }
 
-            ItemPrev[]i =  items.toArray(new ItemPrev[list.size()]);
+            ItemPrev[] i = items.toArray(new ItemPrev[list.size()]);
 
             return i;
 
-        }catch(NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
             ip = new ItemPrev[1];
-            hasInfo=false;
+            hasInfo = false;
             ItemPrev temp = new ItemPrev();
             //TODO:add generic location to database
             temp.setDistanceTime("to be added");
@@ -2959,14 +2978,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
 
-
     }
+
     private int size;
-    private int getListSize(){
+
+    private int getListSize() {
         return this.size;
     }
 
-    private void setListSize(int size){
+    private void setListSize(int size) {
         this.size = size;
     }
 
@@ -2979,7 +2999,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         aboutYapnak.show();
         */
 
-        AboutYapnakDialog dialog = new AboutYapnakDialog(this,this);
+        AboutYapnakDialog dialog = new AboutYapnakDialog(this, this);
         dialog.show();
     }
 
@@ -3017,7 +3037,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         startActivity(promo);
         */
 
-        PromotionDialog promo = new PromotionDialog(this,this);
+        PromotionDialog promo = new PromotionDialog(this, this);
         promo.show();
 
     }
@@ -3044,13 +3064,16 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private Location loc;
-    public Location getLocation(){
+
+    public Location getLocation() {
         return loc;
     }
-    public void setLocation(Location loc){
+
+    public void setLocation(Location loc) {
         this.loc = loc;
     }
-    private boolean isLocationOn(){
+
+    private boolean isLocationOn() {
         GPSTrack t = new GPSTrack(MainActivity.this);
         return t.canGetLoc();
     }
@@ -3058,11 +3081,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private SwipeRefreshLayout refresh;
 
 
-    private Handler handler= new Handler();
+    private Handler handler = new Handler();
 
 
-    public void swipeRefresh(MainActivity activity){
-        final MainActivity a =activity;
+    public void swipeRefresh(MainActivity activity) {
+        final MainActivity a = activity;
         refresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
         refresh.setColorSchemeResources(R.color.darkRed, R.color.floatColour, R.color.deepOrange, R.color.peach, R.color.lightPeach);
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -3073,7 +3096,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     public void run() {
 
                         //new CheckRestaurantDeals().execute(getRestaurantName());
-                        if(connection()) {
+                        if (connection()) {
                             if (!hasRestaurant) {
                                 SQLConnectAsyncTask.useDialog = false;
                                 new SQLConnectAsyncTask(getApplicationContext(), getLocation(), null, a).execute();
@@ -3084,12 +3107,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                                 refresh.setRefreshing(false);
                                 Toast.makeText(getApplicationContext(), "The Restaurant/Location You Queried Is Not Available", Toast.LENGTH_SHORT).show();
                             }
-                        }else{
+                        } else {
                             refresh.setRefreshing(false);
                             Toast.makeText(getApplicationContext(), "Currently Offline", Toast.LENGTH_SHORT).show();
                         }
                     }
-                        //if(getLocation()!=null) {
+                    //if(getLocation()!=null) {
                            /* SQLConnectAsyncTask.useDialog = false;
                         if(getLocation()!=null && getRestaurantName()==null) {
                             new SQLConnectAsyncTask(getApplicationContext(),getLocation(),null, a).execute();
@@ -3114,6 +3137,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
         });
     }
+
     private String restaurantName;
 
 

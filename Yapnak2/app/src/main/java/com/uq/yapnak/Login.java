@@ -605,16 +605,13 @@ public class Login extends Activity{
 
     private boolean connection(){
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        Log.d("debug", manager.toString());
         boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        Log.d("debug", String.valueOf(wifi));
+        boolean lte = false;
         if (manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null) {
-            boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-            Log.d("debug", String.valueOf(lte));
+            lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
         } else {
             Log.d("debug", "no mobile internet");
         }
-
         return (wifi||lte);
     }
 
