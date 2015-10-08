@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/RZLOEKP2lOxobvG2Zeya83KtiC8\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/Dtan0lNlukkSM-v2dtVCH3VmcLs\"",
  "discoveryVersion": "v1",
  "id": "adminApi:v1",
  "name": "adminApi",
@@ -482,14 +482,6 @@
    "response": {
     "$ref": "SimpleEntity"
    },
-   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email"
-   ]
-  },
-  "updateClientHours": {
-   "id": "adminApi.updateClientHours",
-   "path": "updateClientHours",
-   "httpMethod": "POST",
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

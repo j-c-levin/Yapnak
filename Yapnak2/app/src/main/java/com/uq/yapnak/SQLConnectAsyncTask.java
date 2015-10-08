@@ -202,6 +202,9 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
         if (result != null) {
             //Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
             main.load(result);
+            if (main.refresh != null) {
+                main.refresh.setRefreshing(false);
+            }
             Log.d("debug", "loaded results");
             main.floatButton();
             main.setList(result);

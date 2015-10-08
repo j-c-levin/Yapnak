@@ -131,7 +131,6 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
                     .placeholder(R.drawable.manualicon)
                     .load(deal.getFetchImageURL());
              */
-             Log.d("debug", "URL: " + deal.getFetchImageURL());
              new DownloadImage(restaurantLogo).execute(deal.getFetchImageURL());
              //Implement ION Load Image FROM URL provided in dealList(SQLEntity sql) method in MainActivity;
              //Load more images after authentication

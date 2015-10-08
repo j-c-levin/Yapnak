@@ -781,7 +781,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         //load(sql);
         setContentView(R.layout.activity_main1);
-        //load();
+        load();
         // navBarToggle();
         //navigationBarContent();
         getSupportActionBar().setSubtitle(temp.getStringExtra("initials"));
@@ -3078,7 +3078,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return t.canGetLoc();
     }
 
-    private SwipeRefreshLayout refresh;
+    SwipeRefreshLayout refresh;
 
 
     private Handler handler = new Handler();
