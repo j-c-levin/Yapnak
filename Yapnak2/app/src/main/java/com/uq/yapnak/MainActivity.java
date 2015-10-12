@@ -298,13 +298,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_main1);
 
         locationCheck = getLocation();
+
         //if(locationCheck!=null) {
 
              SQLConnectAsyncTask.useDialog = true;
              new SQLConnectAsyncTask(getApplicationContext(),locationCheck,null,this).execute();
-             if (SQLConnectAsyncTask.getListLoaded()) {
-                 //dealList.notifyDataSetChanged();
-             }
+
 
         this.name = getIntent();
         ID = (name.getStringExtra("userID")==null)? name.getStringExtra("initials") : name.getStringExtra("userID");
@@ -359,6 +358,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     private Location locationCheck;
+    private Location currentLoc;
 
     /*@Override
     public void onConnected(Bundle connectionHint) {
@@ -431,6 +431,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onPause();
     }
 
+
     private MainActivity activity = this;
     private String queryMain;
     @Override
@@ -461,11 +462,18 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
+                /*if(newText.length()==0){
+                    SQLConnectAsyncTask.useDialog=false;
+                    new SQLConnectAsyncTask(getApplicationContext(),currentLoc,null,MainActivity.this).execute();
+                }*/
                 return true;
             }
         });
         return true;
     }
+
+
 
     private Location getLoc(String address){
         String trim = address.trim();
@@ -1049,11 +1057,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         if(isTutorialOn()){
             if(requestCode == 111){
                 int value = this.tutorial.getInt("tutorial2",-1);
-                if(value==0){
-                    animateButton(tButton1,textButton1,false);
-                    animateButton(tButton2,textButton2,true);
-                    this.tutorial.edit().putInt("tutorial2", 1).apply();
-                }
+                    if (value == 0) {
+                        animateButton(tButton1, textButton1, false);
+                        animateButton(tButton2, textButton2, true);
+                        this.tutorial.edit().putInt("tutorial2", 1).apply();
+                    }
 
             } if(requestCode == PICK_CONTACT){
                 int value = this.tutorial.getInt("tutorial2",-1);
@@ -1262,6 +1270,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             startActivityForResult(intent, PICK_CONTACT);
         }*/
         Toast.makeText(getApplicationContext(),"Coming Soon",Toast.LENGTH_SHORT).show();
+        animateButton(tButton2,textButton2,false);
+        animateButton(tButton3,textButton3,true);
+        this.tutorial.edit().putInt("tutorial2", 2).apply();
 
         /*contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
