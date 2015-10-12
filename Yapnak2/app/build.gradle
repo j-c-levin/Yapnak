@@ -5,7 +5,6 @@ android {
         config {
             keyAlias 'Yapnak'
             keyPassword '1234567'
-            storeFile file('C:/Users/Joshua/Documents/GitHub/yapnak/YapnakApp.jks')
             storePassword 'Yapnak2015'
         }
     }
