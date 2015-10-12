@@ -654,7 +654,7 @@ public class ClientEndpoint {
           //Offer does not belong to the client
           logger.warning("Offer redeemed does not belong to client " + clientId);
           response.setStatus("False");
-          response.setMessage("Offer redeemed does not belong to client " + clientId);
+          response.setMessage("Offer does not belong to current client");
           break queryBlock;
         }
         logger.info("Offer belongs to the client");

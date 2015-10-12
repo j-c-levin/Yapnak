@@ -8,18 +8,12 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.frontend.yapnak.subview.MyProgressDialog;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.yapnak.gcmbackend.sQLEntityApi.SQLEntityApi;
-import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
-import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
-import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Joshua on 17/05/2015.
@@ -208,6 +202,10 @@ public class SQLConnectAsyncTask extends AsyncTask<Void, Integer, OfferListEntit
         if (result != null) {
             //Log.d("Debug", "completed: " + result.getOfferList().size()  + "\nSTATUS: "+ result.getStatus() +"\nMessage: "+ result.getMessage());
             main.load(result);
+            if (main.refresh != null) {
+                main.refresh.setRefreshing(false);
+            }
+            Log.d("debug", "loaded results");
             main.floatButton();
             main.setList(result);
             main.swipeRefresh(main);

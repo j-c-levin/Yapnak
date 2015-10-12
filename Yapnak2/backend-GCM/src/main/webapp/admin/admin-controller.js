@@ -70,11 +70,6 @@ angular.module('app.controller', [])
 
   $scope.clientData = {};
   $scope.offerTimes = [
-    {time:0,humanHour:"Midnight"},
-    {time:1,humanHour:"1am"},
-    {time:2,humanHour:"2am"},
-    {time:3,humanHour:"3am"},
-    {time:4,humanHour:"4am"},
     {time:5,humanHour:"5am"},
     {time:6,humanHour:"6am"},
     {time:7,humanHour:"7am"},
@@ -94,6 +89,11 @@ angular.module('app.controller', [])
     {time:21,humanHour:"9pm"},
     {time:22,humanHour:"10pm"},
     {time:23,humanHour:"11pm"},
+    {time:24,humanHour:"Midnight"},
+    {time:25,humanHour:"1am"},
+    {time:26,humanHour:"2am"},
+    {time:27,humanHour:"3am"},
+    {time:28,humanHour:"4am"}
   ]
   $scope.offer1Days = [
     {active:false,humanDay:"Monday"},
@@ -148,20 +148,20 @@ angular.module('app.controller', [])
     for (var i = 0; i < $scope.clientData.offers.length; i++) {
       if ($scope.clientData.offer1text.offerId == $scope.clientData.offers[i].offerId) {
 
-        $scope.clientData.offer1StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
-        $scope.clientData.offer1EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.clientData.offer1StartTime = $scope.offerTimes[($scope.clientData.offers[i].offerStart - 5) % 24];
+        $scope.clientData.offer1EndTime = $scope.offerTimes[($scope.clientData.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer1Days,$scope.clientData.offers[i].offerDays);
 
       } else if ($scope.clientData.offer2text.offerId == $scope.clientData.offers[i].offerId) {
 
-        $scope.clientData.offer2StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
-        $scope.clientData.offer2EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.clientData.offer2StartTime = $scope.offerTimes[($scope.clientData.offers[i].offerStart - 5) % 24];
+        $scope.clientData.offer2EndTime = $scope.offerTimes[($scope.clientData.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer2Days,$scope.clientData.offers[i].offerDays);
 
       } else if ($scope.clientData.offer3text.offerId == $scope.clientData.offers[i].offerId) {
 
-        $scope.clientData.offer3StartTime = $scope.offerTimes[$scope.clientData.offers[i].offerStart];
-        $scope.clientData.offer3EndTime = $scope.offerTimes[$scope.clientData.offers[i].offerEnd];
+        $scope.clientData.offer3StartTime = $scope.offerTimes[($scope.clientData.offers[i].offerStart - 5) % 24];
+        $scope.clientData.offer3EndTime = $scope.offerTimes[($scope.clientData.offers[i].offerEnd - 5) % 24];
         //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
       }
     }

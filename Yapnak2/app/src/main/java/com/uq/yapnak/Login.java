@@ -40,7 +40,6 @@ import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.SimpleEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -607,8 +606,12 @@ public class Login extends Activity{
     private boolean connection(){
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-
+        boolean lte = false;
+        if (manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null) {
+            lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        } else {
+            Log.d("debug", "no mobile internet");
+        }
         return (wifi||lte);
     }
 

@@ -132,11 +132,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
 
   $scope.offers = [];
   $scope.offerTimes = [
-    {time:0,humanHour:"Midnight"},
-    {time:1,humanHour:"1am"},
-    {time:2,humanHour:"2am"},
-    {time:3,humanHour:"3am"},
-    {time:4,humanHour:"4am"},
     {time:5,humanHour:"5am"},
     {time:6,humanHour:"6am"},
     {time:7,humanHour:"7am"},
@@ -156,6 +151,11 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     {time:21,humanHour:"9pm"},
     {time:22,humanHour:"10pm"},
     {time:23,humanHour:"11pm"},
+    {time:24,humanHour:"Midnight"},
+    {time:25,humanHour:"1am"},
+    {time:26,humanHour:"2am"},
+    {time:27,humanHour:"3am"},
+    {time:28,humanHour:"4am"}
   ]
   $scope.offer1Days = [
     {active:false,humanDay:"Monday"},
@@ -190,20 +190,20 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     for (var i = 0; i < $scope.offers.length; i++) {
       if ($scope.offer1text.offerId == $scope.offers[i].offerId) {
 
-        $scope.offer1StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
-        $scope.offer1EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        $scope.offer1StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
+        $scope.offer1EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer1Days,$scope.offers[i].offerDays);
 
       } else if ($scope.offer2text.offerId == $scope.offers[i].offerId) {
 
-        $scope.offer2StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
-        $scope.offer2EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        $scope.offer2StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
+        $scope.offer2EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         $scope.parseOfferDays($scope.offer2Days,$scope.offers[i].offerDays);
 
       } else if ($scope.offer3text.offerId == $scope.offers[i].offerId) {
 
-        $scope.offer3StartTime = $scope.offerTimes[$scope.offers[i].offerStart];
-        $scope.offer3EndTime = $scope.offerTimes[$scope.offers[i].offerEnd];
+        $scope.offer3StartTime = $scope.offerTimes[($scope.offers[i].offerStart - 5) % 24];
+        $scope.offer3EndTime = $scope.offerTimes[($scope.offers[i].offerEnd - 5) % 24];
         //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
       }
     }
@@ -214,7 +214,6 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
     for (var i = 0; i < data.length; i++) {
       offer[i].active = data[i];
     }
-    console.log(offer);
   }
 
   var details = function(val) {

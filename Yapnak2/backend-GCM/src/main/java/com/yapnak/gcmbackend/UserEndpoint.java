@@ -641,8 +641,11 @@ public class UserEndpoint {
                 calendar.setFirstDayOfWeek(Calendar.MONDAY);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
                 hour = (hour + 1) % 24;
+                if (hour >=0 && hour <= 4) {
+                    hour = 23 + (hour + 1);
+                }
                 logger.info("Hour is: " + hour);
-                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd > ? LIMIT 21";
+                String statement = "SELECT clientName,clientX,clientY,clientFoodStyle,clientPhotoUrl,client.clientID,offers.offerText offer,offers.offerID, offerDays FROM client JOIN offers ON client.clientID=offers.clientID AND offers.isActive = 1 AND client.isActive = 1 AND offers.showOffer = 1 WHERE clientX BETWEEN ? AND ? AND clientY BETWEEN ? AND ? AND offerStart <= ? AND offerEnd >= ? LIMIT 21";
                 PreparedStatement stmt = connection.prepareStatement(statement);
                 double t = longitude - distance;
                 stmt.setDouble(1, t);
@@ -656,14 +659,21 @@ public class UserEndpoint {
                 stmt.setInt(6, hour);
                 logger.info("search for clients at (lng/lat): " + longitude + " : " + latitude);
                 ResultSet rs = stmt.executeQuery();
+                //Needed to compensate for the fact that monday = 1
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                dayOfWeek = (dayOfWeek + 5) % 7;
+                if (hour > 23) {
+                    if (dayOfWeek == 0) {
+                        dayOfWeek = 6;
+                    } else {
+                        dayOfWeek -= 1;
+                    }
+                }
+                logger.info("day is " + dayOfWeek);
+                JSONParser parse = new JSONParser();
+                JSONArray days;
                 if (rs.next()) {
                     rs.beforeFirst();
-                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                    //Needed to compensate for the fact that monday = 1
-                    dayOfWeek = (dayOfWeek + 5) % 7;
-                    logger.info("day is " + dayOfWeek);
-                    JSONParser parse = new JSONParser();
-                    JSONArray days;
                     while (rs.next()) {
                         logger.info("Retrieving client: " + rs.getString("clientName"));
                         offer = new OfferEntity();
