@@ -6,15 +6,10 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -32,7 +27,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.PowerManager;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -51,7 +45,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -83,7 +76,6 @@ import com.yapnak.gcmbackend.userEndpointApi.model.OfferEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.OfferListEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.RecommendEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.UserDetailsEntity;
-
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -3070,7 +3062,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return t.canGetLoc();
     }
 
-    private SwipeRefreshLayout refresh;
+    protected SwipeRefreshLayout refresh;
 
 
     private Handler handler= new Handler();
