@@ -3071,7 +3071,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         return t.canGetLoc();
     }
 
-    private SwipeRefreshLayout refresh;
+    public SwipeRefreshLayout refresh;
 
 
     private Handler handler= new Handler();
