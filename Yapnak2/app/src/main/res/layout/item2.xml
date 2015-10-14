@@ -106,20 +106,7 @@
                 android:maxLines="3"
                 android:textStyle="bold" />
 
-           <!-- <com.pkmmte.view.CircularImageView
-                android:id="@+id/logo"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/dropdown_arrow"
-                app:border="true"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"
-                app:border_color="#EEEEEE"
-                app:border_width="2dp"
-                app:shadow="true"
-                />  -->
-
-             <com.frontend.yapnak.subview.MyImageView
+            <com.pkmmte.view.CircularImageView
                 android:id="@+id/logo"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
@@ -131,6 +118,19 @@
                 app:border_width="2dp"
                 app:shadow="true"
                 />
+
+             <!--<com.frontend.yapnak.subview.MyImageView
+                android:id="@+id/logo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/drparrow"
+                app:border="true"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                app:border_color="#EEEEEE"
+                app:border_width="2dp"
+                app:shadow="true"
+                /> -->
 
             <TextView
                 android:id="@+id/subtitle"
