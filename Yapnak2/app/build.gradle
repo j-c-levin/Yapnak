@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId 'com.uq.yapnak'
         minSdkVersion 15
-        targetSdkVersion 15
+        targetSdkVersion 21
         versionCode 2
         versionName "2.1"
     }
