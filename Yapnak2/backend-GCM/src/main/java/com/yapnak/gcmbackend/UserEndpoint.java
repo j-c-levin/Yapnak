@@ -641,7 +641,7 @@ public class UserEndpoint {
                 calendar.setFirstDayOfWeek(Calendar.MONDAY);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
                 hour = (hour + 1) % 24;
-                if (hour >=0 && hour <= 4) {
+                if (hour >= 0 && hour <= 4) {
                     hour = 23 + (hour + 1);
                 }
                 logger.info("Hour is: " + hour);
@@ -732,7 +732,7 @@ public class UserEndpoint {
             logger.info("pass complete");
         }
         logger.info("sorted");
-        for (OfferEntity o: response) {
+        for (OfferEntity o : response) {
             o.setDistance(null);
         }
         //stagger
@@ -1258,24 +1258,16 @@ public class UserEndpoint {
         }
     }
 
-    static void sendEmail(String email, String subject, String message) {
+    static void sendEmail(String email, String subject, String message) throws AddressException, MessagingException, UnsupportedEncodingException {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
-        try {
-            javax.mail.Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
-            msg.addRecipient(javax.mail.Message.RecipientType.TO,
-                    new InternetAddress(email));
-            msg.setSubject(subject);
-            msg.setText(message);
-            Transport.send(msg);
-        } catch (AddressException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        javax.mail.Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress("yapnak.uq@gmail.com", "Yapnak"));
+        msg.addRecipient(javax.mail.Message.RecipientType.TO,
+                new InternetAddress(email));
+        msg.setSubject(subject);
+        msg.setText(message);
+        Transport.send(msg);
     }
 
     @ApiMethod(
@@ -1379,7 +1371,7 @@ public class UserEndpoint {
                 //Login analytics insert success
                 logger.info("Login analytics insert success for " + userId + " at " + longitude + " : " + latitude);
                 response.setStatus("True");
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 logger.warning("Login analytics insert failed, user " + userId + " doesn't exist.");
                 response.setStatus("False");
                 response.setMessage("Login analytics insert failed, user " + userId + " doesn't exist.");
@@ -1393,5 +1385,42 @@ public class UserEndpoint {
         } finally {
             return response;
         }
+    }
+
+    @ApiMethod(
+            name = "sendFeedback",
+            path = "sendFeedback",
+            httpMethod = ApiMethod.HttpMethod.POST)
+    public SimpleEntity sendFeedback(@Named("name") String name, @Named("email") String email, @Named("message") String message) {
+        SimpleEntity response = new SimpleEntity();
+        String toEmail = "yapnak.uq@gmail.com";
+        String subject = "Website Feedback from " + name;
+        message += "\n\nSent from the website";
+        try {
+            sendEmail(toEmail, subject, message);
+            subject = "Yapnak feedback received";
+            message = "Thank you for sharing your thoughts with us.\n\nWe have your email and will be giving it a look shortly.\n\nKind regards,\nThe Yapnak Team.";
+            sendEmail(email, subject, message);
+        } catch (AddressException e) {
+            e.printStackTrace();
+            response.setStatus("False");
+            response.setMessage("AddressException: " + e);
+            logger.warning("AddressException in sending feedback: " + e);
+            return response;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            response.setStatus("False");
+            response.setMessage("MessagingException: " + e);
+            logger.warning("MessagingException in sending feedback: " + e);
+            return response;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            response.setStatus("False");
+            response.setMessage("UnsupportedEncodingException: " + e);
+            logger.warning("UnsupportedEncodingException in sending feedback: " + e);
+            return response;
+        }
+        response.setStatus("True");
+        return response;
     }
 }

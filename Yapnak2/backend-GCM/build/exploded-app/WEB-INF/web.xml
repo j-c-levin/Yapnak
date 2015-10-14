@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://java.sun.com/xml/ns/javaee"
-    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+<web-app xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
     <filter>
         <filter-name>autologin</filter-name>
@@ -130,7 +129,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
             <param-value>com.yapnak.gcmbackend.RegistrationEndpoint,
                 com.yapnak.gcmbackend.MessagingEndpoint,
                 com.yapnak.gcmbackend.SQLEntityEndpoint, com.yapnak.gcmbackend.UserEndpoint,
-                com.yapnak.gcmbackend.ClientEndpoint, com.yapnak.gcmbackend.AdminEndpoint</param-value>
+                com.yapnak.gcmbackend.ClientEndpoint, com.yapnak.gcmbackend.AdminEndpoint
+            </param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
@@ -147,16 +147,16 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <url-pattern>/client</url-pattern>
     </servlet-mapping>
 
-<!--
-    <servlet>
-        <servlet-name>clientPage</servlet-name>#
-        <jsp-file>/client.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>clientPage</servlet-name>
-        <url-pattern>/console</url-pattern>
-    </servlet-mapping>
--->
+    <!--
+        <servlet>
+            <servlet-name>clientPage</servlet-name>#
+            <jsp-file>/client.jsp</jsp-file>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>clientPage</servlet-name>
+            <url-pattern>/console</url-pattern>
+        </servlet-mapping>
+    -->
 
     <servlet>
         <servlet-name>register</servlet-name>#
@@ -187,7 +187,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>admin</servlet-name>#
+        <servlet-name>admin</servlet-name>
         <jsp-file>/admin/admin.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
@@ -196,7 +196,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>support</servlet-name>#
+        <servlet-name>support</servlet-name>
         <jsp-file>/support.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
@@ -205,7 +205,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>forgot</servlet-name>#
+        <servlet-name>forgot</servlet-name>
         <jsp-file>/forgot.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
@@ -214,7 +214,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>reset</servlet-name>#
+        <servlet-name>reset</servlet-name>
         <jsp-file>/reset.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
@@ -229,6 +229,33 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     <servlet-mapping>
         <servlet-name>userReset</servlet-name>
         <url-pattern>/userReset</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>landing</servlet-name>
+        <jsp-file>/landing/landing.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>landing</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>contact</servlet-name>
+        <jsp-file>/landing/contact.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>contact</servlet-name>
+        <url-pattern>/contact</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>restaurants</servlet-name>
+        <jsp-file>/landing/restaurants.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>restaurants</servlet-name>
+        <url-pattern>/restaurants</url-pattern>
     </servlet-mapping>
 
     <static-files>
@@ -246,6 +273,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </static-files>
 
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>landing/landing.html</welcome-file>
     </welcome-file-list>
 </web-app>

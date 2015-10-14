@@ -1271,7 +1271,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             startActivityForResult(intent, PICK_CONTACT);
         }*/
         Toast.makeText(getApplicationContext(), "Coming Soon", Toast.LENGTH_SHORT).show();
-
+        animateButton(tButton2,textButton2,false);
+        animateButton(tButton3,textButton3,true);
+        this.tutorial.edit().putInt("tutorial2", 2).apply();
         /*contactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
