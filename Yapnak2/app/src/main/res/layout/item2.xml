@@ -123,7 +123,7 @@
                 android:id="@+id/logo"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/dropdown_arrow"
+                android:src="@drawable/drparrow"
                 app:border="true"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
