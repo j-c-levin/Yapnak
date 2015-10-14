@@ -14,7 +14,7 @@ angular.module('app', ['ui.bootstrap'])
     $scope.progress = "began";
     var req = {
       method: 'POST',
-      url: 'https://yapnak-app.appspot.com/_ah/api/userEndpointApi/v1/sendFeedback?name='.concat($scope.data.name).concat("&email=").concat($scope.data.email).concat("&message=").concat($scope.data.message)
+      url: 'https://yapnak-app.appspot.com/_ah/api/userEndpointApi/v1/sendFeedback?name='.concat(encodeURIComponent($scope.data.name)).concat("&email=").concat(encodeURIComponent($scope.data.email)).concat("&message=").concat(encodeURIComponent($scope.data.message))
       // url: 'http://localhost:8080/_ah/api/userEndpointApi/v1/sendFeedback?name='.concat($scope.data.name).concat("&email=").concat($scope.data.email).concat("&message=").concat($scope.data.message)
     }
     $http(req).then(function(response) {
