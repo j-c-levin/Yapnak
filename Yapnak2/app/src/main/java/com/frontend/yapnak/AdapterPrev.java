@@ -202,12 +202,12 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
             super.onPostExecute(bitmap);
 
             if(bitmap!=null){
-                /*if(bitmap.getWidth()<image.getWidth()){
+                if(bitmap.getWidth()<image.getWidth()){
                     image.setMaxWidth(bitmap.getWidth());
                 }
                 if(bitmap.getHeight()<image.getHeight()){
                     image.setMaxHeight(bitmap.getHeight());
-                }*/
+                }
                 image.setImageBitmap(bitmap);
             }
         }
