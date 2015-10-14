@@ -110,13 +110,15 @@
                 android:id="@+id/logo"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/drparrow"
+                app:shadow="true"
+                android:src="@drawable/dropdown_arrow"
+                android:background="@android:color/transparent"
                 app:border="true"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
                 app:border_color="#EEEEEE"
                 app:border_width="2dp"
-                app:shadow="true"
+
                 />
 
              <!--<com.frontend.yapnak.subview.MyImageView
