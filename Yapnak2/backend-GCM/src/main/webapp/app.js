@@ -1,4 +1,4 @@
-angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
+angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories', 'ngImgCrop'])
 
 .controller('redeem', function ($scope, webfactory, $cookies, $modal) {
 
@@ -129,6 +129,8 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
   var offer1Active;
   var offer2Active;
   var offer3Active;
+  $scope.myImage = '';
+  $scope.myCroppedImage = '';
 
   $scope.offers = [];
   $scope.offerTimes = [
@@ -276,6 +278,7 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
         $scope.foodStyle = details.foodStyle;
         $scope.photo = details.photo;
         $scope.location = details.y + " " + details.x;
+        $scope.myImage = "";
         $scope.image = details.photo;
         offer1Active = $scope.offer1;
         offer2Active = $scope.offer2;
@@ -629,5 +632,53 @@ angular.module('app', ['ngCookies','ui.bootstrap','ngAnimate', 'app.factories'])
       });
     })
   };
+
+  var handleFileSelect=function(evt) {
+    var file=evt.currentTarget.files[0];
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      $scope.$apply(function($scope){
+        $scope.myImage=evt.target.result;
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  angular.element(document.querySelector('#fileInput')).on('change',handleFileSelect);
+
+  $scope.uploadFile = function() {
+    var file = dataURItoBlob($scope.myCroppedImage);
+    console.log(file);
+    webfactory.getUploadUrl($scope.clientId).then(function(response){
+      console.log(response);
+      var uploadUrl = response.uploadUrl;
+      webfactory.uploadFileToUrl(file, uploadUrl).then(function(response) {
+        details(1);
+      }, function(error) {
+        //TODO: some sort of warning?
+        details(0);
+      });
+    })
+  }
+
+  function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    var byteString;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(dataURI.split(',')[1]);
+    else
+        byteString = unescape(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ia], {type:mimeString});
+}
 
 })

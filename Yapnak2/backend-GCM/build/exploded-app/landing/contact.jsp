@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.1.min.js"></script>
 
-  <script src="landing-controller.js"></script>
+  <script src="landing/landing-controller.js"></script>
 
   <link href="../css/landing.css" rel="stylesheet">
 

@@ -606,7 +606,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private boolean connection(){
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        boolean lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        boolean lte = false;
+        if (manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null) {
+            lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+        } else {
+            Log.d("debug", "no mobile internet");
+        }
         return (wifi||lte);
     }
 

@@ -1394,8 +1394,8 @@ public class UserEndpoint {
     public SimpleEntity sendFeedback(@Named("name") String name, @Named("email") String email, @Named("message") String message) {
         SimpleEntity response = new SimpleEntity();
         String toEmail = "yapnak.uq@gmail.com";
-        String subject = "Website Feedback from " + name;
-        message += "\n\nSent from the website";
+        String subject = "Website Feedback from " + name + ", " + email;
+        message += "\n\n" + email + "\n\nSent from the website";
         try {
             sendEmail(toEmail, subject, message);
             subject = "Yapnak feedback received";
