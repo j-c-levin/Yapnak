@@ -12,9 +12,9 @@ body {
   background-image: url('../images/greedycow.jpg');
   background-size: cover;
   background-repeat: no-repeat;
-  height: 500px;
+  height: 100vh;
   margin-bottom: 10px;
-  background-position: 0% 30%;
+  background-position: center center;
 }
 
 .nav-links ul {

@@ -1,4 +1,4 @@
-angular.module('app.controller', [])
+angular.module('app.controller', ['ngImgCrop'])
 
 .controller('modal-controller', function($scope, $modalInstance) {
   $scope.closeModal= function() {
@@ -56,7 +56,6 @@ angular.module('app.controller', [])
   if (detailsfactory.getSession() === "") {
     $state.go('login');
   } else {
-    console.log("allowed past");
     webfactory.getAllClients().then(function(response) {
       if (response !== -1) {
         $scope.clientList = response.clientList;
@@ -135,6 +134,8 @@ angular.module('app.controller', [])
   var offer2Active;
   var offer3Active;
   var email;
+  $scope.clientData.myImage = "";
+  $scope.clientData.myCroppedImage = "";
 
   $scope.masterkey = "";
   $scope.generateMasterkey = function() {
@@ -165,14 +166,12 @@ angular.module('app.controller', [])
         //$scope.parseOfferDays($scope.offer3Days,$scope.offers[i].offerDays);
       }
     }
-    console.log("sorted offer start times");
   }
 
   $scope.parseOfferDays = function(offer,data) {
     for (var i = 0; i < data.length; i++) {
       offer[i].active = data[i];
     }
-    console.log(offer);
   }
 
   $scope.uploadFile = function(){
@@ -227,7 +226,7 @@ angular.module('app.controller', [])
 
         $scope.gotDetails = "client";
         $scope.clientData.locationText = $scope.clientData.x + " " + $scope.clientData.y;
-
+        $scope.clientData.myImage = "";
         $scope.isActive = $scope.clientData.isActive == 1 ? true : false;
         $scope.clientData.offer1Shown = $scope.clientData.showOffer1 == 1 ? true : false;
         $scope.clientData.offer2Shown = $scope.clientData.showOffer2 == 1 ? true : false;
@@ -711,6 +710,9 @@ angular.module('app.controller', [])
 
 .controller('myCtrl', function($scope, fileUpload, detailsfactory, webfactory, $timeout){
 
+  $scope.myImage = "";
+  $scope.myCroppedImage = "";
+
   $scope.uploadFile = function(){
     var clientId = detailsfactory.getclientId();
     var file = $scope.myFile;
@@ -726,11 +728,66 @@ angular.module('app.controller', [])
   $scope.addFile = function() {
     $timeout(function() {
       var file = $scope.myFile;
+      console.log(file);
       detailsfactory.setFile(file);
       console.log("set file ");
       console.dir(file);
     }, 100);
   }
+
+  function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    var byteString;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+    byteString = atob(dataURI.split(',')[1]);
+    else
+    byteString = unescape(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ia], {type:mimeString});
+  }
+
+  $scope.uploadFile = function() {
+    var file = dataURItoBlob($scope.myCroppedImage);
+    console.log(file);
+    webfactory.getUploadUrl(detailsfactory.getclientId()).then(function(response){
+      console.log(response);
+      var uploadUrl = response.uploadUrl;
+      webfactory.uploadFileToUrl(file, uploadUrl).then(function(response) {
+        $scope.myImage = "";
+        $scope.photoUrl = $scope.myCroppedImage;
+        $scope.myCroppedImage = "";
+      }, function(error) {
+        //TODO: some sort of warning?
+        $scope.myImage = "";
+        $scope.myCroppedImage = "";
+      });
+    })
+  }
+
+  $scope.handleFileSelect = function() {
+    $timeout(function() {
+      console.log($scope.newImage);
+      // var file=evt.currentTarget.files[0];
+      var file = $scope.newImage;
+      var reader = new FileReader();
+      reader.onload = function (evt) {
+        $scope.$apply(function($scope){
+          $scope.myImage=evt.target.result;
+        });
+      };
+      reader.readAsDataURL(file);
+    }, 200);
+  };
+
 
 })
 

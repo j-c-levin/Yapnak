@@ -12,6 +12,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="admin/admin-index.css">
 
+  <!-- ngImgCrop -->
+  <script src="../lib/ngImgCrop/0.3.2/ng-img-crop.js"></script>
+  <link rel="stylesheet" type="text/css" href="../lib/ngImgCrop/0.3.2/ng-img-crop.css">
+
 </head>
 <body>
   <div ui-view></div>

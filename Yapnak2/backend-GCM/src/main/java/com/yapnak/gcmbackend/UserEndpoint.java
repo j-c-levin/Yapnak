@@ -1400,7 +1400,7 @@ public class UserEndpoint {
             sendEmail(toEmail, subject, message);
             subject = "Yapnak feedback received";
             message = "Thank you for sharing your thoughts with us.\n\nWe have your email and will be giving it a look shortly.\n\nKind regards,\nThe Yapnak Team.";
-            sendEmail(email, subject, message);
+            sendEmail(ema|il, subject, message);
         } catch (AddressException e) {
             e.printStackTrace();
             response.setStatus("False");

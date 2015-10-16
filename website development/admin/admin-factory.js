@@ -400,13 +400,13 @@ angular.module('app.factories', [])
       options: {
         withCredentials: true
       },
+    }).then(function(response) {
+      console.log("success uploading image");
+      console.log(response);
+    }, function(error) {
+      console.log("failure uploading image");
+      console.log(error);
     })
-    .success(function(){
-      console.log("success");
-    })
-    .error(function(){
-      console.log("failure");
-    });
   }
 
   result.generateMasterkey = function(clientId) {

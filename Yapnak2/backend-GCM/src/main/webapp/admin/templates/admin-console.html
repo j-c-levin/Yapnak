@@ -28,16 +28,27 @@
 
             <div collapse="!isActive">
 
-                <div class="form-signin center-image">
-                    <img height="100" ng-src="{{photoUrl}}">
-                </div>
-
-                <div class="well">
-                    <div ng-controller = "myCtrl">
-                        <input type="file" file-model="myFile" onchange="angular.element(this).scope().addFile()"/>
-                        <button ng-controller="ConsoleController" ng-click="uploadFile()">Upload new</button>
+                <div ng-controller = "myCtrl">
+                    <div class="crop-area" ng-show="myImage !== ''">
+                        <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
+                    </div>
+                    <div class="current-image">
+                        <img height="100" ng-src="{{photoUrl}}" ng-show="myImage == ''" class="current-image">
+                    </div>
+                    <div class="upload-button">
+                        Select an image file:
+                        <input class="input-file-unique" type="file" file-model="newImage" id="fileInput" onchange="angular.element(this).scope().handleFileSelect()" />
+                    </div>
+                    <div class="image-upload">
+                        <button ng-show="myImage !== ''" class="btn btn-default" ng-click="uploadFile()">Update image</button>
                     </div>
                 </div>
+                <!-- <div class="well">
+                <div ng-controller = "myCtrl">
+                <input type="file" file-model="myFile" onchange="angular.element(this).scope().addFile()"/>
+                <button ng-controller="ConsoleController" ng-click="uploadFile()">Upload new</button>
+              </div>
+            </div> -->
 
 
                 <div class="form-signin">
