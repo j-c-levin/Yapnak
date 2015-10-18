@@ -28,7 +28,6 @@ import com.yapnak.gcmbackend.userEndpointApi.model.RegisterUserEntity;
 import com.yapnak.gcmbackend.userEndpointApi.model.SimpleEntity;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by vahizan on 20/09/2015.
@@ -219,8 +218,13 @@ public class RegisterActivity extends Activity{
  private boolean internet(){
      ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
      boolean wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
-     boolean threeg = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected();
-     return (wifi||threeg);
+     boolean lte = false;
+     if (manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE) != null) {
+         lte = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+     } else {
+         Log.d("debug", "no mobile internet");
+     }
+     return (wifi||lte);
  }
 
     private boolean loginSuccess;
@@ -321,7 +325,7 @@ public class RegisterActivity extends Activity{
             if(internet()) {
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
                 try {
-                    if (s != null && Boolean.parseBoolean(s.getStatus())) {
+                    if (s != null  && Boolean.parseBoolean(s.getStatus())) {
                         new LoginAnalytics().execute(s.getUserId());
                         SharedPreferences.Editor pref = keep.edit();
                         pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", email.getText().toString()).putString("phone", phone.getText().toString()).putBoolean("on", true).apply();
@@ -347,7 +351,8 @@ public class RegisterActivity extends Activity{
                         dialog.setInfoText("Please Enter Correct Login Information");
                         dialog.show(fragmentManager, "error");
                     }
-                }catch(NullPointerException e){
+                }
+                catch(NullPointerException e){
                     if (progress.isShowing()) {
                         progress.cancel();
                     }
