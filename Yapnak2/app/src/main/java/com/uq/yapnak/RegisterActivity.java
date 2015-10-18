@@ -267,9 +267,8 @@ public class RegisterActivity extends Activity{
         }
     }
 
-    private class InternalUser extends AsyncTask<String,Integer,AuthenticateEntity>{
-
-
+    private AuthenticateEntity aEnt;
+    private class InternalUser extends AsyncTask<String,Integer,Void>{
         private String registerLog;
         private String pass;
         private RegisterUserEntity reg;
@@ -279,7 +278,7 @@ public class RegisterActivity extends Activity{
         }
 
         @Override
-        protected AuthenticateEntity doInBackground(String... params) {
+        protected Void doInBackground(String... params) {
             emailAddress = params[0];
             phoneNumber= params[2];
             password = params[1];
@@ -295,7 +294,8 @@ public class RegisterActivity extends Activity{
                     }else{
                         e = userEndpoint.authenticateUser(params[1]).setEmail(params[0]).setMobNo(params[2]).execute();
                     }
-                    return e;
+                    aEnt = e;
+                    return null;
 
                 }else{
                     return null;
@@ -321,19 +321,19 @@ public class RegisterActivity extends Activity{
         }
 
         @Override
-        protected void onPostExecute(AuthenticateEntity s) {
+        protected void onPostExecute(Void s) {
             if(internet()) {
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
                 try {
-                    if (s != null  && Boolean.parseBoolean(s.getStatus())) {
-                        new LoginAnalytics().execute(s.getUserId());
+                    if (Boolean.parseBoolean(aEnt.getStatus())) {
+                        new LoginAnalytics().execute(aEnt.getUserId());
                         SharedPreferences.Editor pref = keep.edit();
-                        pref.putString("userID", s.getUserId()).putString("password", pass).putString("email", email.getText().toString()).putString("phone", phone.getText().toString()).putBoolean("on", true).apply();
+                        pref.putString("userID", aEnt.getUserId()).putString("password", pass).putString("email", email.getText().toString()).putString("phone", phone.getText().toString()).putBoolean("on", true).apply();
                         SharedPreferences.Editor keeper = remember.edit();
-                        keeper.putString("userID", s.getUserId()).putString("password", pass).putString("email", email.getText().toString()).putString("phone", phone.getText().toString()).putBoolean("on", true).apply();
-                        Log.d("usernameid", s.getUserId());
+                        keeper.putString("userID", aEnt.getUserId()).putString("password", pass).putString("email", email.getText().toString()).putString("phone", phone.getText().toString()).putBoolean("on", true).apply();
+                        Log.d("usernameid", aEnt.getUserId());
                         Intent i = new Intent(RegisterActivity.this, MainActivity.class);
-                        i.putExtra("userID", s.getUserId());
+                        i.putExtra("userID", aEnt.getUserId());
                         i.putExtra("password", pass);
                         i.putExtra("email", email.getText().toString());
                         i.putExtra("phone", phone.getText().toString());
@@ -357,12 +357,14 @@ public class RegisterActivity extends Activity{
                         progress.cancel();
                     }
 
+                    e.printStackTrace();
                     ErrorDialog dialog = new ErrorDialog();
                     dialog.setInfoText("There Has Been An Error\nPlease Try Again");
                     dialog.show(fragmentManager, "error");
 
                 }
-            }else{
+            }
+            else{
                 if (progress.isShowing()) {
                     progress.cancel();
                 }
