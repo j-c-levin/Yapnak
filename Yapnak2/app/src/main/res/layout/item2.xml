@@ -111,7 +111,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 app:shadow="true"
-                android:src="@drawable/yapnakmonsterthumb"
+                android:src="@drawable/yapnakmonster"
                 android:background="@android:color/transparent"
                 app:border="true"
                 android:scaleType="centerCrop"
