@@ -54,7 +54,7 @@ public class AdapterPrev extends ArrayAdapter<ItemPrev> implements Filterable {
 
             LayoutInflater layoutInflater = ((Activity)getContext()).getLayoutInflater();
 
-            convertView=layoutInflater.inflate(R.layout.item2,parent,false);
+            convertView= layoutInflater.inflate(R.layout.item2,parent,false);
 
             setView(convertView);
 
