@@ -69,6 +69,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
+import com.parse.ParseInstallation;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLEntity;
 import com.yapnak.gcmbackend.sQLEntityApi.model.SQLList;
 import com.yapnak.gcmbackend.userEndpointApi.UserEndpointApi;
@@ -260,8 +261,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        new GcmRegistrationAsyncTask(this).execute();
-
 
        /* mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addConnectionCallbacks(this)
@@ -308,9 +307,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         keep = getSharedPreferences("KeepMe", Context.MODE_PRIVATE);
         remember = getSharedPreferences("RememberMe", Context.MODE_PRIVATE);
-        // Log.d("main-id",ID);
-        //navBarToggle();
-        //navigationBarContent();
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("userId", name.getStringExtra("userID"));
+        installation.saveInBackground();
+        new detailsAsyncTask().execute(name.getStringExtra("userID"));
     }
 
 

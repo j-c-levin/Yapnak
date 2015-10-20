@@ -24,6 +24,7 @@ public class detailsAsyncTask extends AsyncTask<String,Void,Void> {
         Log.d("debug", "built: " + params[0]);
 
         try {
+            ParsePush.subscribeInBackground(params[0]);
             UserDetailsEntity result = user.getUserDetails().setUserId(params[0]).execute();
             Log.d("debug", "got results");
             Log.d("debug", "Found user points:" + result.getLoyaltyPoints());

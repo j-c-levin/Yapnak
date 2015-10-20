@@ -325,6 +325,7 @@ public class RegisterActivity extends Activity{
             if(internet()) {
                 //Log.d("loginResult", e.getMessage() + "  STATUS " + Boolean.parseBoolean(e.getStatus()) + "\nPhoneNumber: " + phoneNumber + "\nEmail: " + emailAddress + "\nPassword: " + password);
                 try {
+                    Log.d("debug", aEnt.getUserId());
                     if (Boolean.parseBoolean(aEnt.getStatus())) {
                         new LoginAnalytics().execute(aEnt.getUserId());
                         SharedPreferences.Editor pref = keep.edit();
