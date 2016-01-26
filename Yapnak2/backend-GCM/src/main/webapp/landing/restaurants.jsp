@@ -46,6 +46,9 @@
           <a href="/contact">Contact</a>
           <!-- <a href="landing/contact.html">Contact</a> -->
         </li>
+        <li>
+            <a href="https://yapnak.wordpress.com/">Blog</a>
+        </li>
       </ul>
     </div>
     <div class="container">
